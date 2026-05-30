@@ -27,3 +27,18 @@
 - **Authors**: Yilun Zhou, Austin Xu, Peifeng Wang, Caiming Xiong, Shafiq Joty
 - **Link**: https://proceedings.mlr.press/v267/zhou25af.html
 - **Summary**: Evaluates judge models in reranking, step-level search, and critique-based refinement settings. Relevance: supports treating OpenRouter chat reranking as an optional verifier/reranker experiment with explicit judge reliability caveats, not as an unquestioned ground truth.
+
+### [2026-05-31] NLPeer: A Unified Resource for the Computational Study of Peer Review
+- **Authors**: Nils Dycke, Ilia Kuznetsov, Iryna Gurevych
+- **Link**: https://arxiv.org/abs/2211.06651
+- **Summary**: Introduces a multidomain peer-review corpus with more than 5k papers and 11k review reports, structured metadata, versioning, and reviewing-assistance tasks. Relevance: strong B-version generalization dataset after the A-version verifier/ranker pipeline is stable.
+
+### [2026-05-31] A Dataset of Peer Reviews (PeerRead): Collection, Insights and NLP Applications
+- **Authors**: Dongyeop Kang, Waleed Ammar, Bhavana Dalvi, Madeleine van Zuylen, Sebastian Kohlmeier, Eduard Hovy, Roy Schwartz
+- **Link**: https://arxiv.org/abs/1804.09635
+- **Summary**: Provides over 14k paper drafts with accept/reject decisions and over 10k expert peer reviews for a subset of papers. Relevance: suitable auxiliary dataset for accept/reject and review-score baselines, but not the main evidence-grounded verifier benchmark.
+
+### [2026-05-31] OpenReview Raw Dataset
+- **Authors**: Prior Computers dataset compilation
+- **Link**: https://huggingface.co/datasets/priorcomputers/openreview_raw
+- **Summary**: Hugging Face dataset card reports OpenReview-derived peer-review data across major ML/AI venues, with paper metadata, note types, review text, venues, years, and OpenReview URLs. Relevance: useful expansion source for later scaling, but A-version should continue using curated local samples and licensed/annotated verifier datasets.

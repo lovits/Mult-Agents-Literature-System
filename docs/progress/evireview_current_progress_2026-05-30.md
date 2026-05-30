@@ -133,6 +133,17 @@ Verifier 实验：
 
 结论：embedding 很适合做 retrieval，不足以单独做 verifier。无泄漏 feature fusion 能把 Ungrounded F1 从 train-fold embedding threshold 的 0.3056 提升到 0.3551，但不能作为最终验证器；下一步要做 evidence-aware LLM verifier 或扩大人工标注。
 
+Ranker 诊断实验：
+
+| 方法 | Groups | MAP | NDCG@3 | Top-1 grounded | Bottom-1 ungrounded |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| OpenRouter embedding max similarity | 24 | 0.7502 | 0.7632 | 0.5833 | 0.5833 |
+| BM25 max similarity | 24 | 0.7771 | 0.7934 | 0.6250 | 0.6667 |
+| Out-of-fold feature verifier probability | 24 | 0.7424 | 0.7828 | 0.5833 | 0.5417 |
+| Candidate claim count | 24 | 0.7597 | 0.7806 | 0.5833 | 0.6250 |
+
+结论：当前 ranker 不能简单使用 verifier probability 排序。BM25 在 paper-review group 内更适合做第一版排序信号，verifier 仍然作为独立判定模块使用。
+
 ### 2.5 OpenRouter 免费模型实验状态
 
 已使用 OpenRouter 免费 embedding 完成主实验。
@@ -151,6 +162,9 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | CLAIMCHECK: https://arxiv.org/abs/2503.21717 | 与本项目 paper-grounded weakness verification 最接近，作为当前主 benchmark。 |
 | SubstanReview: https://aclanthology.org/2023.findings-emnlp.684/ | 给出了 peer review substantiation 的人工标注范式，作为 verifier 的监督基线。 |
 | JETTS: https://proceedings.mlr.press/v267/zhou25af.html | LLM judge 需要单独评估，OpenRouter chat judge 不应直接当作真值。 |
+| NLPeer: https://arxiv.org/abs/2211.06651 | 多领域论文与 review report，适合 B 版泛化实验。 |
+| PeerRead: https://arxiv.org/abs/1804.09635 | 有 accept/reject 与专家评审，可作为辅助分类扩展。 |
+| OpenReview Raw: https://huggingface.co/datasets/priorcomputers/openreview_raw | 大规模 OpenReview 数据来源，适合系统稳定后的扩容。 |
 
 与开题报告对齐后的结论：
 
@@ -222,3 +236,8 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 - `code/experiments/evireview_a/reports/claimcheck_feature_verifier_report.md`
 - `docs/progress/evireview_current_progress_2026-05-30.md`
 - `memory/RESEARCH_LOG.md`
+- `code/experiments/evireview_a/src/evaluate_claimcheck_evidence_ranker.py`
+- `code/experiments/evireview_a/src/render_claimcheck_evidence_ranker_report.py`
+- `code/experiments/evireview_a/data/claimcheck_evidence_ranker_metrics.json`
+- `code/experiments/evireview_a/reports/claimcheck_evidence_ranker_report.md`
+- `docs/research/evireview_dataset_registry_2026-05-31.md`

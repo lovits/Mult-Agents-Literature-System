@@ -332,6 +332,7 @@ papers_manifest.csv
 8. CLAIMCHECK claim retrieval：新增 BM25、TF-IDF、char trigram、hybrid 等无依赖检索基线，验证 paper-claim grounding 的词面方法上限。
 9. OpenRouter 免费 embedding：使用 `nvidia/llama-nemotron-embed-vl-1b-v2:free` 在 CLAIMCHECK 上跑 semantic retrieval，main Hit@3 从 char trigram 的 0.375 提升到 0.500。
 10. CLAIMCHECK verifier diagnostics：OpenRouter max-similarity verifier 在 pilot threshold 下仍退化为 majority baseline；无泄漏 feature-fusion verifier 在 grouped CV 下把 Ungrounded F1 从 train-fold embedding threshold 的 0.3056 提升到 0.3551，但总体 Macro-F1 仍只有 0.5076，说明 verifier 必须独立于 retrieval 建模。
+11. CLAIMCHECK evidence-aware ranker diagnostic：在 24 个同时包含 Grounded/Ungrounded 的 paper-review group 上，BM25 max similarity 的 MAP=0.7771、Top-1 grounded rate=0.625，优于当前 out-of-fold feature verifier probability；排序层当前应以检索相关性为主，verifier probability 暂不作为主排序信号。
 10. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
 
 ### 当前阶段
@@ -340,6 +341,7 @@ papers_manifest.csv
 2. 保留本地 OpenReview ICLR 2024 样本作为端到端 evidence retrieval + weakness audit 应用实验。
 3. 继续把 silver labels 限定为 pipeline debugging，不作为最终实验结论。
 4. OpenRouter 免费 chat reranker 受上游 429 限速影响，暂不作为全量主线；下一步只做小样本 evidence-aware LLM verifier，或回退到本地人工 gold label 流程。
+5. 数据集路线以 `docs/research/evireview_dataset_registry_2026-05-31.md` 为准：A 版使用本地 OpenReview、SubstanReview、CLAIMCHECK；PeerRead、NLPeer、OpenReview Raw 作为 B 版扩展。
 4. 用外部人标 benchmark 的结果决定是否接入更强的 LLM verifier。
 
 ### 下一阶段
