@@ -57,8 +57,9 @@ python3 code/experiments/evireview_a/src/evaluate_retrieval_proxy.py
 
 1. 首先接入 SubstanReview。该数据集直接标注 peer review 内的 Eval/Jus span pairs，可转成 claim-level `Supported` / `Unsupported` substantiation gold labels。
 2. 其次接入 CLAIMCHECK。该数据集更贴近 paper-claim grounding，可直接评估 weakness 是否关联到被审论文的 target claims；因官方仓库暂未检测到 LICENSE，本项目只提交聚合指标与脚本，不提交原始文本。
-3. 本地 ICLR 2024 OpenReview 样本继续用于系统流程实验：weakness extraction、paper evidence retrieval、ranking 和报告生成。
-4. 本地 240 条人工标注表作为补充 gold set，不再作为第一验证路径。
+3. 在 CLAIMCHECK 上先跑无依赖 claim retrieval 基线，确认词面匹配上限，再引入 embedding / LLM reranker。
+4. 本地 ICLR 2024 OpenReview 样本继续用于系统流程实验：weakness extraction、paper evidence retrieval、ranking 和报告生成。
+5. 本地 240 条人工标注表作为补充 gold set，不再作为第一验证路径。
 
 ### 本地 gold 工作流保留项
 

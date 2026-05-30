@@ -48,6 +48,8 @@ python3 code/experiments/evireview_a/src/fetch_claimcheck_texts.py
 python3 code/experiments/evireview_a/src/prepare_claimcheck.py
 python3 code/experiments/evireview_a/src/evaluate_claimcheck_baseline.py
 python3 code/experiments/evireview_a/src/render_claimcheck_report.py
+python3 code/experiments/evireview_a/src/evaluate_claimcheck_retrieval.py
+python3 code/experiments/evireview_a/src/render_claimcheck_retrieval_report.py
 ```
 
 Current retrieval outputs:
@@ -85,6 +87,8 @@ CLAIMCHECK benchmark outputs:
 - `claimcheck_raw_manifest.json`
 - `claimcheck_summary.json`
 - `claimcheck_baseline_metrics.json`
+- `claimcheck_retrieval_metrics.json`
 - `reports/claimcheck_experiment_report.md`
+- `reports/claimcheck_retrieval_report.md`
 
 Raw and row-level CLAIMCHECK text files are intentionally ignored because no upstream repository LICENSE file was detected.
