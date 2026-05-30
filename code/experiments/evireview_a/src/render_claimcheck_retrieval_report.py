@@ -22,6 +22,7 @@ def main() -> None:
         f"- Task: {metrics['task']}",
         f"- Gold definition: {metrics['gold_definition']}",
         f"- License note: {metrics['warning']}",
+        f"- Optional dependency note: {metrics['optional_dependency_note']}",
         "",
         "## Main Split Results",
         "",
@@ -42,6 +43,7 @@ def main() -> None:
             "",
             f"- Best main Hit@3: `{best_name}` at {best['hit_at_3']}.",
             "- Character trigram overlap improves top-k coverage over plain token overlap, suggesting that surface-form variation and partial phrase matching matter.",
+            "- The lightweight LSA baseline does not beat lexical methods, so it should be treated as a negative result rather than the final embedding approach.",
             "- The absolute scores remain low for a paper-grounding task, so the next experiment should introduce embedding retrieval or an LLM reranker.",
             "- These results strengthen the thesis argument that simple lexical matching is an insufficient verifier backend for grounded peer-review critique.",
         ]

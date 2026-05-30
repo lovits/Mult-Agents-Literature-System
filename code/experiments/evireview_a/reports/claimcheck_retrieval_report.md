@@ -8,6 +8,7 @@ This report evaluates dependency-free retrieval baselines for mapping reviewer w
 - Task: weakness-to-paper-claim retrieval
 - Gold definition: Target claims are mapped back to extracted candidate claims by token cosine >= 0.7 before ranking evaluation.
 - License note: Raw CLAIMCHECK text and row-level rankings are not committed because no upstream repository LICENSE was detected.
+- Optional dependency note: lsa_tfidf_svd_128 uses numpy when available and is skipped otherwise.
 
 ## Main Split Results
 
@@ -18,10 +19,12 @@ This report evaluates dependency-free retrieval baselines for mapping reviewer w
 | `tfidf_cosine` | 0.2083 | 0.3472 | 0.4167 | 0.5694 | 0.3301 | 72 / 108 |
 | `bm25` | 0.1806 | 0.3611 | 0.4167 | 0.5833 | 0.3135 | 72 / 108 |
 | `hybrid_equal_weight` | 0.2083 | 0.3472 | 0.4583 | 0.5556 | 0.333 | 72 / 108 |
+| `lsa_tfidf_svd_128` | 0.1806 | 0.2778 | 0.3889 | 0.5694 | 0.2939 | 72 / 108 |
 
 ## Interpretation
 
 - Best main Hit@3: `char_trigram_overlap` at 0.375.
 - Character trigram overlap improves top-k coverage over plain token overlap, suggesting that surface-form variation and partial phrase matching matter.
+- The lightweight LSA baseline does not beat lexical methods, so it should be treated as a negative result rather than the final embedding approach.
 - The absolute scores remain low for a paper-grounding task, so the next experiment should introduce embedding retrieval or an LLM reranker.
 - These results strengthen the thesis argument that simple lexical matching is an insufficient verifier backend for grounded peer-review critique.

@@ -7,6 +7,11 @@ from typing import Any, Callable
 
 from common import DATA_DIR, ensure_dirs, read_jsonl, tokenize, write_json
 
+try:
+    import numpy as np
+except ImportError:  # pragma: no cover - optional dependency path
+    np = None
+
 
 ScoreFn = Callable[[dict[str, Any], str], float]
 
@@ -115,6 +120,10 @@ def hybrid_score(row: dict[str, Any], claim: str) -> float:
     return 0.25 * scores["lexical"] + 0.25 * scores["char_ngram"] + 0.25 * scores["tfidf"] + 0.25 * scores["bm25"]
 
 
+def lsa_score(row: dict[str, Any], claim: str) -> float:
+    return row.get("_lsa_scores", {}).get(claim, 0.0)
+
+
 def prepare_row(row: dict[str, Any]) -> dict[str, Any]:
     row = dict(row)
     row["_idf"] = build_row_idf(row)
@@ -144,6 +153,60 @@ def prepare_row(row: dict[str, Any]) -> dict[str, Any]:
         for claim, scores in raw_scores.items()
     }
     return row
+
+
+def attach_lsa_scores(rows: list[dict[str, Any]], dims: int = 128, max_terms: int = 800) -> None:
+    if np is None:
+        return
+
+    texts = []
+    keys = []
+    token_frequency = Counter()
+    document_frequency = Counter()
+    for row_index, row in enumerate(rows):
+        indexed_texts = [("weakness", None, row["weakness_text"])]
+        indexed_texts.extend(("claim", claim_index, claim) for claim_index, claim in enumerate(row["candidate_claims"]))
+        for kind, claim_index, text in indexed_texts:
+            texts.append(text)
+            keys.append((kind, row_index, claim_index))
+            tokens = tokenize(text)
+            token_frequency.update(tokens)
+            document_frequency.update(set(tokens))
+
+    doc_count = len(texts)
+    terms = [
+        term
+        for term, _ in token_frequency.most_common()
+        if 2 <= document_frequency[term] <= 0.7 * doc_count
+    ][:max_terms]
+    if not terms:
+        return
+
+    vocabulary = {term: index for index, term in enumerate(terms)}
+    matrix = np.zeros((doc_count, len(vocabulary)), dtype=np.float32)
+    for row_index, text in enumerate(texts):
+        counts = Counter(token for token in tokenize(text) if token in vocabulary)
+        if not counts:
+            continue
+        max_tf = max(counts.values())
+        for term, count in counts.items():
+            idf = math.log((doc_count + 1) / (document_frequency[term] + 1)) + 1
+            matrix[row_index, vocabulary[term]] = (0.5 + 0.5 * count / max_tf) * idf
+
+    left, singular_values, _ = np.linalg.svd(matrix, full_matrices=False)
+    dim_count = min(dims, left.shape[1])
+    embeddings = left[:, :dim_count] * singular_values[:dim_count]
+    index_by_key = {key: index for index, key in enumerate(keys)}
+
+    for row_index, row in enumerate(rows):
+        weakness_vec = embeddings[index_by_key[("weakness", row_index, None)]]
+        weakness_norm = float(np.linalg.norm(weakness_vec))
+        scores = {}
+        for claim_index, claim in enumerate(row["candidate_claims"]):
+            claim_vec = embeddings[index_by_key[("claim", row_index, claim_index)]]
+            claim_norm = float(np.linalg.norm(claim_vec))
+            scores[claim] = float(weakness_vec @ claim_vec / (weakness_norm * claim_norm)) if weakness_norm and claim_norm else 0.0
+        row["_lsa_scores"] = scores
 
 
 def rank_indices(row: dict[str, Any], score_fn: ScoreFn) -> list[int]:
@@ -202,6 +265,9 @@ def main() -> None:
         "pilot": [prepare_row(row) for row in read_jsonl(pilot_path)],
         "main": [prepare_row(row) for row in read_jsonl(main_path)],
     }
+    for rows in splits.values():
+        attach_lsa_scores(rows)
+
     methods: dict[str, ScoreFn] = {
         "lexical_token_overlap": lexical_score,
         "char_trigram_overlap": char_ngram_score,
@@ -209,11 +275,19 @@ def main() -> None:
         "bm25": bm25_score,
         "hybrid_equal_weight": hybrid_score,
     }
+    skipped_methods = {}
+    if np is None:
+        skipped_methods["lsa_tfidf_svd_128"] = "numpy is not installed"
+    else:
+        methods["lsa_tfidf_svd_128"] = lsa_score
+
     payload = {
         "dataset": "CLAIMCHECK",
         "task": "weakness-to-paper-claim retrieval",
         "gold_definition": "Target claims are mapped back to extracted candidate claims by token cosine >= 0.7 before ranking evaluation.",
         "warning": "Raw CLAIMCHECK text and row-level rankings are not committed because no upstream repository LICENSE was detected.",
+        "optional_dependency_note": "lsa_tfidf_svd_128 uses numpy when available and is skipped otherwise.",
+        "skipped_methods": skipped_methods,
         "methods": {
             name: {split: evaluate(rows, method) for split, rows in splits.items()}
             for name, method in methods.items()

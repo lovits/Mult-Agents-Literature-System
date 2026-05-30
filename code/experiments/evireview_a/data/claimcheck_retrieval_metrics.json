@@ -3,6 +3,8 @@
   "task": "weakness-to-paper-claim retrieval",
   "gold_definition": "Target claims are mapped back to extracted candidate claims by token cosine >= 0.7 before ranking evaluation.",
   "warning": "Raw CLAIMCHECK text and row-level rankings are not committed because no upstream repository LICENSE was detected.",
+  "optional_dependency_note": "lsa_tfidf_svd_128 uses numpy when available and is skipped otherwise.",
+  "skipped_methods": {},
   "methods": {
     "lexical_token_overlap": {
       "pilot": {
@@ -122,6 +124,30 @@
         "hit_at_5": 0.4583,
         "hit_at_10": 0.5556,
         "mrr": 0.333
+      }
+    },
+    "lsa_tfidf_svd_128": {
+      "pilot": {
+        "grounded_weakness_count": 12,
+        "mapped_target_count": 6,
+        "unmapped_target_count": 6,
+        "target_mapping_threshold": 0.7,
+        "hit_at_1": 0.5,
+        "hit_at_3": 0.5,
+        "hit_at_5": 0.6667,
+        "hit_at_10": 0.6667,
+        "mrr": 0.5602
+      },
+      "main": {
+        "grounded_weakness_count": 108,
+        "mapped_target_count": 72,
+        "unmapped_target_count": 36,
+        "target_mapping_threshold": 0.7,
+        "hit_at_1": 0.1806,
+        "hit_at_3": 0.2778,
+        "hit_at_5": 0.3889,
+        "hit_at_10": 0.5694,
+        "mrr": 0.2939
       }
     }
   },
