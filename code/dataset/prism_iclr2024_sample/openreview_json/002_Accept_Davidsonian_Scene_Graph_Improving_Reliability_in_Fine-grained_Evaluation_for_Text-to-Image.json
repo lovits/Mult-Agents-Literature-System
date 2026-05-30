@@ -1,0 +1,453 @@
+{
+  "content": {
+    "title": {
+      "value": "Davidsonian Scene Graph: Improving Reliability in Fine-grained Evaluation for Text-to-Image Generation"
+    },
+    "authors": {
+      "value": [
+        "Jaemin Cho",
+        "Yushi Hu",
+        "Jason Michael Baldridge",
+        "Roopal Garg",
+        "Peter Anderson",
+        "Ranjay Krishna",
+        "Mohit Bansal",
+        "Jordi Pont-Tuset",
+        "Su Wang"
+      ]
+    },
+    "authorids": {
+      "value": [
+        "~Jaemin_Cho1",
+        "~Yushi_Hu1",
+        "~Jason_Michael_Baldridge1",
+        "roopalgarg@google.com",
+        "~Peter_Anderson1",
+        "~Ranjay_Krishna1",
+        "~Mohit_Bansal2",
+        "~Jordi_Pont-Tuset2",
+        "~Su_Wang4"
+      ]
+    },
+    "keywords": {
+      "value": [
+        "text-to-image generation",
+        "text-to-image evaluation",
+        "Davidsonian semantics",
+        "large language models",
+        "scene graphs",
+        "visual question answering",
+        "question generation",
+        "benchmark"
+      ]
+    },
+    "abstract": {
+      "value": "Evaluating text-to-image models is notoriously difficult. A strong recent approach for assessing text-image faithfulness is based on QG/A (question generation and answering), which uses pre-trained foundational models to automatically generate a set of questions and answers from the prompt, and output images are scored based on whether these answers extracted with a visual question answering model are consistent with the prompt-based answers. This kind of evaluation is naturally dependent on the quality of the underlying QG and VQA models. We identify and address several reliability challenges in existing QG/A work: (a) QG questions should respect the prompt (avoiding hallucinations, duplications, and omissions) and (b) VQA answers should be consistent (not asserting that there is no motorcycle in an image while also claiming the motorcycle is blue). We address these issues with Davidsonian Scene Graph (DSG), an empirically grounded evaluation framework inspired by formal semantics, which is adaptable to any QG/A frameworks. DSG produces atomic and unique questions organized in dependency graphs, which (i) ensure appropriate semantic coverage and (ii) sidestep inconsistent answers. With extensive experimentation and human evaluation on a range of model configurations (LLM, VQA, and T2I), we empirically demonstrate that DSG addresses the challenges noted above. Finally, we present DSG-1k, an open-sourced evaluation benchmark that includes 1,060 prompts, covering a wide range of fine-grained semantic categories with a balanced distribution. We release the DSG-1k prompts and the corresponding DSG questions."
+    },
+    "primary_area": {
+      "value": "representation learning for computer vision, audio, language, and other modalities"
+    },
+    "code_of_ethics": {
+      "value": "I acknowledge that I and all co-authors of this work have read and commit to adhering to the ICLR Code of Ethics."
+    },
+    "submission_guidelines": {
+      "value": "I certify that this submission complies with the submission instructions as described on https://iclr.cc/Conferences/2024/AuthorGuide."
+    },
+    "anonymous_url": {
+      "value": "I certify that there is no URL (e.g., github page) that could be used to find authors' identity."
+    },
+    "no_acknowledgement_section": {
+      "value": "I certify that there is no acknowledgement section in this submission for double blind review."
+    },
+    "venue": {
+      "value": "ICLR 2024 poster"
+    },
+    "venueid": {
+      "value": "ICLR.cc/2024/Conference"
+    },
+    "pdf": {
+      "value": "/pdf/713250bdf458c9b54444d2bf78bfd594a06adead.pdf"
+    },
+    "_bibtex": {
+      "value": "@inproceedings{\ncho2024davidsonian,\ntitle={Davidsonian Scene Graph: Improving Reliability in Fine-grained Evaluation for Text-to-Image Generation},\nauthor={Jaemin Cho and Yushi Hu and Jason Michael Baldridge and Roopal Garg and Peter Anderson and Ranjay Krishna and Mohit Bansal and Jordi Pont-Tuset and Su Wang},\nbooktitle={The Twelfth International Conference on Learning Representations},\nyear={2024},\nurl={https://openreview.net/forum?id=ITq4ZRUT4a}\n}"
+    },
+    "paperhash": {
+      "value": "cho|davidsonian_scene_graph_improving_reliability_in_finegrained_evaluation_for_texttoimage_generation"
+    }
+  },
+  "id": "ITq4ZRUT4a",
+  "forum": "ITq4ZRUT4a",
+  "signatures": [
+    "ICLR.cc/2024/Conference/Submission8654/Authors"
+  ],
+  "readers": [
+    "everyone"
+  ],
+  "writers": [
+    "ICLR.cc/2024/Conference",
+    "ICLR.cc/2024/Conference/Submission8654/Authors"
+  ],
+  "number": 8654,
+  "odate": 1697213872796,
+  "invitations": [
+    "ICLR.cc/2024/Conference/-/Submission",
+    "ICLR.cc/2024/Conference/-/Post_Submission",
+    "ICLR.cc/2024/Conference/Submission8654/-/Revision",
+    "ICLR.cc/2024/Conference/Submission8654/-/Rebuttal_Revision",
+    "ICLR.cc/2024/Conference/-/Edit",
+    "ICLR.cc/2024/Conference/Submission8654/-/Camera_Ready_Revision"
+  ],
+  "domain": "ICLR.cc/2024/Conference",
+  "tcdate": 1695520234963,
+  "cdate": 1695520234963,
+  "tmdate": 1713672788142,
+  "mdate": 1713672788142,
+  "pdate": 1705411045887,
+  "version": 2,
+  "details": {
+    "directReplies": [
+      {
+        "content": {
+          "summary": {
+            "value": "This paper studies the problem of fine-grained evaluation of text-to-image (T2I) alignment. Following a line of recent works, this paper formulates T2I alignment evaluation as visual question answering (VQA), which involves question generation from the text prompt using LLMs and question answering using VQA models (referred to as the QG/A framework).\n\nThe main contributions of this paper are:\n* It identifies the issues of existing QG/A methods regarding the question generation step and proposes four properties that the generated questions should satisfy.\n* It proposes a QG method that constructs the questions of a given text prompt as a Davidsonian Scene Graph (DSG). DSG considers the dependency between questions and is designed to satisfy the four properties.\n* It collects a test set of 1060 prompts, which covers different challenges, semantic categories and writing styles, together with Likert-scale T2I alignment rating by humans.\n* The experiments demonstrate that DSG, when combined with different VQA models, achieves a higher correlation with human evaluation compared with existing QG/A frameworks.\n* It further reveals two challenges of QG/A frameworks for T2I evaluation: (1) Some question categories (e.g., shape, style and text rendering) are beyond the capability of current SOTA VQA models to evaluate. (2) For questions that involve “subjectivity” and “domain knowledge”, agreement is hard to achieve even between humans."
+          },
+          "soundness": {
+            "value": "2 fair"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "3 good"
+          },
+          "strengths": {
+            "value": "* This work reveals the issues of existing QG/A methods in terms of the QG step, which is well-motivated and the proposed four desired properties of QG are reasonable.\n* The experiments demonstrate that the proposed DSG achieves solid improvement over existing QG/A frameworks in terms of correlation with human evaluation, which advances the reliability of automatic T2I alignment evaluation.\n* This work is transparent about its limitations, shedding light on directions for future studies to work on.\n* The paper is well-written and easy to follow."
+          },
+          "weaknesses": {
+            "value": "### The design of DSG and DSG-1k\n* It is not well-explained which part of DSG is designed to address the **Atomic Question** and **Full Semantic Coverage** properties. Why the QG methods of TIFA and VQ^A cannot achieve these two properties?\n* Some categories are under-represented in the DSG-1k dataset. According to Table 9, six categories have less than 30 examples and VQA-Human correlation is not computed for these categories.\n\n### Evaluation\n* There is no ablation study showing which design choice in DSG contributes to each of the four properties.\n* It is unclear whether DSG correlates better with humans, compared with TIFA and VQ^A, in each fine-grained category.\n* The relationship between the claimed desired question properties and the final VQA-Human correlation is not well demonstrated. In other words, the relationship between Precision/Recall/Atomicity/Uniqueness in Table 2 and Spearman/Kendall correlation in Table 3 is unclear.\n* There is no comparison with TIFA and VQ^2A in terms of precision and recall in Table 2."
+          },
+          "questions": {
+            "value": "* It is stated on page 4 that DSG only involve binary yes/no questions. Why are there multi-choice questions in the human annotation UI in Figure 10?"
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "5: marginally below the acceptance threshold"
+          },
+          "confidence": {
+            "value": "3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "WjY1aSyAxu",
+        "forum": "ITq4ZRUT4a",
+        "replyto": "ITq4ZRUT4a",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8654/Reviewer_p5Xv"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8654/Reviewer_p5Xv"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8654/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1697943426909,
+        "cdate": 1697943426909,
+        "tmdate": 1699637084204,
+        "mdate": 1699637084204,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "summary": {
+            "value": "This paper focuses on text-to-image generation evaluation by asking text-related questions and checking whether a VQA model can answer it given the generated image. It suggests previous QG/A frameworks usually ask ambiguous, duplicated, and invalid questions. The paper parses the input text input atomic entity/attribute/relation tuples, translates each tuple into questions, and obtains their dependencies through an LLM. The experimental results show the generated questions are unique, have valid entailment, and query atomic semantics. The paper lastly constructs a dataset with the proposed methods."
+          },
+          "soundness": {
+            "value": "3 good"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "3 good"
+          },
+          "strengths": {
+            "value": "The paper has strong motivation. It first analyses the drawbacks of previous QG/A methods, then proposes some principles for the generated questions, and lastly introduces a three-step prompting method to resolve it.\n\nThe experimental results are strong enough to support the effectiveness of the proposed method in the proposed uniqueness, valid dependency, and human alignment.\n\nThe paper is well-written, and the related work is sufficient."
+          },
+          "weaknesses": {
+            "value": "The VQA model is not good enough and hinders the final alignment to humans in T2I evaluation."
+          },
+          "questions": {
+            "value": "Can a better VQA model lead to better alignment in Tables 3, 4, and 6?"
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "8: accept, good paper"
+          },
+          "confidence": {
+            "value": "3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "goqirvrQUN",
+        "forum": "ITq4ZRUT4a",
+        "replyto": "ITq4ZRUT4a",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8654/Reviewer_A5bo"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8654/Reviewer_A5bo"
+        ],
+        "number": 2,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8654/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698577069983,
+        "cdate": 1698577069983,
+        "tmdate": 1699637084058,
+        "mdate": 1699637084058,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "summary": {
+            "value": "The paper addresses the task of evaluating text-to-image models, specifically focusing on the question generation and answering method. This method automatically generate questions and answers from the prompt, and the faithfulness of the image is assessed based on the consistency of the answers from both prompt and visual question answering models. The authors identify and tackle key reliability challenges in this approach, including the quality of generated questions and the consistency of visual question answering.\nTo overcome these challenges, the authors introduce the Davidsonian Scene Graph (DSG), which produces atomic and unique questions organized in dependency graphs, to ensure questions cover semantic of the prompt and that answers are consistent.\nThe paper provides experimental results and human evaluations, demonstrating that DSG addresses the reliability challenges mentioned earlier. Additionally, the authors introduce DSG-1k, an open-sourced evaluation benchmark with 1,060 prompts covering a wide range of fine-grained semantic categories."
+          },
+          "soundness": {
+            "value": "2 fair"
+          },
+          "presentation": {
+            "value": "2 fair"
+          },
+          "contribution": {
+            "value": "2 fair"
+          },
+          "strengths": {
+            "value": "This paper introduces Davidsonian Scene Graph (DSG) to improve the faithfulness of the text-to-image evaluation. Compared to previous QG/A methods, this framework generates  atomic questions with full semantic coverage and valid question dependency. The authors implement QG step as a Directed Acyclic Graph (DAG) where the nodes represent the unique questions and they explicitly model semantic dependencies with directed edges. Additionally, they collect a fine-grained human-annotated benchmark called DSG-1k including 1,060 diverse prompts with a balanced distribution to facilitate research in this area."
+          },
+          "weaknesses": {
+            "value": "1.\tThis paper improves the existing QG/A methods with Davidsonian Scene graph, which is generated based on LLMs. The approach of the work could be enriched with more details and techniques. \n\n2.\tAblation on separate steps of DSG should be presented. For example, without establishing dependencies, measure the changes of consistency between VQA score and the human 1-5 Likert Scores.\n\n3.\tApart from TIFA and VQ2A, more methods could be compared, including CLIPScore and caption based approaches."
+          },
+          "questions": {
+            "value": "1.\tIn 4.1, to validate the question dependencies, authors evaluate manually on 30 samples and automatically on the full TIFA160. However, the consistency of manual and automatic evaluation is not presented.\n\n2.\tThe comparison of runtime among different methods should be added. \n\n3.\tIn table 3, for Instruct-BLIP, the Spearman’s ρ of DSG is lower than that of TIFA, authors should explain this phenomenon briefly."
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "5: marginally below the acceptance threshold"
+          },
+          "confidence": {
+            "value": "5: You are absolutely certain about your assessment. You are very familiar with the related work and checked the math/other details carefully."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "rXP9hxnXeK",
+        "forum": "ITq4ZRUT4a",
+        "replyto": "ITq4ZRUT4a",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8654/Reviewer_tDEJ"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8654/Reviewer_tDEJ"
+        ],
+        "number": 3,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8654/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698638236334,
+        "cdate": 1698638236334,
+        "tmdate": 1699637083907,
+        "mdate": 1699637083907,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "title": {
+            "value": "Common response (Part 1)"
+          },
+          "comment": {
+            "value": "We thank the reviewers tDEJ, A5bo, and p5Xv for their valuable comments.\n\nOur paper presents DSG, a linguistically motivated novel text-to-image (T2I) alignment evaluation method that addresses the critical reliability issues existing in the line of work on fine-grained T2I evaluation. Further, we contribute a benchmark dataset DSG-1k which is balanced in a rich set of semantic categories, and is intended to thereby provide informative diagnostics for understanding the behavior of T2I models. \n\nWe are glad that the reviewers recognize our strengths:\n\n- reveals the issue of existing QG/A methods (p5Xv)\n- strong motivation/well-motivated  (A5bo / p5Xv)\n- proposed method can generate atomic questions with full semantic coverage and valid question dependency (tDEJ)\n- improve the faithfulness/reliability of text-to-image evaluation (tDEJ / p5Xv)\n- introducing a fine-grained human-annotated benchmark DSG-1k to facilitate research (tDEJ)\n- strong experiments demonstrate the DSG achieves solid improvements over existing QG/A frameworks (A5bo / p5Xv)\n- transparent about limitations, shedding light on directions on future studies (p5Xv)\n- sufficient related work (A5bo)\n- well written and easy to follow (A5bo / p5Xv)\n\nWe address the queries from each reviewer in separate responses and have incorporated feedback in our revised PDF. Below, we answer the questions commonly asked by some reviewers.\n\n(continued below)"
+          }
+        },
+        "id": "T2VSxpDH0o",
+        "forum": "ITq4ZRUT4a",
+        "replyto": "ITq4ZRUT4a",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8654/Authors"
+        ],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8654/Authors"
+        ],
+        "number": 6,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8654/-/Official_Comment"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1700410336764,
+        "cdate": 1700410336764,
+        "tmdate": 1700410336764,
+        "mdate": 1700410336764,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "title": {
+            "value": "A gentle reminder to check author responses"
+          },
+          "comment": {
+            "value": "Dear reviewers,\n\nWe again thank you for your valuable comments! We have responded to your comments, and would like to follow up to see if our responses address your concerns, or if you have any further questions. We would really appreciate the opportunity to discuss this further if our response has not already addressed your concerns. \n\nBest,\nAuthors"
+          }
+        },
+        "id": "GauqYfgdNG",
+        "forum": "ITq4ZRUT4a",
+        "replyto": "ITq4ZRUT4a",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8654/Authors"
+        ],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8654/Authors"
+        ],
+        "number": 9,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8654/-/Official_Comment"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1700582193261,
+        "cdate": 1700582193261,
+        "tmdate": 1700582193261,
+        "mdate": 1700582193261,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "metareview": {
+            "value": "This paper presents an approach to measure the quality of text to image generative models. The authors tackle fine-grained text alignment and measure it using question generation (from the text prompts) and answering using a VQA model (input generated questions and generated image). The paper identifies a set of requirements  that the automated question generation should follow and a linguistic constraint (Davidsonian Scene Graph) that ensures that these properties are satisfied.\nThey also collect a dataset of 1060 prompts and human likert ratings (DSG dataset).\nOverall, the paper makes interesting contributions and observations  in evaluating these models which is both important and understudied. \nDuring the review process, the reviewers raised several questions around ablations and design of the DSG dataset.\nIn particular, Rp5Xv raised important concerns about the dataset design, justification of design choices, and comparisons/relations to TIFA and VQ^2A. The author responses have resolved almost all the queries from the reviewers.\nGiven this resolution, and the contributions of this work I do not see any reason to not accept the paper."
+          },
+          "justification_for_why_not_higher_score": {
+            "value": "While the paper takes an important step in evaluating text to image models, it relies  heavily on automated question generation and linguistic structure of a single sentence text prompt. This approach may not easily work for multi-sentence long prompts that are becoming more common for the next generation of text-to-image models in the community. This will likely limit the impact of this particular paper."
+          },
+          "justification_for_why_not_lower_score": {
+            "value": "The paper is technically sound, addresses an important and understudied problem of evaluating text-to-image models, and has interesting contributions to this field."
+          }
+        },
+        "id": "kAtgm50Aqs",
+        "forum": "ITq4ZRUT4a",
+        "replyto": "ITq4ZRUT4a",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8654/Area_Chair_pU4B"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8654/Senior_Area_Chairs",
+          "ICLR.cc/2024/Conference/Submission8654/Area_Chair_pU4B"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8654/-/Meta_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1701892464691,
+        "cdate": 1701892464691,
+        "tmdate": 1708115477002,
+        "mdate": 1708115477002,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "title": {
+            "value": "Paper Decision"
+          },
+          "decision": {
+            "value": "Accept (poster)"
+          },
+          "comment": {
+            "value": ""
+          }
+        },
+        "id": "ex9Qi0v35O",
+        "forum": "ITq4ZRUT4a",
+        "replyto": "ITq4ZRUT4a",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Program_Chairs"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Program_Chairs"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8654/-/Decision",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1705405989842,
+        "cdate": 1705405989842,
+        "tmdate": 1708116172947,
+        "mdate": 1708116172947,
+        "license": "CC BY 4.0",
+        "version": 2
+      }
+    ]
+  }
+}

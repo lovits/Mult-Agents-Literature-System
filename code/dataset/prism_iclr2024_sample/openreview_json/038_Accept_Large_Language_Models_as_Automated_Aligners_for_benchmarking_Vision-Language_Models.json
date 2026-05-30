@@ -1,0 +1,410 @@
+{
+  "content": {
+    "title": {
+      "value": "Large Language Models as Automated Aligners for  benchmarking  Vision-Language Models"
+    },
+    "authors": {
+      "value": [
+        "Yuanfeng Ji",
+        "Chongjian GE",
+        "Weikai Kong",
+        "Enze Xie",
+        "Zhengying Liu",
+        "Zhenguo Li",
+        "Ping Luo"
+      ]
+    },
+    "authorids": {
+      "value": [
+        "~Yuanfeng_Ji1",
+        "~Chongjian_GE1",
+        "~Weikai_Kong1",
+        "~Enze_Xie1",
+        "~Zhengying_Liu2",
+        "~Zhenguo_Li1",
+        "~Ping_Luo2"
+      ]
+    },
+    "keywords": {
+      "value": [
+        "LLMs",
+        "VLMs",
+        "Benchmark"
+      ]
+    },
+    "abstract": {
+      "value": "With the advancements in Large Language Models (LLMs), Vision-Language Models (VLMs) have reached a new level of sophistication, showing notable competence in executing intricate cognition and reasoning tasks. However, existing evaluation benchmarks, primarily relying on rigid, hand-crafted datasets to measure task-specific performance, face significant limitations in assessing the alignment of these increasingly anthropomorphic models with human intelligence. In this work, we address the limitations via Auto-Bench, which delves into exploring LLMs as proficient aligners, measuring the alignment between VLMs and human intelligence and value through automatic data curation and assessment. Specifically, for data curation, Auto-Bench utilizes LLMs (e.g., GPT-4) to automatically generate a vast set of question-answer-reasoning triplets via prompting on visual symbolic representations (e.g., captions, object locations, instance relationships, and etc. The curated data closely matches human intent, owing to the extensive world knowledge embedded in LLMs. Through this pipeline, a total of 28.5K human-verified and 3,504K unfiltered question-answer-reasoning triplets have been curated, covering 4 primary abilities and 16 sub-abilities. We subsequently engage LLMs like GPT-3.5 to serve as judges, implementing the quantitative and qualitative automated assessments to facilitate a comprehensive evaluation of VLMs. Our validation results reveal that LLMs are proficient in both evaluation data curation and model assessment, achieving an average agreement rate of 85%. We envision Auto-Bench as a flexible, scalable, and comprehensive benchmark for evaluating the evolving sophisticated VLMs."
+    },
+    "primary_area": {
+      "value": "datasets and benchmarks"
+    },
+    "code_of_ethics": {
+      "value": "I acknowledge that I and all co-authors of this work have read and commit to adhering to the ICLR Code of Ethics."
+    },
+    "submission_guidelines": {
+      "value": "I certify that this submission complies with the submission instructions as described on https://iclr.cc/Conferences/2024/AuthorGuide."
+    },
+    "anonymous_url": {
+      "value": "I certify that there is no URL (e.g., github page) that could be used to find authors' identity."
+    },
+    "no_acknowledgement_section": {
+      "value": "I certify that there is no acknowledgement section in this submission for double blind review."
+    },
+    "venue": {
+      "value": "ICLR 2024 poster"
+    },
+    "venueid": {
+      "value": "ICLR.cc/2024/Conference"
+    },
+    "pdf": {
+      "value": "/pdf/fec2f0e416c0a90d47240e5522b34b70940223f4.pdf"
+    },
+    "_bibtex": {
+      "value": "@inproceedings{\nji2024large,\ntitle={Large Language Models as Automated Aligners for  benchmarking  Vision-Language Models},\nauthor={Yuanfeng Ji and Chongjian GE and Weikai Kong and Enze Xie and Zhengying Liu and Zhenguo Li and Ping Luo},\nbooktitle={The Twelfth International Conference on Learning Representations},\nyear={2024},\nurl={https://openreview.net/forum?id=kZEXgtMNNo}\n}"
+    },
+    "paperhash": {
+      "value": "ji|large_language_models_as_automated_aligners_for_benchmarking_visionlanguage_models"
+    }
+  },
+  "id": "kZEXgtMNNo",
+  "forum": "kZEXgtMNNo",
+  "signatures": [
+    "ICLR.cc/2024/Conference/Submission8696/Authors"
+  ],
+  "readers": [
+    "everyone"
+  ],
+  "writers": [
+    "ICLR.cc/2024/Conference",
+    "ICLR.cc/2024/Conference/Submission8696/Authors"
+  ],
+  "number": 8696,
+  "odate": 1697213872796,
+  "invitations": [
+    "ICLR.cc/2024/Conference/-/Submission",
+    "ICLR.cc/2024/Conference/-/Post_Submission",
+    "ICLR.cc/2024/Conference/Submission8696/-/Revision",
+    "ICLR.cc/2024/Conference/Submission8696/-/Rebuttal_Revision",
+    "ICLR.cc/2024/Conference/-/Edit",
+    "ICLR.cc/2024/Conference/Submission8696/-/Camera_Ready_Revision"
+  ],
+  "domain": "ICLR.cc/2024/Conference",
+  "tcdate": 1695521713473,
+  "cdate": 1695521713473,
+  "tmdate": 1710826520088,
+  "mdate": 1710826520088,
+  "pdate": 1705411046968,
+  "version": 2,
+  "details": {
+    "directReplies": [
+      {
+        "content": {
+          "summary": {
+            "value": "The paper introduces Auto-Bench, an automated benchmarking pipeline that utilizes Large Language Models (LLMs) to curate data and evaluate Vision-Language Models (VLMs). The pipeline includes LLMs as automatic curators to generate question-answer-reasoning triplets and LLMs as judges to assess VLMs' performance. The paper shows the effectiveness of Auto-Bench in data curation, model evaluation, and supervised fine-tuning of VLMs."
+          },
+          "soundness": {
+            "value": "2 fair"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "2 fair"
+          },
+          "strengths": {
+            "value": "1. The paper introduces an innovative and comprehensive benchmarking pipeline for VLMs.\n2. The use of LLMs as automatic curators and judges adds scalability to the evaluation process.\n3. The extensive dataset curated by Auto-Bench enables effective evaluation and fine-tuning of VLMs."
+          },
+          "weaknesses": {
+            "value": "1. From my perspective, the approach provided by Visual Instruction Tuning [1] for constructing multimodal instruction data also constitutes a scalable, user-friendly, and comprehensive automated pipeline. Therefore, the claim about data generation is relatively weak. I've noticed that you mention your method being more diverse and complex, but in the analysis of 3.3 BENCHMARK STATISTICS, there is no mention of Visual Instruction Tuning. Lastly, could you please elaborate on any other significant differences and advantages of your method against Visual Instruction Tuning?\n2. The use of GPT-4 or GPT-3.5 has already been mentioned in other articles, such as [2] and [3].\n3. Assessments of different visual capabilities have also been addressed in other evaluations, such as [2], [3], [4], and [5].\n[1] Visual Instruction Tuning\n[2] MM-Vet: Evaluating Large Multimodal Models for Integrated Capabilities\n[3] TouchStone: Evaluating Vision-Language Models by Language Models\n[4] MME: A Comprehensive Evaluation Benchmark for Multimodal Large Language Models\n[5] MMBench: Is Your Multi-modal Model an All-around Player?"
+          },
+          "questions": {
+            "value": "Please check the weakness."
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "5: marginally below the acceptance threshold"
+          },
+          "confidence": {
+            "value": "4: You are confident in your assessment, but not absolutely certain. It is unlikely, but not impossible, that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "K37rFMAxlJ",
+        "forum": "kZEXgtMNNo",
+        "replyto": "kZEXgtMNNo",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8696/Reviewer_G18f"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8696/Reviewer_G18f"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8696/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698485709408,
+        "cdate": 1698485709408,
+        "tmdate": 1699637089937,
+        "mdate": 1699637089937,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "summary": {
+            "value": "The paper proposes AutoBench, a method to generate a large amount of instruction-response pairs for evaluating large multimodal models. The main motivation of the work is centered around the fact that the current datasets are either not suitable for open-ended evaluation or rely on expensive and limited human evaluation. The approach involves using LLM as data creators + LLM as evaluators. I like the motivation of the work, however, the paper majorly lacks in the quality of the experiments and its setup.\n\nComments:\n\n- My major issue with the setup is using LLMs as data curators! Many existing LMMs are trained on GPT-4 generated data such as LLaVA, mPLUG-Owl etc. To what extent is the evaluation fair across all the models which are not specifically not trained on the GPT-4 generated data?\n- The experiments are performed by generating instructions and responses for the COCO images and their corresponding COCO captions. I find this setup highly concerning since InstructBLIP (best model in their eval) is trained with COCO captions. Similarly, other models like LLaVA are also trained with the COCO captions. Again, this makes the evaluation unfair to all the models. \n- Quoting from the paper: “ Besides, we carefully curated approximately 28.5K high-quality samples to comprise the validation dataset, which was subsequently utilized for performance evaluation.” There is no information on how this curation was performed? \n- Benchmark scope: It remains unclear to me how an image in the dataset is assigned a particular subskill? When do you know that a particular image has physics related possible questions?\n- Quoting from the paper: “Due to the nature of reasoning-based questions often lacking a unique answer, we format them as multiple-choice questions, thus reducing the difficulty of evaluation and ensuring its accuracy.” It would be better to provide some examples to understand why reasoning-based questions need multiple choice questions. Why can’t they be just open-ended even if they lack a unique answer.\n- Thanks for showing distributions of the question length and cosine similarity. Figure 3b looks more or less overlapping and hence does not shout semantic richness in comparison to other dataset. \n- Figure 3 should also have datasets like Visit-Bench or Touchstone where the questions are collected from humans. I feel that the human questions will be the most diverse.\n- How much does it cost to add a new model to your benchmark involving 28.5K instances?\n- To establish LLM as a valid judge, the paper does not have any correlations with human numbers. In addition, it would be important to show that simpler metrics that are based on lexical similarity are not good judges for this dataset, which it currently does not do.\n- I like the paper’s diversification into understanding the usefulness of the models along different skills and sub-skills."
+          },
+          "soundness": {
+            "value": "2 fair"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "2 fair"
+          },
+          "strengths": {
+            "value": "Mentioned in the summary"
+          },
+          "weaknesses": {
+            "value": "Mentioned in the summary"
+          },
+          "questions": {
+            "value": "Mentioned in the summary"
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "5: marginally below the acceptance threshold"
+          },
+          "confidence": {
+            "value": "5: You are absolutely certain about your assessment. You are very familiar with the related work and checked the math/other details carefully."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "XCYwlpkTBP",
+        "forum": "kZEXgtMNNo",
+        "replyto": "kZEXgtMNNo",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8696/Reviewer_69zX"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8696/Reviewer_69zX"
+        ],
+        "number": 2,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8696/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698732137659,
+        "cdate": 1698732137659,
+        "tmdate": 1700595618712,
+        "mdate": 1700595618712,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "summary": {
+            "value": "The authors use LLMs to generate and curate a new evaluation benchmark for vision-language models, dubbed Auto-Bench. By conditioned on image verbalizations (such as image captions, object locations, OCR etc) LLMs are used to generate question-answer-rationale triplets to evaluate a wide variety of vision-language capabilities, covering perception, reasoning, planning abilities and alignment with human values. To overcome evaluation bottlenecks such as surface form variation, he authors further propose using LLMs to judge model responses. Finally, the authors benchmark several state-of-the-art VL models using their proposed benchmark."
+          },
+          "soundness": {
+            "value": "4 excellent"
+          },
+          "presentation": {
+            "value": "4 excellent"
+          },
+          "contribution": {
+            "value": "4 excellent"
+          },
+          "strengths": {
+            "value": "- This work addresses an important challenge -- existing vision-language benchmarks only cover a narrow range of capabilities, and are limited in size due to the difficulty of manual curation.\n\n- The primary contribution of this work is substantial -- a large benchmark containing more than 3 million examples, including a train split and a high-quality human-curated validation set, as well as an evaluation framework using LLMs.\n\n- The authors choose a large breadth of the different capabilities to evaluate VLMs on, including planning and human value alignment which have not been focused on much in prior work. I also like how different tasks were framed as open-ended and close-ended depending on the nature of the task. \n\n- I really like the comparison between AutoBench and existing human-curated VQA datasets in section 4.2.\n\n- The experiments are well done. I especially appreciate the Inclusion of qualitative model comparisons using an ELO system.\n\n- The analysis of alignment between LLM and humans as judges in Section 4.4.\n\n- The paper is well-written and easy to follow for the most part.\n\nWell done!"
+          },
+          "weaknesses": {
+            "value": "- The benchmark is built only on images sourced from MS-COCO. While I understand that this was done due to the richness of image annotations that could be fed to the LLM to generate questions, MS-COCO images also represent a narrow subset of all images which we would like to apply vision-language models to. Vision-language models have been oversaturated on COCO-based benchmarks, so performance on Auto-Bench may not be reflective of performance on other image domains (e.g. VizWiz, or medical images)"
+          },
+          "questions": {
+            "value": "In section 4.2, \"Users are guided to rank each sample based on its rationality and level of challenge.\" what does rationality mean?"
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "8: accept, good paper"
+          },
+          "confidence": {
+            "value": "4: You are confident in your assessment, but not absolutely certain. It is unlikely, but not impossible, that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "YFmZRnWrqm",
+        "forum": "kZEXgtMNNo",
+        "replyto": "kZEXgtMNNo",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8696/Reviewer_m7V9"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8696/Reviewer_m7V9"
+        ],
+        "number": 3,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8696/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698943804473,
+        "cdate": 1698943804473,
+        "tmdate": 1699637089723,
+        "mdate": 1699637089723,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "title": {
+            "value": "Responses to ACs and all reviewers"
+          },
+          "comment": {
+            "value": "We sincerely appreciate all reviewers for the time and efforts in reviewing our paper. We are pleased to note that reviewers have acknowledged the following contributions of our work:\n - **Innovative benchmarking pipeline:** This work addresses a significant challenge by introducing an innovative and comprehensive benchmarking pipeline for evaluating current VLMs. [m7V9,G18f]\n - **The extensive dataset:** The primary contribution of this work is substantial, providing a large benchmark containing over 3 million examples, including a train split and a high-quality human-curated validation set. [m7V9,G18f]\n - **The comprehensive evalution:** The authors have undertaken a comprehensive evaluation by selecting a broad range of different capabilities to assess VLMs, covering a diverse set of skills and sub-skills. [m7V9,69zX,G18f]\n\nWe also thank all reviewers for their insightful and constructive suggestions, which help further improve our paper. In addition to the pointwise responses below, we summarize the major revisions in the rebuttal according to reviewers’ suggestions.\n\n- **Clarification on the difference with other methods ([69zX,G18f]):** For better understanding Auto-Bench's contributions, we included detailed comparisons with concurrent works such as Visual Instruct Tuning[1], TouchStone[2], MM-Vet[3], MMBench[4], etc.\n- **Extended Experiments ([G18f]):**  For comprehensive comparisons, new experiments have been conducted to incorporate additional statistics of different benchmarks.\n- **Updating Manuscript ([m7V9,69zX,G18f]):** As suggested, we added some new discussions and included our revision in the paper **(contents in blue)**.\n\nWe hope our pointwise responses below could clarify reviewers’ confusion and alleviate all concerns. We thank all reviewers’ efforts and time again and look forward to any further discussions.\n\nBest,\n\nAuthors\n\n[1] Haotian Liu, et al. Visual Instruction Tuning. arXiv preprint arXiv:2304.08485, 2023.\n\n[2] Shuai Bai, et al. TouchStone: Evaluating Vision-Language Models by Language Models. arXiv preprint arXiv:2308.16890, 2023.\n\n[3] Weihao Yu, et al. MM-Vet: Evaluating Large Multimodal Models for Integrated Capabilities. arXiv preprint arXiv:2308.02490, 2023.\n\n[4] Yuan Liu, et al. MMBench: Is Your Multi-modal Model an All-around Player? arXiv preprint arXiv:2307.06281, 2023."
+          }
+        },
+        "id": "O6ijXlHd7x",
+        "forum": "kZEXgtMNNo",
+        "replyto": "kZEXgtMNNo",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8696/Authors"
+        ],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8696/Authors"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8696/-/Official_Comment"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1700554761343,
+        "cdate": 1700554761343,
+        "tmdate": 1700554953243,
+        "mdate": 1700554953243,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "metareview": {
+            "value": "This work explores using LLMs for curating evaluation benchmarks for vision-language models and creates a novel approach for this called Auto-Bench. Based on text explanations of the image (captions, object locations) Auto-Bench generates question-answer-reasoning triplets for evaluating different capabilities of VLMs. In addition, this work proposes to use LLMs also as part of computing the evaluation metrics by enabling these models to judge the VLM responses. Extensive experimentation is performed to showcase the utility of the method."
+          },
+          "justification_for_why_not_higher_score": {
+            "value": "As pointed out by reviewers, this method is not fully novel as a number of related works pursue very similar ideas and implementations."
+          },
+          "justification_for_why_not_lower_score": {
+            "value": "Authors provide the largest evaluation benchmark (to date) and provide extensive experiments beyond what is currently available in the literature. I believe the community would benefit from this work being presented at ICLR"
+          }
+        },
+        "id": "rO9QYfRSK1",
+        "forum": "kZEXgtMNNo",
+        "replyto": "kZEXgtMNNo",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission8696/Area_Chair_aLWz"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission8696/Senior_Area_Chairs",
+          "ICLR.cc/2024/Conference/Submission8696/Area_Chair_aLWz"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8696/-/Meta_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1702677729410,
+        "cdate": 1702677729410,
+        "tmdate": 1708115478647,
+        "mdate": 1708115478647,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "title": {
+            "value": "Paper Decision"
+          },
+          "decision": {
+            "value": "Accept (poster)"
+          },
+          "comment": {
+            "value": ""
+          }
+        },
+        "id": "3msXjpQr4g",
+        "forum": "kZEXgtMNNo",
+        "replyto": "kZEXgtMNNo",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Program_Chairs"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Program_Chairs"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission8696/-/Decision",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1705405990297,
+        "cdate": 1705405990297,
+        "tmdate": 1708116174425,
+        "mdate": 1708116174425,
+        "license": "CC BY 4.0",
+        "version": 2
+      }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+# EviReview-Lite A Version Experiments
+
+This experiment directory implements the first reproducible pass of the EviReview-Lite thesis plan.
+
+Main dataset:
+
+`code/dataset/prism_iclr2024_sample`
+
+Primary A-version tasks:
+
+1. Prepare a clean manifest and dataset audit.
+2. Validate the OpenReview source chain.
+3. Extract human reviewer weaknesses from review text.
+4. Build paper evidence blocks and retrieval baselines in later steps.
+
+Run from the repository root:
+
+```bash
+python3 code/experiments/evireview_a/src/prepare_manifest.py
+python3 code/experiments/evireview_a/src/validate_openreview_source.py
+python3 code/experiments/evireview_a/src/extract_human_weaknesses.py
+python3 code/experiments/evireview_a/src/build_evidence_blocks.py
+python3 code/experiments/evireview_a/src/retrieve_bm25.py
+python3 code/experiments/evireview_a/src/build_annotation_candidates.py
+```

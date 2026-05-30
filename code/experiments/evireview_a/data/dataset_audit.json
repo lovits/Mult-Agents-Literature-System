@@ -1,0 +1,16 @@
+{
+  "dataset_root": "code/dataset/prism_iclr2024_sample",
+  "raw_manifest": "code/dataset/prism_iclr2024_sample/papers_manifest.csv",
+  "paper_count": 50,
+  "decision_counts": {
+    "Reject": 25,
+    "Accept": 25
+  },
+  "markdown_count": 50,
+  "review_text_count": 50,
+  "openreview_json_count": 50,
+  "pdf_local_count": 50,
+  "balanced_accept_reject": true,
+  "issues": [],
+  "source_note": "Local dataset README states the sample was downloaded from the public OpenReview API v2 and converted to Markdown with MinerU v4."
+}

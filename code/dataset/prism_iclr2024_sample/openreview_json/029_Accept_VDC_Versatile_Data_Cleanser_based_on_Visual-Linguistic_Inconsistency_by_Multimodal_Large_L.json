@@ -1,0 +1,409 @@
+{
+  "content": {
+    "title": {
+      "value": "VDC: Versatile Data Cleanser based on Visual-Linguistic Inconsistency by Multimodal Large Language Models"
+    },
+    "authors": {
+      "value": [
+        "Zihao Zhu",
+        "Mingda Zhang",
+        "Shaokui Wei",
+        "Bingzhe Wu",
+        "Baoyuan Wu"
+      ]
+    },
+    "authorids": {
+      "value": [
+        "~Zihao_Zhu2",
+        "~Mingda_Zhang2",
+        "~Shaokui_Wei1",
+        "~Bingzhe_Wu1",
+        "~Baoyuan_Wu1"
+      ]
+    },
+    "keywords": {
+      "value": [
+        "Noisy label detection",
+        "Poisoned sample detection",
+        "data-centric AI",
+        "multimodal large language model"
+      ]
+    },
+    "abstract": {
+      "value": "The role of data in building AI systems has recently been emphasized by the emerging concept of data-centric AI. Unfortunately, in the real-world, datasets may contain dirty samples, such as poisoned samples from backdoor attack, noisy labels in crowdsourcing, and even hybrids of them. The presence of such dirty samples makes the DNNs vunerable and unreliable.\nHence, it is critical to detect dirty samples to improve the quality and realiability of dataset. \nExisting detectors only focus on detecting poisoned samples or noisy labels, that are often prone to weak generalization when dealing with dirty samples from other fields.\nIn this paper, we find a commonality of various dirty samples is visual-linguistic inconsistency between images and associated labels. \nTo capture the semantic inconsistency between modalities, we propose versatile data cleanser (VDC) leveraging the surpassing capabilities of multimodal large language models (MLLM) in cross-modal alignment and reasoning.\nIt consists of three consecutive modules: the visual question generation module to generate insightful questions about the image; the visual question answering module to acquire the semantics of the visual content by answering the questions with MLLM; followed by the visual answer evaluation module to evaluate the inconsistency.\nExtensive experiments demonstrate its superior performance and generalization to various categories and types of dirty samples.\nThe code is available at [https://github.com/zihao-ai/vdc](https://github.com/zihao-ai/vdc)."
+    },
+    "primary_area": {
+      "value": "societal considerations including fairness, safety, privacy"
+    },
+    "code_of_ethics": {
+      "value": "I acknowledge that I and all co-authors of this work have read and commit to adhering to the ICLR Code of Ethics."
+    },
+    "submission_guidelines": {
+      "value": "I certify that this submission complies with the submission instructions as described on https://iclr.cc/Conferences/2024/AuthorGuide."
+    },
+    "anonymous_url": {
+      "value": "I certify that there is no URL (e.g., github page) that could be used to find authors' identity."
+    },
+    "no_acknowledgement_section": {
+      "value": "I certify that there is no acknowledgement section in this submission for double blind review."
+    },
+    "venue": {
+      "value": "ICLR 2024 poster"
+    },
+    "venueid": {
+      "value": "ICLR.cc/2024/Conference"
+    },
+    "TLDR": {
+      "value": "We propose a universal framework that capable of detecting poisoned samples, noisy labels and hybrids of them simultaneously."
+    },
+    "pdf": {
+      "value": "/pdf/66009612880b659116956be01719a60fbf3fdbca.pdf"
+    },
+    "_bibtex": {
+      "value": "@inproceedings{\nzhu2024vdc,\ntitle={{VDC}: Versatile Data Cleanser based on Visual-Linguistic Inconsistency by Multimodal Large Language Models},\nauthor={Zihao Zhu and Mingda Zhang and Shaokui Wei and Bingzhe Wu and Baoyuan Wu},\nbooktitle={The Twelfth International Conference on Learning Representations},\nyear={2024},\nurl={https://openreview.net/forum?id=ygxTuVz9eU}\n}"
+    },
+    "paperhash": {
+      "value": "zhu|vdc_versatile_data_cleanser_based_on_visuallinguistic_inconsistency_by_multimodal_large_language_models"
+    }
+  },
+  "id": "ygxTuVz9eU",
+  "forum": "ygxTuVz9eU",
+  "number": 248,
+  "cdate": 1694782702880,
+  "tcdate": 1694782702880,
+  "mdate": 1713672038587,
+  "tmdate": 1713672038587,
+  "signatures": [
+    "ICLR.cc/2024/Conference/Submission248/Authors"
+  ],
+  "readers": [
+    "everyone"
+  ],
+  "writers": [
+    "ICLR.cc/2024/Conference",
+    "ICLR.cc/2024/Conference/Submission248/Authors"
+  ],
+  "odate": 1697213872796,
+  "invitations": [
+    "ICLR.cc/2024/Conference/-/Submission",
+    "ICLR.cc/2024/Conference/-/Post_Submission",
+    "ICLR.cc/2024/Conference/Submission248/-/Revision",
+    "ICLR.cc/2024/Conference/-/Edit",
+    "ICLR.cc/2024/Conference/Submission248/-/Camera_Ready_Revision"
+  ],
+  "domain": "ICLR.cc/2024/Conference",
+  "pdate": 1705410789907,
+  "version": 2,
+  "details": {
+    "directReplies": [
+      {
+        "content": {
+          "summary": {
+            "value": "The paper proposes a general \"label\" cleaning/filtering approach and aims to detect three types of errors: \"poisoned samples\", \"noisy samples\", and \"hybrid dirty samples\". The paper takes advantage of the exceptional capability of multimodal large language model (MLLM) and casts the error detection problem into a three-step scoring pipeline. The pipeline consists of 1) visual question generation, 2) visual question answering, and 3) visual answer evaluation. The main argument is that, unlike prior arts, the proposed approach can detect all three types of label errors and achieves better performance in common benchmarks, including ImageNet-100 and CIFAR-10."
+          },
+          "soundness": {
+            "value": "2 fair"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "2 fair"
+          },
+          "strengths": {
+            "value": "- The proposed method leverages the recent trend of MLLM to the label error detection literature\n- The proposed method is training-free"
+          },
+          "weaknesses": {
+            "value": "- The empirical comparison is not fair.\n    - The propose approach is using instruct-BLIP (larger network trained on larger dataset), while the baseline is usually using less-expressive network trained on smaller datasets, e.g., CL is using ResNet-18 and trained on CIFAR dataset.\n- The claim that the proposed method mitigates all three types of label noises is too strong.\n    - The proposed approach is general, but so do other baselines. For example, SimiFeat-V leverages the feature similarity to detect noisy labels, which is also applicable to the scenario of “poisoned samples” as long as the feature extractor is trained on a poison-free dataset."
+          },
+          "questions": {
+            "value": "1. The name of “visual question generation” is confusing. From my understanding to the paper, there is no visual signal in this stage. Can the author confirm this?\n2. What are the accuracy of each question?\n    - Figure 2 shows the TRR of the general and label-specific questions. I am curious of what specific question is challenging for the instruct-BLIP. Is there any specific question that is always challenging to the instructBLIP and, therefore, removing those questions actually help the overall performance\n3. Given that the method leverages a ensemble of the MLLM responses, instead of taking the average accuracy as score as in Eq. 4, does the author think that using techniques like label aggregation further improves the overall performances?\n4. To make a fair comparison with other baselines, I suggest the authors could compare baselines with MLLM as well. For example, CL usually trains their classifier with leave-one-out or cross validation, which limits the size of the train dataset. However, one can also uses off-the-shelf classifier and apply CL on it.\n5. Do the authors consider the data-leakage problem? Does the train dataset used to train the instruct-BLIP accidentally include the images in ImageNet or CIFAR? If so, how do accurately validate the performances?\n6. Do the authors observe any accumulated error in the three-step pipeline? For example, the label-specific question include some noisy questions, which leads to poisoned answers in the second stage."
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "6: marginally above the acceptance threshold"
+          },
+          "confidence": {
+            "value": "5: You are absolutely certain about your assessment. You are very familiar with the related work and checked the math/other details carefully."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "oa4JbDyZ22",
+        "forum": "ygxTuVz9eU",
+        "replyto": "ygxTuVz9eU",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission248/Reviewer_vuG8"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission248/Reviewer_vuG8"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission248/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698540134807,
+        "cdate": 1698540134807,
+        "tmdate": 1700533275892,
+        "mdate": 1700533275892,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "summary": {
+            "value": "To address common noise data and backdoor attack problems in deep learning, the paper designed a data cleaning tool called VDC using a multimodal large language model. By designing generalized visual question answering questions and label-specific visual question answering questions, VDC can remove dirty and poisoned data from the dataset based on the inconsistency between the semantic of the obtained question results and the semantic of the image itself. The paper compared VDC with backdoor attack methods and noisy learning methods, demonstrating the effectiveness of VDC."
+          },
+          "soundness": {
+            "value": "3 good"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "2 fair"
+          },
+          "strengths": {
+            "value": "+ The paper's approach is innovative, using popular multimodal large models to replace manual data cleaning work.\n+ The paper unified the treatment of noisy data and poisoned data from backdoor attacks, which is relatively rare in previous research.\n+ The paper's extensive experiments demonstrate the effectiveness of VDC in handling dirty data."
+          },
+          "weaknesses": {
+            "value": "+ The overall content of the paper seems to be more about using out-of-distribution methods to filter data, and perhaps this should be reflected in the accuracy of sample selection.\n+ While the paper effectively addresses the issue of dirty data using MLLM, it seems to have a bias towards reporting the application of MLLM."
+          },
+          "questions": {
+            "value": "+ How is the threshold for excluding dirty data determined in the paper?\n+ Has the author considered the scenario where MLLM itself serves as a detector rather than a data cleaner?\n+ The paper's method relies heavily on MLLM, which in essence depends on more data and better labeling. Therefore, it may not be necessary to test models that use more clean data on small datasets, as this may go against the goal of advancing deep learning."
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "6: marginally above the acceptance threshold"
+          },
+          "confidence": {
+            "value": "4: You are confident in your assessment, but not absolutely certain. It is unlikely, but not impossible, that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "LpFKkIcfAp",
+        "forum": "ygxTuVz9eU",
+        "replyto": "ygxTuVz9eU",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission248/Reviewer_481L"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission248/Reviewer_481L"
+        ],
+        "number": 2,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission248/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698767240325,
+        "cdate": 1698767240325,
+        "tmdate": 1699635950212,
+        "mdate": 1699635950212,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "summary": {
+            "value": "This paper proposes a working pipeline for noisy data detection. Compared with existing works focusing on noisy data or noisy label, this work aims to obtain an integrated framework to handle a comprehensive scenario including various noisy cases. Specifically, it terms it as visual-language inconsistency. Leveraging on several prompt techniques, the proposed framework achieves promising results compared with other baselines."
+          },
+          "soundness": {
+            "value": "3 good"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "2 fair"
+          },
+          "strengths": {
+            "value": "1. Noisy or dirty data detection and cleaning is an important research topic. It is becoming even more critical for recent machine learning research since the data scale is always getting larger.\n2. The proposed framework wisely utilize the advantage of current large-scale model to benefit the dirty data detection task.\n3. Comprehensive empirical results show the framework superiority compared with other baselines.\n4. The whole draft is in a good format for readers."
+          },
+          "weaknesses": {
+            "value": "1. I mainly concern about the technical contribution in this draft. The wise combination of prompting and dirty data detection is interesting. However, it still based on the visual-language understanding from large-scale pretrained model. Only based on such powerful tools relatively diminish this paper novelty. In addition, the key point of this paper is proposing an integrated detection pipeline instead of only focusing on sample or label. This point looks like a trivial combination which is incremental compared with previous settings. Is this setting practical and necessary for real-world scenarios?\n2. Adding more recent published works for comparison may further help to support the paper contribution. Currently, only one or two baselines are published within past one year."
+          },
+          "questions": {
+            "value": "Please refer to the strengths and weakness for details. Even if I am concerning some points in weakness, I recognize other aspects of this paper mentioned in strengths. Overall, I lean to vote for an acceptance for now and I would like to check other reviewers' comments to discuss and make my final decision."
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "6: marginally above the acceptance threshold"
+          },
+          "confidence": {
+            "value": "3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "VV87JWnLKE",
+        "forum": "ygxTuVz9eU",
+        "replyto": "ygxTuVz9eU",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission248/Reviewer_N7YG"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission248/Reviewer_N7YG"
+        ],
+        "number": 3,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission248/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698767372031,
+        "cdate": 1698767372031,
+        "tmdate": 1699635950131,
+        "mdate": 1699635950131,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "title": {
+            "value": "A common response to the concerns about the contribution of this paper"
+          },
+          "comment": {
+            "value": "Dear Reviewers and AC,\n\nThank you for your time and efforts in handling our submission. We appreciate the professional feedback and suggestions from the reviewers, and we are trying our best to address their concerns in the rebuttal. Here, we would like to provide a common response to the concerns about the contribution of our paper.\n\n\n- **First of all, the dirty sample detection task solved in our paper is curical, practical, and challenging in the real world.**\n    - **The existing of dirty samples makes the DNNs vulnerable and unreliable.** (1) For poisoned samples, DNNs trained on the poisoned dataset will be injected with backdoor, i.e., predict any poisoned sample as the target label during the inference stage. (2) For noisy labels, training DNNs using the noisy dataset will significantly degrade the overall performance. \n    - **Dirty samples is a practical threat in the real-world scenario.** (1) For poisoned samples, malicious attackers intentionally manipulate partical clean samples to inject backdoor by embedding triggers and changing the ground-truth labels. (2) For noisy labels, human annotators or automatic annotation robots may make mistakes accidentally in the crowdsourcing or web crawling. \n    - **Detecting dirty sample  is still a challenging task that reamins to be solved.** Even though some poisoned sample detectors for backdoor defense and noisy label detectors for robust machine learning have been proposed in the literature, none of them focus on both poisoned samples and noisy labels simultaneously.\n- **We present a new perspective for detecting dirty samples in this field.** \n    - **We find a notable commonality of noisy labels and poisoned samples lies in visual-linguistic inconsistency**, i.e., the semantics of the visual content of the image is inconsistent with the semantics of the corresponding labels. This fundamental commonality was overlooked by previous methods. \n    - **This revelation can inspire more researchers to continue exploring follow this direction, marking the most significant contribution of our paper to this field.**\n- **Moreover, based on the commonality that we discovered, we propose an easy, user-friendly, training-free and effective framework for addressing the task.**\n    - **We build a bridge between the visual and language foundation models and this task.**   We observe that the multimodal large language models have excellent visual and language understanding capabilities, which are suitable for the visual-linguistic inconsistency that we discovered. Hence, we propose a novel framework to fully mine this specific potential of large models.\n    - **Our proposed method is user-friendly and training-free.** With the increasing availability of LLM and MLLM accessible via APIs, our method can leverage the power of large models to accomplish the task at relatively low cost.  Furthermore, VDC does not require training on the entire noisy dataset like previous methods, eliminating the need for extensive computing resources, making our method very practical for oridinary users.\n    - **Our proposed method achieves significantly enhancements compared to baselines.** Moreover, with the rapid development of large-scale models, the performance of VDC will be further improved in the future.\n- **In the realm of large model development, our investigation emphasizes the efficacy of multimodal large models in addressing critical issues pertaining to data cleansing and AI security.** This not only introduces a new application paradigm for large models but also provides additional momentum for their ongoing advancement. Furthermore, the robust progression of large models inherently stands to gain from  these applications.\n\nI hope this response can help you appreciate the contribution of our paper.\n    \nBest regards,\n\nAuthors"
+          }
+        },
+        "id": "9hWe0R4KR5",
+        "forum": "ygxTuVz9eU",
+        "replyto": "ygxTuVz9eU",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission248/Authors"
+        ],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission248/Authors"
+        ],
+        "number": 7,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission248/-/Official_Comment"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1700475286066,
+        "cdate": 1700475286066,
+        "tmdate": 1700529384569,
+        "mdate": 1700529384569,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "metareview": {
+            "value": "This paper considers the problem of noisy data detection. To solve this problem, an integrated framework is proposed to handle a comprehensive scenario. The proposed framework leverages several prompt techniques and achieves promising results.\n\n**Strengths**\n- The paper studies an important topic in the community.\n- It is interesting to utilize the advantage of current large-scale model to benefit the dirty data detection task.\n- Comprehensive experiments are provided to demonstrate the effectiveness of the proposed method over previous methods.\n- The paper is well-written and easy to follow.\n\n**Weaknesses**\n\nPre-rebuttal, many concerns are raised, including more fair comparison, clarification of the novelty, more experiments, etc. Most of them have been addressed in the rebuttal. But two concerns still remain.\n\n- Lacks 1) analysis on why the proposed method is better, 2) in what scenario, the proposed method tends to work better, and finally 3) and why MLLM is preferred in this application.\n\n- Make the using of foundations models more clear."
+          },
+          "justification_for_why_not_higher_score": {
+            "value": "Lack of explanations of the following aspects.\n\n- Lacks 1) analysis on why the proposed method is better, 2) in what scenario, the proposed method tends to work better, and finally 3) and why MLLM is preferred in this application.\n\n- Make the using of foundations models more clear."
+          },
+          "justification_for_why_not_lower_score": {
+            "value": "This paper proposes an interesting, effective framework to solve an important setting. Extensive experiments demonstrate the benefits of the proposed method."
+          }
+        },
+        "id": "BFOZXFdA8j",
+        "forum": "ygxTuVz9eU",
+        "replyto": "ygxTuVz9eU",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission248/Area_Chair_JGV8"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission248/Senior_Area_Chairs",
+          "ICLR.cc/2024/Conference/Submission248/Area_Chair_JGV8"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission248/-/Meta_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1701712259697,
+        "cdate": 1701712259697,
+        "tmdate": 1708115150173,
+        "mdate": 1708115150173,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "title": {
+            "value": "Paper Decision"
+          },
+          "decision": {
+            "value": "Accept (poster)"
+          },
+          "comment": {
+            "value": ""
+          }
+        },
+        "id": "q7syvp3YSi",
+        "forum": "ygxTuVz9eU",
+        "replyto": "ygxTuVz9eU",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Program_Chairs"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Program_Chairs"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission248/-/Decision",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1705405929095,
+        "cdate": 1705405929095,
+        "tmdate": 1708115856719,
+        "mdate": 1708115856719,
+        "license": "CC BY 4.0",
+        "version": 2
+      }
+    ]
+  }
+}

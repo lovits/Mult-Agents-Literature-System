@@ -1,0 +1,27 @@
+{
+  "paper_count": 50,
+  "weakness_item_count": 1463,
+  "papers_with_extracted_items": 50,
+  "decision_counts": {
+    "Reject": 764,
+    "Accept": 699
+  },
+  "section_counts": {
+    "weaknesses": 781,
+    "questions": 682
+  },
+  "category_counts": {
+    "related_work": 129,
+    "method": 377,
+    "validity": 24,
+    "other": 447,
+    "clarity": 43,
+    "experiment": 425,
+    "reproducibility": 18
+  },
+  "min_items_per_paper": 11,
+  "max_items_per_paper": 74,
+  "mean_items_per_paper": 29.26,
+  "extraction_issues": [],
+  "note": "Rule-based extraction captures reviewer Weaknesses and Questions sections. A later annotation pass should deduplicate and normalize high-priority items."
+}

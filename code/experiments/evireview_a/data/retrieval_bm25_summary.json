@@ -1,0 +1,21 @@
+{
+  "weakness_count": 1463,
+  "retrieval_result_count": 1463,
+  "non_empty_retrieval_count": 1447,
+  "non_empty_rate": 0.9891,
+  "top_k": 5,
+  "bm25_k1": 1.5,
+  "bm25_b": 0.75,
+  "top1_section_type_counts": {
+    "related_work": 110,
+    "method": 469,
+    "introduction": 203,
+    "abstract": 68,
+    "experiment": 218,
+    "other": 268,
+    "conclusion": 21,
+    "reference": 33,
+    "limitation": 57
+  },
+  "note": "This is a lexical BM25 baseline over evidence blocks from the same paper. It is not a gold evidence evaluation yet."
+}

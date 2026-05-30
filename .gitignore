@@ -1,0 +1,24 @@
+.DS_Store
+Thumbs.db
+
+# Python/runtime caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Codex/OMX runtime and local orchestration state
+.omx/
+
+# Large raw PDFs are reproducible from OpenReview URLs in the manifest.
+code/dataset/prism_iclr2024_sample/pdf/
+
+# Literature PDFs are source artifacts; keep Markdown notes and indexes in git.
+paper/**/*.pdf
+
+# Experiment scratch/output caches
+code/experiments/**/outputs/
+code/experiments/**/.cache/

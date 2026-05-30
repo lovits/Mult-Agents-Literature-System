@@ -1,0 +1,488 @@
+{
+  "content": {
+    "title": {
+      "value": "Chain-of-Experts: When LLMs Meet Complex Operations Research Problems"
+    },
+    "authors": {
+      "value": [
+        "Ziyang Xiao",
+        "Dongxiang Zhang",
+        "Yangjun Wu",
+        "Lilin Xu",
+        "Yuan Jessica Wang",
+        "Xiongwei Han",
+        "Xiaojin Fu",
+        "Tao Zhong",
+        "Jia Zeng",
+        "Mingli Song",
+        "Gang Chen"
+      ]
+    },
+    "authorids": {
+      "value": [
+        "~Ziyang_Xiao2",
+        "~Dongxiang_Zhang2",
+        "~Yangjun_Wu1",
+        "~Lilin_Xu2",
+        "~Yuan_Jessica_Wang1",
+        "~Xiongwei_Han1",
+        "~Xiaojin_Fu1",
+        "~Tao_Zhong2",
+        "~Jia_Zeng1",
+        "~Mingli_Song1",
+        "~Gang_Chen6"
+      ]
+    },
+    "keywords": {
+      "value": [
+        "Large Language Model",
+        "Operations Research"
+      ]
+    },
+    "abstract": {
+      "value": "Large language models (LLMs) have emerged as powerful techniques for various NLP tasks, such as mathematical reasoning and plan generation. In this paper, we study automatic modeling and programming for complex operation research (OR) problems, so as to alleviate the heavy dependence on domain experts and benefit a spectrum of industry sectors. We present the first LLM-based solution, namely Chain-of-Experts (CoE), a novel multi-agent cooperative framework to enhance reasoning capabilities. Specifically, each agent is assigned a specific role and endowed with domain knowledge related to OR. We also introduce a conductor to orchestrate these agents via forward thought construction and backward reflection mechanism. Furthermore, we release a benchmark dataset (ComplexOR) of complex OR problems to facilitate OR research and community development. Experimental results show that CoE significantly outperforms the state-of-the-art LLM-based approaches both on LPWP and ComplexOR."
+    },
+    "primary_area": {
+      "value": "general machine learning (i.e., none of the above)"
+    },
+    "code_of_ethics": {
+      "value": "I acknowledge that I and all co-authors of this work have read and commit to adhering to the ICLR Code of Ethics."
+    },
+    "submission_guidelines": {
+      "value": "I certify that this submission complies with the submission instructions as described on https://iclr.cc/Conferences/2024/AuthorGuide."
+    },
+    "anonymous_url": {
+      "value": "I certify that there is no URL (e.g., github page) that could be used to find authors' identity."
+    },
+    "no_acknowledgement_section": {
+      "value": "I certify that there is no acknowledgement section in this submission for double blind review."
+    },
+    "venue": {
+      "value": "ICLR 2024 poster"
+    },
+    "venueid": {
+      "value": "ICLR.cc/2024/Conference"
+    },
+    "pdf": {
+      "value": "/pdf/1d98a47ecf1564e66c26b81cecaf16056a88e9c1.pdf"
+    },
+    "supplementary_material": {
+      "value": "/attachment/3f0d4c6ed8e2ba0732bc18a12b30fe3f624154c1.zip"
+    },
+    "_bibtex": {
+      "value": "@inproceedings{\nxiao2024chainofexperts,\ntitle={Chain-of-Experts: When {LLM}s Meet Complex Operations Research Problems},\nauthor={Ziyang Xiao and Dongxiang Zhang and Yangjun Wu and Lilin Xu and Yuan Jessica Wang and Xiongwei Han and Xiaojin Fu and Tao Zhong and Jia Zeng and Mingli Song and Gang Chen},\nbooktitle={The Twelfth International Conference on Learning Representations},\nyear={2024},\nurl={https://openreview.net/forum?id=HobyL1B9CZ}\n}"
+    },
+    "TLDR": {
+      "value": "This paper introduces Chain-of-Experts (CoE), a multi-agent LLM framework that boosts reasoning in complex operation research problems by integrating domain-specific agents under a conductor's guidance and reflection mechanism."
+    },
+    "paperhash": {
+      "value": "xiao|chainofexperts_when_llms_meet_complex_operations_research_problems"
+    }
+  },
+  "id": "HobyL1B9CZ",
+  "forum": "HobyL1B9CZ",
+  "number": 5639,
+  "cdate": 1695393655562,
+  "tcdate": 1695393655562,
+  "mdate": 1710514301069,
+  "tmdate": 1710514301069,
+  "signatures": [
+    "ICLR.cc/2024/Conference/Submission5639/Authors"
+  ],
+  "readers": [
+    "everyone"
+  ],
+  "writers": [
+    "ICLR.cc/2024/Conference",
+    "ICLR.cc/2024/Conference/Submission5639/Authors"
+  ],
+  "odate": 1697213872796,
+  "invitations": [
+    "ICLR.cc/2024/Conference/-/Submission",
+    "ICLR.cc/2024/Conference/-/Post_Submission",
+    "ICLR.cc/2024/Conference/Submission5639/-/Revision",
+    "ICLR.cc/2024/Conference/Submission5639/-/Rebuttal_Revision",
+    "ICLR.cc/2024/Conference/-/Edit",
+    "ICLR.cc/2024/Conference/Submission5639/-/Camera_Ready_Revision"
+  ],
+  "domain": "ICLR.cc/2024/Conference",
+  "pdate": 1705410945782,
+  "version": 2,
+  "details": {
+    "directReplies": [
+      {
+        "content": {
+          "summary": {
+            "value": "This work investigates solving complex operations research problems via the cooperation of multiple LLM-based agents.\nThe authors suggest Chain-of-Experts, which is a multi-agent framework comprised of 11 experts, for different aspects, and a conductor to coordinate these experts.\nThe experts are powered by common techniques such as In-context Learning and Reasoning based on LLMs.\nThe CoE framework sovle OR problems in an iterative way, where failed answers will get feedback via the reflection step.\nThis workflow will stop when the answer passes the evaluator or the iteration exceeds the given number.\nA new benchmark, ComplexOR, is contributed to evaluate on 20 complex OR problems.\nExperiments on LPWP and ComplexOR demonstrates that the proposed CoE outperforms previous LLM-agent methods."
+          },
+          "soundness": {
+            "value": "3 good"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "3 good"
+          },
+          "strengths": {
+            "value": "1. the CoE framework.\n2. A combination of existing techniques to solve OR problems.\n3. A new small-scale real-world dataset"
+          },
+          "weaknesses": {
+            "value": "1. The results on ComplexOR seem not sense. A too small dataset.\n2. The description of  CoE is not clear. It should be well-moviated and started with several backgrounds.\n\nThrough the response,  indeed the construction of ComplexOR is very difficult, and the authors acknowledge that the dataset will continue to be updated, which could be a potential contribution to the field and answer our questions."
+          },
+          "questions": {
+            "value": "1. Is the CoE suitable for other reasoning tasks? What is the difference if applied to other tasks?\n2. I suggest the paper give more attention to the CoE framework.\n\nThe answers have already addressed our questions.  Thanks."
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "6: marginally above the acceptance threshold"
+          },
+          "confidence": {
+            "value": "3: You are fairly confident in your assessment. It is possible that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work. Math/other details were not carefully checked."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "yenXIqqOr0",
+        "forum": "HobyL1B9CZ",
+        "replyto": "HobyL1B9CZ",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission5639/Reviewer_suKy"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission5639/Reviewer_suKy"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission5639/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698568800847,
+        "cdate": 1698568800847,
+        "tmdate": 1700898333077,
+        "mdate": 1700898333077,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "summary": {
+            "value": "This paper proposes chain of experts (CoE), a framework that uses multiple LLM agents to solve operations research (OR) problems. Most complex OR problem requires coordination among multiple experts, each solving a subproblem. In CoE, these experts are implemented using specialized LLMs augmented with, e.g., knowledge bases or reasoning skills targeting the subproblems they are designed to solve. A separate conductor model orchestrated this coordination process. This framework is further augmented by a backward reflection process, that, conditioning on the feedback provided by the program execution environment, recursively runs backward to identify potential errors in the chain. CoE does not require updating the parameters of the LLM agents, and thus is applicable to both proprietary and open-source models.\n\nCoE is evaluated on LPWP (elementary linear programming problems), and complexOR (a newly created dataset by the paper, containing 20 expert-annodated OR problems). Experiments with GPT-3.5, GPT-4, and Claude-2 suggest that CoE outperforms baselines. An ablation analysis quantifies the contribution of each design choice in CoE."
+          },
+          "soundness": {
+            "value": "3 good"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "3 good"
+          },
+          "strengths": {
+            "value": "- CoE is an interesting and novel framework for solving complex problems with multiagent collaboration.\n- CoE’s design is grounded in real-world applications and proves effective.\n- Requiring no training, CoE is applicable to both open-source and proprietary models.\n- The presentation is reasonably clear."
+          },
+          "weaknesses": {
+            "value": "- The paper would be more interesting to the LM community and have a larger impact if it could test out CoE on some of the well-established benchmarks\n- ComplexOR is very small; I wonder how significant the results are\n- The paper does not provide enough details on how the experts are specialized."
+          },
+          "questions": {
+            "value": "- ComplexOR is very small. Can the authors provide more details on the consistency of the results across multiple runs?\n- It would be interesting to compare to a baseline that applies CoE, and uses the same model to play all the different roles.\n- Eq. 3 reads like applying the LLM to the prompt template outputs a new set of parameters, which does not align with what happens with prompting. At a higher level, do we really need the $\\theta$ notations in Eqs. 2 and 3?"
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "8: accept, good paper"
+          },
+          "confidence": {
+            "value": "4: You are confident in your assessment, but not absolutely certain. It is unlikely, but not impossible, that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "4NE0dF4ZQ5",
+        "forum": "HobyL1B9CZ",
+        "replyto": "HobyL1B9CZ",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission5639/Reviewer_ocDx"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission5639/Reviewer_ocDx"
+        ],
+        "number": 2,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission5639/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698809601514,
+        "cdate": 1698809601514,
+        "tmdate": 1700623828014,
+        "mdate": 1700623828014,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "summary": {
+            "value": "This paper presents a multi-agent reasoning method for operations research problems solving. In particular, all the expert agents called in a sequence by another conductor agent, and all the agents are based on LLMs, acting different roles. The approach (named Chain-of-Experts) achieves better results compared with other SOTA models on the LPWP dataset and they also release a new dataset on complex OR problems."
+          },
+          "soundness": {
+            "value": "3 good"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "3 good"
+          },
+          "strengths": {
+            "value": "* Propose a multi-agent method for OR problem solving with one conductor and multiple experts; and achieves better empirical results\n* Release a dataset on complex OR for the community"
+          },
+          "weaknesses": {
+            "value": "* Lack of evaluation on individual expert agents, as well as the conductor\n* The comparison with other models might not be fair, since they call the LLM differently. Maybe add some measurements of how different methods use the LLMs."
+          },
+          "questions": {
+            "value": "* If we use other less competent LLMs, like smaller models or open sourced models, how much the performance will be affected?"
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "8: accept, good paper"
+          },
+          "confidence": {
+            "value": "4: You are confident in your assessment, but not absolutely certain. It is unlikely, but not impossible, that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "WVN4KRyJVv",
+        "forum": "HobyL1B9CZ",
+        "replyto": "HobyL1B9CZ",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission5639/Reviewer_B8wx"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission5639/Reviewer_B8wx"
+        ],
+        "number": 3,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission5639/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698828096868,
+        "cdate": 1698828096868,
+        "tmdate": 1699636585978,
+        "mdate": 1699636585978,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "summary": {
+            "value": "This paper focuses on utilizing large language models (LLMs) to address operations research problems. It employs an approach where LLMs role-play as agents in the problem-solving pipeline, collaboratively breaking down and resolving problems. The paper also incorporates external feedback for the backpropagation reflections in the problem-solving pipeline, allowing the LLMs within the pipeline to self-improve. Moreover, the research introduces a new operations research dataset, which appears to be more intricate compared to existing ones. The proposed approach is tested on the newly-created dataset as well as another benchmark, and results indicate that it outperforms used baseline prompting methods."
+          },
+          "soundness": {
+            "value": "3 good"
+          },
+          "presentation": {
+            "value": "3 good"
+          },
+          "contribution": {
+            "value": "2 fair"
+          },
+          "strengths": {
+            "value": "1. Overall, the methodology presented in this paper is straightforward, easy to implement, and demonstrates strong empirical results across two benchmarks.\n2. The paper offers a new operations research dataset that, based on experimental outcomes, is more challenging than existing ones.\n3. I find the mechanism of propagating feedback from external sources to enhance the performance of language models both innovative and interesting. The results suggest that this mechanism also boosts model performance."
+          },
+          "weaknesses": {
+            "value": "1. While the paper focuses on tackling complex operations research problems, it doesn't seem to introduce any techniques specifically tailored for operations research challenges.\n2. I believe the novelty of this work is somewhat limited, as several studies have already explored the \"planning with feedback\" approach with LLMs. Please refer to \"A Survey on Large Language Model based Autonomous Agents (https://arxiv.org/pdf/2308.11432.pdf)\" for more details. I think the authors should offer a more in-depth comparison with these existing works. Moreover, though the methodology is described as a multi-expert framework, it essentially relies on deploying various prompts to the same LLM."
+          },
+          "questions": {
+            "value": "Why can't the method proposed in this paper be represented through Solo Performance Prompting, and where exactly does it differ from Solo Performance Prompting? From the description, it seems that the approach is entirely representable under the Solo Performance Prompting framework."
+          },
+          "flag_for_ethics_review": {
+            "value": [
+              "No ethics review needed."
+            ]
+          },
+          "rating": {
+            "value": "6: marginally above the acceptance threshold"
+          },
+          "confidence": {
+            "value": "4: You are confident in your assessment, but not absolutely certain. It is unlikely, but not impossible, that you did not understand some parts of the submission or that you are unfamiliar with some pieces of related work."
+          },
+          "code_of_conduct": {
+            "value": "Yes"
+          }
+        },
+        "id": "P1AxOxL82C",
+        "forum": "HobyL1B9CZ",
+        "replyto": "HobyL1B9CZ",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission5639/Reviewer_CHCN"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission5639/Reviewer_CHCN"
+        ],
+        "number": 4,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission5639/-/Official_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1698829312345,
+        "cdate": 1698829312345,
+        "tmdate": 1700722532591,
+        "mdate": 1700722532591,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "title": {
+            "value": "For all reviewers: further paper revision"
+          },
+          "comment": {
+            "value": "We will make the following revisions to the paper:\n\n1. We further expand size of ComplexOR dataset from 20 to 37, and update the all experimental result related to ComplexOR. To improve coherence of result, we set the temperature of LLM to a value of $0.7$ and conduct five runs to average the metrics. The overall performance on ComplexOR is shown in following table and remaining results can be found in revision paper.\n\n|                  | Accuracy  | CE rate  | RE rate  |\n| ---------------- | --------- | -------- | -------- |\n| tag-BART         | 0.0%      | -        | -        |\n| Standard         | 0.5%      | 36.8%    | 8.6%     |\n| Chain-of-Thought | 0.5%      | 35.3%    | 8.6%     |\n| Progressive Hint | 2.2%      | 35.1%    | 13.5%    |\n| Tree-of-Thought  | 4.9%      | 31.4%    | 7.6%     |\n| Graph-of-Thought | 4.3%      | 32.4%    | 8.1%     |\n| ReAct            | 14.6%     | 31.9%    | 10.8%    |\n| Reflexion        | 13.5%     | 12.9%    | 10.1%    |\n| Solo Performance | 7.0%      | 46.5%    | 13.5%    |\n| Chain-of-Experts | **25.9%** | **7.6%** | **6.4%** |\n\n2. To evaluate the effectiveness of introduction of expert, we wdd a baseline  that uses the same model, which uses a uniform system prompt across all roles without any additional knowledge bases.\n\n|                     |           | LPWP     |          |           | ComplexOR |          |\n| ------------------- | --------- | -------- | -------- | --------- | --------- | -------- |\n|                     | Accuracy  | CE rate  | RE rate  | Accuracy  | CE rate   | RE rate  |\n| Standard            | 42.4%     | 18.1%    | 13.2%    | 0.5%      | 36.8%     | 8.6%     |\n| CoE without Experts | 55.1%     | 4.0%     | 11.9%    | 18.8%     | 7.9%      | 15.0%    |\n| Chain-of-Experts    | **58.9%** | **3.8%** | **7.7%** | **25.9%** | **7.6%**  | **6.4%** |\n\n3. Add an experiment that run methods in Llama2.\n\n|                  | Accuracy | CE rate | RE rate |\n| ---------------- | -------- | ------- | ------- |\n| Standard         | 0%       | 100%    | 0%      |\n| Chain-of-Thought | 0%       | 100%    | 0%      |\n| Reflexion        | 0%       | 100%    | 0%      |\n| ReAct            | 0.7%     | 99.3%   | 0%      |\n| Solo Performance | 0%       | 100%    | 0%      |\n| Chain-of-Experts | 0.7%     | 99.3%   | 0%      |\n\n4. Modify the Equation 2 and 3, remove the notation of $\\theta$ and the policy of Conductor is described as follows:\n$$Conductor_{\\mathcal{F}^{\\theta'}(\\mathbb{PT}_t)}(e | s) = P_r\\{E_{\\phi_t} = e | S_t = s\\}$$\n\n5. We provide a case study in Appendix 4.3 to illustrate insights into the effectiveness of our approach compared to standard prompting and Solo Performance Prompting."
+          }
+        },
+        "id": "2VRZiQVgKq",
+        "forum": "HobyL1B9CZ",
+        "replyto": "HobyL1B9CZ",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission5639/Authors"
+        ],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission5639/Authors"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission5639/-/Official_Comment"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1700527464662,
+        "cdate": 1700527464662,
+        "tmdate": 1700528155874,
+        "mdate": 1700528155874,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "metareview": {
+            "value": "The papers study the use of LLMs for automatically approaching operations research problems. The authors propose chain-of-experts (CoE), in which a group of LLM agents cooperatively tackles the problem. In CoT, these agents can have different functionalities such as a conductor (which calls other agents, essentially a planner) and other agents with more specific roles. The evaluations in the paper are pretty thorough and the authors also put good effort during the discussion phase to address reviewer concerns. All reviewers and I agree that proposed framework is valuable and perform well compared to alternative approaches. While there are many prompting techniques, the proposed approach can be considered as reasonably novel and it represents a strong empirical/algorithmic contribution."
+          },
+          "justification_for_why_not_higher_score": {
+            "value": "Based on the average review score, this work can be bumped up to spotlight or even oral. I am currently recommending poster as I believe it is mostly based on intelligently prompting and coordinating LLMs and seems to lack a deeper sophistication."
+          },
+          "justification_for_why_not_lower_score": {
+            "value": "Reviewers unanimously agree on acceptance. The results are solid."
+          }
+        },
+        "id": "ERlZaKQGAm",
+        "forum": "HobyL1B9CZ",
+        "replyto": "HobyL1B9CZ",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Submission5639/Area_Chair_rwz5"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Submission5639/Senior_Area_Chairs",
+          "ICLR.cc/2024/Conference/Submission5639/Area_Chair_rwz5"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission5639/-/Meta_Review",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1702254031663,
+        "cdate": 1702254031663,
+        "tmdate": 1708115362936,
+        "mdate": 1708115362936,
+        "license": "CC BY 4.0",
+        "version": 2
+      },
+      {
+        "content": {
+          "title": {
+            "value": "Paper Decision"
+          },
+          "decision": {
+            "value": "Accept (poster)"
+          },
+          "comment": {
+            "value": ""
+          }
+        },
+        "id": "hMzvRiKcp8",
+        "forum": "HobyL1B9CZ",
+        "replyto": "HobyL1B9CZ",
+        "signatures": [
+          "ICLR.cc/2024/Conference/Program_Chairs"
+        ],
+        "nonreaders": [],
+        "readers": [
+          "everyone"
+        ],
+        "writers": [
+          "ICLR.cc/2024/Conference",
+          "ICLR.cc/2024/Conference/Program_Chairs"
+        ],
+        "number": 1,
+        "invitations": [
+          "ICLR.cc/2024/Conference/Submission5639/-/Decision",
+          "ICLR.cc/2024/Conference/-/Edit"
+        ],
+        "domain": "ICLR.cc/2024/Conference",
+        "tcdate": 1705405970537,
+        "cdate": 1705405970537,
+        "tmdate": 1708116063505,
+        "mdate": 1708116063505,
+        "license": "CC BY 4.0",
+        "version": 2
+      }
+    ]
+  }
+}
