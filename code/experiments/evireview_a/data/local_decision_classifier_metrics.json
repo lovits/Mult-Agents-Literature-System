@@ -1,0 +1,1522 @@
+{
+  "status": "ok",
+  "dataset": "Local PRISM/OpenReview ICLR 2024 sample",
+  "task": "Exploratory Accept/Reject classification from metadata, human-review weakness, and silver evidence features",
+  "warning": "Exploratory only: human weakness features are an upper-bound proxy, and silver evidence labels are rule-generated debugging labels, not final human gold.",
+  "validation": "5-fold stratified cross-validation over 50 papers, with balanced Accept/Reject folds.",
+  "paper_count": 50,
+  "decision_counts": {
+    "Reject": 25,
+    "Accept": 25
+  },
+  "silver_feature_coverage_papers": 30,
+  "best_method": "metadata",
+  "results": [
+    {
+      "name": "majority",
+      "feature_count": 0,
+      "feature_names": [],
+      "aggregate": {
+        "count": 50,
+        "accuracy": 0.5,
+        "macro_f1": 0.4505,
+        "roc_auc": 0.5,
+        "per_label": {
+          "Reject": {
+            "precision": 0.5,
+            "recall": 0.8,
+            "f1": 0.6154,
+            "support": 25
+          },
+          "Accept": {
+            "precision": 0.5,
+            "recall": 0.2,
+            "f1": 0.2857,
+            "support": 25
+          }
+        },
+        "confusion": {
+          "Reject": {
+            "Reject": 20,
+            "Accept": 5
+          },
+          "Accept": {
+            "Reject": 20,
+            "Accept": 5
+          }
+        }
+      },
+      "fold_macro_f1_mean": 0.3333,
+      "fold_macro_f1_std": 0.0,
+      "folds": []
+    },
+    {
+      "name": "metadata",
+      "feature_count": 7,
+      "feature_names": [
+        "direct_replies_count",
+        "keyword_hit_count",
+        "keyword_score",
+        "markdown_chars_log",
+        "review_count",
+        "review_text_chars_log",
+        "title_token_count_log"
+      ],
+      "aggregate": {
+        "count": 50,
+        "accuracy": 0.68,
+        "macro_f1": 0.68,
+        "roc_auc": 0.6896,
+        "per_label": {
+          "Reject": {
+            "precision": 0.68,
+            "recall": 0.68,
+            "f1": 0.68,
+            "support": 25
+          },
+          "Accept": {
+            "precision": 0.68,
+            "recall": 0.68,
+            "f1": 0.68,
+            "support": 25
+          }
+        },
+        "confusion": {
+          "Reject": {
+            "Reject": 17,
+            "Accept": 8
+          },
+          "Accept": {
+            "Reject": 8,
+            "Accept": 17
+          }
+        }
+      },
+      "fold_macro_f1_mean": 0.6755,
+      "fold_macro_f1_std": 0.0783,
+      "folds": [
+        {
+          "fold": 1,
+          "threshold": 0.5,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.6,
+            "macro_f1": 0.6,
+            "roc_auc": 0.6,
+            "per_label": {
+              "Reject": {
+                "precision": 0.6,
+                "recall": 0.6,
+                "f1": 0.6,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.6,
+                "recall": 0.6,
+                "f1": 0.6,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 3,
+                "Accept": 2
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        },
+        {
+          "fold": 2,
+          "threshold": 0.515,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.8,
+            "macro_f1": 0.8,
+            "roc_auc": 0.88,
+            "per_label": {
+              "Reject": {
+                "precision": 0.8,
+                "recall": 0.8,
+                "f1": 0.8,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.8,
+                "recall": 0.8,
+                "f1": 0.8,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 4,
+                "Accept": 1
+              },
+              "Accept": {
+                "Reject": 1,
+                "Accept": 4
+              }
+            }
+          }
+        },
+        {
+          "fold": 3,
+          "threshold": 0.4459,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.7,
+            "macro_f1": 0.697,
+            "roc_auc": 0.56,
+            "per_label": {
+              "Reject": {
+                "precision": 0.75,
+                "recall": 0.6,
+                "f1": 0.6667,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.6667,
+                "recall": 0.8,
+                "f1": 0.7273,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 3,
+                "Accept": 2
+              },
+              "Accept": {
+                "Reject": 1,
+                "Accept": 4
+              }
+            }
+          }
+        },
+        {
+          "fold": 4,
+          "threshold": 0.5,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.6,
+            "macro_f1": 0.5833,
+            "roc_auc": 0.76,
+            "per_label": {
+              "Reject": {
+                "precision": 0.5714,
+                "recall": 0.8,
+                "f1": 0.6667,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.6667,
+                "recall": 0.4,
+                "f1": 0.5,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 4,
+                "Accept": 1
+              },
+              "Accept": {
+                "Reject": 3,
+                "Accept": 2
+              }
+            }
+          }
+        },
+        {
+          "fold": 5,
+          "threshold": 0.4839,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.7,
+            "macro_f1": 0.697,
+            "roc_auc": 0.72,
+            "per_label": {
+              "Reject": {
+                "precision": 0.75,
+                "recall": 0.6,
+                "f1": 0.6667,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.6667,
+                "recall": 0.8,
+                "f1": 0.7273,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 3,
+                "Accept": 2
+              },
+              "Accept": {
+                "Reject": 1,
+                "Accept": 4
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "human_weakness_upper_bound",
+      "feature_count": 11,
+      "feature_names": [
+        "major_ratio",
+        "question_ratio",
+        "weakness_category_clarity_ratio",
+        "weakness_category_experiment_ratio",
+        "weakness_category_method_ratio",
+        "weakness_category_other_ratio",
+        "weakness_category_related_work_ratio",
+        "weakness_category_reproducibility_ratio",
+        "weakness_category_validity_ratio",
+        "weakness_count_log",
+        "weakness_mean_chars_log"
+      ],
+      "aggregate": {
+        "count": 50,
+        "accuracy": 0.62,
+        "macro_f1": 0.6198,
+        "roc_auc": 0.6512,
+        "per_label": {
+          "Reject": {
+            "precision": 0.625,
+            "recall": 0.6,
+            "f1": 0.6122,
+            "support": 25
+          },
+          "Accept": {
+            "precision": 0.6154,
+            "recall": 0.64,
+            "f1": 0.6275,
+            "support": 25
+          }
+        },
+        "confusion": {
+          "Reject": {
+            "Reject": 15,
+            "Accept": 10
+          },
+          "Accept": {
+            "Reject": 9,
+            "Accept": 16
+          }
+        }
+      },
+      "fold_macro_f1_mean": 0.5822,
+      "fold_macro_f1_std": 0.1983,
+      "folds": [
+        {
+          "fold": 1,
+          "threshold": 0.4118,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.6,
+            "macro_f1": 0.5833,
+            "roc_auc": 0.48,
+            "per_label": {
+              "Reject": {
+                "precision": 0.6667,
+                "recall": 0.4,
+                "f1": 0.5,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.5714,
+                "recall": 0.8,
+                "f1": 0.6667,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 2,
+                "Accept": 3
+              },
+              "Accept": {
+                "Reject": 1,
+                "Accept": 4
+              }
+            }
+          }
+        },
+        {
+          "fold": 2,
+          "threshold": 0.437,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.8,
+            "macro_f1": 0.8,
+            "roc_auc": 0.84,
+            "per_label": {
+              "Reject": {
+                "precision": 0.8,
+                "recall": 0.8,
+                "f1": 0.8,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.8,
+                "recall": 0.8,
+                "f1": 0.8,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 4,
+                "Accept": 1
+              },
+              "Accept": {
+                "Reject": 1,
+                "Accept": 4
+              }
+            }
+          }
+        },
+        {
+          "fold": 3,
+          "threshold": 0.4256,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.4,
+            "macro_f1": 0.2857,
+            "roc_auc": 0.32,
+            "per_label": {
+              "Reject": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.4444,
+                "recall": 0.8,
+                "f1": 0.5714,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 0,
+                "Accept": 5
+              },
+              "Accept": {
+                "Reject": 1,
+                "Accept": 4
+              }
+            }
+          }
+        },
+        {
+          "fold": 4,
+          "threshold": 0.4513,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.8,
+            "macro_f1": 0.7917,
+            "roc_auc": 1.0,
+            "per_label": {
+              "Reject": {
+                "precision": 0.7143,
+                "recall": 1.0,
+                "f1": 0.8333,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 1.0,
+                "recall": 0.6,
+                "f1": 0.75,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 5,
+                "Accept": 0
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        },
+        {
+          "fold": 5,
+          "threshold": 0.4636,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.5,
+            "macro_f1": 0.4505,
+            "roc_auc": 0.76,
+            "per_label": {
+              "Reject": {
+                "precision": 0.5,
+                "recall": 0.8,
+                "f1": 0.6154,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.5,
+                "recall": 0.2,
+                "f1": 0.2857,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 4,
+                "Accept": 1
+              },
+              "Accept": {
+                "Reject": 4,
+                "Accept": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "silver_evidence_proxy",
+      "feature_count": 9,
+      "feature_names": [
+        "silver_count_log",
+        "silver_label_generic_vague_ratio",
+        "silver_label_mentioned_but_not_problem_ratio",
+        "silver_label_partially_supported_ratio",
+        "silver_label_supported_ratio",
+        "silver_label_unsupported_ratio",
+        "silver_support_max",
+        "silver_support_mean",
+        "silver_support_min"
+      ],
+      "aggregate": {
+        "count": 50,
+        "accuracy": 0.44,
+        "macro_f1": 0.4253,
+        "roc_auc": 0.448,
+        "per_label": {
+          "Reject": {
+            "precision": 0.4545,
+            "recall": 0.6,
+            "f1": 0.5172,
+            "support": 25
+          },
+          "Accept": {
+            "precision": 0.4118,
+            "recall": 0.28,
+            "f1": 0.3333,
+            "support": 25
+          }
+        },
+        "confusion": {
+          "Reject": {
+            "Reject": 15,
+            "Accept": 10
+          },
+          "Accept": {
+            "Reject": 18,
+            "Accept": 7
+          }
+        }
+      },
+      "fold_macro_f1_mean": 0.3884,
+      "fold_macro_f1_std": 0.1298,
+      "folds": [
+        {
+          "fold": 1,
+          "threshold": 0.5201,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.3,
+            "macro_f1": 0.2308,
+            "roc_auc": 0.32,
+            "per_label": {
+              "Reject": {
+                "precision": 0.375,
+                "recall": 0.6,
+                "f1": 0.4615,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 3,
+                "Accept": 2
+              },
+              "Accept": {
+                "Reject": 5,
+                "Accept": 0
+              }
+            }
+          }
+        },
+        {
+          "fold": 2,
+          "threshold": 0.5203,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.4,
+            "macro_f1": 0.2857,
+            "roc_auc": 0.4,
+            "per_label": {
+              "Reject": {
+                "precision": 0.4444,
+                "recall": 0.8,
+                "f1": 0.5714,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 4,
+                "Accept": 1
+              },
+              "Accept": {
+                "Reject": 5,
+                "Accept": 0
+              }
+            }
+          }
+        },
+        {
+          "fold": 3,
+          "threshold": 0.4996,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.4,
+            "macro_f1": 0.375,
+            "roc_auc": 0.32,
+            "per_label": {
+              "Reject": {
+                "precision": 0.3333,
+                "recall": 0.2,
+                "f1": 0.25,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.4286,
+                "recall": 0.6,
+                "f1": 0.5,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 1,
+                "Accept": 4
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        },
+        {
+          "fold": 4,
+          "threshold": 0.4963,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.6,
+            "macro_f1": 0.6,
+            "roc_auc": 0.68,
+            "per_label": {
+              "Reject": {
+                "precision": 0.6,
+                "recall": 0.6,
+                "f1": 0.6,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.6,
+                "recall": 0.6,
+                "f1": 0.6,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 3,
+                "Accept": 2
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        },
+        {
+          "fold": 5,
+          "threshold": 0.5164,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.5,
+            "macro_f1": 0.4505,
+            "roc_auc": 0.52,
+            "per_label": {
+              "Reject": {
+                "precision": 0.5,
+                "recall": 0.8,
+                "f1": 0.6154,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.5,
+                "recall": 0.2,
+                "f1": 0.2857,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 4,
+                "Accept": 1
+              },
+              "Accept": {
+                "Reject": 4,
+                "Accept": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "metadata_plus_human_weakness",
+      "feature_count": 18,
+      "feature_names": [
+        "direct_replies_count",
+        "keyword_hit_count",
+        "keyword_score",
+        "major_ratio",
+        "markdown_chars_log",
+        "question_ratio",
+        "review_count",
+        "review_text_chars_log",
+        "title_token_count_log",
+        "weakness_category_clarity_ratio",
+        "weakness_category_experiment_ratio",
+        "weakness_category_method_ratio",
+        "weakness_category_other_ratio",
+        "weakness_category_related_work_ratio",
+        "weakness_category_reproducibility_ratio",
+        "weakness_category_validity_ratio",
+        "weakness_count_log",
+        "weakness_mean_chars_log"
+      ],
+      "aggregate": {
+        "count": 50,
+        "accuracy": 0.64,
+        "macro_f1": 0.64,
+        "roc_auc": 0.6736,
+        "per_label": {
+          "Reject": {
+            "precision": 0.64,
+            "recall": 0.64,
+            "f1": 0.64,
+            "support": 25
+          },
+          "Accept": {
+            "precision": 0.64,
+            "recall": 0.64,
+            "f1": 0.64,
+            "support": 25
+          }
+        },
+        "confusion": {
+          "Reject": {
+            "Reject": 16,
+            "Accept": 9
+          },
+          "Accept": {
+            "Reject": 9,
+            "Accept": 16
+          }
+        }
+      },
+      "fold_macro_f1_mean": 0.6318,
+      "fold_macro_f1_std": 0.1492,
+      "folds": [
+        {
+          "fold": 1,
+          "threshold": 0.5,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.5,
+            "macro_f1": 0.4949,
+            "roc_auc": 0.52,
+            "per_label": {
+              "Reject": {
+                "precision": 0.5,
+                "recall": 0.4,
+                "f1": 0.4444,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5455,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 2,
+                "Accept": 3
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        },
+        {
+          "fold": 2,
+          "threshold": 0.4364,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.9,
+            "macro_f1": 0.899,
+            "roc_auc": 0.88,
+            "per_label": {
+              "Reject": {
+                "precision": 1.0,
+                "recall": 0.8,
+                "f1": 0.8889,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.8333,
+                "recall": 1.0,
+                "f1": 0.9091,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 4,
+                "Accept": 1
+              },
+              "Accept": {
+                "Reject": 0,
+                "Accept": 5
+              }
+            }
+          }
+        },
+        {
+          "fold": 3,
+          "threshold": 0.6469,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.5,
+            "macro_f1": 0.4949,
+            "roc_auc": 0.36,
+            "per_label": {
+              "Reject": {
+                "precision": 0.5,
+                "recall": 0.4,
+                "f1": 0.4444,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5455,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 2,
+                "Accept": 3
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        },
+        {
+          "fold": 4,
+          "threshold": 0.5,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.7,
+            "macro_f1": 0.6703,
+            "roc_auc": 0.92,
+            "per_label": {
+              "Reject": {
+                "precision": 0.625,
+                "recall": 1.0,
+                "f1": 0.7692,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 1.0,
+                "recall": 0.4,
+                "f1": 0.5714,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 5,
+                "Accept": 0
+              },
+              "Accept": {
+                "Reject": 3,
+                "Accept": 2
+              }
+            }
+          }
+        },
+        {
+          "fold": 5,
+          "threshold": 0.4728,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.6,
+            "macro_f1": 0.6,
+            "roc_auc": 0.68,
+            "per_label": {
+              "Reject": {
+                "precision": 0.6,
+                "recall": 0.6,
+                "f1": 0.6,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.6,
+                "recall": 0.6,
+                "f1": 0.6,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 3,
+                "Accept": 2
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "metadata_plus_silver_evidence",
+      "feature_count": 16,
+      "feature_names": [
+        "direct_replies_count",
+        "keyword_hit_count",
+        "keyword_score",
+        "markdown_chars_log",
+        "review_count",
+        "review_text_chars_log",
+        "silver_count_log",
+        "silver_label_generic_vague_ratio",
+        "silver_label_mentioned_but_not_problem_ratio",
+        "silver_label_partially_supported_ratio",
+        "silver_label_supported_ratio",
+        "silver_label_unsupported_ratio",
+        "silver_support_max",
+        "silver_support_mean",
+        "silver_support_min",
+        "title_token_count_log"
+      ],
+      "aggregate": {
+        "count": 50,
+        "accuracy": 0.6,
+        "macro_f1": 0.5994,
+        "roc_auc": 0.6704,
+        "per_label": {
+          "Reject": {
+            "precision": 0.5926,
+            "recall": 0.64,
+            "f1": 0.6154,
+            "support": 25
+          },
+          "Accept": {
+            "precision": 0.6087,
+            "recall": 0.56,
+            "f1": 0.5833,
+            "support": 25
+          }
+        },
+        "confusion": {
+          "Reject": {
+            "Reject": 16,
+            "Accept": 9
+          },
+          "Accept": {
+            "Reject": 11,
+            "Accept": 14
+          }
+        }
+      },
+      "fold_macro_f1_mean": 0.5968,
+      "fold_macro_f1_std": 0.0904,
+      "folds": [
+        {
+          "fold": 1,
+          "threshold": 0.5,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.5,
+            "macro_f1": 0.4949,
+            "roc_auc": 0.64,
+            "per_label": {
+              "Reject": {
+                "precision": 0.5,
+                "recall": 0.4,
+                "f1": 0.4444,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5455,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 2,
+                "Accept": 3
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        },
+        {
+          "fold": 2,
+          "threshold": 0.5,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.5,
+            "macro_f1": 0.4949,
+            "roc_auc": 0.72,
+            "per_label": {
+              "Reject": {
+                "precision": 0.5,
+                "recall": 0.6,
+                "f1": 0.5455,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.5,
+                "recall": 0.4,
+                "f1": 0.4444,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 3,
+                "Accept": 2
+              },
+              "Accept": {
+                "Reject": 3,
+                "Accept": 2
+              }
+            }
+          }
+        },
+        {
+          "fold": 3,
+          "threshold": 0.629,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.6,
+            "macro_f1": 0.6,
+            "roc_auc": 0.4,
+            "per_label": {
+              "Reject": {
+                "precision": 0.6,
+                "recall": 0.6,
+                "f1": 0.6,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.6,
+                "recall": 0.6,
+                "f1": 0.6,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 3,
+                "Accept": 2
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        },
+        {
+          "fold": 4,
+          "threshold": 0.5,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.7,
+            "macro_f1": 0.697,
+            "roc_auc": 0.8,
+            "per_label": {
+              "Reject": {
+                "precision": 0.6667,
+                "recall": 0.8,
+                "f1": 0.7273,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.75,
+                "recall": 0.6,
+                "f1": 0.6667,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 4,
+                "Accept": 1
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        },
+        {
+          "fold": 5,
+          "threshold": 0.538,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.7,
+            "macro_f1": 0.697,
+            "roc_auc": 0.68,
+            "per_label": {
+              "Reject": {
+                "precision": 0.6667,
+                "recall": 0.8,
+                "f1": 0.7273,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.75,
+                "recall": 0.6,
+                "f1": 0.6667,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 4,
+                "Accept": 1
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "fusion_all_proxy",
+      "feature_count": 27,
+      "feature_names": [
+        "direct_replies_count",
+        "keyword_hit_count",
+        "keyword_score",
+        "major_ratio",
+        "markdown_chars_log",
+        "question_ratio",
+        "review_count",
+        "review_text_chars_log",
+        "silver_count_log",
+        "silver_label_generic_vague_ratio",
+        "silver_label_mentioned_but_not_problem_ratio",
+        "silver_label_partially_supported_ratio",
+        "silver_label_supported_ratio",
+        "silver_label_unsupported_ratio",
+        "silver_support_max",
+        "silver_support_mean",
+        "silver_support_min",
+        "title_token_count_log",
+        "weakness_category_clarity_ratio",
+        "weakness_category_experiment_ratio",
+        "weakness_category_method_ratio",
+        "weakness_category_other_ratio",
+        "weakness_category_related_work_ratio",
+        "weakness_category_reproducibility_ratio",
+        "weakness_category_validity_ratio",
+        "weakness_count_log",
+        "weakness_mean_chars_log"
+      ],
+      "aggregate": {
+        "count": 50,
+        "accuracy": 0.58,
+        "macro_f1": 0.5785,
+        "roc_auc": 0.6496,
+        "per_label": {
+          "Reject": {
+            "precision": 0.5714,
+            "recall": 0.64,
+            "f1": 0.6038,
+            "support": 25
+          },
+          "Accept": {
+            "precision": 0.5909,
+            "recall": 0.52,
+            "f1": 0.5532,
+            "support": 25
+          }
+        },
+        "confusion": {
+          "Reject": {
+            "Reject": 16,
+            "Accept": 9
+          },
+          "Accept": {
+            "Reject": 12,
+            "Accept": 13
+          }
+        }
+      },
+      "fold_macro_f1_mean": 0.5625,
+      "fold_macro_f1_std": 0.1435,
+      "folds": [
+        {
+          "fold": 1,
+          "threshold": 0.5,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.7,
+            "macro_f1": 0.6703,
+            "roc_auc": 0.48,
+            "per_label": {
+              "Reject": {
+                "precision": 1.0,
+                "recall": 0.4,
+                "f1": 0.5714,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.625,
+                "recall": 1.0,
+                "f1": 0.7692,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 2,
+                "Accept": 3
+              },
+              "Accept": {
+                "Reject": 0,
+                "Accept": 5
+              }
+            }
+          }
+        },
+        {
+          "fold": 2,
+          "threshold": 0.6051,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.7,
+            "macro_f1": 0.697,
+            "roc_auc": 0.88,
+            "per_label": {
+              "Reject": {
+                "precision": 0.6667,
+                "recall": 0.8,
+                "f1": 0.7273,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.75,
+                "recall": 0.6,
+                "f1": 0.6667,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 4,
+                "Accept": 1
+              },
+              "Accept": {
+                "Reject": 2,
+                "Accept": 3
+              }
+            }
+          }
+        },
+        {
+          "fold": 3,
+          "threshold": 0.5482,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.4,
+            "macro_f1": 0.4,
+            "roc_auc": 0.28,
+            "per_label": {
+              "Reject": {
+                "precision": 0.4,
+                "recall": 0.4,
+                "f1": 0.4,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.4,
+                "recall": 0.4,
+                "f1": 0.4,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 2,
+                "Accept": 3
+              },
+              "Accept": {
+                "Reject": 3,
+                "Accept": 2
+              }
+            }
+          }
+        },
+        {
+          "fold": 4,
+          "threshold": 0.5763,
+          "test_label_counts": {
+            "Accept": 5,
+            "Reject": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.7,
+            "macro_f1": 0.6703,
+            "roc_auc": 0.84,
+            "per_label": {
+              "Reject": {
+                "precision": 0.625,
+                "recall": 1.0,
+                "f1": 0.7692,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 1.0,
+                "recall": 0.4,
+                "f1": 0.5714,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 5,
+                "Accept": 0
+              },
+              "Accept": {
+                "Reject": 3,
+                "Accept": 2
+              }
+            }
+          }
+        },
+        {
+          "fold": 5,
+          "threshold": 0.5,
+          "test_label_counts": {
+            "Reject": 5,
+            "Accept": 5
+          },
+          "metrics": {
+            "count": 10,
+            "accuracy": 0.4,
+            "macro_f1": 0.375,
+            "roc_auc": 0.64,
+            "per_label": {
+              "Reject": {
+                "precision": 0.4286,
+                "recall": 0.6,
+                "f1": 0.5,
+                "support": 5
+              },
+              "Accept": {
+                "precision": 0.3333,
+                "recall": 0.2,
+                "f1": 0.25,
+                "support": 5
+              }
+            },
+            "confusion": {
+              "Reject": {
+                "Reject": 3,
+                "Accept": 2
+              },
+              "Accept": {
+                "Reject": 4,
+                "Accept": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

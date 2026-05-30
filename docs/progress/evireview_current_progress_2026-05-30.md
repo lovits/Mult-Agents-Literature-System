@@ -150,6 +150,24 @@ Ranker 诊断实验：
 
 OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 429 rate limit 阻塞，当前只保留为可选小样本诊断，不作为主线。
 
+### 2.6 本地 OpenReview Accept/Reject 辅助分类实验
+
+数据：本地 50 篇 ICLR 2024 OpenReview 样本，25 Accept / 25 Reject。
+
+定位：探索性辅助实验，不作为主贡献。当前使用 metadata、人工 reviewer weakness 上界特征和 silver evidence proxy；还不是 agent-generated weakness 的最终分类结果。
+
+| 方法 | Accuracy | Macro-F1 | ROC-AUC |
+| --- | ---: | ---: | ---: |
+| Majority baseline | 0.5000 | 0.4505 | 0.5000 |
+| Metadata baseline | 0.6800 | 0.6800 | 0.6896 |
+| Human weakness upper-bound | 0.6200 | 0.6198 | 0.6512 |
+| Silver evidence proxy | 0.4400 | 0.4253 | 0.4480 |
+| Metadata + human weakness | 0.6400 | 0.6400 | 0.6736 |
+| Metadata + silver evidence | 0.6000 | 0.5994 | 0.6704 |
+| Fusion proxy | 0.5800 | 0.5785 | 0.6496 |
+
+结论：当前分类结果支持“分类只能作为辅助实验”的写法。metadata baseline 最强，silver evidence proxy 单独表现较弱，说明在没有人工 gold evidence labels 和 agent-generated weaknesses 之前，不能把 evidence-aware features 夸大为分类贡献。
+
 ## 3. 最新论文对实验路线的修正
 
 本轮跟踪并写入 `memory/RESEARCH_LOG.md` 的论文包括：
@@ -199,8 +217,8 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 
 - 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注。
 - Agent weakness generation 还没有跑完整对比。
-- Evidence-aware ranker 还没有进入主实验。
-- Accept/reject 分类还未做，且应定位为探索性。
+- Evidence-aware ranker 已有 CLAIMCHECK 诊断，但还没有进入本地端到端主实验。
+- Accept/reject 分类已有探索性 baseline，但还没有使用 agent-generated weakness。
 - 前端、后端、Agent/RAG 工程化目录还未落地。
 - UI 展示、任务队列、数据库、Qdrant、报告页面还未实现。
 
@@ -241,3 +259,7 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 - `code/experiments/evireview_a/data/claimcheck_evidence_ranker_metrics.json`
 - `code/experiments/evireview_a/reports/claimcheck_evidence_ranker_report.md`
 - `docs/research/evireview_dataset_registry_2026-05-31.md`
+- `code/experiments/evireview_a/src/evaluate_local_decision_classifier.py`
+- `code/experiments/evireview_a/src/render_local_decision_classifier_report.py`
+- `code/experiments/evireview_a/data/local_decision_classifier_metrics.json`
+- `code/experiments/evireview_a/reports/local_decision_classifier_report.md`
