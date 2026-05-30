@@ -331,6 +331,7 @@ papers_manifest.csv
 7. CLAIMCHECK 路线：接入 paper-claim grounded weakness benchmark，只提交聚合指标，不提交无许可证的原始文本。
 8. CLAIMCHECK claim retrieval：新增 BM25、TF-IDF、char trigram、hybrid 等无依赖检索基线，验证 paper-claim grounding 的词面方法上限。
 9. OpenRouter 免费 embedding：使用 `nvidia/llama-nemotron-embed-vl-1b-v2:free` 在 CLAIMCHECK 上跑 semantic retrieval，main Hit@3 从 char trigram 的 0.375 提升到 0.500。
+10. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
 
 ### 当前阶段
 
@@ -343,7 +344,7 @@ papers_manifest.csv
 
 1. 跑 SubstanReview train/test 转换与 verifier baseline。
 2. 跑 CLAIMCHECK paper-claim grounding 诊断，作为后续 LLM/embedding verifier 的主 benchmark。
-3. 跑 CLAIMCHECK OpenRouter free LLM reranker / verifier，对比 embedding-only retrieval。
+3. 设计更稳的 verifier：embedding top-k retrieval + LLM pairwise judgment / feature-based classifier，而不是单阈值 max similarity。
 4. 做 evidence-aware ranking。
 5. 对本地 OpenReview 样本做补充人工标注，而不是把它作为第一验证来源。
 

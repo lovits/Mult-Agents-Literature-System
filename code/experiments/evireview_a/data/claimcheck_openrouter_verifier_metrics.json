@@ -1,0 +1,112 @@
+{
+  "status": "ok",
+  "dataset": "CLAIMCHECK",
+  "task": "Grounded/Ungrounded verifier from max OpenRouter embedding similarity",
+  "embedding_model": "nvidia/llama-nemotron-embed-vl-1b-v2:free",
+  "warning": "This is a diagnostic verifier baseline; pilot split is tiny and skewed.",
+  "pilot_selected": {
+    "pilot": {
+      "count": 13,
+      "threshold": 0.0,
+      "accuracy": 0.9231,
+      "macro_f1": 0.48,
+      "label_counts": {
+        "Grounded": 12,
+        "Ungrounded": 1
+      },
+      "per_label": {
+        "Grounded": {
+          "precision": 0.9231,
+          "recall": 1.0,
+          "f1": 0.96,
+          "support": 12
+        },
+        "Ungrounded": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1
+        }
+      },
+      "confusion": {
+        "Grounded": {
+          "Grounded": 12,
+          "Ungrounded": 0
+        },
+        "Ungrounded": {
+          "Grounded": 1,
+          "Ungrounded": 0
+        }
+      }
+    },
+    "main": {
+      "count": 155,
+      "threshold": 0.0,
+      "accuracy": 0.6968,
+      "macro_f1": 0.4106,
+      "label_counts": {
+        "Grounded": 108,
+        "Ungrounded": 47
+      },
+      "per_label": {
+        "Grounded": {
+          "precision": 0.6968,
+          "recall": 1.0,
+          "f1": 0.8213,
+          "support": 108
+        },
+        "Ungrounded": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 47
+        }
+      },
+      "confusion": {
+        "Grounded": {
+          "Grounded": 108,
+          "Ungrounded": 0
+        },
+        "Ungrounded": {
+          "Grounded": 47,
+          "Ungrounded": 0
+        }
+      }
+    }
+  },
+  "oracle_main_threshold_diagnostic": {
+    "count": 155,
+    "threshold": 0.3087,
+    "accuracy": 0.6839,
+    "macro_f1": 0.5524,
+    "label_counts": {
+      "Grounded": 108,
+      "Ungrounded": 47
+    },
+    "per_label": {
+      "Grounded": {
+        "precision": 0.7252,
+        "recall": 0.8796,
+        "f1": 0.795,
+        "support": 108
+      },
+      "Ungrounded": {
+        "precision": 0.4583,
+        "recall": 0.234,
+        "f1": 0.3099,
+        "support": 47
+      }
+    },
+    "confusion": {
+      "Grounded": {
+        "Grounded": 95,
+        "Ungrounded": 13
+      },
+      "Ungrounded": {
+        "Grounded": 36,
+        "Ungrounded": 11
+      }
+    }
+  },
+  "oracle_main_threshold": 0.3087
+}

@@ -1,0 +1,11 @@
+{
+  "status": "blocked",
+  "dataset": "CLAIMCHECK",
+  "task": "OpenRouter free chat reranking over embedding candidates",
+  "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+  "reason": "OpenRouter HTTP error 429: Provider returned error; provider=Venice; retry_after_seconds=12",
+  "required_env": [
+    "OPENROUTER_API_KEY"
+  ],
+  "suggested_command": "OPENROUTER_API_KEY=... python3 code/experiments/evireview_a/src/evaluate_claimcheck_openrouter_reranker.py"
+}

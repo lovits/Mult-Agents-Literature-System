@@ -59,8 +59,9 @@ python3 code/experiments/evireview_a/src/evaluate_retrieval_proxy.py
 2. 其次接入 CLAIMCHECK。该数据集更贴近 paper-claim grounding，可直接评估 weakness 是否关联到被审论文的 target claims；因官方仓库暂未检测到 LICENSE，本项目只提交聚合指标与脚本，不提交原始文本。
 3. 在 CLAIMCHECK 上先跑无依赖 claim retrieval 基线，确认词面匹配上限，再引入 embedding / LLM reranker。
 4. 已接入 OpenRouter 免费 embedding 模型 `nvidia/llama-nemotron-embed-vl-1b-v2:free`，CLAIMCHECK main Hit@3 达到 0.500，高于 char trigram 的 0.375。
-5. 本地 ICLR 2024 OpenReview 样本继续用于系统流程实验：weakness extraction、paper evidence retrieval、ranking 和报告生成。
-6. 本地 240 条人工标注表作为补充 gold set，不再作为第一验证路径。
+5. OpenRouter 免费 chat reranker 当前受上游 429 限速影响，暂不作为全量实验主线；embedding max-similarity verifier 也不足以替代 verifier，main Macro-F1 在 pilot-selected threshold 下仍为 0.4106。
+6. 本地 ICLR 2024 OpenReview 样本继续用于系统流程实验：weakness extraction、paper evidence retrieval、ranking 和报告生成。
+7. 本地 240 条人工标注表作为补充 gold set，不再作为第一验证路径。
 
 ### 本地 gold 工作流保留项
 

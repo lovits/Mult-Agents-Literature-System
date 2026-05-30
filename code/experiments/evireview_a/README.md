@@ -52,6 +52,10 @@ python3 code/experiments/evireview_a/src/evaluate_claimcheck_retrieval.py
 python3 code/experiments/evireview_a/src/render_claimcheck_retrieval_report.py
 python3 code/experiments/evireview_a/src/evaluate_claimcheck_openrouter_embeddings.py
 python3 code/experiments/evireview_a/src/render_claimcheck_openrouter_report.py
+python3 code/experiments/evireview_a/src/evaluate_claimcheck_openrouter_reranker.py
+python3 code/experiments/evireview_a/src/render_claimcheck_openrouter_rerank_report.py
+python3 code/experiments/evireview_a/src/evaluate_claimcheck_openrouter_verifier.py
+python3 code/experiments/evireview_a/src/render_claimcheck_openrouter_verifier_report.py
 ```
 
 OpenRouter embedding retrieval requires `OPENROUTER_API_KEY`. The default free embedding model is
@@ -94,9 +98,13 @@ CLAIMCHECK benchmark outputs:
 - `claimcheck_baseline_metrics.json`
 - `claimcheck_retrieval_metrics.json`
 - `claimcheck_openrouter_embedding_metrics.json`
+- `claimcheck_openrouter_rerank_metrics.json`
+- `claimcheck_openrouter_verifier_metrics.json`
 - `reports/claimcheck_experiment_report.md`
 - `reports/claimcheck_retrieval_report.md`
 - `reports/claimcheck_openrouter_embedding_report.md`
+- `reports/claimcheck_openrouter_rerank_report.md`
+- `reports/claimcheck_openrouter_verifier_report.md`
 
 Raw and row-level CLAIMCHECK text files are intentionally ignored because no upstream repository LICENSE file was detected.
 OpenRouter embedding caches are also ignored; only aggregate metrics and reports are committed.

@@ -29,3 +29,4 @@ code/experiments/evireview_a/data/claimcheck_raw/
 code/experiments/evireview_a/data/claimcheck_*weaknesses.jsonl
 code/experiments/evireview_a/data/claimcheck_*predictions.jsonl
 code/experiments/evireview_a/data/claimcheck_openrouter_*cache*.json
+code/experiments/evireview_a/data/claimcheck_openrouter_rerank_cache.json
