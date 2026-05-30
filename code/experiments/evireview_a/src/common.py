@@ -190,6 +190,15 @@ EXPECTED_SECTIONS_BY_CATEGORY = {
     "other": {"abstract", "introduction", "method", "experiment", "other"},
 }
 
+GOLD_LABELS = {
+    "Supported",
+    "Partially Supported",
+    "Mentioned but Not Problem",
+    "Generic / Vague",
+    "Unsupported",
+    "Contradicted",
+}
+
 
 def section_alignment(category: str, section_type: str) -> bool:
     return section_type in EXPECTED_SECTIONS_BY_CATEGORY.get(category, EXPECTED_SECTIONS_BY_CATEGORY["other"])

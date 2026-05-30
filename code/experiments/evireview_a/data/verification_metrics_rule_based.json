@@ -1,0 +1,4 @@
+{
+  "status": "blocked",
+  "reason": "No gold rows found. Fill gold_label and annotator_rationale in annotation_sheet_section_hybrid.csv first."
+}

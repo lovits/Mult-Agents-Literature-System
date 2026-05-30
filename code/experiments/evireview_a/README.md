@@ -29,6 +29,9 @@ python3 code/experiments/evireview_a/src/export_annotation_sheet.py
 python3 code/experiments/evireview_a/src/bootstrap_silver_labels.py
 python3 code/experiments/evireview_a/src/verify_evidence_baseline.py
 python3 code/experiments/evireview_a/src/render_verifier_report.py
+python3 code/experiments/evireview_a/src/select_gold_pilot_batch.py
+python3 code/experiments/evireview_a/src/import_gold_labels.py
+python3 code/experiments/evireview_a/src/evaluate_verifier_against_gold.py
 ```
 
 Current retrieval outputs:
@@ -46,3 +49,6 @@ Annotation and verifier outputs:
 - `weakness_evidence_silver.jsonl`
 - `verifier_rule_based_predictions.jsonl`
 - `reports/verifier_rule_based_report.md`
+- `annotation_pilot_batch_60.csv`
+- `weakness_evidence_gold.jsonl` after manual labels are filled
+- `verification_metrics_rule_based.json` after gold labels exist

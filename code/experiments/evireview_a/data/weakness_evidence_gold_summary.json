@@ -1,0 +1,9 @@
+{
+  "source": "annotation_sheet_section_hybrid.csv",
+  "total_rows": 240,
+  "gold_rows": 0,
+  "label_counts": {},
+  "decision_counts": {},
+  "invalid_rows": [],
+  "status": "needs_labels"
+}
