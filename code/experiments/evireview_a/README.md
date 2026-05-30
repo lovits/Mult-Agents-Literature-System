@@ -56,6 +56,8 @@ python3 code/experiments/evireview_a/src/evaluate_claimcheck_openrouter_reranker
 python3 code/experiments/evireview_a/src/render_claimcheck_openrouter_rerank_report.py
 python3 code/experiments/evireview_a/src/evaluate_claimcheck_openrouter_verifier.py
 python3 code/experiments/evireview_a/src/render_claimcheck_openrouter_verifier_report.py
+python3 code/experiments/evireview_a/src/evaluate_claimcheck_feature_verifier.py
+python3 code/experiments/evireview_a/src/render_claimcheck_feature_verifier_report.py
 ```
 
 OpenRouter embedding retrieval requires `OPENROUTER_API_KEY`. The default free embedding model is
@@ -100,11 +102,16 @@ CLAIMCHECK benchmark outputs:
 - `claimcheck_openrouter_embedding_metrics.json`
 - `claimcheck_openrouter_rerank_metrics.json`
 - `claimcheck_openrouter_verifier_metrics.json`
+- `claimcheck_feature_verifier_metrics.json`
 - `reports/claimcheck_experiment_report.md`
 - `reports/claimcheck_retrieval_report.md`
 - `reports/claimcheck_openrouter_embedding_report.md`
 - `reports/claimcheck_openrouter_rerank_report.md`
 - `reports/claimcheck_openrouter_verifier_report.md`
+- `reports/claimcheck_feature_verifier_report.md`
 
 Raw and row-level CLAIMCHECK text files are intentionally ignored because no upstream repository LICENSE file was detected.
 OpenRouter embedding caches are also ignored; only aggregate metrics and reports are committed.
+
+The feature verifier intentionally excludes gold-only fields such as target-claim count, annotation confidence,
+target-claim text, and human weakness type annotations to avoid label leakage.

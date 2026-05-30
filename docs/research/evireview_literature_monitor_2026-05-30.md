@@ -61,6 +61,17 @@ python3 code/experiments/evireview_a/src/evaluate_retrieval_proxy.py
 4. 已接入 OpenRouter 免费 embedding 模型 `nvidia/llama-nemotron-embed-vl-1b-v2:free`，CLAIMCHECK main Hit@3 达到 0.500，高于 char trigram 的 0.375。
 5. OpenRouter 免费 chat reranker 当前受上游 429 限速影响，暂不作为全量实验主线；embedding max-similarity verifier 也不足以替代 verifier，main Macro-F1 在 pilot-selected threshold 下仍为 0.4106。
 6. 本地 ICLR 2024 OpenReview 样本继续用于系统流程实验：weakness extraction、paper evidence retrieval、ranking 和报告生成。
+
+## 2026-05-30 追加监测：最新 benchmark 对实验路线的影响
+
+| 论文 | 核心信息 | 对当前实验的更新 |
+| --- | --- | --- |
+| SoundnessBench: Can Your AI Scientist Really Tell Good Research Ideas from Bad Ones? | arXiv 2026-05-28。构建 1,099 条 ICLR proposal-stage soundness benchmark，并观察到 LLM 对低 soundness 方案存在乐观偏差。Source: https://arxiv.org/abs/2605.30329 | 不把 accept/reject 分类作为主贡献；把“方法学 soundness / grounded weakness verification”作为 verifier 的长期目标。 |
+| PRISM: A Multi-Dimensional Benchmark for Evaluating LLM Peer Reviewers | arXiv 2026-05-26。用 depth、novelty、flaw identification、constructiveness 等多维度评估 LLM reviewer，并引入 argument mining 与 retrieval-augmented verification。Source: https://arxiv.org/abs/2605.26730 | A 版实验继续拆成检索、验证、排序、报告质量，而不是单一 review score。 |
+| LLM-as-a-Reviewer: Benchmarking Their Ability, Divergence, and Prompt Injection Resistance as Paper Reviewers | arXiv 2026-05-25。评估 898 篇 NeurIPS/ICLR 论文上的 LLM reviewer，强调与人类偏差、评分校准和 prompt injection 风险。Source: https://arxiv.org/abs/2605.25415 | 后续系统 demo 需要保留 prompt injection / hidden instruction 风险说明；生成评审不能直接进入最终结论，必须过 evidence verifier。 |
+| Evaluating Judges as Evaluators: The JETTS Benchmark of LLM-as-Judges as Test-Time Scaling Evaluators | ICML 2025。评估 judge models 在 reranking、step-level beam search、critique refinement 中的可靠性。Source: https://proceedings.mlr.press/v267/zhou25af.html | OpenRouter chat reranker 只能作为可选诊断实验；受 429 限制且 judge 可靠性未验证，不作为当前主线。 |
+
+本轮实验据此做了一个无泄漏的 CLAIMCHECK feature verifier 诊断：只使用检索/embedding/可推断元特征，不使用 target claim count、annotation confidence、target claim text、人类 weakness type annotation。结果说明 feature fusion 能把 Ungrounded F1 从 train-fold embedding threshold 的 0.3056 提升到 0.3551，但总体还不够强，下一步应转向“证据片段 + rubric prompt 的小样本 LLM verifier”或更多人工标注数据。
 7. 本地 240 条人工标注表作为补充 gold set，不再作为第一验证路径。
 
 ### 本地 gold 工作流保留项
