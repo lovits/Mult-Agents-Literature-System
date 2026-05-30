@@ -12,22 +12,29 @@ This experiment uses an existing human-annotated peer-review dataset before rely
 - Test: 110 reviews, 552 Eval spans.
 - Overall label counts: `Supported: 1232, Unsupported: 1545`
 
-## Baseline
+## Baselines
 
-- Verifier: `transparent_context_cue_v0`
-- Threshold selection: maximize train Macro-F1 over thresholds 0.20..0.90
-- Train Macro-F1: 0.5382 at threshold 0.78
-- Test Accuracy: 0.5109
-- Test Macro-F1: 0.509
-- Test gold labels: `Supported: 241, Unsupported: 311`
-- Test predictions: `Supported: 277, Unsupported: 275`
+| Baseline | Test Accuracy | Test Macro-F1 | Prediction Counts |
+| --- | ---: | ---: | --- |
+| `majority_train_label` | 0.5634 | 0.3604 | `Unsupported: 552` |
+| `transparent_context_cue_v0` | 0.5109 | 0.509 | `Supported: 277, Unsupported: 275` |
+| `multinomial_naive_bayes_v0` | 0.6467 | 0.6411 | `Supported: 242, Unsupported: 310` |
 
-## Per-label Test F1
+- Best test Macro-F1: `multinomial_naive_bayes_v0`.
+- Best test gold labels: `Supported: 241, Unsupported: 311`
+- `transparent_context_cue_v0` selects its threshold on train Macro-F1.
+- `multinomial_naive_bayes_v0` is a no-new-dependency supervised bag-of-words verifier over claim-local review context.
+
+## Best Per-label Test F1
 
 | Label | Precision | Recall | F1 | Support |
 | --- | ---: | ---: | ---: | ---: |
-| Supported | 0.4477 | 0.5145 | 0.4788 | 241 |
-| Unsupported | 0.5745 | 0.508 | 0.5392 | 311 |
+| Supported | 0.595 | 0.5975 | 0.5963 | 241 |
+| Unsupported | 0.6871 | 0.6849 | 0.686 | 311 |
+
+## Confusion Matrix
+
+- Best baseline confusion: `{'Supported': {'Supported': 144, 'Unsupported': 97}, 'Unsupported': {'Supported': 98, 'Unsupported': 213}}`
 
 ## Interpretation
 

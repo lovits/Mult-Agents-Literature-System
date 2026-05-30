@@ -13,8 +13,9 @@ def main() -> None:
     ensure_dirs()
     summary = json.loads((DATA_DIR / "substanreview_summary.json").read_text(encoding="utf-8"))
     metrics = json.loads((DATA_DIR / "substanreview_baseline_metrics.json").read_text(encoding="utf-8"))
-    test = metrics["test"]
-    train = metrics["train"]
+    baselines = metrics["baselines"]
+    best_name = metrics["best_test_macro_f1"]
+    best = baselines[best_name]["test"]
 
     lines = [
         "# SubstanReview Human-Annotated Verifier Benchmark",
@@ -31,23 +32,40 @@ def main() -> None:
         f"- Test: {summary['splits']['test']['review_count']} reviews, {summary['splits']['test']['claim_count']} Eval spans.",
         f"- Overall label counts: `{fmt_counts(summary['all']['substantiation_label_counts'])}`",
         "",
-        "## Baseline",
+        "## Baselines",
         "",
-        f"- Verifier: `{metrics['baseline']}`",
-        f"- Threshold selection: {metrics['threshold_selection']}",
-        f"- Train Macro-F1: {train['macro_f1']} at threshold {train['threshold']}",
-        f"- Test Accuracy: {test['accuracy']}",
-        f"- Test Macro-F1: {test['macro_f1']}",
-        f"- Test gold labels: `{fmt_counts(test['label_counts'])}`",
-        f"- Test predictions: `{fmt_counts(test['prediction_counts'])}`",
-        "",
-        "## Per-label Test F1",
-        "",
-        "| Label | Precision | Recall | F1 | Support |",
-        "| --- | ---: | ---: | ---: | ---: |",
+        "| Baseline | Test Accuracy | Test Macro-F1 | Prediction Counts |",
+        "| --- | ---: | ---: | --- |",
     ]
-    for label, item in sorted(test["per_label"].items()):
+    for name, payload in baselines.items():
+        test = payload["test"]
+        lines.append(
+            f"| `{name}` | {test['accuracy']} | {test['macro_f1']} | `{fmt_counts(test['prediction_counts'])}` |"
+        )
+    lines.extend(
+        [
+            "",
+            f"- Best test Macro-F1: `{best_name}`.",
+            f"- Best test gold labels: `{fmt_counts(best['label_counts'])}`",
+            "- `transparent_context_cue_v0` selects its threshold on train Macro-F1.",
+            "- `multinomial_naive_bayes_v0` is a no-new-dependency supervised bag-of-words verifier over claim-local review context.",
+            "",
+            "## Best Per-label Test F1",
+            "",
+            "| Label | Precision | Recall | F1 | Support |",
+            "| --- | ---: | ---: | ---: | ---: |",
+        ]
+    )
+    for label, item in sorted(best["per_label"].items()):
         lines.append(f"| {label} | {item['precision']} | {item['recall']} | {item['f1']} | {item['support']} |")
+    lines.extend(
+        [
+            "",
+            "## Confusion Matrix",
+            "",
+            f"- Best baseline confusion: `{best['confusion']}`",
+        ]
+    )
     lines.extend(
         [
             "",
