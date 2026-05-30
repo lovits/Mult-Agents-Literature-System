@@ -327,20 +327,21 @@ papers_manifest.csv
    - Hybrid
    - Section-aware Hybrid
 5. Proxy diagnostics：section-aware hybrid 的 Top-1 section alignment 提升到 0.7021。
+6. 外部人标验证集路线：接入 SubstanReview，把人工标注的 Eval/Jus span pair 转成 claim-level substantiation gold labels，用于先验证 verifier 层。
 
 ### 当前阶段
 
-1. 输出技术设计文档。
-2. 输出人工标注表。
-3. 生成 silver labels，仅用于 pipeline debugging，不作为最终实验结论。
-4. 跑 rule-based verifier baseline。
+1. 先用已有人工标注数据集验证 substantiation/verifier 能力。
+2. 保留本地 OpenReview ICLR 2024 样本作为端到端 evidence retrieval + weakness audit 应用实验。
+3. 继续把 silver labels 限定为 pipeline debugging，不作为最终实验结论。
+4. 用外部人标 benchmark 的结果决定是否接入更强的 LLM verifier。
 
 ### 下一阶段
 
-1. 人工标注 240 条 weakness-evidence。
-2. 用 gold labels 评估 verifier。
+1. 跑 SubstanReview train/test 转换与 verifier baseline。
+2. 查找并接入 CLAIMCHECK 等更贴近 paper-claim grounding 的公开数据，如果数据可直接取得。
 3. 做 evidence-aware ranking。
-4. 做 exploratory classification。
+4. 对本地 OpenReview 样本做补充人工标注，而不是把它作为第一验证来源。
 
 ---
 

@@ -51,7 +51,16 @@ python3 code/experiments/evireview_a/src/evaluate_retrieval_proxy.py
 
 ## Gold 标注工作流补充
 
-本轮文献更新后，A 版实验的下一步变为：
+本轮文献更新后，A 版实验的路线修正为：优先使用已经公开的人工标注数据集验证 verifier/substantiation 层，再把本地 OpenReview 样本作为端到端应用实验。
+
+### 已有人标数据优先路线
+
+1. 首先接入 SubstanReview。该数据集直接标注 peer review 内的 Eval/Jus span pairs，可转成 claim-level `Supported` / `Unsupported` substantiation gold labels。
+2. 其次寻找 CLAIMCHECK 等更贴近 paper-claim grounding 的可下载数据；如果数据可直接取得，再做 paper claim - weakness - evidence 的三元评估。
+3. 本地 ICLR 2024 OpenReview 样本继续用于系统流程实验：weakness extraction、paper evidence retrieval、ranking 和报告生成。
+4. 本地 240 条人工标注表作为补充 gold set，不再作为第一验证路径。
+
+### 本地 gold 工作流保留项
 
 1. 导出 240 条 `annotation_sheet_section_hybrid.csv`。
 2. 先标注一个 60 条 pilot batch，检查标签分布和标注规范是否可操作。

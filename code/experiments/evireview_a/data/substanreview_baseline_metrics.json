@@ -1,0 +1,83 @@
+{
+  "dataset": "SubstanReview",
+  "task": "claim-level substantiation detection",
+  "baseline": "transparent_context_cue_v0",
+  "threshold_selection": "maximize train Macro-F1 over thresholds 0.20..0.90",
+  "gold_definition": "Supported iff an Eval span has a paired Jus span with the same polarity and index.",
+  "train": {
+    "count": 2225,
+    "threshold": 0.78,
+    "accuracy": 0.5429,
+    "macro_f1": 0.5382,
+    "label_counts": {
+      "Supported": 991,
+      "Unsupported": 1234
+    },
+    "prediction_counts": {
+      "Supported": 1008,
+      "Unsupported": 1217
+    },
+    "per_label": {
+      "Supported": {
+        "precision": 0.4871,
+        "recall": 0.4955,
+        "f1": 0.4912,
+        "support": 991
+      },
+      "Unsupported": {
+        "precision": 0.5892,
+        "recall": 0.581,
+        "f1": 0.5851,
+        "support": 1234
+      }
+    },
+    "confusion": {
+      "Supported": {
+        "Supported": 491,
+        "Unsupported": 500
+      },
+      "Unsupported": {
+        "Supported": 517,
+        "Unsupported": 717
+      }
+    }
+  },
+  "test": {
+    "count": 552,
+    "threshold": 0.78,
+    "accuracy": 0.5109,
+    "macro_f1": 0.509,
+    "label_counts": {
+      "Supported": 241,
+      "Unsupported": 311
+    },
+    "prediction_counts": {
+      "Unsupported": 275,
+      "Supported": 277
+    },
+    "per_label": {
+      "Supported": {
+        "precision": 0.4477,
+        "recall": 0.5145,
+        "f1": 0.4788,
+        "support": 241
+      },
+      "Unsupported": {
+        "precision": 0.5745,
+        "recall": 0.508,
+        "f1": 0.5392,
+        "support": 311
+      }
+    },
+    "confusion": {
+      "Supported": {
+        "Supported": 124,
+        "Unsupported": 117
+      },
+      "Unsupported": {
+        "Supported": 153,
+        "Unsupported": 158
+      }
+    }
+  }
+}

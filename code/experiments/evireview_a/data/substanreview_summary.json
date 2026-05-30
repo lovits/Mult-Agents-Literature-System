@@ -1,0 +1,67 @@
+{
+  "dataset": "SubstanReview",
+  "task": "Claim-level substantiation detection from human annotated Eval/Jus span pairs",
+  "gold_definition": "Eval spans with a same-index Jus span are Supported; Eval spans without a paired Jus span are Unsupported.",
+  "source_repository": "https://github.com/YanzhuGuo/SubstanReview",
+  "paper": "https://aclanthology.org/2023.findings-emnlp.684/",
+  "splits": {
+    "train": {
+      "split": "train",
+      "review_count": 440,
+      "claim_count": 2225,
+      "substantiation_label_counts": {
+        "Supported": 991,
+        "Unsupported": 1234
+      },
+      "polarity_counts": {
+        "pos": 1166,
+        "neg": 1059
+      },
+      "evidence_count_distribution": {
+        "1": 948,
+        "0": 1234,
+        "3": 5,
+        "2": 37,
+        "4": 1
+      }
+    },
+    "test": {
+      "split": "test",
+      "review_count": 110,
+      "claim_count": 552,
+      "substantiation_label_counts": {
+        "Supported": 241,
+        "Unsupported": 311
+      },
+      "polarity_counts": {
+        "pos": 302,
+        "neg": 250
+      },
+      "evidence_count_distribution": {
+        "1": 235,
+        "0": 311,
+        "2": 6
+      }
+    }
+  },
+  "all": {
+    "split": "all",
+    "review_count": 550,
+    "claim_count": 2777,
+    "substantiation_label_counts": {
+      "Supported": 1232,
+      "Unsupported": 1545
+    },
+    "polarity_counts": {
+      "pos": 1468,
+      "neg": 1309
+    },
+    "evidence_count_distribution": {
+      "1": 1183,
+      "0": 1545,
+      "3": 5,
+      "2": 43,
+      "4": 1
+    }
+  }
+}

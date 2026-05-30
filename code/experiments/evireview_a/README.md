@@ -6,6 +6,10 @@ Main dataset:
 
 `code/dataset/prism_iclr2024_sample`
 
+Human-annotated verifier benchmark:
+
+`SubstanReview` from `https://github.com/YanzhuGuo/SubstanReview`
+
 Primary A-version tasks:
 
 1. Prepare a clean manifest and dataset audit.
@@ -32,6 +36,10 @@ python3 code/experiments/evireview_a/src/render_verifier_report.py
 python3 code/experiments/evireview_a/src/select_gold_pilot_batch.py
 python3 code/experiments/evireview_a/src/import_gold_labels.py
 python3 code/experiments/evireview_a/src/evaluate_verifier_against_gold.py
+python3 code/experiments/evireview_a/src/fetch_substanreview.py
+python3 code/experiments/evireview_a/src/prepare_substanreview.py
+python3 code/experiments/evireview_a/src/evaluate_substanreview_baseline.py
+python3 code/experiments/evireview_a/src/render_substanreview_report.py
 ```
 
 Current retrieval outputs:
@@ -52,3 +60,14 @@ Annotation and verifier outputs:
 - `annotation_pilot_batch_60.csv`
 - `weakness_evidence_gold.jsonl` after manual labels are filled
 - `verification_metrics_rule_based.json` after gold labels exist
+
+External human-annotated benchmark outputs:
+
+- `substanreview_raw/train.jsonl`
+- `substanreview_raw/test.jsonl`
+- `substanreview_raw/LICENSE`
+- `substanreview_train_claims.jsonl`
+- `substanreview_test_claims.jsonl`
+- `substanreview_baseline_predictions.jsonl`
+- `substanreview_baseline_metrics.json`
+- `reports/substanreview_experiment_report.md`
