@@ -21,5 +21,17 @@ python3 code/experiments/evireview_a/src/validate_openreview_source.py
 python3 code/experiments/evireview_a/src/extract_human_weaknesses.py
 python3 code/experiments/evireview_a/src/build_evidence_blocks.py
 python3 code/experiments/evireview_a/src/retrieve_bm25.py
+python3 code/experiments/evireview_a/src/retrieve_tfidf.py
+python3 code/experiments/evireview_a/src/retrieve_hybrid_section.py
+python3 code/experiments/evireview_a/src/evaluate_retrieval_proxy.py
 python3 code/experiments/evireview_a/src/build_annotation_candidates.py
 ```
+
+Current retrieval outputs:
+
+- `retrieval_bm25_top5.jsonl`
+- `retrieval_tfidf_top5.jsonl`
+- `retrieval_hybrid_top5.jsonl`
+- `retrieval_section_hybrid_top5.jsonl`
+- `retrieval_proxy_eval.json`
+- `reports/retrieval_proxy_eval.md`

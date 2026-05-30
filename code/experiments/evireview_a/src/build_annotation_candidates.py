@@ -9,6 +9,10 @@ from common import DATA_DIR, ensure_dirs, write_json, write_jsonl
 TARGET_PAPERS = 30
 ITEMS_PER_PAPER = 8
 PREFERRED_SECTION = "weaknesses"
+RETRIEVAL_INPUTS = {
+    "bm25": "retrieval_bm25_top5.jsonl",
+    "section_hybrid": "retrieval_section_hybrid_top5.jsonl",
+}
 
 
 def load_jsonl(path):
@@ -18,21 +22,13 @@ def load_jsonl(path):
                 yield json.loads(line)
 
 
-def main() -> None:
-    ensure_dirs()
-    retrieval_path = DATA_DIR / "retrieval_bm25_top5.jsonl"
+def build_candidates(retriever_name: str, retrieval_filename: str, weakness_meta, decision_by_paper, title_by_paper):
+    retrieval_path = DATA_DIR / retrieval_filename
     if not retrieval_path.exists():
-        raise SystemExit("retrieval_bm25_top5.jsonl missing; run retrieve_bm25.py first")
+        raise SystemExit(f"{retrieval_filename} missing; run retrieval scripts first")
 
     items = list(load_jsonl(retrieval_path))
     by_paper = defaultdict(list)
-    decision_by_paper = {}
-    title_by_paper = {}
-    weakness_meta = {}
-    for weakness in load_jsonl(DATA_DIR / "human_weaknesses.jsonl"):
-        weakness_meta[weakness["weakness_id"]] = weakness
-        decision_by_paper[weakness["paper_id"]] = weakness["decision"]
-        title_by_paper[weakness["paper_id"]] = weakness["title"]
     for item in items:
         by_paper[item["paper_id"]].append(item)
 
@@ -68,6 +64,7 @@ def main() -> None:
                     "category_rule": item["category_rule"],
                     "severity_hint": meta["severity_hint"],
                     "source_section": item["source_section"],
+                    "retriever": retriever_name,
                     "retrieved_evidence_top5": item["retrieved"],
                     "gold_label": "",
                     "gold_evidence_block_ids": "",
@@ -76,8 +73,11 @@ def main() -> None:
                 }
             )
 
-    write_jsonl(DATA_DIR / "annotation_candidates_bm25.jsonl", candidates)
+    out_path = DATA_DIR / f"annotation_candidates_{retriever_name}.jsonl"
+    write_jsonl(out_path, candidates)
     summary = {
+        "retriever": retriever_name,
+        "retrieval_input": retrieval_filename,
         "target_papers": TARGET_PAPERS,
         "items_per_paper": ITEMS_PER_PAPER,
         "candidate_count": len(candidates),
@@ -92,14 +92,40 @@ def main() -> None:
             "Unsupported",
             "Contradicted",
         ],
-        "note": "Candidates are BM25-assisted annotation inputs. Empty gold fields are intentionally left for manual labeling.",
+        "note": "Candidates are retrieval-assisted annotation inputs. Empty gold fields are intentionally left for manual labeling.",
     }
-    write_json(DATA_DIR / "annotation_candidates_summary.json", summary)
-    print(f"Wrote {DATA_DIR / 'annotation_candidates_bm25.jsonl'}")
+    summary_path = DATA_DIR / f"annotation_candidates_{retriever_name}_summary.json"
+    write_json(summary_path, summary)
+    print(f"Wrote {out_path}")
+    print(f"Wrote {summary_path}")
+    return summary
+
+
+def main() -> None:
+    ensure_dirs()
+    decision_by_paper = {}
+    title_by_paper = {}
+    weakness_meta = {}
+    for weakness in load_jsonl(DATA_DIR / "human_weaknesses.jsonl"):
+        weakness_meta[weakness["weakness_id"]] = weakness
+        decision_by_paper[weakness["paper_id"]] = weakness["decision"]
+        title_by_paper[weakness["paper_id"]] = weakness["title"]
+
+    summaries = {}
+    for retriever_name, retrieval_filename in RETRIEVAL_INPUTS.items():
+        summaries[retriever_name] = build_candidates(
+            retriever_name,
+            retrieval_filename,
+            weakness_meta,
+            decision_by_paper,
+            title_by_paper,
+        )
+
+    preferred = summaries["section_hybrid"] if "section_hybrid" in summaries else summaries["bm25"]
+    write_json(DATA_DIR / "annotation_candidates_summary.json", preferred)
     print(f"Wrote {DATA_DIR / 'annotation_candidates_summary.json'}")
-    print(f"candidates={len(candidates)} papers={len(selected_papers)}")
+    print(f"preferred=section_hybrid candidates={preferred['candidate_count']} papers={preferred['paper_count']}")
 
 
 if __name__ == "__main__":
     main()
-

@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import math
 import re
 from pathlib import Path
 from typing import Any
@@ -46,6 +47,15 @@ def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
+def read_jsonl(path: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                rows.append(json.loads(line))
+    return rows
+
+
 def rel_path(path: Path) -> str:
     return str(path.relative_to(REPO_ROOT))
 
@@ -87,6 +97,21 @@ def normalize_ws(text: str) -> str:
 
 def tokenize(text: str) -> list[str]:
     return re.findall(r"[A-Za-z][A-Za-z0-9_+-]*|\d+(?:\.\d+)?", (text or "").lower())
+
+
+def cosine_sparse(left: dict[str, float], right: dict[str, float]) -> float:
+    if not left or not right:
+        return 0.0
+    if len(left) > len(right):
+        left, right = right, left
+    dot = sum(value * right.get(key, 0.0) for key, value in left.items())
+    if dot == 0:
+        return 0.0
+    left_norm = math.sqrt(sum(value * value for value in left.values()))
+    right_norm = math.sqrt(sum(value * value for value in right.values()))
+    if left_norm == 0 or right_norm == 0:
+        return 0.0
+    return dot / (left_norm * right_norm)
 
 
 def split_atomic_items(text: str) -> list[str]:
@@ -153,6 +178,29 @@ def classify_section(section_path: str) -> str:
         if any(keyword in lower for keyword in keywords):
             return section_type
     return "other"
+
+
+EXPECTED_SECTIONS_BY_CATEGORY = {
+    "related_work": {"related_work", "introduction", "reference"},
+    "experiment": {"experiment", "method", "limitation"},
+    "method": {"method", "experiment"},
+    "reproducibility": {"method", "experiment", "appendix"},
+    "clarity": {"introduction", "method", "other"},
+    "validity": {"experiment", "method", "limitation"},
+    "other": {"abstract", "introduction", "method", "experiment", "other"},
+}
+
+
+def section_alignment(category: str, section_type: str) -> bool:
+    return section_type in EXPECTED_SECTIONS_BY_CATEGORY.get(category, EXPECTED_SECTIONS_BY_CATEGORY["other"])
+
+
+def section_prior(category: str, section_type: str) -> float:
+    if section_alignment(category, section_type):
+        return 1.0
+    if section_type in {"reference", "appendix"}:
+        return 0.15
+    return 0.0
 
 
 def infer_severity(text: str, source_section: str) -> str:

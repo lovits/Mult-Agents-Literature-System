@@ -1,4 +1,6 @@
 {
+  "retriever": "section_hybrid",
+  "retrieval_input": "retrieval_section_hybrid_top5.jsonl",
   "target_papers": 30,
   "items_per_paper": 8,
   "candidate_count": 240,
@@ -24,5 +26,5 @@
     "Unsupported",
     "Contradicted"
   ],
-  "note": "Candidates are BM25-assisted annotation inputs. Empty gold fields are intentionally left for manual labeling."
+  "note": "Candidates are retrieval-assisted annotation inputs. Empty gold fields are intentionally left for manual labeling."
 }

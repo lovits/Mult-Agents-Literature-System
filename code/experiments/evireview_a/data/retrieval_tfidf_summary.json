@@ -1,0 +1,8 @@
+{
+  "retriever": "tfidf_cosine",
+  "weakness_count": 1463,
+  "non_empty_retrieval_count": 1447,
+  "non_empty_rate": 0.9891,
+  "top_k": 5,
+  "note": "Dependency-free lexical TF-IDF cosine baseline. This is not neural dense retrieval."
+}
