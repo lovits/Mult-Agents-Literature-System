@@ -334,7 +334,7 @@ papers_manifest.csv
 10. CLAIMCHECK verifier diagnostics：OpenRouter max-similarity verifier 在 pilot threshold 下仍退化为 majority baseline；无泄漏 feature-fusion verifier 在 grouped CV 下把 Ungrounded F1 从 train-fold embedding threshold 的 0.3056 提升到 0.3551，但总体 Macro-F1 仍只有 0.5076，说明 verifier 必须独立于 retrieval 建模。
 11. CLAIMCHECK evidence-aware ranker diagnostic：在 24 个同时包含 Grounded/Ungrounded 的 paper-review group 上，BM25 max similarity 的 MAP=0.7771、Top-1 grounded rate=0.625，优于当前 out-of-fold feature verifier probability；排序层当前应以检索相关性为主，verifier probability 暂不作为主排序信号。
 12. Local OpenReview accept/reject diagnostic：在 50 篇本地 ICLR 2024 样本上做 5-fold exploratory classification，metadata baseline Macro-F1=0.68；human weakness upper-bound Macro-F1=0.6198；silver evidence proxy Macro-F1=0.4253。分类模块保留为辅助实验，当前证据特征不能支撑主贡献。
-13. Rubric-agent generation baseline：基于论文结构和 evidence blocks 的 deterministic rubric reviewer 已在 50 篇本地样本生成 194 条候选弱点，coverage proxy 在 threshold=0.18 时覆盖 48.05% 人工 reviewer weaknesses，194/194 均能进入 section-aware retrieval。该结果先验证 Agent -> RAG 接口，不作为最终 LLM reviewer。
+13. Rubric-agent generation baseline：基于论文结构和 evidence blocks 的 deterministic rubric reviewer 已在 50 篇本地样本生成 194 条候选弱点，coverage proxy 在 threshold=0.18 时覆盖 48.05% 人工 reviewer weaknesses，194/194 均能进入 section-aware retrieval，并已通过 heuristic verifier/ranker 生成 top-3 ranked weaknesses。Verifier 诊断显示 121/194 为 Unsupported、70/194 为 Mentioned but Not Problem、3/194 为 Partially Supported，说明该 baseline 主要用于验证 Agent -> RAG -> Verifier -> Ranker 接口，不作为最终 LLM reviewer。
 10. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
 
 ### 当前阶段

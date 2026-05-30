@@ -65,6 +65,7 @@ python3 code/experiments/evireview_a/src/render_local_decision_classifier_report
 python3 code/experiments/evireview_a/src/generate_rubric_agent_weaknesses.py
 python3 code/experiments/evireview_a/src/evaluate_rubric_agent_coverage.py
 python3 code/experiments/evireview_a/src/retrieve_rubric_agent_evidence.py
+python3 code/experiments/evireview_a/src/verify_rubric_agent_weaknesses.py
 python3 code/experiments/evireview_a/src/render_rubric_agent_report.py
 ```
 
@@ -126,6 +127,9 @@ CLAIMCHECK benchmark outputs:
 - `rubric_agent_coverage_metrics.json`
 - `rubric_agent_retrieval_top5.jsonl`
 - `rubric_agent_retrieval_summary.json`
+- `rubric_agent_verified_weaknesses.jsonl`
+- `rubric_agent_ranked_top3.jsonl`
+- `rubric_agent_verifier_summary.json`
 - `reports/rubric_agent_generation_report.md`
 
 Raw and row-level CLAIMCHECK text files are intentionally ignored because no upstream repository LICENSE file was detected.

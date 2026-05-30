@@ -193,8 +193,12 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | Coverage recall @ 0.24 | 0.0834 |
 | Generated weaknesses with retrieval | 194 / 194 |
 | Top-1 section-prior hit rate | 1.0000 |
+| Verifier Unsupported | 121 |
+| Verifier Mentioned but Not Problem | 70 |
+| Verifier Partially Supported | 3 |
+| Ranked top-3 items | 141 |
 
-结论：rubric-agent 已经把 Step 4 的生成接口跑通，并能进入 section-aware retrieval。它不是最终 LLM reviewer；下一步应做 OpenRouter 小样本 structured reviewer 与 rubric-agent 对比，再接 verifier/ranker。
+结论：rubric-agent 已经把 Step 4 的生成接口跑通，并能进入 section-aware retrieval、heuristic verifier 和 top-3 ranker。当前 verifier 结果偏 Unsupported / Mentioned，说明它更像“结构风险提示器”，不是最终 LLM reviewer；下一步应做 OpenRouter 小样本 structured reviewer 与 rubric-agent 对比，并重点降低 unsupported/generated-generic 问题。
 
 ## 3. 最新论文对实验路线的修正
 
@@ -301,4 +305,7 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 - `code/experiments/evireview_a/data/rubric_agent_weaknesses.jsonl`
 - `code/experiments/evireview_a/data/rubric_agent_coverage_metrics.json`
 - `code/experiments/evireview_a/data/rubric_agent_retrieval_top5.jsonl`
+- `code/experiments/evireview_a/data/rubric_agent_verified_weaknesses.jsonl`
+- `code/experiments/evireview_a/data/rubric_agent_ranked_top3.jsonl`
+- `code/experiments/evireview_a/data/rubric_agent_verifier_summary.json`
 - `code/experiments/evireview_a/reports/rubric_agent_generation_report.md`

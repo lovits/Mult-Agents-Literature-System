@@ -45,6 +45,16 @@ This report evaluates a deterministic rubric-guided reviewer baseline before run
 - Top-1 section-prior hit rate: 1.0
 - Warning: Retrieval is for deterministic generated weakness pipeline validation; evidence support still needs verifier evaluation.
 
+## Verifier and Ranker Handoff
+
+- Verifier: `rubric_agent_rule_based_section_lexical_v0`
+- Verified generated weaknesses: 194
+- Label counts: {'Unsupported': 121, 'Mentioned but Not Problem': 70, 'Partially Supported': 3}
+- Mean support score: 0.1867
+- Top-3 ranked items: 141
+- Top-3 label counts: {'Unsupported': 70, 'Mentioned but Not Problem': 68, 'Partially Supported': 3}
+- Warning: Generated weakness verifier/ranker diagnostics use heuristic silver rules and must not be reported as human evaluation.
+
 ## Interpretation
 
 - This baseline validates the generation interface and creates structured candidate weaknesses for downstream retrieval, verifier, ranker, and classification experiments.

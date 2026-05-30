@@ -11,6 +11,8 @@ def main() -> None:
     coverage = json.loads((DATA_DIR / "rubric_agent_coverage_metrics.json").read_text(encoding="utf-8"))
     retrieval_path = DATA_DIR / "rubric_agent_retrieval_summary.json"
     retrieval = json.loads(retrieval_path.read_text(encoding="utf-8")) if retrieval_path.exists() else None
+    verifier_path = DATA_DIR / "rubric_agent_verifier_summary.json"
+    verifier = json.loads(verifier_path.read_text(encoding="utf-8")) if verifier_path.exists() else None
     lines = [
         "# Rubric-agent Weakness Generation Baseline",
         "",
@@ -65,6 +67,21 @@ def main() -> None:
                 f"- Generated weaknesses with retrieval: {retrieval['non_empty_retrieval_count']} / {retrieval['generated_weakness_count']}",
                 f"- Top-1 section-prior hit rate: {retrieval['top1_section_prior_hit_rate']}",
                 f"- Warning: {retrieval['warning']}",
+            ]
+        )
+    if verifier:
+        lines.extend(
+            [
+                "",
+                "## Verifier and Ranker Handoff",
+                "",
+                f"- Verifier: `{verifier['verifier']}`",
+                f"- Verified generated weaknesses: {verifier['generated_weakness_count']}",
+                f"- Label counts: {verifier['label_counts']}",
+                f"- Mean support score: {verifier['mean_support_score']}",
+                f"- Top-3 ranked items: {verifier['top3_count']}",
+                f"- Top-3 label counts: {verifier['top3_label_counts']}",
+                f"- Warning: {verifier['warning']}",
             ]
         )
     lines.extend(
