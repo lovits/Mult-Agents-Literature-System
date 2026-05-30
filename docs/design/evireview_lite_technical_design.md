@@ -330,6 +330,7 @@ papers_manifest.csv
 6. 外部人标验证集路线：接入 SubstanReview，把人工标注的 Eval/Jus span pair 转成 claim-level substantiation gold labels，用于先验证 verifier 层。
 7. CLAIMCHECK 路线：接入 paper-claim grounded weakness benchmark，只提交聚合指标，不提交无许可证的原始文本。
 8. CLAIMCHECK claim retrieval：新增 BM25、TF-IDF、char trigram、hybrid 等无依赖检索基线，验证 paper-claim grounding 的词面方法上限。
+9. OpenRouter 免费 embedding：使用 `nvidia/llama-nemotron-embed-vl-1b-v2:free` 在 CLAIMCHECK 上跑 semantic retrieval，main Hit@3 从 char trigram 的 0.375 提升到 0.500。
 
 ### 当前阶段
 
@@ -342,7 +343,7 @@ papers_manifest.csv
 
 1. 跑 SubstanReview train/test 转换与 verifier baseline。
 2. 跑 CLAIMCHECK paper-claim grounding 诊断，作为后续 LLM/embedding verifier 的主 benchmark。
-3. 跑 CLAIMCHECK embedding / semantic retrieval，对比当前无依赖词面检索上限。
+3. 跑 CLAIMCHECK OpenRouter free LLM reranker / verifier，对比 embedding-only retrieval。
 4. 做 evidence-aware ranking。
 5. 对本地 OpenReview 样本做补充人工标注，而不是把它作为第一验证来源。
 

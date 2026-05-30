@@ -50,7 +50,12 @@ python3 code/experiments/evireview_a/src/evaluate_claimcheck_baseline.py
 python3 code/experiments/evireview_a/src/render_claimcheck_report.py
 python3 code/experiments/evireview_a/src/evaluate_claimcheck_retrieval.py
 python3 code/experiments/evireview_a/src/render_claimcheck_retrieval_report.py
+python3 code/experiments/evireview_a/src/evaluate_claimcheck_openrouter_embeddings.py
+python3 code/experiments/evireview_a/src/render_claimcheck_openrouter_report.py
 ```
+
+OpenRouter embedding retrieval requires `OPENROUTER_API_KEY`. The default free embedding model is
+`nvidia/llama-nemotron-embed-vl-1b-v2:free`; override it with `OPENROUTER_EMBEDDING_MODEL`.
 
 Current retrieval outputs:
 
@@ -88,7 +93,10 @@ CLAIMCHECK benchmark outputs:
 - `claimcheck_summary.json`
 - `claimcheck_baseline_metrics.json`
 - `claimcheck_retrieval_metrics.json`
+- `claimcheck_openrouter_embedding_metrics.json`
 - `reports/claimcheck_experiment_report.md`
 - `reports/claimcheck_retrieval_report.md`
+- `reports/claimcheck_openrouter_embedding_report.md`
 
 Raw and row-level CLAIMCHECK text files are intentionally ignored because no upstream repository LICENSE file was detected.
+OpenRouter embedding caches are also ignored; only aggregate metrics and reports are committed.
