@@ -328,6 +328,7 @@ papers_manifest.csv
    - Section-aware Hybrid
 5. Proxy diagnostics：section-aware hybrid 的 Top-1 section alignment 提升到 0.7021。
 6. 外部人标验证集路线：接入 SubstanReview，把人工标注的 Eval/Jus span pair 转成 claim-level substantiation gold labels，用于先验证 verifier 层。
+7. CLAIMCHECK 路线：接入 paper-claim grounded weakness benchmark，只提交聚合指标，不提交无许可证的原始文本。
 
 ### 当前阶段
 
@@ -339,7 +340,7 @@ papers_manifest.csv
 ### 下一阶段
 
 1. 跑 SubstanReview train/test 转换与 verifier baseline。
-2. 查找并接入 CLAIMCHECK 等更贴近 paper-claim grounding 的公开数据，如果数据可直接取得。
+2. 跑 CLAIMCHECK paper-claim grounding 诊断，作为后续 LLM/embedding verifier 的主 benchmark。
 3. 做 evidence-aware ranking。
 4. 对本地 OpenReview 样本做补充人工标注，而不是把它作为第一验证来源。
 

@@ -22,3 +22,9 @@ paper/**/*.pdf
 # Experiment scratch/output caches
 code/experiments/**/outputs/
 code/experiments/**/.cache/
+
+# CLAIMCHECK has public data but no repository license detected.
+# Keep raw and row-level text local; commit only scripts and aggregate metrics.
+code/experiments/evireview_a/data/claimcheck_raw/
+code/experiments/evireview_a/data/claimcheck_*weaknesses.jsonl
+code/experiments/evireview_a/data/claimcheck_*predictions.jsonl

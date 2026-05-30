@@ -10,6 +10,10 @@ Human-annotated verifier benchmark:
 
 `SubstanReview` from `https://github.com/YanzhuGuo/SubstanReview`
 
+Paper-grounded weakness benchmark:
+
+`CLAIMCHECK` from `https://github.com/JHU-CLSP/CLAIMCHECK`
+
 Primary A-version tasks:
 
 1. Prepare a clean manifest and dataset audit.
@@ -40,6 +44,10 @@ python3 code/experiments/evireview_a/src/fetch_substanreview.py
 python3 code/experiments/evireview_a/src/prepare_substanreview.py
 python3 code/experiments/evireview_a/src/evaluate_substanreview_baseline.py
 python3 code/experiments/evireview_a/src/render_substanreview_report.py
+python3 code/experiments/evireview_a/src/fetch_claimcheck_texts.py
+python3 code/experiments/evireview_a/src/prepare_claimcheck.py
+python3 code/experiments/evireview_a/src/evaluate_claimcheck_baseline.py
+python3 code/experiments/evireview_a/src/render_claimcheck_report.py
 ```
 
 Current retrieval outputs:
@@ -71,3 +79,12 @@ External human-annotated benchmark outputs:
 - `substanreview_baseline_predictions.jsonl`
 - `substanreview_baseline_metrics.json`
 - `reports/substanreview_experiment_report.md`
+
+CLAIMCHECK benchmark outputs:
+
+- `claimcheck_raw_manifest.json`
+- `claimcheck_summary.json`
+- `claimcheck_baseline_metrics.json`
+- `reports/claimcheck_experiment_report.md`
+
+Raw and row-level CLAIMCHECK text files are intentionally ignored because no upstream repository LICENSE file was detected.

@@ -1,0 +1,84 @@
+{
+  "dataset": "CLAIMCHECK",
+  "task": "Weakness-to-paper-claim association and grounding diagnostics",
+  "gold_definition": "A weakness is Grounded when CLAIMCHECK annotators linked it to at least one target claim.",
+  "source_repository": "https://github.com/JHU-CLSP/CLAIMCHECK",
+  "paper": "https://aclanthology.org/2025.findings-emnlp.1185/",
+  "license_note": "No upstream LICENSE file detected; raw and row-level text outputs are intentionally gitignored.",
+  "splits": {
+    "pilot": {
+      "split": "pilot",
+      "paper_review_pair_count": 5,
+      "weakness_count": 13,
+      "grounding_label_counts": {
+        "Grounded": 12,
+        "Ungrounded": 1
+      },
+      "target_claim_count_distribution": {
+        "1": 10,
+        "2": 1,
+        "3": 1,
+        "0": 1
+      },
+      "weakness_type_counts": {
+        "insufficient": 4,
+        "contradictory": 3,
+        "related_work": 4,
+        "clarity": 1,
+        "other": 3,
+        "novelty": 3
+      },
+      "avg_candidate_claim_count": 38.0
+    },
+    "main": {
+      "split": "main",
+      "paper_review_pair_count": 55,
+      "weakness_count": 155,
+      "grounding_label_counts": {
+        "Grounded": 108,
+        "Ungrounded": 47
+      },
+      "target_claim_count_distribution": {
+        "1": 83,
+        "0": 47,
+        "2": 20,
+        "3": 4,
+        "4": 1
+      },
+      "weakness_type_counts": {
+        "clarity": 27,
+        "insufficient": 89,
+        "other": 26,
+        "contradictory": 21,
+        "related_work": 21,
+        "novelty": 19
+      },
+      "avg_candidate_claim_count": 39.4323
+    }
+  },
+  "all": {
+    "split": "all",
+    "paper_review_pair_count": 60,
+    "weakness_count": 168,
+    "grounding_label_counts": {
+      "Grounded": 120,
+      "Ungrounded": 48
+    },
+    "target_claim_count_distribution": {
+      "1": 93,
+      "2": 21,
+      "3": 5,
+      "0": 48,
+      "4": 1
+    },
+    "weakness_type_counts": {
+      "insufficient": 93,
+      "contradictory": 24,
+      "related_work": 25,
+      "clarity": 28,
+      "other": 29,
+      "novelty": 22
+    },
+    "avg_candidate_claim_count": 39.3214
+  }
+}

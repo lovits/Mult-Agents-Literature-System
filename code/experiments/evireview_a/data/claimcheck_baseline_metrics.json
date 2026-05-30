@@ -1,0 +1,147 @@
+{
+  "dataset": "CLAIMCHECK",
+  "task": "paper-claim grounded weakness diagnostics",
+  "gold_definition": "Grounded iff a weakness has at least one annotator-linked target claim.",
+  "baselines": {
+    "majority_pilot_label": {
+      "description": "Always predict the pilot-majority label: Grounded",
+      "main": {
+        "count": 155,
+        "accuracy": 0.6968,
+        "macro_f1": 0.4106,
+        "label_counts": {
+          "Grounded": 108,
+          "Ungrounded": 47
+        },
+        "prediction_counts": {
+          "Grounded": 155
+        },
+        "per_label": {
+          "Grounded": {
+            "precision": 0.6968,
+            "recall": 1.0,
+            "f1": 0.8213,
+            "support": 108
+          },
+          "Ungrounded": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 47
+          }
+        },
+        "confusion": {
+          "Grounded": {
+            "Grounded": 108,
+            "Ungrounded": 0
+          },
+          "Ungrounded": {
+            "Grounded": 47,
+            "Ungrounded": 0
+          }
+        }
+      }
+    },
+    "weakness_claim_lexical_threshold_v0": {
+      "description": "Predict Grounded if weakness text has enough lexical overlap with any extracted candidate paper claim.",
+      "threshold_selection": "maximize pilot Macro-F1 over thresholds 0.00..0.80",
+      "pilot": {
+        "count": 13,
+        "accuracy": 0.9231,
+        "macro_f1": 0.48,
+        "label_counts": {
+          "Grounded": 12,
+          "Ungrounded": 1
+        },
+        "prediction_counts": {
+          "Grounded": 13
+        },
+        "per_label": {
+          "Grounded": {
+            "precision": 0.9231,
+            "recall": 1.0,
+            "f1": 0.96,
+            "support": 12
+          },
+          "Ungrounded": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          }
+        },
+        "confusion": {
+          "Grounded": {
+            "Grounded": 12,
+            "Ungrounded": 0
+          },
+          "Ungrounded": {
+            "Grounded": 1,
+            "Ungrounded": 0
+          }
+        },
+        "threshold": 0.0
+      },
+      "main": {
+        "count": 155,
+        "accuracy": 0.6968,
+        "macro_f1": 0.4106,
+        "label_counts": {
+          "Grounded": 108,
+          "Ungrounded": 47
+        },
+        "prediction_counts": {
+          "Grounded": 155
+        },
+        "per_label": {
+          "Grounded": {
+            "precision": 0.6968,
+            "recall": 1.0,
+            "f1": 0.8213,
+            "support": 108
+          },
+          "Ungrounded": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 47
+          }
+        },
+        "confusion": {
+          "Grounded": {
+            "Grounded": 108,
+            "Ungrounded": 0
+          },
+          "Ungrounded": {
+            "Grounded": 47,
+            "Ungrounded": 0
+          }
+        },
+        "threshold": 0.0
+      }
+    }
+  },
+  "claim_association_lexical_ranking": {
+    "description": "Rank candidate paper claims by lexical overlap with the weakness; evaluate only target claims mappable back to extracted candidate claims.",
+    "pilot": {
+      "grounded_weakness_count": 12,
+      "mapped_target_count": 6,
+      "unmapped_target_count": 6,
+      "target_mapping_threshold": 0.7,
+      "hit_at_1": 0.6667,
+      "hit_at_3": 0.6667,
+      "hit_at_5": 0.6667,
+      "mrr": 0.6874
+    },
+    "main": {
+      "grounded_weakness_count": 108,
+      "mapped_target_count": 72,
+      "unmapped_target_count": 36,
+      "target_mapping_threshold": 0.7,
+      "hit_at_1": 0.1944,
+      "hit_at_3": 0.3194,
+      "hit_at_5": 0.4306,
+      "mrr": 0.3106
+    }
+  }
+}

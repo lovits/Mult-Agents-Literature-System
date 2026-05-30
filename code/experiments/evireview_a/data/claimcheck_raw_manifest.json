@@ -1,0 +1,29 @@
+{
+  "dataset": "CLAIMCHECK",
+  "source_repository": "https://github.com/JHU-CLSP/CLAIMCHECK",
+  "paper": "https://aclanthology.org/2025.findings-emnlp.1185/",
+  "license": {
+    "status": "not_found",
+    "note": "No LICENSE file or GitHub license endpoint was found on 2026-05-30; raw text files are kept out of git."
+  },
+  "files": [
+    {
+      "name": "README.md",
+      "url": "https://raw.githubusercontent.com/JHU-CLSP/CLAIMCHECK/main/README.md",
+      "bytes": 1599,
+      "sha256": "55b9c4be992066b5cafa30a4db6fdb02f0a956ffa851583f3f0cd16e3fd63e00"
+    },
+    {
+      "name": "source_pilot.json",
+      "url": "https://raw.githubusercontent.com/JHU-CLSP/CLAIMCHECK/main/data/texts/source/pilot.json",
+      "bytes": 318878,
+      "sha256": "95eeed5d34010fdff257aae6445165ecd9ab1276ee0dfb651aaca000f6d661f6"
+    },
+    {
+      "name": "source_main.json",
+      "url": "https://raw.githubusercontent.com/JHU-CLSP/CLAIMCHECK/main/data/texts/source/main.json",
+      "bytes": 3793665,
+      "sha256": "6fbfa93145910021b9b995437ceedb616be81d20be44ec6fc9a88942bf09dec1"
+    }
+  ]
+}
