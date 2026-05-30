@@ -42,3 +42,18 @@
 - **Authors**: Prior Computers dataset compilation
 - **Link**: https://huggingface.co/datasets/priorcomputers/openreview_raw
 - **Summary**: Hugging Face dataset card reports OpenReview-derived peer-review data across major ML/AI venues, with paper metadata, note types, review text, venues, years, and OpenReview URLs. Relevance: useful expansion source for later scaling, but A-version should continue using curated local samples and licensed/annotated verifier datasets.
+
+### [2026-05-31] ReviewGrounder: Improving Review Substantiveness with Rubric-Guided, Tool-Integrated Agents
+- **Authors**: Zhuofeng Li, Yi Lu, Dongfu Jiang, Haoxiang Zhang, Yuyang Bai, Chuan Li, Yu Wang, Shuiwang Ji, Jianwen Xie, Yu Zhang
+- **Link**: https://arxiv.org/abs/2604.14261
+- **Summary**: Proposes rubric-guided, tool-integrated review agents to improve review substantiveness and reduce superficial comments. Relevance: supports the current deterministic rubric-agent baseline as a cheap, inspectable lower bound before OpenRouter LLM reviewer experiments.
+
+### [2026-05-31] FactReview: Evidence-Grounded Peer Review with Execution-Based Claim Verification
+- **Authors**: Ling Yue, Chaoqian Ouyang, Hang Xu, Ruijun Huang, Yuchen Liu, Libin Zheng, Wei Liu, Shaowu Pan, Shimin Di, Min-Ling Zhang
+- **Link**: https://arxiv.org/abs/2604.04074
+- **Summary**: Frames scientific peer review around evidence-grounded claim auditing rather than direct verdict generation. Relevance: reinforces EviReview-Lite's decomposition into weakness generation, Paper-RAG retrieval, evidence verification, ranker, and only auxiliary accept/reject classification.
+
+### [2026-05-31] DeepReview: Improving LLM-based Paper Review with Human-like Deep Thinking Process
+- **Authors**: WestlakeNLP and collaborators
+- **Link**: https://aclanthology.org/2025.acl-long.1420/
+- **Summary**: Builds a structured LLM-based paper review process with intermediate reasoning and review-quality objectives. Relevance: useful related work for structured reviewer generation, but current A-version should keep generation small and focus evaluation on grounded weakness coverage.

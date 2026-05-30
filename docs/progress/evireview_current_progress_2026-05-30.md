@@ -168,6 +168,34 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 结论：当前分类结果支持“分类只能作为辅助实验”的写法。metadata baseline 最强，silver evidence proxy 单独表现较弱，说明在没有人工 gold evidence labels 和 agent-generated weaknesses 之前，不能把 evidence-aware features 夸大为分类贡献。
 
+### 2.7 Rubric-agent weakness generation baseline
+
+定位：先实现一个可复现、可解释的本地 reviewer agent baseline，验证 Agent -> Paper-RAG -> Verifier/Ranker 的接口。该 baseline 不依赖 OpenRouter 免费 chat 模型，因此不会被 429 限流阻塞。
+
+方法：
+
+- 按 experiment、method、related work、reproducibility、limitation、clarity rubric 检查论文 evidence blocks。
+- 根据 section 长度、ablation/baseline/reproducibility/limitation 关键词等信号触发候选 weakness。
+- 输出结构化字段：`weakness_text`、`category`、`severity`、`confidence`、`reviewer_role`、`evidence_block_ids`。
+- 用词法 + char ngram overlap 与人工 reviewer weaknesses 做 coverage proxy。
+
+结果：
+
+| 指标 | 数值 |
+| --- | ---: |
+| Papers | 50 |
+| Generated weaknesses | 194 |
+| Mean generated per paper | 3.88 |
+| Generic rate | 0.1804 |
+| Redundancy rate | 0.1531 |
+| Coverage recall @ 0.12 | 0.8243 |
+| Coverage recall @ 0.18 | 0.4805 |
+| Coverage recall @ 0.24 | 0.0834 |
+| Generated weaknesses with retrieval | 194 / 194 |
+| Top-1 section-prior hit rate | 1.0000 |
+
+结论：rubric-agent 已经把 Step 4 的生成接口跑通，并能进入 section-aware retrieval。它不是最终 LLM reviewer；下一步应做 OpenRouter 小样本 structured reviewer 与 rubric-agent 对比，再接 verifier/ranker。
+
 ## 3. 最新论文对实验路线的修正
 
 本轮跟踪并写入 `memory/RESEARCH_LOG.md` 的论文包括：
@@ -183,6 +211,8 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | NLPeer: https://arxiv.org/abs/2211.06651 | 多领域论文与 review report，适合 B 版泛化实验。 |
 | PeerRead: https://arxiv.org/abs/1804.09635 | 有 accept/reject 与专家评审，可作为辅助分类扩展。 |
 | OpenReview Raw: https://huggingface.co/datasets/priorcomputers/openreview_raw | 大规模 OpenReview 数据来源，适合系统稳定后的扩容。 |
+| ReviewGrounder: https://arxiv.org/abs/2604.14261 | 支持 rubric-guided、tool-integrated reviewer 设计，本轮 rubric-agent baseline 与它对齐。 |
+| FactReview: https://arxiv.org/abs/2604.04074 | 支持将评审生成拆成 claim/evidence audit，而不是直接端到端生成最终 judgment。 |
 
 与开题报告对齐后的结论：
 
@@ -217,6 +247,7 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 
 - 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注。
 - Agent weakness generation 还没有跑完整对比。
+- Rubric-agent generation baseline 已完成；OpenRouter 小样本 LLM reviewer 对比还没做。
 - Evidence-aware ranker 已有 CLAIMCHECK 诊断，但还没有进入本地端到端主实验。
 - Accept/reject 分类已有探索性 baseline，但还没有使用 agent-generated weakness。
 - 前端、后端、Agent/RAG 工程化目录还未落地。
@@ -238,7 +269,7 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 3. 完成本地 60 条 pilot gold label 的质量检查，必要时扩到 200-300 条。
 4. 把 feature-fusion verifier 的失败案例转成标注规范补充：哪些 weak criticism 是 generic，哪些需要 external literature。
 5. 做 evidence-aware ranker：支持度、严重性、section confidence、novelty category 综合排序。
-6. 最后再做 Agent weakness generation 和辅助 accept/reject 分类。
+6. 用 OpenRouter 免费模型跑 5-10 篇 structured reviewer 小样本，与 rubric-agent baseline 对比 coverage / generic rate / redundancy。
 
 近期最小可交付：
 
@@ -263,3 +294,11 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 - `code/experiments/evireview_a/src/render_local_decision_classifier_report.py`
 - `code/experiments/evireview_a/data/local_decision_classifier_metrics.json`
 - `code/experiments/evireview_a/reports/local_decision_classifier_report.md`
+- `code/experiments/evireview_a/src/generate_rubric_agent_weaknesses.py`
+- `code/experiments/evireview_a/src/evaluate_rubric_agent_coverage.py`
+- `code/experiments/evireview_a/src/retrieve_rubric_agent_evidence.py`
+- `code/experiments/evireview_a/src/render_rubric_agent_report.py`
+- `code/experiments/evireview_a/data/rubric_agent_weaknesses.jsonl`
+- `code/experiments/evireview_a/data/rubric_agent_coverage_metrics.json`
+- `code/experiments/evireview_a/data/rubric_agent_retrieval_top5.jsonl`
+- `code/experiments/evireview_a/reports/rubric_agent_generation_report.md`

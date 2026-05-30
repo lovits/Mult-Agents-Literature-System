@@ -1,0 +1,139 @@
+{
+  "status": "ok",
+  "generator": "rubric_agent_v0",
+  "task": "Coverage diagnostic for deterministic rubric-agent weaknesses against human reviewer weaknesses",
+  "warning": "Lexical/character overlap is a weak proxy for semantic coverage; use this as a pipeline baseline before LLM pairwise judging or human review.",
+  "paper_count": 50,
+  "generated_weakness_count": 194,
+  "human_weakness_count": 1463,
+  "mean_generated_per_paper": 3.88,
+  "generated_category_counts": {
+    "related_work": 35,
+    "limitation": 36,
+    "experiment": 55,
+    "reproducibility": 12,
+    "method": 56
+  },
+  "generated_severity_counts": {
+    "major": 146,
+    "minor": 48
+  },
+  "generic_rate": 0.1804,
+  "redundancy_rate": 0.1531,
+  "coverage_by_threshold": [
+    {
+      "threshold": 0.12,
+      "human_weakness_count": 1463,
+      "covered_human_weakness_count": 1206,
+      "human_weakness_recall": 0.8243,
+      "mean_paper_recall": 0.8331,
+      "category_recall": {
+        "clarity": 0.8837,
+        "experiment": 0.8918,
+        "method": 0.8382,
+        "other": 0.7136,
+        "related_work": 0.9457,
+        "reproducibility": 0.6111,
+        "validity": 0.875
+      }
+    },
+    {
+      "threshold": 0.18,
+      "human_weakness_count": 1463,
+      "covered_human_weakness_count": 703,
+      "human_weakness_recall": 0.4805,
+      "mean_paper_recall": 0.4798,
+      "category_recall": {
+        "clarity": 0.4186,
+        "experiment": 0.5718,
+        "method": 0.496,
+        "other": 0.3065,
+        "related_work": 0.7752,
+        "reproducibility": 0.1667,
+        "validity": 0.625
+      }
+    },
+    {
+      "threshold": 0.24,
+      "human_weakness_count": 1463,
+      "covered_human_weakness_count": 122,
+      "human_weakness_recall": 0.0834,
+      "mean_paper_recall": 0.0844,
+      "category_recall": {
+        "clarity": 0.093,
+        "experiment": 0.0918,
+        "method": 0.0796,
+        "other": 0.0291,
+        "related_work": 0.2481,
+        "reproducibility": 0.0556,
+        "validity": 0.125
+      }
+    }
+  ],
+  "top_match_examples": [
+    {
+      "paper_id": "SyuQKk7sX2",
+      "human_weakness_id": "048_r4_weaknesses_021",
+      "generated_weakness_id": "SyuQKk7sX2_rubric_agent_v0_04",
+      "similarity": 0.3393,
+      "human_category": "experiment",
+      "generated_category": "reproducibility"
+    },
+    {
+      "paper_id": "b2XfOm3RJa",
+      "human_weakness_id": "020_r1_weaknesses_001",
+      "generated_weakness_id": "b2XfOm3RJa_rubric_agent_v0_05",
+      "similarity": 0.3238,
+      "human_category": "other",
+      "generated_category": "method"
+    },
+    {
+      "paper_id": "SyuQKk7sX2",
+      "human_weakness_id": "048_r2_weaknesses_010",
+      "generated_weakness_id": "SyuQKk7sX2_rubric_agent_v0_05",
+      "similarity": 0.3234,
+      "human_category": "related_work",
+      "generated_category": "method"
+    },
+    {
+      "paper_id": "EmQSOi1X2f",
+      "human_weakness_id": "003_r2_weaknesses_006",
+      "generated_weakness_id": "EmQSOi1X2f_rubric_agent_v0_03",
+      "similarity": 0.3079,
+      "human_category": "method",
+      "generated_category": "method"
+    },
+    {
+      "paper_id": "8JCn0kmS8W",
+      "human_weakness_id": "017_r3_weaknesses_021",
+      "generated_weakness_id": "8JCn0kmS8W_rubric_agent_v0_01",
+      "similarity": 0.3071,
+      "human_category": "method",
+      "generated_category": "experiment"
+    },
+    {
+      "paper_id": "clU5xWyItb",
+      "human_weakness_id": "015_r4_questions_029",
+      "generated_weakness_id": "clU5xWyItb_rubric_agent_v0_01",
+      "similarity": 0.3029,
+      "human_category": "related_work",
+      "generated_category": "method"
+    },
+    {
+      "paper_id": "FQepisCUWu",
+      "human_weakness_id": "010_r3_questions_018",
+      "generated_weakness_id": "FQepisCUWu_rubric_agent_v0_03",
+      "similarity": 0.2925,
+      "human_category": "experiment",
+      "generated_category": "reproducibility"
+    },
+    {
+      "paper_id": "v6a1pXXADC",
+      "human_weakness_id": "044_r3_questions_036",
+      "generated_weakness_id": "v6a1pXXADC_rubric_agent_v0_03",
+      "similarity": 0.2922,
+      "human_category": "related_work",
+      "generated_category": "method"
+    }
+  ]
+}
