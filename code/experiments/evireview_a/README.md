@@ -25,6 +25,10 @@ python3 code/experiments/evireview_a/src/retrieve_tfidf.py
 python3 code/experiments/evireview_a/src/retrieve_hybrid_section.py
 python3 code/experiments/evireview_a/src/evaluate_retrieval_proxy.py
 python3 code/experiments/evireview_a/src/build_annotation_candidates.py
+python3 code/experiments/evireview_a/src/export_annotation_sheet.py
+python3 code/experiments/evireview_a/src/bootstrap_silver_labels.py
+python3 code/experiments/evireview_a/src/verify_evidence_baseline.py
+python3 code/experiments/evireview_a/src/render_verifier_report.py
 ```
 
 Current retrieval outputs:
@@ -35,3 +39,10 @@ Current retrieval outputs:
 - `retrieval_section_hybrid_top5.jsonl`
 - `retrieval_proxy_eval.json`
 - `reports/retrieval_proxy_eval.md`
+
+Annotation and verifier outputs:
+
+- `annotation_sheet_section_hybrid.csv`
+- `weakness_evidence_silver.jsonl`
+- `verifier_rule_based_predictions.jsonl`
+- `reports/verifier_rule_based_report.md`
