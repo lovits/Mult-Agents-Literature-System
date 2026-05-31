@@ -57,3 +57,23 @@
 - **Authors**: WestlakeNLP and collaborators
 - **Link**: https://aclanthology.org/2025.acl-long.1420/
 - **Summary**: Builds a structured LLM-based paper review process with intermediate reasoning and review-quality objectives. Relevance: useful related work for structured reviewer generation, but current A-version should keep generation small and focus evaluation on grounded weakness coverage.
+
+### [2026-05-31] Physics Is All You Need? A Case Study in Physicist-Supervised AI Development of Scientific Software
+- **Authors**: Nhat-Minh Nguyen
+- **Link**: https://arxiv.org/abs/2605.30353
+- **Summary**: Presents a scientist-supervised AI-agent software development case study and reports that standard oracle tests can miss domain-specific scientific errors. Relevance: supports keeping EviReview-Lite under evidence retrieval, verifier diagnostics, and human gold-label supervision instead of trusting reviewer-agent output directly.
+
+### [2026-05-31] RAGCap-Bench: Benchmarking Capabilities of LLMs in Agentic Retrieval Augmented Generation Systems
+- **Authors**: Jingru Lin, Chen Zhang, Stephen Y. Liu, Haizhou Li
+- **Link**: https://arxiv.org/abs/2510.13910
+- **Summary**: Proposes a capability-oriented benchmark for intermediate tasks in agentic RAG workflows and analyzes typical error categories. Relevance: supports evaluating EviReview-Lite by module-level capabilities such as query/weakness planning, evidence retrieval, verifier judgment, and ranking rather than only final review text.
+
+### [2026-05-31] InfoDeepSeek: Benchmarking Agentic Information Seeking for Retrieval-Augmented Generation
+- **Authors**: Yunjia Xi, Jianghao Lin, Menghui Zhu, Yongzhao Xiao, Zhuoying Ou, Jiaqi Liu, Tong Wan, Bo Chen, Weiwen Liu, Yasheng Wang, Ruiming Tang, Weinan Zhang, Yong Yu
+- **Link**: https://arxiv.org/abs/2505.15872
+- **Summary**: Introduces a benchmark and evaluation framework for dynamic agentic information seeking with fine-grained metrics for accuracy, utility, and compactness. Relevance: supports adding compactness and evidence-use efficiency diagnostics to EviReview-Lite's Paper-RAG workflow.
+
+### [2026-05-31] RAGCHECKER: A Fine-grained Framework for Diagnosing Retrieval-Augmented Generation
+- **Authors**: Dongyu Ru, Lin Qiu, Xiangkun Hu, Tianhang Zhang, Peng Shi, Shuaichen Chang, Cheng Jiayang, Cunxiang Wang, Shichao Sun, Huanyu Li, Zizhao Zhang, Binjie Wang, Jiarong Jiang, Tong He, Zhiguo Wang, Pengfei Liu, Yue Zhang, Zheng Zhang
+- **Link**: https://arxiv.org/abs/2408.08067
+- **Summary**: Presents fine-grained RAG diagnostics for retrieval and generation, using claim-level entailment checks and meta-evaluation against human judgments. Relevance: supports the current claim/weakness-level verifier design and argues for separating retrieval quality from generation faithfulness.

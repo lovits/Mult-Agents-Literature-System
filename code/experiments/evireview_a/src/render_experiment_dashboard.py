@@ -1,0 +1,238 @@
+from __future__ import annotations
+
+import json
+import os
+from pathlib import Path
+from typing import Any
+
+from common import DATA_DIR, REPORT_DIR, ensure_dirs
+
+GLM_API_KEY_ENV_NAMES = ("GLM_API_KEY", "ZHIPU_API_KEY", "ZHIPUAI_API_KEY", "BIGMODEL_API_KEY", "ZAI_API_KEY")
+
+
+def load_json(name: str, default: Any = None) -> Any:
+    path = DATA_DIR / name
+    if not path.exists():
+        return default
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def fmt(value: Any) -> str:
+    if value is None:
+        return "-"
+    if isinstance(value, float):
+        return f"{value:.4f}".rstrip("0").rstrip(".")
+    return str(value)
+
+
+def metric_line(module: str, dataset: str, metric: str, result: Any, status: str, note: str) -> str:
+    return f"| {module} | {dataset} | {metric} | {fmt(result)} | {status} | {note} |"
+
+
+def openrouter_status() -> str:
+    return "set" if os.getenv("OPENROUTER_API_KEY") else "missing"
+
+
+def glm_status() -> str:
+    return "set" if any(os.getenv(name) for name in GLM_API_KEY_ENV_NAMES) else "missing"
+
+
+def dashboard_lines() -> list[str]:
+    source = load_json("source_reliability_report.json", {})
+    human = load_json("human_weaknesses_summary.json", {})
+    evidence = load_json("evidence_blocks_summary.json", {})
+    retrieval = load_json("retrieval_proxy_eval.json", {})
+    substan = load_json("substanreview_baseline_metrics.json", {})
+    claimcheck = load_json("claimcheck_summary.json", {})
+    claim_retrieval = load_json("claimcheck_openrouter_embedding_metrics.json", {})
+    claim_verifier = load_json("claimcheck_feature_verifier_metrics.json", {})
+    claim_ranker = load_json("claimcheck_evidence_ranker_metrics.json", {})
+    local_classifier = load_json("local_decision_classifier_metrics.json", {})
+    rubric_generation = load_json("rubric_agent_weaknesses_summary.json", {})
+    rubric_coverage = load_json("rubric_agent_coverage_metrics.json", {})
+    rubric_verifier = load_json("rubric_agent_verifier_summary.json", {})
+    glm_generation = load_json("glm_reviewer_weaknesses_summary.json", {})
+    glm_coverage = load_json("glm_reviewer_coverage_metrics.json", {})
+    glm_verifier = load_json("glm_reviewer_verifier_summary.json", {})
+    reranker = load_json("claimcheck_openrouter_rerank_metrics.json", {})
+
+    retrieval_results = retrieval.get("results", {})
+    section_hybrid = retrieval_results.get("section_aware_hybrid", {})
+    substan_nb = substan.get("baselines", {}).get("multinomial_naive_bayes_v0", {}).get("test", {})
+    claim_main = claim_retrieval.get("splits", {}).get("main", {})
+    feature_verifier = claim_verifier.get("feature_verifier", {})
+    ranker_metrics = claim_ranker.get("metrics", {})
+    best_ranker_name = "-"
+    best_ranker = {}
+    if ranker_metrics:
+        best_ranker_name, best_ranker = max(
+            ranker_metrics.items(),
+            key=lambda item: (item[1].get("map", 0.0), item[1].get("top1_grounded_rate", 0.0)),
+        )
+    classifier_results = local_classifier.get("results", [])
+    best_classifier = next(
+        (item for item in classifier_results if item.get("name") == local_classifier.get("best_method")),
+        {},
+    )
+    coverage_018 = next(
+        (item for item in rubric_coverage.get("coverage_by_threshold", []) if item.get("threshold") == 0.18),
+        {},
+    )
+    glm_coverage_018 = next(
+        (item for item in glm_coverage.get("coverage_by_threshold", []) if item.get("threshold") == 0.18),
+        {},
+    )
+
+    lines = [
+        "# EviReview-Lite Experiment Dashboard",
+        "",
+        "This dashboard aggregates the current A-version experiment state across dataset audit, retrieval, verification, ranking, generation, and auxiliary classification.",
+        "",
+        "## Environment",
+        "",
+        f"- OpenRouter API key: `{openrouter_status()}`",
+        f"- GLM/Zhipu API key: `{glm_status()}`; accepted env names: `{', '.join(GLM_API_KEY_ENV_NAMES)}`.",
+        "- Raw CLAIMCHECK row-level text policy: do not commit raw text because no upstream LICENSE was detected.",
+        "- Local OpenReview/PRISM sample remains the end-to-end application dataset.",
+        "",
+        "## Module Metrics",
+        "",
+        "| Module | Dataset | Primary metric | Result | Status | Note |",
+        "| --- | --- | --- | ---: | --- | --- |",
+        metric_line(
+            "Source audit",
+            "Local OpenReview/PRISM",
+            "Matched papers",
+            f"{source.get('matched_count', 50)} / {source.get('manifest_count', 50)}",
+            "done",
+            "OpenReview source chain validated.",
+        ),
+        metric_line(
+            "Human weakness extraction",
+            "Local OpenReview/PRISM",
+            "Weakness items",
+            human.get("weakness_item_count"),
+            "done",
+            "Human-review upper-bound source for generation coverage.",
+        ),
+        metric_line(
+            "Evidence blocks",
+            "Local OpenReview/PRISM",
+            "Blocks",
+            evidence.get("evidence_block_count"),
+            "done",
+            "Paper-RAG substrate.",
+        ),
+        metric_line(
+            "Section-aware retrieval",
+            "Local OpenReview/PRISM",
+            "Top-3 section alignment",
+            section_hybrid.get("top3_any_section_alignment_rate"),
+            "done",
+            "Best local retrieval proxy so far.",
+        ),
+        metric_line(
+            "Substantiation verifier floor",
+            "SubstanReview",
+            "Naive Bayes Macro-F1",
+            substan_nb.get("macro_f1"),
+            "done",
+            "Licensed supervised review-internal substantiation baseline.",
+        ),
+        metric_line(
+            "Claim retrieval",
+            "CLAIMCHECK",
+            "OpenRouter embedding Hit@3",
+            claim_main.get("hit_at_3"),
+            "done",
+            "Semantic retrieval improves over lexical baselines.",
+        ),
+        metric_line(
+            "Groundedness verifier",
+            "CLAIMCHECK",
+            "Feature verifier Macro-F1",
+            feature_verifier.get("macro_f1"),
+            "diagnostic",
+            "Verifier still weak, especially as final decision module.",
+        ),
+        metric_line(
+            "Evidence-aware ranker",
+            "CLAIMCHECK",
+            f"{best_ranker_name} MAP",
+            best_ranker.get("map"),
+            "diagnostic",
+            "BM25 currently beats feature-verifier probability for ranking.",
+        ),
+        metric_line(
+            "Auxiliary classifier",
+            "Local OpenReview/PRISM",
+            f"{local_classifier.get('best_method', '-')} Macro-F1",
+            best_classifier.get("aggregate", {}).get("macro_f1"),
+            "diagnostic",
+            "Classification remains auxiliary; metadata baseline is strongest.",
+        ),
+        metric_line(
+            "Rubric-agent generation",
+            "Local OpenReview/PRISM",
+            "Coverage recall @ 0.18",
+            coverage_018.get("human_weakness_recall"),
+            "pipeline baseline",
+            "Deterministic reviewer validates Agent -> RAG interface.",
+        ),
+        metric_line(
+            "GLM-4.6V reviewer sample",
+            "Local OpenReview/PRISM",
+            "Coverage recall @ 0.18",
+            glm_coverage_018.get("human_weakness_recall"),
+            glm_generation.get("status", "not run"),
+            f"{glm_generation.get('generated_weakness_count', 0)} generated; labels: {glm_verifier.get('label_counts', {})}",
+        ),
+        metric_line(
+            "Generated weakness verifier/ranker",
+            "Local OpenReview/PRISM",
+            "Generated weaknesses verified",
+            rubric_verifier.get("generated_weakness_count"),
+            "pipeline baseline",
+            f"Label counts: {rubric_verifier.get('label_counts', {})}",
+        ),
+    ]
+
+    lines.extend(
+        [
+            "",
+            "## Dataset Coverage",
+            "",
+            "| Dataset | Current use | Evidence | Remaining gap |",
+            "| --- | --- | --- | --- |",
+            f"| Local OpenReview/PRISM | End-to-end A-version dataset | {human.get('paper_count', 50)} papers, {human.get('weakness_item_count', 0)} human weakness items, {evidence.get('evidence_block_count', 0)} evidence blocks | Human weakness-evidence gold labels still incomplete |",
+            f"| SubstanReview | Supervised substantiation floor | Test Macro-F1 {fmt(substan_nb.get('macro_f1'))} | Review-internal evidence only, not full paper-grounding |",
+            f"| CLAIMCHECK | Paper-grounded critique benchmark | {claimcheck.get('main', {}).get('weakness_count', 155)} main weaknesses; embedding Hit@3 {fmt(claim_main.get('hit_at_3'))} | Raw row-level text not committed; verifier still weak |",
+            "",
+            "## Current Risks",
+            "",
+            f"- OpenRouter chat reranker status: `{reranker.get('status', 'unknown')}`; reason: {reranker.get('reason', 'not recorded')}.",
+            "- GLM-4.6V reviewer result is a 3-paper deployment sample, so it proves provider integration and pipeline handoff only.",
+            "- Generated rubric-agent weaknesses are mostly heuristic structure warnings; current verifier labels are mostly Unsupported / Mentioned.",
+            "- Local classification is exploratory: metadata baseline is stronger than evidence-proxy features.",
+            "- CLAIMCHECK and local silver labels are diagnostics until human gold labels or licensed row-level benchmark evaluation are stronger.",
+            "",
+            "## Next Experiments",
+            "",
+            "1. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.",
+            "2. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.",
+            "3. Expand local human gold weakness-evidence labels from pilot toward 200-300 items.",
+            "4. Use generated + verified weaknesses as features in the auxiliary classifier only after generated evidence support improves over metadata baseline.",
+        ]
+    )
+    return lines
+
+
+def main() -> None:
+    ensure_dirs()
+    out_path = REPORT_DIR / "experiment_dashboard.md"
+    out_path.write_text("\n".join(dashboard_lines()) + "\n", encoding="utf-8")
+    print(f"Wrote {out_path}")
+
+
+if __name__ == "__main__":
+    main()

@@ -335,17 +335,18 @@ papers_manifest.csv
 11. CLAIMCHECK evidence-aware ranker diagnostic：在 24 个同时包含 Grounded/Ungrounded 的 paper-review group 上，BM25 max similarity 的 MAP=0.7771、Top-1 grounded rate=0.625，优于当前 out-of-fold feature verifier probability；排序层当前应以检索相关性为主，verifier probability 暂不作为主排序信号。
 12. Local OpenReview accept/reject diagnostic：在 50 篇本地 ICLR 2024 样本上做 5-fold exploratory classification，metadata baseline Macro-F1=0.68；human weakness upper-bound Macro-F1=0.6198；silver evidence proxy Macro-F1=0.4253。分类模块保留为辅助实验，当前证据特征不能支撑主贡献。
 13. Rubric-agent generation baseline：基于论文结构和 evidence blocks 的 deterministic rubric reviewer 已在 50 篇本地样本生成 194 条候选弱点，coverage proxy 在 threshold=0.18 时覆盖 48.05% 人工 reviewer weaknesses，194/194 均能进入 section-aware retrieval，并已通过 heuristic verifier/ranker 生成 top-3 ranked weaknesses。Verifier 诊断显示 121/194 为 Unsupported、70/194 为 Mentioned but Not Problem、3/194 为 Partially Supported，说明该 baseline 主要用于验证 Agent -> RAG -> Verifier -> Ranker 接口，不作为最终 LLM reviewer。
-10. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
+14. GLM-4.6V structured reviewer sample：通过环境变量安全接入 GLM-4.6V，在 3 篇本地样本生成 8 条结构化弱点，coverage proxy 在 threshold=0.18 时覆盖 50.47% 人工 reviewer weaknesses，并立即进入 section-aware retrieval 与 heuristic verifier；当前标签分布为 4 条 Mentioned but Not Problem、2 条 Partially Supported、2 条 Unsupported，说明 provider 接入和流程闭环可用，但样本仍不足以作为最终性能结论。
+15. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
 
 ### 当前阶段
 
 1. 先用已有人工标注数据集验证 substantiation/verifier 能力。
 2. 保留本地 OpenReview ICLR 2024 样本作为端到端 evidence retrieval + weakness audit 应用实验。
 3. 继续把 silver labels 限定为 pipeline debugging，不作为最终实验结论。
-4. OpenRouter 免费 chat reranker 受上游 429 限速影响，暂不作为全量主线；下一步只做小样本 evidence-aware LLM verifier，或回退到本地人工 gold label 流程。
+4. OpenRouter 免费 chat reranker 受上游 429 限速影响，暂不作为全量主线；GLM-4.6V 当前作为 structured reviewer provider 做 5-10 篇小样本对比，或回退到本地人工 gold label 流程。
 5. 数据集路线以 `docs/research/evireview_dataset_registry_2026-05-31.md` 为准：A 版使用本地 OpenReview、SubstanReview、CLAIMCHECK；PeerRead、NLPeer、OpenReview Raw 作为 B 版扩展。
 6. 分类实验必须继续写成 auxiliary/exploratory；除非后续 agent-generated weakness + human gold evidence labels 明显超过 metadata baseline，否则不要把 accept/reject 作为系统核心指标。
-7. 生成实验先使用 deterministic rubric-agent 做 pipeline validation；后续 OpenRouter 免费模型只做小样本 structured reviewer，对比 rubric baseline，而不是替代全部实验链路。
+7. 生成实验先使用 deterministic rubric-agent 做 pipeline validation；GLM-4.6V 只做小样本 structured reviewer 对比 rubric baseline，而不是替代全部实验链路。
 4. 用外部人标 benchmark 的结果决定是否接入更强的 LLM verifier。
 
 ### 下一阶段

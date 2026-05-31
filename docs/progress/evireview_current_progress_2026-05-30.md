@@ -198,7 +198,29 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | Verifier Partially Supported | 3 |
 | Ranked top-3 items | 141 |
 
-结论：rubric-agent 已经把 Step 4 的生成接口跑通，并能进入 section-aware retrieval、heuristic verifier 和 top-3 ranker。当前 verifier 结果偏 Unsupported / Mentioned，说明它更像“结构风险提示器”，不是最终 LLM reviewer；下一步应做 OpenRouter 小样本 structured reviewer 与 rubric-agent 对比，并重点降低 unsupported/generated-generic 问题。
+结论：rubric-agent 已经把 Step 4 的生成接口跑通，并能进入 section-aware retrieval、heuristic verifier 和 top-3 ranker。当前 verifier 结果偏 Unsupported / Mentioned，说明它更像“结构风险提示器”，不是最终 LLM reviewer；下一步应做 GLM-4.6V 小样本 structured reviewer 与 rubric-agent 对比，并重点降低 unsupported/generated-generic 问题。
+
+### 2.8 GLM-4.6V structured reviewer 小样本接入
+
+定位：验证 GLM-4.6V 能否作为结构化 reviewer provider 接入现有 Agent -> Paper-RAG -> Verifier/Ranker 流程。API key 只通过环境变量读取，不写入仓库。
+
+当前小样本结果：
+
+| 指标 | 数值 |
+| --- | ---: |
+| Selected papers | 3 |
+| Generated weaknesses | 8 |
+| Papers with generation | 3 |
+| Generic rate | 0.1250 |
+| Coverage recall @ 0.12 | 0.7757 |
+| Coverage recall @ 0.18 | 0.5047 |
+| Coverage recall @ 0.24 | 0.1308 |
+| Verifier Mentioned but Not Problem | 4 |
+| Verifier Partially Supported | 2 |
+| Verifier Unsupported | 2 |
+| Mean support score | 0.3448 |
+
+结论：GLM-4.6V 已经跑通结构化生成与后续检索/验证链路；相较 deterministic rubric-agent，小样本中的 support distribution 更好，但样本只有 3 篇，不能写成最终性能结论。下一步应扩展到 5-10 篇，与 rubric-agent 按 coverage、generic rate、redundancy、verifier label distribution 做同一套对比。
 
 ## 3. 最新论文对实验路线的修正
 
@@ -217,6 +239,10 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | OpenReview Raw: https://huggingface.co/datasets/priorcomputers/openreview_raw | 大规模 OpenReview 数据来源，适合系统稳定后的扩容。 |
 | ReviewGrounder: https://arxiv.org/abs/2604.14261 | 支持 rubric-guided、tool-integrated reviewer 设计，本轮 rubric-agent baseline 与它对齐。 |
 | FactReview: https://arxiv.org/abs/2604.04074 | 支持将评审生成拆成 claim/evidence audit，而不是直接端到端生成最终 judgment。 |
+| Physics Is All You Need?: https://arxiv.org/abs/2605.30353 | 说明科研 agent 仍需要领域专家监督，且普通 oracle tests 会漏掉科学软件错误；支持本项目把 reviewer agent 放在证据审计和人工 gold labels 约束下。 |
+| RAGCap-Bench: https://arxiv.org/abs/2510.13910 | Agentic RAG 的中间能力需要单独测评；支持本项目把 weakness planning、retrieval、verification、ranking 拆成可诊断模块。 |
+| InfoDeepSeek: https://arxiv.org/abs/2505.15872 | 动态信息搜寻式 Agentic RAG 需要 accuracy、utility、compactness 等细粒度指标；支持后续加入 evidence compactness / citation efficiency。 |
+| RAGCHECKER: https://arxiv.org/abs/2408.08067 | RAG 评估应区分检索和生成，并用 claim-level entailment 诊断；支持当前“retrieval 好不等于 verifier 好”的实验结论。 |
 
 与开题报告对齐后的结论：
 
@@ -250,8 +276,8 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 核心未完成：
 
 - 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注。
-- Agent weakness generation 还没有跑完整对比。
-- Rubric-agent generation baseline 已完成；OpenRouter 小样本 LLM reviewer 对比还没做。
+- Agent weakness generation 已跑 rubric-agent 全量 baseline 和 GLM-4.6V 3-paper 小样本，但还没有完成 5-10 篇 provider 对比。
+- Rubric-agent generation baseline 已完成；GLM-4.6V 已接入，小样本仍需扩大后再和 rubric-agent 正式对比。
 - Evidence-aware ranker 已有 CLAIMCHECK 诊断，但还没有进入本地端到端主实验。
 - Accept/reject 分类已有探索性 baseline，但还没有使用 agent-generated weakness。
 - 前端、后端、Agent/RAG 工程化目录还未落地。
@@ -273,7 +299,7 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 3. 完成本地 60 条 pilot gold label 的质量检查，必要时扩到 200-300 条。
 4. 把 feature-fusion verifier 的失败案例转成标注规范补充：哪些 weak criticism 是 generic，哪些需要 external literature。
 5. 做 evidence-aware ranker：支持度、严重性、section confidence、novelty category 综合排序。
-6. 用 OpenRouter 免费模型跑 5-10 篇 structured reviewer 小样本，与 rubric-agent baseline 对比 coverage / generic rate / redundancy。
+6. 用 GLM-4.6V 跑 5-10 篇 structured reviewer 小样本，与 rubric-agent baseline 对比 coverage / generic rate / redundancy / verifier label distribution。
 
 近期最小可交付：
 
@@ -309,3 +335,13 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 - `code/experiments/evireview_a/data/rubric_agent_ranked_top3.jsonl`
 - `code/experiments/evireview_a/data/rubric_agent_verifier_summary.json`
 - `code/experiments/evireview_a/reports/rubric_agent_generation_report.md`
+- `code/experiments/evireview_a/src/run_glm_reviewer_experiment.py`
+- `code/experiments/evireview_a/src/render_experiment_dashboard.py`
+- `code/experiments/evireview_a/data/glm_reviewer_weaknesses.jsonl`
+- `code/experiments/evireview_a/data/glm_reviewer_weaknesses_summary.json`
+- `code/experiments/evireview_a/data/glm_reviewer_coverage_metrics.json`
+- `code/experiments/evireview_a/data/glm_reviewer_retrieval_top5.jsonl`
+- `code/experiments/evireview_a/data/glm_reviewer_verified_weaknesses.jsonl`
+- `code/experiments/evireview_a/data/glm_reviewer_verifier_summary.json`
+- `code/experiments/evireview_a/reports/glm_reviewer_experiment_report.md`
+- `code/experiments/evireview_a/reports/experiment_dashboard.md`

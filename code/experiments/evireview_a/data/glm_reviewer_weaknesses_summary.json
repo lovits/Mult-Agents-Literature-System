@@ -1,0 +1,23 @@
+{
+  "status": "ok",
+  "generator": "glm_structured_reviewer_v0",
+  "model": "glm-4.6v",
+  "endpoint": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+  "requested_paper_count": 3,
+  "selected_paper_count": 3,
+  "generated_weakness_count": 8,
+  "papers_with_generation": 3,
+  "category_counts": {
+    "experiment": 4,
+    "validity": 2,
+    "method": 1,
+    "clarity": 1
+  },
+  "severity_counts": {
+    "major": 6,
+    "minor": 2
+  },
+  "elapsed_seconds": 93.53,
+  "errors": [],
+  "warning": "Small GLM-4.6V reviewer deployment sample; API key is never written to disk."
+}

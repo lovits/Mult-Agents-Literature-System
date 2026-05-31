@@ -67,10 +67,16 @@ python3 code/experiments/evireview_a/src/evaluate_rubric_agent_coverage.py
 python3 code/experiments/evireview_a/src/retrieve_rubric_agent_evidence.py
 python3 code/experiments/evireview_a/src/verify_rubric_agent_weaknesses.py
 python3 code/experiments/evireview_a/src/render_rubric_agent_report.py
+python3 code/experiments/evireview_a/src/run_glm_reviewer_experiment.py
+python3 code/experiments/evireview_a/src/render_experiment_dashboard.py
 ```
 
 OpenRouter embedding retrieval requires `OPENROUTER_API_KEY`. The default free embedding model is
 `nvidia/llama-nemotron-embed-vl-1b-v2:free`; override it with `OPENROUTER_EMBEDDING_MODEL`.
+
+GLM-4.6V reviewer generation requires one of `GLM_API_KEY`, `ZHIPU_API_KEY`, `ZHIPUAI_API_KEY`,
+`BIGMODEL_API_KEY`, or `ZAI_API_KEY`. The experiment records only the environment-variable name used,
+never the secret value. Override the model or endpoint with `GLM_MODEL` and `GLM_ENDPOINT`.
 
 Current retrieval outputs:
 
@@ -131,6 +137,14 @@ CLAIMCHECK benchmark outputs:
 - `rubric_agent_ranked_top3.jsonl`
 - `rubric_agent_verifier_summary.json`
 - `reports/rubric_agent_generation_report.md`
+- `glm_reviewer_weaknesses.jsonl`
+- `glm_reviewer_weaknesses_summary.json`
+- `glm_reviewer_coverage_metrics.json`
+- `glm_reviewer_retrieval_top5.jsonl`
+- `glm_reviewer_verified_weaknesses.jsonl`
+- `glm_reviewer_verifier_summary.json`
+- `reports/glm_reviewer_experiment_report.md`
+- `reports/experiment_dashboard.md`
 
 Raw and row-level CLAIMCHECK text files are intentionally ignored because no upstream repository LICENSE file was detected.
 OpenRouter embedding caches are also ignored; only aggregate metrics and reports are committed.

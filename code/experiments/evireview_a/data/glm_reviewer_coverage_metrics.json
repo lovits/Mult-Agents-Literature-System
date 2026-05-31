@@ -1,0 +1,23 @@
+{
+  "generic_rate": 0.125,
+  "coverage_by_threshold": [
+    {
+      "threshold": 0.12,
+      "evaluated_human_weakness_count": 107,
+      "covered_human_weakness_count": 83,
+      "human_weakness_recall": 0.7757
+    },
+    {
+      "threshold": 0.18,
+      "evaluated_human_weakness_count": 107,
+      "covered_human_weakness_count": 54,
+      "human_weakness_recall": 0.5047
+    },
+    {
+      "threshold": 0.24,
+      "evaluated_human_weakness_count": 107,
+      "covered_human_weakness_count": 14,
+      "human_weakness_recall": 0.1308
+    }
+  ]
+}
