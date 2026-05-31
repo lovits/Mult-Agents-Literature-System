@@ -222,6 +222,25 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 结论：GLM-4.6V 已经跑通结构化生成与后续检索/验证链路；相较 deterministic rubric-agent，小样本中的 support distribution 更好，但样本只有 3 篇，不能写成最终性能结论。下一步应扩展到 5-10 篇，与 rubric-agent 按 coverage、generic rate、redundancy、verifier label distribution 做同一套对比。
 
+### 2.9 GLM overlap 上的 reviewer 公平对比
+
+定位：在不重新调用外部 API 的前提下，先把 GLM 已生成的 3 篇论文与 rubric-agent 限定在同一批论文上比较，避免“GLM 小样本 vs rubric 全量 50 篇”的不公平对照。
+
+重叠样本：3 篇论文 / 107 条 human weaknesses。
+
+| 指标 | Rubric-agent | GLM-4.6V reviewer |
+| --- | ---: | ---: |
+| Generated weaknesses | 11 | 8 |
+| Mean generated per paper | 3.6667 | 2.6667 |
+| Generic rate | 0.0909 | 0.0000 |
+| Redundancy rate | 0.1091 | 0.0000 |
+| Coverage recall @ 0.18 | 0.3738 | 0.5047 |
+| Mean paper recall @ 0.18 | 0.3412 | 0.5166 |
+| Mean support score | 0.2030 | 0.3448 |
+| Partially-supported-or-better rate | 0.0000 | 0.2500 |
+
+结论：在 GLM overlap 上，GLM-4.6V 生成更少，但 coverage proxy、support score、Partially Supported 比例均高于 rubric-agent。这个结果支持“rubric-agent 是可解释结构风险 baseline，GLM/LLM reviewer 是候选生成器，但必须进入 evidence verifier”的实验路线。下一步仍然不能直接写成 GLM 优于 rubric 的最终结论，需要扩到 5-10 篇后再复跑同一套 paired report。
+
 ## 3. 最新论文对实验路线的修正
 
 本轮跟踪并写入 `memory/RESEARCH_LOG.md` 的论文包括：
@@ -243,6 +262,10 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | RAGCap-Bench: https://arxiv.org/abs/2510.13910 | Agentic RAG 的中间能力需要单独测评；支持本项目把 weakness planning、retrieval、verification、ranking 拆成可诊断模块。 |
 | InfoDeepSeek: https://arxiv.org/abs/2505.15872 | 动态信息搜寻式 Agentic RAG 需要 accuracy、utility、compactness 等细粒度指标；支持后续加入 evidence compactness / citation efficiency。 |
 | RAGCHECKER: https://arxiv.org/abs/2408.08067 | RAG 评估应区分检索和生成，并用 claim-level entailment 诊断；支持当前“retrieval 好不等于 verifier 好”的实验结论。 |
+| SoK Agentic RAG: https://arxiv.org/abs/2603.07379 | 把 Agentic RAG 形式化为带状态转移的 sequential decision-making 系统，支持本项目把评审流程写成状态图和可审计 trajectory。 |
+| A-RAG: https://arxiv.org/abs/2602.03442 | 通过 keyword search、semantic search、chunk read 三层检索接口让模型参与检索决策，支持本项目后续把 section-aware Paper-RAG 升级为 hierarchical retrieval tools。 |
+| Beyond Correctness / VERITAS: https://arxiv.org/abs/2510.13272 | 强调 search agent 不能只看最终答案正确性，还要看 intermediate reasoning faithfulness；支持本项目把 weakness -> evidence -> verifier trace 作为主贡献证据。 |
+| Fintech Agentic RAG: https://arxiv.org/abs/2510.25518 | 模块化 agentic RAG 在专业领域通过 query reformulation、sub-query decomposition、reranking 提升检索鲁棒性，但有延迟代价；支持本项目把多 agent workflow 写成质量优先而非低延迟系统。 |
 
 与开题报告对齐后的结论：
 
@@ -276,8 +299,8 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 核心未完成：
 
 - 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注。
-- Agent weakness generation 已跑 rubric-agent 全量 baseline 和 GLM-4.6V 3-paper 小样本，但还没有完成 5-10 篇 provider 对比。
-- Rubric-agent generation baseline 已完成；GLM-4.6V 已接入，小样本仍需扩大后再和 rubric-agent 正式对比。
+- Agent weakness generation 已跑 rubric-agent 全量 baseline、GLM-4.6V 3-paper 小样本，以及 GLM overlap 上的 paired comparison，但还没有完成 5-10 篇 provider 对比。
+- Rubric-agent generation baseline 已完成；GLM-4.6V 已接入并完成重叠样本公平对比，小样本仍需扩大后再作为正式 provider 结果。
 - Evidence-aware ranker 已有 CLAIMCHECK 诊断，但还没有进入本地端到端主实验。
 - Accept/reject 分类已有探索性 baseline，但还没有使用 agent-generated weakness。
 - 前端、后端、Agent/RAG 工程化目录还未落地。
@@ -345,3 +368,6 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 - `code/experiments/evireview_a/data/glm_reviewer_verifier_summary.json`
 - `code/experiments/evireview_a/reports/glm_reviewer_experiment_report.md`
 - `code/experiments/evireview_a/reports/experiment_dashboard.md`
+- `code/experiments/evireview_a/src/compare_generated_reviewers.py`
+- `code/experiments/evireview_a/data/generated_reviewer_comparison_metrics.json`
+- `code/experiments/evireview_a/reports/generated_reviewer_comparison_report.md`

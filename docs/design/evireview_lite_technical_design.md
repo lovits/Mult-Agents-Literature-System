@@ -336,7 +336,8 @@ papers_manifest.csv
 12. Local OpenReview accept/reject diagnostic：在 50 篇本地 ICLR 2024 样本上做 5-fold exploratory classification，metadata baseline Macro-F1=0.68；human weakness upper-bound Macro-F1=0.6198；silver evidence proxy Macro-F1=0.4253。分类模块保留为辅助实验，当前证据特征不能支撑主贡献。
 13. Rubric-agent generation baseline：基于论文结构和 evidence blocks 的 deterministic rubric reviewer 已在 50 篇本地样本生成 194 条候选弱点，coverage proxy 在 threshold=0.18 时覆盖 48.05% 人工 reviewer weaknesses，194/194 均能进入 section-aware retrieval，并已通过 heuristic verifier/ranker 生成 top-3 ranked weaknesses。Verifier 诊断显示 121/194 为 Unsupported、70/194 为 Mentioned but Not Problem、3/194 为 Partially Supported，说明该 baseline 主要用于验证 Agent -> RAG -> Verifier -> Ranker 接口，不作为最终 LLM reviewer。
 14. GLM-4.6V structured reviewer sample：通过环境变量安全接入 GLM-4.6V，在 3 篇本地样本生成 8 条结构化弱点，coverage proxy 在 threshold=0.18 时覆盖 50.47% 人工 reviewer weaknesses，并立即进入 section-aware retrieval 与 heuristic verifier；当前标签分布为 4 条 Mentioned but Not Problem、2 条 Partially Supported、2 条 Unsupported，说明 provider 接入和流程闭环可用，但样本仍不足以作为最终性能结论。
-15. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
+15. Generated reviewer paired comparison：在 GLM overlap 的 3 篇论文 / 107 条 human weaknesses 上，GLM-4.6V 的 coverage recall@0.18 为 0.5047，高于同批 rubric-agent 的 0.3738；GLM mean support score 为 0.3448，高于 rubric-agent 的 0.2030。该结果只作为小样本诊断，用于决定下一步扩到 5-10 篇。
+16. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
 
 ### 当前阶段
 

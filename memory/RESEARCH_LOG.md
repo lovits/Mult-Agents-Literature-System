@@ -77,3 +77,23 @@
 - **Authors**: Dongyu Ru, Lin Qiu, Xiangkun Hu, Tianhang Zhang, Peng Shi, Shuaichen Chang, Cheng Jiayang, Cunxiang Wang, Shichao Sun, Huanyu Li, Zizhao Zhang, Binjie Wang, Jiarong Jiang, Tong He, Zhiguo Wang, Pengfei Liu, Yue Zhang, Zheng Zhang
 - **Link**: https://arxiv.org/abs/2408.08067
 - **Summary**: Presents fine-grained RAG diagnostics for retrieval and generation, using claim-level entailment checks and meta-evaluation against human judgments. Relevance: supports the current claim/weakness-level verifier design and argues for separating retrieval quality from generation faithfulness.
+
+### [2026-05-31] SoK: Agentic Retrieval-Augmented Generation (RAG): Taxonomy, Architectures, Evaluation, and Research Directions
+- **Authors**: Saroj Mishra, Suman Niroula, Umesh Yadav, Dilip Thakur, Srijan Gyawali, Shiva Gaire
+- **Link**: https://arxiv.org/abs/2603.07379
+- **Summary**: Systematizes Agentic RAG as sequential decision-making with planning, retrieval orchestration, memory, and tool-use components, and highlights reliability risks such as compounding hallucination and retrieval misalignment. Relevance: supports writing EviReview-Lite as a stateful reviewer-agent workflow with explicit oversight and trajectory diagnostics.
+
+### [2026-05-31] A-RAG: Scaling Agentic Retrieval-Augmented Generation via Hierarchical Retrieval Interfaces
+- **Authors**: Mingxuan Du, Benfeng Xu, Chiwei Zhu, Shaohan Wang, Pengyu Wang, Xiaorui Wang, Zhendong Mao
+- **Link**: https://arxiv.org/abs/2602.03442
+- **Summary**: Proposes hierarchical retrieval interfaces, including keyword search, semantic search, and chunk read, so an agent can adaptively choose retrieval granularity. Relevance: motivates upgrading EviReview-Lite from section-aware reranking toward explicit Paper-RAG tools for reviewer agents.
+
+### [2026-05-31] Beyond Correctness: Rewarding Faithful Reasoning in Retrieval-Augmented Generation
+- **Authors**: Zhichao Xu, Zongyu Wu, Yun Zhou, Aosong Feng, Kang Zhou, Sangmin Woo, Kiran Ramnath, Yijun Tian, Xuan Qi, Weikang Qiu, Lin Lee Cheong, Haibo Ding
+- **Link**: https://arxiv.org/abs/2510.13272
+- **Summary**: Introduces faithfulness metrics for RL-based search agents and VERITAS, a reward framework for intermediate traceability in agentic search. Relevance: supports treating EviReview-Lite's weakness-evidence-verifier trace as a primary evaluation artifact, not just final review correctness.
+
+### [2026-05-31] Retrieval Augmented Generation (RAG) for Fintech: Agentic Design and Evaluation
+- **Authors**: Thomas Cook, Richard Osuagwu, Liman Tsatiashvili, Vrynsia Vrynsia, Koustav Ghosal, Maraim Masoud, Riccardo Mattivi
+- **Link**: https://arxiv.org/abs/2510.25518
+- **Summary**: Designs a modular agentic RAG pipeline for a domain with dense terminology, using query reformulation, sub-query decomposition, acronym resolution, and cross-encoder reranking. Relevance: supports using domain-specific retrieval orchestration in EviReview-Lite, while noting that quality gains may trade off against latency.

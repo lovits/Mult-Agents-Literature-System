@@ -54,6 +54,7 @@ def dashboard_lines() -> list[str]:
     glm_generation = load_json("glm_reviewer_weaknesses_summary.json", {})
     glm_coverage = load_json("glm_reviewer_coverage_metrics.json", {})
     glm_verifier = load_json("glm_reviewer_verifier_summary.json", {})
+    generated_comparison = load_json("generated_reviewer_comparison_metrics.json", {})
     reranker = load_json("claimcheck_openrouter_rerank_metrics.json", {})
 
     retrieval_results = retrieval.get("results", {})
@@ -80,6 +81,17 @@ def dashboard_lines() -> list[str]:
     )
     glm_coverage_018 = next(
         (item for item in glm_coverage.get("coverage_by_threshold", []) if item.get("threshold") == 0.18),
+        {},
+    )
+    comparison_generators = generated_comparison.get("generators", {})
+    comparison_rubric = comparison_generators.get("rubric_agent", {})
+    comparison_glm = comparison_generators.get("glm_reviewer", {})
+    comparison_rubric_018 = next(
+        (item for item in comparison_rubric.get("coverage_by_threshold", []) if item.get("threshold") == 0.18),
+        {},
+    )
+    comparison_glm_018 = next(
+        (item for item in comparison_glm.get("coverage_by_threshold", []) if item.get("threshold") == 0.18),
         {},
     )
 
@@ -188,6 +200,14 @@ def dashboard_lines() -> list[str]:
             f"{glm_generation.get('generated_weakness_count', 0)} generated; labels: {glm_verifier.get('label_counts', {})}",
         ),
         metric_line(
+            "Paired reviewer comparison",
+            "GLM overlap papers",
+            "Coverage recall @ 0.18",
+            comparison_glm_018.get("human_weakness_recall"),
+            "diagnostic",
+            f"GLM vs rubric: {comparison_glm_018.get('human_weakness_recall', '-')} vs {comparison_rubric_018.get('human_weakness_recall', '-')}",
+        ),
+        metric_line(
             "Generated weakness verifier/ranker",
             "Local OpenReview/PRISM",
             "Generated weaknesses verified",
@@ -212,6 +232,7 @@ def dashboard_lines() -> list[str]:
             "",
             f"- OpenRouter chat reranker status: `{reranker.get('status', 'unknown')}`; reason: {reranker.get('reason', 'not recorded')}.",
             "- GLM-4.6V reviewer result is a 3-paper deployment sample, so it proves provider integration and pipeline handoff only.",
+            "- Paired GLM-vs-rubric comparison currently covers only the GLM overlap papers.",
             "- Generated rubric-agent weaknesses are mostly heuristic structure warnings; current verifier labels are mostly Unsupported / Mentioned.",
             "- Local classification is exploratory: metadata baseline is stronger than evidence-proxy features.",
             "- CLAIMCHECK and local silver labels are diagnostics until human gold labels or licensed row-level benchmark evaluation are stronger.",

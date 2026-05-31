@@ -1,0 +1,120 @@
+{
+  "status": "ok",
+  "task": "paired generated reviewer comparison on GLM paper overlap",
+  "warning": "Small paired diagnostic; use for experiment planning only.",
+  "overlap_paper_ids": [
+    "D0zeqL7Vnz",
+    "ITq4ZRUT4a",
+    "xnUIMz5u2s"
+  ],
+  "overlap_paper_count": 3,
+  "human_weakness_count": 107,
+  "generators": {
+    "rubric_agent": {
+      "generator": "rubric_agent",
+      "display": "Rubric-agent",
+      "paper_count": 3,
+      "generated_weakness_count": 11,
+      "human_weakness_count": 107,
+      "mean_generated_per_paper": 3.6667,
+      "category_counts": {
+        "experiment": 4,
+        "limitation": 3,
+        "related_work": 1,
+        "method": 2,
+        "reproducibility": 1
+      },
+      "severity_counts": {
+        "major": 7,
+        "minor": 4
+      },
+      "generic_rate": 0.0909,
+      "redundancy_rate": 0.1091,
+      "coverage_by_threshold": [
+        {
+          "threshold": 0.12,
+          "human_weakness_count": 107,
+          "covered_human_weakness_count": 81,
+          "human_weakness_recall": 0.757,
+          "mean_paper_recall": 0.7909
+        },
+        {
+          "threshold": 0.18,
+          "human_weakness_count": 107,
+          "covered_human_weakness_count": 40,
+          "human_weakness_recall": 0.3738,
+          "mean_paper_recall": 0.3412
+        },
+        {
+          "threshold": 0.24,
+          "human_weakness_count": 107,
+          "covered_human_weakness_count": 6,
+          "human_weakness_recall": 0.0561,
+          "mean_paper_recall": 0.0437
+        }
+      ],
+      "support": {
+        "verified_count": 11,
+        "label_counts": {
+          "Mentioned but Not Problem": 5,
+          "Unsupported": 6
+        },
+        "mean_support_score": 0.203,
+        "partially_supported_or_better_rate": 0.0
+      }
+    },
+    "glm_reviewer": {
+      "generator": "glm_reviewer",
+      "display": "GLM-4.6V reviewer",
+      "paper_count": 3,
+      "generated_weakness_count": 8,
+      "human_weakness_count": 107,
+      "mean_generated_per_paper": 2.6667,
+      "category_counts": {
+        "experiment": 4,
+        "validity": 2,
+        "method": 1,
+        "clarity": 1
+      },
+      "severity_counts": {
+        "major": 6,
+        "minor": 2
+      },
+      "generic_rate": 0.0,
+      "redundancy_rate": 0.0,
+      "coverage_by_threshold": [
+        {
+          "threshold": 0.12,
+          "human_weakness_count": 107,
+          "covered_human_weakness_count": 83,
+          "human_weakness_recall": 0.7757,
+          "mean_paper_recall": 0.8159
+        },
+        {
+          "threshold": 0.18,
+          "human_weakness_count": 107,
+          "covered_human_weakness_count": 54,
+          "human_weakness_recall": 0.5047,
+          "mean_paper_recall": 0.5166
+        },
+        {
+          "threshold": 0.24,
+          "human_weakness_count": 107,
+          "covered_human_weakness_count": 14,
+          "human_weakness_recall": 0.1308,
+          "mean_paper_recall": 0.1322
+        }
+      ],
+      "support": {
+        "verified_count": 8,
+        "label_counts": {
+          "Mentioned but Not Problem": 4,
+          "Partially Supported": 2,
+          "Unsupported": 2
+        },
+        "mean_support_score": 0.3448,
+        "partially_supported_or_better_rate": 0.25
+      }
+    }
+  }
+}
