@@ -25,6 +25,7 @@ This dashboard aggregates the current A-version experiment state across dataset 
 | Rubric-agent generation | Local OpenReview/PRISM | Coverage recall @ 0.18 | 0.4805 | pipeline baseline | Deterministic reviewer validates Agent -> RAG interface. |
 | GLM-4.6V reviewer sample | Local OpenReview/PRISM | Coverage recall @ 0.18 | 0.5047 | ok | 8 generated; labels: {'Mentioned but Not Problem': 4, 'Partially Supported': 2, 'Unsupported': 2} |
 | Paired reviewer comparison | GLM overlap papers | Coverage recall @ 0.18 | 0.5047 | diagnostic | GLM vs rubric: 0.5047 vs 0.3738 |
+| Hierarchical Paper-RAG | Generated weaknesses | GLM mean support | 0.4411 | diagnostic | GLM partial+ 0.625; rubric support 0.1999 |
 | Generated weakness verifier/ranker | Local OpenReview/PRISM | Generated weaknesses verified | 194 | pipeline baseline | Label counts: {'Unsupported': 121, 'Mentioned but Not Problem': 70, 'Partially Supported': 3} |
 
 ## Dataset Coverage
@@ -40,6 +41,7 @@ This dashboard aggregates the current A-version experiment state across dataset 
 - OpenRouter chat reranker status: `blocked`; reason: OpenRouter HTTP error 429: Provider returned error; provider=Venice; retry_after_seconds=12.
 - GLM-4.6V reviewer result is a 3-paper deployment sample, so it proves provider integration and pipeline handoff only.
 - Paired GLM-vs-rubric comparison currently covers only the GLM overlap papers.
+- Hierarchical Paper-RAG currently uses silver verifier labels; treat support gains as architecture diagnostics, not final truth.
 - Generated rubric-agent weaknesses are mostly heuristic structure warnings; current verifier labels are mostly Unsupported / Mentioned.
 - Local classification is exploratory: metadata baseline is stronger than evidence-proxy features.
 - CLAIMCHECK and local silver labels are diagnostics until human gold labels or licensed row-level benchmark evaluation are stronger.
@@ -49,4 +51,5 @@ This dashboard aggregates the current A-version experiment state across dataset 
 1. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.
 2. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.
 3. Expand local human gold weakness-evidence labels from pilot toward 200-300 items.
-4. Use generated + verified weaknesses as features in the auxiliary classifier only after generated evidence support improves over metadata baseline.
+4. Compare section-aware and hierarchical retrieval against human gold labels once the gold set is large enough.
+5. Use generated + verified weaknesses as features in the auxiliary classifier only after generated evidence support improves over metadata baseline.

@@ -55,6 +55,7 @@ def dashboard_lines() -> list[str]:
     glm_coverage = load_json("glm_reviewer_coverage_metrics.json", {})
     glm_verifier = load_json("glm_reviewer_verifier_summary.json", {})
     generated_comparison = load_json("generated_reviewer_comparison_metrics.json", {})
+    hierarchical_retrieval = load_json("generated_hierarchical_retrieval_summary.json", {})
     reranker = load_json("claimcheck_openrouter_rerank_metrics.json", {})
 
     retrieval_results = retrieval.get("results", {})
@@ -94,6 +95,9 @@ def dashboard_lines() -> list[str]:
         (item for item in comparison_glm.get("coverage_by_threshold", []) if item.get("threshold") == 0.18),
         {},
     )
+    hierarchical_sources = hierarchical_retrieval.get("sources", {})
+    hierarchical_glm = hierarchical_sources.get("glm_reviewer", {})
+    hierarchical_rubric = hierarchical_sources.get("rubric_agent", {})
 
     lines = [
         "# EviReview-Lite Experiment Dashboard",
@@ -208,6 +212,14 @@ def dashboard_lines() -> list[str]:
             f"GLM vs rubric: {comparison_glm_018.get('human_weakness_recall', '-')} vs {comparison_rubric_018.get('human_weakness_recall', '-')}",
         ),
         metric_line(
+            "Hierarchical Paper-RAG",
+            "Generated weaknesses",
+            "GLM mean support",
+            hierarchical_glm.get("mean_support_score"),
+            "diagnostic",
+            f"GLM partial+ {hierarchical_glm.get('partially_supported_or_better_rate', '-')}; rubric support {hierarchical_rubric.get('mean_support_score', '-')}",
+        ),
+        metric_line(
             "Generated weakness verifier/ranker",
             "Local OpenReview/PRISM",
             "Generated weaknesses verified",
@@ -233,6 +245,7 @@ def dashboard_lines() -> list[str]:
             f"- OpenRouter chat reranker status: `{reranker.get('status', 'unknown')}`; reason: {reranker.get('reason', 'not recorded')}.",
             "- GLM-4.6V reviewer result is a 3-paper deployment sample, so it proves provider integration and pipeline handoff only.",
             "- Paired GLM-vs-rubric comparison currently covers only the GLM overlap papers.",
+            "- Hierarchical Paper-RAG currently uses silver verifier labels; treat support gains as architecture diagnostics, not final truth.",
             "- Generated rubric-agent weaknesses are mostly heuristic structure warnings; current verifier labels are mostly Unsupported / Mentioned.",
             "- Local classification is exploratory: metadata baseline is stronger than evidence-proxy features.",
             "- CLAIMCHECK and local silver labels are diagnostics until human gold labels or licensed row-level benchmark evaluation are stronger.",
@@ -242,7 +255,8 @@ def dashboard_lines() -> list[str]:
             "1. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.",
             "2. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.",
             "3. Expand local human gold weakness-evidence labels from pilot toward 200-300 items.",
-            "4. Use generated + verified weaknesses as features in the auxiliary classifier only after generated evidence support improves over metadata baseline.",
+            "4. Compare section-aware and hierarchical retrieval against human gold labels once the gold set is large enough.",
+            "5. Use generated + verified weaknesses as features in the auxiliary classifier only after generated evidence support improves over metadata baseline.",
         ]
     )
     return lines

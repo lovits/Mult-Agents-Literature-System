@@ -1,0 +1,42 @@
+{
+  "status": "ok",
+  "retriever": "generated_hierarchical_paper_rag_v0",
+  "sources": {
+    "glm_reviewer": {
+      "generated_weakness_count": 8,
+      "non_empty_retrieval_count": 8,
+      "top1_section_alignment_rate": 1.0,
+      "top3_section_alignment_rate": 1.0,
+      "mean_support_score": 0.4411,
+      "partially_supported_or_better_rate": 0.625,
+      "label_counts": {
+        "Partially Supported": 5,
+        "Mentioned but Not Problem": 1,
+        "Unsupported": 2
+      },
+      "top1_tool_mix": {
+        "semantic_search": 6,
+        "keyword_search": 2
+      }
+    },
+    "rubric_agent": {
+      "generated_weakness_count": 194,
+      "non_empty_retrieval_count": 194,
+      "top1_section_alignment_rate": 1.0,
+      "top3_section_alignment_rate": 1.0,
+      "mean_support_score": 0.1999,
+      "partially_supported_or_better_rate": 0.0258,
+      "label_counts": {
+        "Unsupported": 113,
+        "Mentioned but Not Problem": 76,
+        "Partially Supported": 5
+      },
+      "top1_tool_mix": {
+        "keyword_search": 72,
+        "section_read": 7,
+        "semantic_search": 115
+      }
+    }
+  },
+  "warning": "Silver verifier labels are diagnostics only; compare trends, not final truth."
+}

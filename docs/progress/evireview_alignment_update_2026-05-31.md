@@ -34,21 +34,58 @@ flowchart LR
 - GLM-4.6V 在小样本上更像可用的候选弱点生成器，但仍必须经过 evidence retrieval 和 verifier。
 - 当前样本太小，不能写成最终模型优劣结论；下一步扩到 5-10 篇后复跑同一 paired comparison。
 
-## 3. 近两年 Agentic RAG 文献带来的路线修正
+## 3. 本轮新增架构实验：Hierarchical Paper-RAG
+
+为了把 A-RAG / Agentic RAG 文献中的 hierarchical retrieval 思路落到当前系统，本轮新增了一个透明的 Paper-RAG 工具接口：
+
+```mermaid
+flowchart LR
+    A["Generated weakness"] --> B["keyword_search"]
+    A --> C["semantic_search"]
+    A --> D["section_read"]
+    B --> E["RRF merge"]
+    C --> E
+    D --> E
+    E --> F["top-k evidence blocks"]
+    F --> G["silver verifier"]
+```
+
+当前工具定义：
+
+- `keyword_search`：按 weakness 关键词与 evidence block 词项重叠检索。
+- `semantic_search`：按 lexical cosine + char n-gram similarity 检索。
+- `section_read`：按 weakness category 读取 expected sections，例如 experiment -> experiment/method/limitation。
+- `RRF merge`：用 reciprocal rank fusion 合并三个工具结果，再加入 lexical、char、section prior。
+
+结果：
+
+| Source | Weaknesses | Top-1 section align | Mean support | Partially-supported-or-better |
+| --- | ---: | ---: | ---: | ---: |
+| GLM-4.6V reviewer | 8 | 1.0000 | 0.4411 | 0.6250 |
+| Rubric-agent | 194 | 1.0000 | 0.1999 | 0.0258 |
+
+解释：
+
+- GLM 样本在 hierarchical Paper-RAG 下的 support score 从原先 0.3448 提升到 0.4411，Partially Supported-or-better 从 0.2500 提升到 0.6250。
+- Rubric-agent 也有小幅提升，但大部分仍为 Unsupported / Mentioned，说明它仍是结构风险 baseline，不是最终 reviewer。
+- 这个结果支持将“section-aware Paper-RAG”升级为“hierarchical Paper-RAG tools”作为论文创新点，但目前 verifier 仍是 silver label，不能夸大为最终真实性指标。
+
+## 4. 近两年 Agentic RAG 文献带来的路线修正
 
 | 文献方向 | 对本项目的修正 |
 | --- | --- |
 | Agentic RAG SoK / taxonomy | 把系统写成有状态的 sequential decision process，而不是一次性 prompt。 |
-| A-RAG hierarchical retrieval | 后续把 Paper-RAG 从 section-aware rerank 升级为 keyword search / semantic search / chunk read 三类工具。 |
+| A-RAG hierarchical retrieval | 已开始把 Paper-RAG 从 section-aware rerank 升级为 keyword search / semantic search / section_read 三类工具。 |
+| AgenticRAG enterprise retrieval | 强化“search / open / in-document navigation”式工具化检索，而不是把所有 grounding 压给一次性 top-k 检索。 |
 | RAGCap-Bench / InfoDeepSeek | 评价指标要覆盖中间能力：检索决策、证据压缩、utility、compactness，而不是只看最终报告。 |
 | RAGCHECKER / VERITAS | 主贡献应强调 weakness-level / claim-level traceability 和 faithfulness，而不是生成文本流畅度。 |
 | ReviewGrounder / FactReview / CLAIMCHECK | 论文评审场景的核心风险是 critique 是否 grounded 和 methodologically sound。 |
 
-## 4. 创新点优化
+## 5. 创新点优化
 
 建议开题报告和论文正文中的创新点收敛为三条：
 
-1. 面向论文结构的 Agentic Paper-RAG：按 abstract / method / experiment / related work / limitation 等 section 建模，并支持后续 hierarchical retrieval tools。
+1. 面向论文结构的 Agentic Paper-RAG：按 abstract / method / experiment / related work / limitation 等 section 建模，并实现 keyword_search / semantic_search / section_read 的 hierarchical retrieval tools，后续扩展为 search / open / read 的 in-document navigation。
 2. 面向评审弱点的 evidence verifier：不直接相信 reviewer agent，而是对每条 weakness 做 evidence retrieval、support labeling、rationale trace。
 3. Evidence-aware reviewer ranking：综合 severity、support score、section prior、redundancy，输出可审计 top weaknesses，而不是生成一篇不可拆解的完整评审。
 
@@ -57,19 +94,19 @@ flowchart LR
 - accept/reject classification 作为案例分析和辅助任务。
 - 前端系统作为流程展示，不抢主实验贡献。
 
-## 5. 下一步实验计划
+## 6. 下一步实验计划
 
 优先级如下：
 
 1. 将 GLM-4.6V reviewer 扩到 5-10 篇，复跑 paired comparison。
 2. 把 paired comparison 的指标固定为 coverage、generic rate、redundancy、verifier label distribution、support score。
 3. 扩充本地 weakness-evidence gold labels 到 200-300 条，用于替代 silver verifier 的关键结论。
-4. 设计 hierarchical Paper-RAG 工具接口：keyword search、semantic search、section/chunk read。
+4. 用人工 gold labels 对比 section-aware retrieval 与 hierarchical retrieval，避免只依赖 silver verifier。
 5. 在开题报告实验章节中明确写出：retrieval、verifier、ranker 是三个独立实验模块，分类只是辅助实验。
 
-## 6. 仍未完成
+## 7. 仍未完成
 
 - GLM-4.6V 还没有 5-10 篇稳定样本。
 - Evidence verifier 仍以 silver / heuristic 诊断为主，缺少足够人工 gold labels。
 - 前后端工程化尚未开始。
-- 还没有把 hierarchical retrieval tools 落成可运行 agent graph。
+- Hierarchical retrieval tools 已有实验脚本，但还没有落成完整 LangGraph-style agent graph。

@@ -241,6 +241,32 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 结论：在 GLM overlap 上，GLM-4.6V 生成更少，但 coverage proxy、support score、Partially Supported 比例均高于 rubric-agent。这个结果支持“rubric-agent 是可解释结构风险 baseline，GLM/LLM reviewer 是候选生成器，但必须进入 evidence verifier”的实验路线。下一步仍然不能直接写成 GLM 优于 rubric 的最终结论，需要扩到 5-10 篇后再复跑同一套 paired report。
 
+### 2.10 Hierarchical Paper-RAG retrieval tools
+
+定位：把近两年 Agentic RAG 文献中的 hierarchical retrieval interface 落到本项目实验链路中。该实验不重新调用 LLM，只对已有 generated weaknesses 重新做 evidence retrieval，并继续使用 silver verifier 做诊断。
+
+工具接口：
+
+- `keyword_search`：exact term overlap + section prior。
+- `semantic_search`：lexical cosine + char n-gram similarity + section prior。
+- `section_read`：按 weakness category 读取 expected sections，例如 experiment -> experiment/method/limitation。
+- `RRF merge`：用 reciprocal rank fusion 合并三个工具结果。
+
+结果：
+
+| Source | Weaknesses | Top-1 section align | Top-3 section align | Mean support | Partially-supported-or-better |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GLM-4.6V reviewer | 8 | 1.0000 | 1.0000 | 0.4411 | 0.6250 |
+| Rubric-agent | 194 | 1.0000 | 1.0000 | 0.1999 | 0.0258 |
+
+对比原 retrieval/verifier：
+
+- GLM 原 mean support score 为 0.3448，hierarchical retrieval 后为 0.4411。
+- GLM 原 Partially Supported-or-better rate 为 0.2500，hierarchical retrieval 后为 0.6250。
+- Rubric-agent 原 verifier 标签中 Partially Supported 为 3/194，hierarchical retrieval 后为 5/194，改善有限。
+
+结论：hierarchical Paper-RAG 对 GLM 这类更具体的 weakness 生成结果更有帮助；对 rubric-agent 的泛化结构风险提示帮助有限。这支持把系统架构从“section-aware rerank”升级为“可审计 hierarchical retrieval tools”，但最终结论仍需人工 gold labels 验证。
+
 ## 3. 最新论文对实验路线的修正
 
 本轮跟踪并写入 `memory/RESEARCH_LOG.md` 的论文包括：
@@ -264,6 +290,7 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | RAGCHECKER: https://arxiv.org/abs/2408.08067 | RAG 评估应区分检索和生成，并用 claim-level entailment 诊断；支持当前“retrieval 好不等于 verifier 好”的实验结论。 |
 | SoK Agentic RAG: https://arxiv.org/abs/2603.07379 | 把 Agentic RAG 形式化为带状态转移的 sequential decision-making 系统，支持本项目把评审流程写成状态图和可审计 trajectory。 |
 | A-RAG: https://arxiv.org/abs/2602.03442 | 通过 keyword search、semantic search、chunk read 三层检索接口让模型参与检索决策，支持本项目后续把 section-aware Paper-RAG 升级为 hierarchical retrieval tools。 |
+| AgenticRAG: https://arxiv.org/abs/2605.05538 | 企业知识库场景中 search / find / open / summarize 工具化检索显著优于单次检索，支持本项目把论文内证据检索写成可审计工具轨迹。 |
 | Beyond Correctness / VERITAS: https://arxiv.org/abs/2510.13272 | 强调 search agent 不能只看最终答案正确性，还要看 intermediate reasoning faithfulness；支持本项目把 weakness -> evidence -> verifier trace 作为主贡献证据。 |
 | Fintech Agentic RAG: https://arxiv.org/abs/2510.25518 | 模块化 agentic RAG 在专业领域通过 query reformulation、sub-query decomposition、reranking 提升检索鲁棒性，但有延迟代价；支持本项目把多 agent workflow 写成质量优先而非低延迟系统。 |
 
@@ -272,7 +299,8 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 1. 题目中的“分类”保留为辅助实验，不作为主贡献。
 2. 主贡献写成“面向论文评审弱点的证据检索与证据校验”。
 3. 创新点保持三条：section-aware Paper-RAG、evidence verifier、evidence-aware ranker。
-4. 系统展示可以做，但必须在核心实验稳定后再做。
+4. Paper-RAG 创新点应从 section-aware retrieval 进一步写成 hierarchical Paper-RAG tools：keyword search、semantic search、section_read、RRF merge。
+5. 系统展示可以做，但必须在核心实验稳定后再做。
 
 ## 4. 是否需要记忆与上下文管理系统
 
@@ -301,6 +329,7 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 - 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注。
 - Agent weakness generation 已跑 rubric-agent 全量 baseline、GLM-4.6V 3-paper 小样本，以及 GLM overlap 上的 paired comparison，但还没有完成 5-10 篇 provider 对比。
 - Rubric-agent generation baseline 已完成；GLM-4.6V 已接入并完成重叠样本公平对比，小样本仍需扩大后再作为正式 provider 结果。
+- Hierarchical Paper-RAG tools 已有本地生成弱点诊断，但还没有用人工 gold labels 做正式对比。
 - Evidence-aware ranker 已有 CLAIMCHECK 诊断，但还没有进入本地端到端主实验。
 - Accept/reject 分类已有探索性 baseline，但还没有使用 agent-generated weakness。
 - 前端、后端、Agent/RAG 工程化目录还未落地。
@@ -321,8 +350,9 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 2. 如果 chat 模型继续限流，转为本地 OpenReview 的 rule-based / feature verifier 与人工标注流程，不阻塞主线。
 3. 完成本地 60 条 pilot gold label 的质量检查，必要时扩到 200-300 条。
 4. 把 feature-fusion verifier 的失败案例转成标注规范补充：哪些 weak criticism 是 generic，哪些需要 external literature。
-5. 做 evidence-aware ranker：支持度、严重性、section confidence、novelty category 综合排序。
-6. 用 GLM-4.6V 跑 5-10 篇 structured reviewer 小样本，与 rubric-agent baseline 对比 coverage / generic rate / redundancy / verifier label distribution。
+5. 用人工 gold labels 对比 section-aware retrieval 与 hierarchical Paper-RAG，而不是只看 silver verifier。
+6. 做 evidence-aware ranker：支持度、严重性、section confidence、novelty category 综合排序。
+7. 用 GLM-4.6V 跑 5-10 篇 structured reviewer 小样本，与 rubric-agent baseline 对比 coverage / generic rate / redundancy / verifier label distribution。
 
 近期最小可交付：
 
@@ -371,3 +401,8 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 - `code/experiments/evireview_a/src/compare_generated_reviewers.py`
 - `code/experiments/evireview_a/data/generated_reviewer_comparison_metrics.json`
 - `code/experiments/evireview_a/reports/generated_reviewer_comparison_report.md`
+- `code/experiments/evireview_a/src/retrieve_generated_hierarchical.py`
+- `code/experiments/evireview_a/data/generated_hierarchical_retrieval_top5.jsonl`
+- `code/experiments/evireview_a/data/generated_hierarchical_verified_weaknesses.jsonl`
+- `code/experiments/evireview_a/data/generated_hierarchical_retrieval_summary.json`
+- `code/experiments/evireview_a/reports/hierarchical_paper_rag_report.md`

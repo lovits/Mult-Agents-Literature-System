@@ -97,3 +97,8 @@
 - **Authors**: Thomas Cook, Richard Osuagwu, Liman Tsatiashvili, Vrynsia Vrynsia, Koustav Ghosal, Maraim Masoud, Riccardo Mattivi
 - **Link**: https://arxiv.org/abs/2510.25518
 - **Summary**: Designs a modular agentic RAG pipeline for a domain with dense terminology, using query reformulation, sub-query decomposition, acronym resolution, and cross-encoder reranking. Relevance: supports using domain-specific retrieval orchestration in EviReview-Lite, while noting that quality gains may trade off against latency.
+
+### [2026-05-31] AgenticRAG: Agentic Retrieval for Enterprise Knowledge Bases
+- **Authors**: Susheel Suresh, Hazel Mak, Shangpo Chou, Fred Kroon, Sahil Bhatnagar
+- **Link**: https://arxiv.org/abs/2605.05538
+- **Summary**: Presents a lightweight agentic retrieval harness over enterprise knowledge bases with search, find, open, and summarize tools. Its ablations report that moving from single-shot retrieval to agentic tool use is the largest quality driver. Relevance: reinforces the current EviReview-Lite upgrade from one-pass section-aware retrieval toward auditable Paper-RAG tools and in-document navigation.
