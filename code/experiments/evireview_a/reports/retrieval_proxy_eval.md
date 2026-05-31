@@ -8,6 +8,7 @@ These are proxy diagnostics before manual weakness-evidence gold labels are comp
 | tfidf_cosine | 0.9891 | 0.6247 | 0.8238 | 2.5847 | 0.153045 |
 | hybrid_bm25_tfidf | 0.9891 | 0.6164 | 0.8300 | 2.6455 | 0.883120 |
 | section_aware_hybrid | 0.9891 | 0.7021 | 0.8618 | 2.6192 | 0.949624 |
+| human_hierarchical_paper_rag | 1.0000 | 0.9993 | 1.0000 | 1.8640 | 0.246929 |
 
 ## Interpretation
 

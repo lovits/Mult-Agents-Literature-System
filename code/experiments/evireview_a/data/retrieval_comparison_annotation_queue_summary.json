@@ -1,0 +1,31 @@
+{
+  "status": "ready",
+  "section_retrieval_file": "retrieval_section_hybrid_top5.jsonl",
+  "hierarchical_retrieval_file": "retrieval_human_hierarchical_top5.jsonl",
+  "candidate_pairs": 1463,
+  "selected_rows": 300,
+  "target_size": 300,
+  "top1_disagreement_rate": 0.6138,
+  "top3_disagreement_rate": 0.9645,
+  "selected_decision_counts": {
+    "Accept": 157,
+    "Reject": 143
+  },
+  "selected_category_counts": {
+    "clarity": 43,
+    "experiment": 54,
+    "method": 54,
+    "other": 54,
+    "related_work": 53,
+    "reproducibility": 18,
+    "validity": 24
+  },
+  "gold_columns": [
+    "gold_best_retriever",
+    "gold_label",
+    "gold_evidence_block_ids",
+    "annotator_rationale",
+    "annotator_confidence"
+  ],
+  "warning": "This is an annotation queue, not an automatic evaluation result."
+}

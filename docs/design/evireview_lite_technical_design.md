@@ -172,11 +172,13 @@ flowchart TD
 当前实现：
 
 - `build_annotation_candidates.py`
+- `build_retrieval_comparison_annotation_queue.py`
 
 本轮新增：
 
 - `export_annotation_sheet.py`
 - `bootstrap_silver_labels.py`
+- section-aware vs hierarchical retrieval 对比标注队列：300 rows，覆盖 1463 条 human weaknesses 中的高 disagreement 样本。
 
 标签体系：
 
@@ -340,7 +342,8 @@ papers_manifest.csv
 14. GLM-4.6V structured reviewer sample：通过环境变量安全接入 GLM-4.6V，在 3 篇本地样本生成 8 条结构化弱点，coverage proxy 在 threshold=0.18 时覆盖 50.47% 人工 reviewer weaknesses，并立即进入 section-aware retrieval 与 heuristic verifier；当前标签分布为 4 条 Mentioned but Not Problem、2 条 Partially Supported、2 条 Unsupported，说明 provider 接入和流程闭环可用，但样本仍不足以作为最终性能结论。
 15. Generated reviewer paired comparison：在 GLM overlap 的 3 篇论文 / 107 条 human weaknesses 上，GLM-4.6V 的 coverage recall@0.18 为 0.5047，高于同批 rubric-agent 的 0.3738；GLM mean support score 为 0.3448，高于 rubric-agent 的 0.2030。该结果只作为小样本诊断，用于决定下一步扩到 5-10 篇。
 16. Hierarchical Paper-RAG retrieval tools：新增 keyword_search、semantic_search、section_read 和 RRF merge，对已有 generated weaknesses 重新检索证据。GLM 样本的 mean support score 从 0.3448 提升到 0.4411，Partially Supported-or-better rate 从 0.25 提升到 0.625；rubric-agent 提升有限，说明 hierarchical retrieval 更适合具体 weakness，而不是泛化结构风险提示。该结果仍是 silver verifier 诊断，后续需用人工 gold labels 验证。
-17. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
+17. Human weakness hierarchical retrieval：对 1463 条人工 reviewer weaknesses 运行 hierarchical Paper-RAG，non-empty retrieval=1.0、Top-1 section alignment=0.9993、Top-3 alignment=1.0；section-aware 与 hierarchical 的 Top-1 disagreement=0.6138、Top-3 disagreement=0.9645，并已生成 300 条 retrieval comparison annotation queue。该队列是下一步人工 gold 检索对比的主入口。
+18. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
 
 ### 当前阶段
 
@@ -351,7 +354,7 @@ papers_manifest.csv
 5. 数据集路线以 `docs/research/evireview_dataset_registry_2026-05-31.md` 为准：A 版使用本地 OpenReview、SubstanReview、CLAIMCHECK；PeerRead、NLPeer、OpenReview Raw 作为 B 版扩展。
 6. 分类实验必须继续写成 auxiliary/exploratory；除非后续 agent-generated weakness + human gold evidence labels 明显超过 metadata baseline，否则不要把 accept/reject 作为系统核心指标。
 7. 生成实验先使用 deterministic rubric-agent 做 pipeline validation；GLM-4.6V 只做小样本 structured reviewer 对比 rubric baseline，而不是替代全部实验链路。
-8. Paper-RAG 从 section-aware rerank 升级为 hierarchical tools，但 silver verifier 只能作为调试指标。
+8. Paper-RAG 从 section-aware rerank 升级为 hierarchical tools；当前已覆盖 generated weaknesses 和 human weaknesses，但 silver/verifier proxy 只能作为调试指标。
 9. 用外部人标 benchmark 的结果决定是否接入更强的 LLM verifier。
 
 ### 下一阶段
@@ -359,7 +362,7 @@ papers_manifest.csv
 1. 跑 SubstanReview train/test 转换与 verifier baseline。
 2. 跑 CLAIMCHECK paper-claim grounding 诊断，作为后续 LLM/embedding verifier 的主 benchmark。
 3. 设计更稳的 verifier：embedding top-k retrieval + LLM pairwise judgment / feature-based classifier，而不是单阈值 max similarity。
-4. 用人工 gold labels 对比 section-aware retrieval 与 hierarchical Paper-RAG。
+4. 标注 300 条 retrieval comparison queue，用人工 gold labels 对比 section-aware retrieval 与 hierarchical Paper-RAG。
 5. 做 evidence-aware ranking。
 6. 对本地 OpenReview 样本做补充人工标注，而不是把它作为第一验证来源。
 

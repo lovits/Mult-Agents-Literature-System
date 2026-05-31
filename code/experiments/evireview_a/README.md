@@ -70,6 +70,8 @@ python3 code/experiments/evireview_a/src/render_rubric_agent_report.py
 python3 code/experiments/evireview_a/src/run_glm_reviewer_experiment.py
 python3 code/experiments/evireview_a/src/compare_generated_reviewers.py
 python3 code/experiments/evireview_a/src/retrieve_generated_hierarchical.py
+python3 code/experiments/evireview_a/src/retrieve_human_hierarchical.py
+python3 code/experiments/evireview_a/src/build_retrieval_comparison_annotation_queue.py
 python3 code/experiments/evireview_a/src/render_experiment_dashboard.py
 ```
 
@@ -149,9 +151,16 @@ CLAIMCHECK benchmark outputs:
 - `generated_hierarchical_retrieval_top5.jsonl`
 - `generated_hierarchical_verified_weaknesses.jsonl`
 - `generated_hierarchical_retrieval_summary.json`
+- `retrieval_human_hierarchical_top5.jsonl`
+- `retrieval_human_hierarchical_summary.json`
+- `retrieval_comparison_annotation_queue.jsonl`
+- `retrieval_comparison_annotation_queue.csv`
+- `retrieval_comparison_annotation_queue_summary.json`
 - `reports/glm_reviewer_experiment_report.md`
 - `reports/generated_reviewer_comparison_report.md`
 - `reports/hierarchical_paper_rag_report.md`
+- `reports/human_hierarchical_retrieval_report.md`
+- `reports/retrieval_comparison_annotation_queue.md`
 - `reports/experiment_dashboard.md`
 
 Raw and row-level CLAIMCHECK text files are intentionally ignored because no upstream repository LICENSE file was detected.

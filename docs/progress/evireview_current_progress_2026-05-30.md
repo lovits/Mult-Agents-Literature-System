@@ -267,6 +267,42 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 结论：hierarchical Paper-RAG 对 GLM 这类更具体的 weakness 生成结果更有帮助；对 rubric-agent 的泛化结构风险提示帮助有限。这支持把系统架构从“section-aware rerank”升级为“可审计 hierarchical retrieval tools”，但最终结论仍需人工 gold labels 验证。
 
+### 2.11 Human weakness hierarchical retrieval and comparison queue
+
+定位：把 hierarchical Paper-RAG 从 generated weaknesses 诊断推进到真实 human reviewer weaknesses，并为“section-aware retrieval vs hierarchical retrieval”的人工 gold 对比准备标注队列。
+
+已完成脚本：
+
+- `retrieve_human_hierarchical.py`：对 1463 条 human weaknesses 运行 keyword_search / semantic_search / section_read / RRF merge。
+- `build_retrieval_comparison_annotation_queue.py`：把 section-aware top-k 与 hierarchical top-k 配对，按 retriever disagreement、decision、category 分层抽取 300 条标注队列。
+
+结果：
+
+| 指标 | 数值 |
+| --- | ---: |
+| Human weaknesses | 1463 |
+| Hierarchical non-empty retrieval | 1.0000 |
+| Hierarchical Top-1 section align | 0.9993 |
+| Hierarchical Top-3 section align | 1.0000 |
+| Top-1 tool mix: semantic / keyword / section_read | 807 / 567 / 89 |
+| Section-aware vs hierarchical Top-1 disagreement | 0.6138 |
+| Section-aware vs hierarchical Top-3 disagreement | 0.9645 |
+| Comparison annotation queue | 300 |
+
+标注队列分布：
+
+| Category | Rows |
+| --- | ---: |
+| clarity | 43 |
+| experiment | 54 |
+| method | 54 |
+| other | 54 |
+| related_work | 53 |
+| reproducibility | 18 |
+| validity | 24 |
+
+结论：hierarchical retrieval 的 section-alignment proxy 很高，但真正有价值的是它与 section-aware baseline 的证据块差异很大；这使 300 条队列适合作为下一阶段人工 gold labels 标注入口。正式论文结论仍应等待人工判断 `gold_best_retriever` 与 `gold_label` 后再写。
+
 ## 3. 最新论文对实验路线的修正
 
 本轮跟踪并写入 `memory/RESEARCH_LOG.md` 的论文包括：
@@ -291,6 +327,7 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | SoK Agentic RAG: https://arxiv.org/abs/2603.07379 | 把 Agentic RAG 形式化为带状态转移的 sequential decision-making 系统，支持本项目把评审流程写成状态图和可审计 trajectory。 |
 | A-RAG: https://arxiv.org/abs/2602.03442 | 通过 keyword search、semantic search、chunk read 三层检索接口让模型参与检索决策，支持本项目后续把 section-aware Paper-RAG 升级为 hierarchical retrieval tools。 |
 | AgenticRAG: https://arxiv.org/abs/2605.05538 | 企业知识库场景中 search / find / open / summarize 工具化检索显著优于单次检索，支持本项目把论文内证据检索写成可审计工具轨迹。 |
+| Patho-AgenticRAG: https://arxiv.org/abs/2508.02258 | 高风险医学视觉场景中使用多轮检索和任务分解降低幻觉，作为 Agentic RAG grounding 动机的旁证；A 版不扩展到多模态。 |
 | Beyond Correctness / VERITAS: https://arxiv.org/abs/2510.13272 | 强调 search agent 不能只看最终答案正确性，还要看 intermediate reasoning faithfulness；支持本项目把 weakness -> evidence -> verifier trace 作为主贡献证据。 |
 | Fintech Agentic RAG: https://arxiv.org/abs/2510.25518 | 模块化 agentic RAG 在专业领域通过 query reformulation、sub-query decomposition、reranking 提升检索鲁棒性，但有延迟代价；支持本项目把多 agent workflow 写成质量优先而非低延迟系统。 |
 
@@ -326,10 +363,10 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 
 核心未完成：
 
-- 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注。
+- 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注；当前已生成 300 条 section-aware vs hierarchical retrieval 对比标注队列。
 - Agent weakness generation 已跑 rubric-agent 全量 baseline、GLM-4.6V 3-paper 小样本，以及 GLM overlap 上的 paired comparison，但还没有完成 5-10 篇 provider 对比。
 - Rubric-agent generation baseline 已完成；GLM-4.6V 已接入并完成重叠样本公平对比，小样本仍需扩大后再作为正式 provider 结果。
-- Hierarchical Paper-RAG tools 已有本地生成弱点诊断，但还没有用人工 gold labels 做正式对比。
+- Hierarchical Paper-RAG tools 已有本地生成弱点诊断和 1463 条 human weakness 检索诊断，但还没有用人工 gold labels 做正式对比。
 - Evidence-aware ranker 已有 CLAIMCHECK 诊断，但还没有进入本地端到端主实验。
 - Accept/reject 分类已有探索性 baseline，但还没有使用 agent-generated weakness。
 - 前端、后端、Agent/RAG 工程化目录还未落地。
@@ -348,9 +385,9 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 
 1. 做 CLAIMCHECK 小样本 evidence-aware LLM verifier：输入 weakness + top-k candidate claims/evidence，让免费 chat 模型只输出 Grounded/Ungrounded 与简短理由；由于 429，只跑小规模 stratified sample。
 2. 如果 chat 模型继续限流，转为本地 OpenReview 的 rule-based / feature verifier 与人工标注流程，不阻塞主线。
-3. 完成本地 60 条 pilot gold label 的质量检查，必要时扩到 200-300 条。
+3. 标注 300 条 retrieval comparison queue，先回答 section-aware 和 hierarchical retrieval 谁更适合 human reviewer weaknesses。
 4. 把 feature-fusion verifier 的失败案例转成标注规范补充：哪些 weak criticism 是 generic，哪些需要 external literature。
-5. 用人工 gold labels 对比 section-aware retrieval 与 hierarchical Paper-RAG，而不是只看 silver verifier。
+5. 用人工 gold labels 对比 section-aware retrieval 与 hierarchical Paper-RAG，而不是只看 silver verifier 或 section-alignment proxy。
 6. 做 evidence-aware ranker：支持度、严重性、section confidence、novelty category 综合排序。
 7. 用 GLM-4.6V 跑 5-10 篇 structured reviewer 小样本，与 rubric-agent baseline 对比 coverage / generic rate / redundancy / verifier label distribution。
 

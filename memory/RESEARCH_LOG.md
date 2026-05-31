@@ -102,3 +102,8 @@
 - **Authors**: Susheel Suresh, Hazel Mak, Shangpo Chou, Fred Kroon, Sahil Bhatnagar
 - **Link**: https://arxiv.org/abs/2605.05538
 - **Summary**: Presents a lightweight agentic retrieval harness over enterprise knowledge bases with search, find, open, and summarize tools. Its ablations report that moving from single-shot retrieval to agentic tool use is the largest quality driver. Relevance: reinforces the current EviReview-Lite upgrade from one-pass section-aware retrieval toward auditable Paper-RAG tools and in-document navigation.
+
+### [2026-05-31] Patho-AgenticRAG: Towards Multimodal Agentic Retrieval-Augmented Generation for Pathology VLMs via Reinforcement Learning
+- **Authors**: Wenchuan Zhang, Jingru Guo, Hengzhe Zhang, Penghao Zhang, Jie Chen, Shuwan Zhang, Zhang Zhang, Yuhao Yi, Hong Bu
+- **Link**: https://arxiv.org/abs/2508.02258
+- **Summary**: Applies multimodal agentic retrieval to pathology VLMs, combining text-image retrieval, task decomposition, and multi-turn search to reduce hallucination in a high-stakes evidence-grounded domain. Relevance: useful as related work showing agentic RAG's broader grounding motivation, but not an A-version dependency because EviReview-Lite is text-only paper-review retrieval.

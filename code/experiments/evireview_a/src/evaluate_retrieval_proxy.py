@@ -14,6 +14,7 @@ RETRIEVAL_FILES = {
     "tfidf_cosine": "retrieval_tfidf_top5.jsonl",
     "hybrid_bm25_tfidf": "retrieval_hybrid_top5.jsonl",
     "section_aware_hybrid": "retrieval_section_hybrid_top5.jsonl",
+    "human_hierarchical_paper_rag": "retrieval_human_hierarchical_top5.jsonl",
 }
 
 
@@ -114,4 +115,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

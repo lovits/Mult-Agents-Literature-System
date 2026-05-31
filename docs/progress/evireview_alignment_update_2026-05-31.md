@@ -70,6 +70,20 @@ flowchart LR
 - Rubric-agent 也有小幅提升，但大部分仍为 Unsupported / Mentioned，说明它仍是结构风险 baseline，不是最终 reviewer。
 - 这个结果支持将“section-aware Paper-RAG”升级为“hierarchical Paper-RAG tools”作为论文创新点，但目前 verifier 仍是 silver label，不能夸大为最终真实性指标。
 
+继续推进到 human reviewer weaknesses 后，已新增全量 1463 条人工 weakness 的 hierarchical retrieval 诊断与 300 条人工标注对比队列：
+
+| 项目 | 结果 |
+| --- | ---: |
+| Human weaknesses | 1463 |
+| Hierarchical non-empty retrieval | 1.0000 |
+| Hierarchical Top-1 section align | 0.9993 |
+| Hierarchical Top-3 section align | 1.0000 |
+| Section-aware vs hierarchical Top-1 disagreement | 0.6138 |
+| Section-aware vs hierarchical Top-3 disagreement | 0.9645 |
+| Selected comparison annotation rows | 300 |
+
+这一步的意义是：不再只用 generated weaknesses 做架构诊断，而是把检索对比推进到开题报告核心数据源，即真实人工 reviewer weaknesses。由于 Top-1 / Top-3 disagreement 很高，300 条对比队列适合作为下一阶段 gold labels 标注入口。
+
 ## 4. 近两年 Agentic RAG 文献带来的路线修正
 
 | 文献方向 | 对本项目的修正 |
@@ -100,8 +114,8 @@ flowchart LR
 
 1. 将 GLM-4.6V reviewer 扩到 5-10 篇，复跑 paired comparison。
 2. 把 paired comparison 的指标固定为 coverage、generic rate、redundancy、verifier label distribution、support score。
-3. 扩充本地 weakness-evidence gold labels 到 200-300 条，用于替代 silver verifier 的关键结论。
-4. 用人工 gold labels 对比 section-aware retrieval 与 hierarchical retrieval，避免只依赖 silver verifier。
+3. 优先标注 `retrieval_comparison_annotation_queue.csv` 中的 300 条队列，用于替代 silver / proxy 指标。
+4. 用人工 gold labels 对比 section-aware retrieval 与 hierarchical retrieval，避免只依赖 section alignment。
 5. 在开题报告实验章节中明确写出：retrieval、verifier、ranker 是三个独立实验模块，分类只是辅助实验。
 
 ## 7. 仍未完成
@@ -109,4 +123,4 @@ flowchart LR
 - GLM-4.6V 还没有 5-10 篇稳定样本。
 - Evidence verifier 仍以 silver / heuristic 诊断为主，缺少足够人工 gold labels。
 - 前后端工程化尚未开始。
-- Hierarchical retrieval tools 已有实验脚本，但还没有落成完整 LangGraph-style agent graph。
+- Hierarchical retrieval tools 已有 generated weakness 与 human weakness 两条诊断脚本，但还没有落成完整 LangGraph-style agent graph。

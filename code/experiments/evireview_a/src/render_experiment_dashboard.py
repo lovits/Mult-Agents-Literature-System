@@ -56,6 +56,8 @@ def dashboard_lines() -> list[str]:
     glm_verifier = load_json("glm_reviewer_verifier_summary.json", {})
     generated_comparison = load_json("generated_reviewer_comparison_metrics.json", {})
     hierarchical_retrieval = load_json("generated_hierarchical_retrieval_summary.json", {})
+    human_hierarchical = load_json("retrieval_human_hierarchical_summary.json", {})
+    retrieval_queue = load_json("retrieval_comparison_annotation_queue_summary.json", {})
     reranker = load_json("claimcheck_openrouter_rerank_metrics.json", {})
 
     retrieval_results = retrieval.get("results", {})
@@ -220,6 +222,22 @@ def dashboard_lines() -> list[str]:
             f"GLM partial+ {hierarchical_glm.get('partially_supported_or_better_rate', '-')}; rubric support {hierarchical_rubric.get('mean_support_score', '-')}",
         ),
         metric_line(
+            "Human hierarchical retrieval",
+            "Local OpenReview/PRISM",
+            "Top-1 section alignment",
+            human_hierarchical.get("top1_section_alignment_rate"),
+            "diagnostic",
+            f"{human_hierarchical.get('query_count', 0)} human weaknesses; top tools {human_hierarchical.get('top1_tool_mix', {})}",
+        ),
+        metric_line(
+            "Retrieval comparison queue",
+            "Human weaknesses",
+            "Selected annotation rows",
+            retrieval_queue.get("selected_rows"),
+            retrieval_queue.get("status", "not run"),
+            f"Top-1 disagreement {retrieval_queue.get('top1_disagreement_rate', '-')}; Top-3 disagreement {retrieval_queue.get('top3_disagreement_rate', '-')}",
+        ),
+        metric_line(
             "Generated weakness verifier/ranker",
             "Local OpenReview/PRISM",
             "Generated weaknesses verified",
@@ -246,6 +264,7 @@ def dashboard_lines() -> list[str]:
             "- GLM-4.6V reviewer result is a 3-paper deployment sample, so it proves provider integration and pipeline handoff only.",
             "- Paired GLM-vs-rubric comparison currently covers only the GLM overlap papers.",
             "- Hierarchical Paper-RAG currently uses silver verifier labels; treat support gains as architecture diagnostics, not final truth.",
+            "- Human hierarchical retrieval has high section-alignment proxy scores, but true evidence support still needs the 300-row comparison queue to be labeled.",
             "- Generated rubric-agent weaknesses are mostly heuristic structure warnings; current verifier labels are mostly Unsupported / Mentioned.",
             "- Local classification is exploratory: metadata baseline is stronger than evidence-proxy features.",
             "- CLAIMCHECK and local silver labels are diagnostics until human gold labels or licensed row-level benchmark evaluation are stronger.",
@@ -254,8 +273,8 @@ def dashboard_lines() -> list[str]:
             "",
             "1. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.",
             "2. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.",
-            "3. Expand local human gold weakness-evidence labels from pilot toward 200-300 items.",
-            "4. Compare section-aware and hierarchical retrieval against human gold labels once the gold set is large enough.",
+            "3. Label the 300-row retrieval comparison queue to decide whether section-aware or hierarchical retrieval is better for human reviewer weaknesses.",
+            "4. Expand local human gold weakness-evidence labels from pilot toward 200-300 usable rows.",
             "5. Use generated + verified weaknesses as features in the auxiliary classifier only after generated evidence support improves over metadata baseline.",
         ]
     )

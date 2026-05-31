@@ -1,0 +1,58 @@
+{
+  "status": "ok",
+  "retriever": "human_hierarchical_paper_rag_v0",
+  "query_count": 1463,
+  "non_empty_count": 1463,
+  "non_empty_rate": 1.0,
+  "top1_section_alignment_rate": 0.9993,
+  "top3_any_section_alignment_rate": 1.0,
+  "decision_counts": {
+    "Reject": 764,
+    "Accept": 699
+  },
+  "category_counts": {
+    "related_work": 129,
+    "method": 377,
+    "validity": 24,
+    "other": 447,
+    "clarity": 43,
+    "experiment": 425,
+    "reproducibility": 18
+  },
+  "top1_tool_mix": {
+    "semantic_search": 807,
+    "keyword_search": 567,
+    "section_read": 89
+  },
+  "by_category": {
+    "clarity": {
+      "query_count": 43,
+      "top1_section_alignment_rate": 1.0
+    },
+    "experiment": {
+      "query_count": 425,
+      "top1_section_alignment_rate": 1.0
+    },
+    "method": {
+      "query_count": 377,
+      "top1_section_alignment_rate": 1.0
+    },
+    "other": {
+      "query_count": 447,
+      "top1_section_alignment_rate": 1.0
+    },
+    "related_work": {
+      "query_count": 129,
+      "top1_section_alignment_rate": 1.0
+    },
+    "reproducibility": {
+      "query_count": 18,
+      "top1_section_alignment_rate": 1.0
+    },
+    "validity": {
+      "query_count": 24,
+      "top1_section_alignment_rate": 0.9583
+    }
+  },
+  "warning": "Proxy diagnostics only. Use human gold labels for true evidence recall and verifier accuracy."
+}

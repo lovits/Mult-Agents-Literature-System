@@ -85,6 +85,26 @@
         "reference": 24,
         "limitation": 51
       }
+    },
+    "human_hierarchical_paper_rag": {
+      "query_count": 1463,
+      "non_empty_count": 1463,
+      "non_empty_rate": 1.0,
+      "top1_section_alignment_rate": 0.9993,
+      "top3_any_section_alignment_rate": 1.0,
+      "avg_topk_section_diversity": 1.864,
+      "avg_top1_score": 0.246929,
+      "avg_top5_score": 0.230234,
+      "top1_section_counts": {
+        "related_work": 43,
+        "method": 668,
+        "introduction": 156,
+        "abstract": 59,
+        "experiment": 431,
+        "other": 80,
+        "limitation": 25,
+        "reference": 1
+      }
     }
   }
 }
