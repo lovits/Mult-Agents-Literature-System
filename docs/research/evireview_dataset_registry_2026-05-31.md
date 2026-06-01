@@ -22,7 +22,7 @@ Datasets are scored against the current thesis objective:
 | A | SubstanReview | https://github.com/YanzhuGuo/SubstanReview and https://aclanthology.org/2023.findings-emnlp.684/ | Supervised substantiation baseline | Keep as verifier floor |
 | A | CLAIMCHECK | https://arxiv.org/abs/2503.21717 and https://aclanthology.org/2025.findings-emnlp.1185/ | Paper-grounded critique retrieval, verifier, ranker diagnostics | Keep, but commit only aggregate metrics until license is clarified |
 | A | PeerReview Bench | https://huggingface.co/datasets/prometheus-eval/peerreview-bench | Existing expert annotations for correctness, significance, and evidence | Add now as no-manual-label verifier/ranker-quality dataset |
-| A | PeerQA-XT | https://huggingface.co/datasets/UKPLab/PeerQA-XT | Peer-review-derived scientific QA over full paper text | Add next for Paper-RAG retrieval QA |
+| A | PeerQA-XT | https://huggingface.co/datasets/UKPLab/PeerQA-XT | Peer-review-derived scientific QA over full paper text | Added as Paper-RAG retrieval QA baseline |
 | B | PeerRead | https://github.com/allenai/PeerRead and https://arxiv.org/abs/1804.09635 | Auxiliary accept/reject and score prediction baseline | Add only if A-version classification needs expansion |
 | B | NLPeer | https://arxiv.org/abs/2211.06651 and https://aclanthology.org/2023.acl-long.277/ | Multi-venue review reports, guided skimming, structured peer-review study | Candidate for B-version generalization |
 | B | RottenReviews | https://huggingface.co/datasets/Reviewerly/RottenReviews | Review quality dimensions and human quality annotations | Add as quality/ranker supplement |
@@ -51,7 +51,7 @@ Datasets are scored against the current thesis objective:
 The latest search shifts the A-version away from new local manual labeling as the first evaluation source. The immediate ready-to-use route is:
 
 1. **PeerReview Bench**: 3,881 expert annotation rows with review item-level `correctness`, `significance`, and `evidence` labels, CC-BY-4.0. A 300-row no-dependency probe is already prepared in `peerreview_bench_expert_annotations.jsonl`.
-2. **PeerQA-XT**: 12,628 train/validation/test scientific QA pairs with full paper text and peer-review-derived questions, CC-BY-NC-SA-4.0. This is the best next dataset for Paper-RAG retrieval QA without hand labels.
+2. **PeerQA-XT**: 12,628 train/validation/test scientific QA pairs with full paper text and peer-review-derived questions, CC-BY-NC-SA-4.0. A first 80-row test retrieval baseline is now prepared for Paper-RAG QA without hand labels.
 3. **RottenReviews / ReviewBench / PeerCheck / SPECS**: keep as B-version supplements for review quality, reviewer generation alignment, generalization, and robustness.
 
 ## Implementation Policy

@@ -63,6 +63,7 @@ def dashboard_lines() -> list[str]:
     ready_datasets = load_json("ready_dataset_candidates.json", {})
     peerreview_bench = load_json("peerreview_bench_baseline_metrics.json", {})
     peerreview_summary = load_json("peerreview_bench_summary.json", {})
+    peerqa_xt = load_json("peerqa_xt_retrieval_metrics.json", {})
     reranker = load_json("claimcheck_openrouter_rerank_metrics.json", {})
 
     retrieval_results = retrieval.get("results", {})
@@ -111,6 +112,8 @@ def dashboard_lines() -> list[str]:
         .get("baselines", {})
         .get("multinomial_naive_bayes_v0", {})
     )
+    peerqa_hybrid = peerqa_xt.get("methods", {}).get("hybrid_question", {})
+    peerqa_bm25 = peerqa_xt.get("methods", {}).get("bm25_question", {})
     ready_count = len([item for item in ready_datasets.get("candidates", []) if item.get("status") == "reachable"])
 
     lines = [
@@ -184,6 +187,14 @@ def dashboard_lines() -> list[str]:
             peerreview_sig_nb.get("macro_f1"),
             peerreview_bench.get("status", "not run"),
             f"{peerreview_summary.get('downloaded_rows', 0)} rows; labels correctness/significance/evidence.",
+        ),
+        metric_line(
+            "Paper-RAG QA retrieval",
+            "PeerQA-XT",
+            "Hybrid answer-support Hit@5",
+            peerqa_hybrid.get("answer_support_hit_at_5"),
+            peerqa_xt.get("status", "not run"),
+            f"{peerqa_xt.get('downloaded_rows', 0)} rows; BM25 Hit@5 {fmt(peerqa_bm25.get('answer_support_hit_at_5'))}.",
         ),
         metric_line(
             "Claim retrieval",
@@ -293,6 +304,7 @@ def dashboard_lines() -> list[str]:
             f"| Local OpenReview/PRISM | End-to-end A-version dataset | {human.get('paper_count', 50)} papers, {human.get('weakness_item_count', 0)} human weakness items, {evidence.get('evidence_block_count', 0)} evidence blocks | Human weakness-evidence gold labels still incomplete |",
             f"| SubstanReview | Supervised substantiation floor | Test Macro-F1 {fmt(substan_nb.get('macro_f1'))} | Review-internal evidence only, not full paper-grounding |",
             f"| PeerReview Bench | No-manual-label review-quality/verifier baseline | {peerreview_summary.get('downloaded_rows', 0)} local rows from {peerreview_summary.get('total_available_rows', '-')} expert annotations | Sample is imbalanced; expand/full fetch before final result |",
+            f"| PeerQA-XT | No-manual-label Paper-RAG QA retrieval | {peerqa_xt.get('downloaded_rows', 0)} local retrieval rows from {peerqa_xt.get('total_available_rows', '-')} test rows; hybrid Hit@5 {fmt(peerqa_hybrid.get('answer_support_hit_at_5'))} | No gold evidence spans; current metric is answer-token support proxy |",
             f"| CLAIMCHECK | Paper-grounded critique benchmark | {claimcheck.get('main', {}).get('weakness_count', 155)} main weaknesses; embedding Hit@3 {fmt(claim_main.get('hit_at_3'))} | Raw row-level text not committed; verifier still weak |",
             "",
             "## Current Risks",
@@ -306,12 +318,13 @@ def dashboard_lines() -> list[str]:
             "- Generated rubric-agent weaknesses are mostly heuristic structure warnings; current verifier labels are mostly Unsupported / Mentioned.",
             "- Local classification is exploratory: metadata baseline is stronger than evidence-proxy features.",
             "- PeerReview Bench sample labels are imbalanced, so Macro-F1 is more important than accuracy.",
+            "- PeerQA-XT does not provide gold evidence spans; answer-support Hit@K is a retrieval proxy, not final evidence precision.",
             "- CLAIMCHECK and local silver labels are diagnostics until human gold labels or licensed row-level benchmark evaluation are stronger.",
             "",
             "## Next Experiments",
             "",
             "1. Expand PeerReview Bench beyond the 300-row probe and use correctness/significance/evidence labels as no-manual-label verifier/ranker-quality supervision.",
-            "2. Add PeerQA-XT for Paper-RAG retrieval QA over full scientific papers.",
+            "2. Upgrade PeerQA-XT from question-only BM25/TF-IDF/hybrid retrieval to section-aware and hierarchical Paper-RAG tools.",
             "3. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.",
             "4. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.",
             "5. Label the 300-row retrieval comparison queue only if external ready-label datasets still leave a gap in local Paper-RAG evidence support.",

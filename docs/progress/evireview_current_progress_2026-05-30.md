@@ -348,6 +348,30 @@ PeerReview Bench 当前 300-row probe 结果：
 - correctness 与 evidence 维度目前大多退化为多数类，下一步应扩到完整 3,881 行，或加入 paper-context / evidence-aware features。
 - 这条路线比本地人工标注更符合“直接拿来用的数据集做实验”的要求；本地 300 条队列保留为系统特定补充验证。
 
+### 2.13 PeerQA-XT Paper-RAG QA baseline
+
+为补齐开题报告中 Paper-RAG 检索实验的外部 ready-label 数据，本轮接入 PeerQA-XT。该数据集每条样本包含 peer-review-derived question、answer、full paper 和 domain，因此可以不新增人工标注就评估“问题能否从论文正文中检索到支持答案的信息”。
+
+已完成脚本：
+
+- `evaluate_peerqa_xt_retrieval.py`：通过 Hugging Face Dataset Viewer API 拉取 PeerQA-XT test split，运行 BM25、TF-IDF、Hybrid question retrieval 和 oracle answer-query diagnostic。
+
+当前 80-row test probe 结果：
+
+| Method | Rows | Hit@1 | Hit@3 | Hit@5 | Mean answer recall@5 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| bm25_question | 80 | 0.2750 | 0.6500 | 0.8625 | 0.5248 |
+| tfidf_question | 80 | 0.2500 | 0.7000 | 0.8000 | 0.5216 |
+| hybrid_question | 80 | 0.2625 | 0.6750 | 0.8375 | 0.5232 |
+| oracle_answer_query | 80 | 0.5000 | 0.9125 | 0.9750 | 0.6337 |
+
+解释：
+
+- PeerQA-XT 没有 gold evidence spans，因此当前 Hit@K 是 answer-token support proxy，不是最终证据精确率。
+- question-only BM25/TF-IDF 已经能在 Top-5 找到较多 answer-support chunks，说明该数据集适合作为 Paper-RAG retrieval QA 的外部验证集。
+- `oracle_answer_query` 只用于诊断上界，不能作为系统方法。
+- 下一步应把本项目已有的 section-aware / hierarchical Paper-RAG tools 迁移到 PeerQA-XT，并比较是否能提高 Hit@1/Hit@3，而不是只看 Top-5。
+
 ## 3. 最新论文对实验路线的修正
 
 本轮跟踪并写入 `memory/RESEARCH_LOG.md` 的论文包括：
