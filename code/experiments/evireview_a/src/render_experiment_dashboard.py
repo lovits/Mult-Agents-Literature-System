@@ -60,6 +60,9 @@ def dashboard_lines() -> list[str]:
     retrieval_queue = load_json("retrieval_comparison_annotation_queue_summary.json", {})
     retrieval_comparison_gold = load_json("retrieval_comparison_gold_summary.json", {})
     retrieval_comparison_metrics = load_json("retrieval_comparison_gold_metrics.json", {})
+    ready_datasets = load_json("ready_dataset_candidates.json", {})
+    peerreview_bench = load_json("peerreview_bench_baseline_metrics.json", {})
+    peerreview_summary = load_json("peerreview_bench_summary.json", {})
     reranker = load_json("claimcheck_openrouter_rerank_metrics.json", {})
 
     retrieval_results = retrieval.get("results", {})
@@ -102,6 +105,13 @@ def dashboard_lines() -> list[str]:
     hierarchical_sources = hierarchical_retrieval.get("sources", {})
     hierarchical_glm = hierarchical_sources.get("glm_reviewer", {})
     hierarchical_rubric = hierarchical_sources.get("rubric_agent", {})
+    peerreview_tasks = peerreview_bench.get("tasks", {})
+    peerreview_sig_nb = (
+        peerreview_tasks.get("significance", {})
+        .get("baselines", {})
+        .get("multinomial_naive_bayes_v0", {})
+    )
+    ready_count = len([item for item in ready_datasets.get("candidates", []) if item.get("status") == "reachable"])
 
     lines = [
         "# EviReview-Lite Experiment Dashboard",
@@ -158,6 +168,22 @@ def dashboard_lines() -> list[str]:
             substan_nb.get("macro_f1"),
             "done",
             "Licensed supervised review-internal substantiation baseline.",
+        ),
+        metric_line(
+            "Ready dataset search",
+            "External datasets",
+            "Reachable candidates",
+            ready_count,
+            ready_datasets.get("status", "not run"),
+            "Prioritizes no-new-manual-label datasets aligned with the opening report.",
+        ),
+        metric_line(
+            "PeerReview Bench baseline",
+            "PeerReview Bench",
+            "Significance NB Macro-F1",
+            peerreview_sig_nb.get("macro_f1"),
+            peerreview_bench.get("status", "not run"),
+            f"{peerreview_summary.get('downloaded_rows', 0)} rows; labels correctness/significance/evidence.",
         ),
         metric_line(
             "Claim retrieval",
@@ -266,6 +292,7 @@ def dashboard_lines() -> list[str]:
             "| --- | --- | --- | --- |",
             f"| Local OpenReview/PRISM | End-to-end A-version dataset | {human.get('paper_count', 50)} papers, {human.get('weakness_item_count', 0)} human weakness items, {evidence.get('evidence_block_count', 0)} evidence blocks | Human weakness-evidence gold labels still incomplete |",
             f"| SubstanReview | Supervised substantiation floor | Test Macro-F1 {fmt(substan_nb.get('macro_f1'))} | Review-internal evidence only, not full paper-grounding |",
+            f"| PeerReview Bench | No-manual-label review-quality/verifier baseline | {peerreview_summary.get('downloaded_rows', 0)} local rows from {peerreview_summary.get('total_available_rows', '-')} expert annotations | Sample is imbalanced; expand/full fetch before final result |",
             f"| CLAIMCHECK | Paper-grounded critique benchmark | {claimcheck.get('main', {}).get('weakness_count', 155)} main weaknesses; embedding Hit@3 {fmt(claim_main.get('hit_at_3'))} | Raw row-level text not committed; verifier still weak |",
             "",
             "## Current Risks",
@@ -278,15 +305,16 @@ def dashboard_lines() -> list[str]:
             f"- Retrieval comparison gold status: `{retrieval_comparison_gold.get('status', 'not imported')}`; current gold rows: {retrieval_comparison_gold.get('gold_rows', 0)}.",
             "- Generated rubric-agent weaknesses are mostly heuristic structure warnings; current verifier labels are mostly Unsupported / Mentioned.",
             "- Local classification is exploratory: metadata baseline is stronger than evidence-proxy features.",
+            "- PeerReview Bench sample labels are imbalanced, so Macro-F1 is more important than accuracy.",
             "- CLAIMCHECK and local silver labels are diagnostics until human gold labels or licensed row-level benchmark evaluation are stronger.",
             "",
             "## Next Experiments",
             "",
-            "1. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.",
-            "2. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.",
-            "3. Label the 300-row retrieval comparison queue to decide whether section-aware or hierarchical retrieval is better for human reviewer weaknesses.",
-            "4. Expand local human gold weakness-evidence labels from pilot toward 200-300 usable rows.",
-            "5. Use generated + verified weaknesses as features in the auxiliary classifier only after generated evidence support improves over metadata baseline.",
+            "1. Expand PeerReview Bench beyond the 300-row probe and use correctness/significance/evidence labels as no-manual-label verifier/ranker-quality supervision.",
+            "2. Add PeerQA-XT for Paper-RAG retrieval QA over full scientific papers.",
+            "3. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.",
+            "4. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.",
+            "5. Label the 300-row retrieval comparison queue only if external ready-label datasets still leave a gap in local Paper-RAG evidence support.",
         ]
     )
     return lines

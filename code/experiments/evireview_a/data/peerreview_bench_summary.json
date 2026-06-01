@@ -1,0 +1,29 @@
+{
+  "status": "ready",
+  "dataset_id": "prometheus-eval/peerreview-bench",
+  "config": "expert_annotation",
+  "split": "eval",
+  "source_url": "https://huggingface.co/datasets/prometheus-eval/peerreview-bench",
+  "license": "cc-by-4.0",
+  "total_available_rows": 3881,
+  "downloaded_rows": 300,
+  "limit": 300,
+  "label_counts": {
+    "correctness": {
+      "Not Correct": 32,
+      "Correct": 268
+    },
+    "significance": {
+      "Unlabeled": 32,
+      "Significant": 190,
+      "Marginally Significant": 59,
+      "Not Significant": 19
+    },
+    "evidence": {
+      "Unlabeled": 51,
+      "Sufficient": 241,
+      "Requires More": 8
+    }
+  },
+  "note": "Stored rows drop full paper_content and keep a short paper excerpt to keep the repository lightweight."
+}

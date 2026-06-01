@@ -117,3 +117,13 @@
 - **Authors**: Eric Liang
 - **Link**: https://arxiv.org/abs/2605.31575
 - **Summary**: Generates synthetic IR corpora with deterministic relevance oracles and controlled distractors to diagnose retrieval scaling and failure modes. Relevance: useful for future Paper-RAG stress tests around distractor density, but should remain auxiliary because the thesis core depends on real paper-review weaknesses and human labels.
+
+### [2026-06-01] PeerReview Bench / CMU Paper Reviewer Expert Annotation Study
+- **Authors**: Prometheus / CMU Paper Reviewer team
+- **Link**: https://huggingface.co/datasets/prometheus-eval/peerreview-bench
+- **Summary**: Provides expert annotations over review items with correctness, significance, and evidence labels. Relevance: this is the strongest immediate ready-label dataset for EviReview-Lite's verifier and evidence-aware ranker because it does not require new manual annotation before baseline experiments.
+
+### [2026-06-01] PeerQA: A Scientific Question Answering Dataset from Peer Reviews
+- **Authors**: UKP Lab and collaborators
+- **Link**: https://arxiv.org/abs/2502.13668
+- **Summary**: Builds scientific document-level QA from peer-review questions and author-provided answers, with full-paper context. Relevance: best next ready-label dataset for Paper-RAG retrieval QA because questions come from peer-review contexts and answers must be grounded in the final manuscript.

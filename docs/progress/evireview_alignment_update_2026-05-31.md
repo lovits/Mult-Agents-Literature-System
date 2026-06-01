@@ -119,14 +119,17 @@ flowchart LR
 
 优先级如下：
 
-1. 将 GLM-4.6V reviewer 扩到 5-10 篇，复跑 paired comparison。
-2. 把 paired comparison 的指标固定为 coverage、generic rate、redundancy、verifier label distribution、support score。
-3. 优先标注 `retrieval_comparison_annotation_queue.csv` 中的 300 条队列，用于替代 silver / proxy 指标。
-4. 标注后运行 `import_retrieval_comparison_gold.py` 和 `evaluate_retrieval_comparison_gold.py`，正式比较 section-aware retrieval 与 hierarchical retrieval。
-5. 在开题报告实验章节中明确写出：retrieval、verifier、ranker 是三个独立实验模块，分类只是辅助实验。
+1. 优先扩展 PeerReview Bench：它已有 correctness / significance / evidence 专家标注，可直接支撑 verifier、ranker 和 review-quality baseline，不需要新增人工标注。
+2. 接入 PeerQA-XT：用 peer-review-derived QA 对 full paper 做 Paper-RAG retrieval QA，补上“检索证据是否能回答评审问题”的外部 ready-label 评估。
+3. 将 GLM-4.6V reviewer 扩到 5-10 篇，复跑 paired comparison。
+4. 把 paired comparison 的指标固定为 coverage、generic rate、redundancy、verifier label distribution、support score。
+5. 本地 `retrieval_comparison_annotation_queue.csv` 的 300 条队列保留为系统特定 gold label；只有当外部 ready-label 数据集无法覆盖论文内证据块选择时再优先标注。
+6. 在开题报告实验章节中明确写出：retrieval、verifier、ranker 是三个独立实验模块，分类只是辅助实验。
 
 ## 7. 仍未完成
 
+- PeerReview Bench 目前只跑了 300-row probe，还没有扩展到完整 3,881 expert annotations。
+- PeerQA-XT 尚未接入 Paper-RAG QA baseline。
 - GLM-4.6V 还没有 5-10 篇稳定样本。
 - Evidence verifier 仍以 silver / heuristic 诊断为主，缺少足够人工 gold labels。
 - 前后端工程化尚未开始。

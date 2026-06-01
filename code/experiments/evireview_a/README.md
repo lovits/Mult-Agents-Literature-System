@@ -44,6 +44,9 @@ python3 code/experiments/evireview_a/src/fetch_substanreview.py
 python3 code/experiments/evireview_a/src/prepare_substanreview.py
 python3 code/experiments/evireview_a/src/evaluate_substanreview_baseline.py
 python3 code/experiments/evireview_a/src/render_substanreview_report.py
+python3 code/experiments/evireview_a/src/probe_ready_datasets.py
+python3 code/experiments/evireview_a/src/prepare_peerreview_bench.py
+python3 code/experiments/evireview_a/src/evaluate_peerreview_bench_baseline.py
 python3 code/experiments/evireview_a/src/fetch_claimcheck_texts.py
 python3 code/experiments/evireview_a/src/prepare_claimcheck.py
 python3 code/experiments/evireview_a/src/evaluate_claimcheck_baseline.py
@@ -113,6 +116,13 @@ External human-annotated benchmark outputs:
 - `substanreview_baseline_predictions.jsonl`
 - `substanreview_baseline_metrics.json`
 - `reports/substanreview_experiment_report.md`
+- `ready_dataset_candidates.json`
+- `reports/ready_dataset_candidates.md`
+- `peerreview_bench_expert_annotations.jsonl`
+- `peerreview_bench_summary.json`
+- `peerreview_bench_baseline_metrics.json`
+- `peerreview_bench_baseline_predictions.jsonl`
+- `reports/peerreview_bench_baseline_report.md`
 
 CLAIMCHECK benchmark outputs:
 

@@ -1,0 +1,290 @@
+{
+  "status": "ok",
+  "dataset": "prometheus-eval/peerreview-bench",
+  "source_file": "peerreview_bench_expert_annotations.jsonl",
+  "row_count": 300,
+  "tasks": {
+    "correctness": {
+      "status": "ok",
+      "label_field": "correctness_label",
+      "train_count": 240,
+      "test_count": 60,
+      "train_label_counts": {
+        "Not Correct": 24,
+        "Correct": 216
+      },
+      "baselines": {
+        "majority_train_label": {
+          "count": 60,
+          "accuracy": 0.8667,
+          "macro_f1": 0.4643,
+          "label_counts": {
+            "Not Correct": 8,
+            "Correct": 52
+          },
+          "prediction_counts": {
+            "Correct": 60
+          },
+          "per_label": {
+            "Correct": {
+              "precision": 0.8667,
+              "recall": 1.0,
+              "f1": 0.9286,
+              "support": 52
+            },
+            "Not Correct": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 8
+            }
+          },
+          "confusion": {
+            "Correct": {
+              "Correct": 52,
+              "Not Correct": 0
+            },
+            "Not Correct": {
+              "Correct": 8,
+              "Not Correct": 0
+            }
+          }
+        },
+        "multinomial_naive_bayes_v0": {
+          "count": 60,
+          "accuracy": 0.8667,
+          "macro_f1": 0.4643,
+          "label_counts": {
+            "Not Correct": 8,
+            "Correct": 52
+          },
+          "prediction_counts": {
+            "Correct": 60
+          },
+          "per_label": {
+            "Correct": {
+              "precision": 0.8667,
+              "recall": 1.0,
+              "f1": 0.9286,
+              "support": 52
+            },
+            "Not Correct": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 8
+            }
+          },
+          "confusion": {
+            "Correct": {
+              "Correct": 52,
+              "Not Correct": 0
+            },
+            "Not Correct": {
+              "Correct": 8,
+              "Not Correct": 0
+            }
+          }
+        }
+      }
+    },
+    "significance": {
+      "status": "ok",
+      "label_field": "significance_label",
+      "train_count": 214,
+      "test_count": 54,
+      "train_label_counts": {
+        "Significant": 155,
+        "Marginally Significant": 47,
+        "Not Significant": 12
+      },
+      "baselines": {
+        "majority_train_label": {
+          "count": 54,
+          "accuracy": 0.6481,
+          "macro_f1": 0.2622,
+          "label_counts": {
+            "Significant": 35,
+            "Marginally Significant": 12,
+            "Not Significant": 7
+          },
+          "prediction_counts": {
+            "Significant": 54
+          },
+          "per_label": {
+            "Marginally Significant": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 12
+            },
+            "Not Significant": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 7
+            },
+            "Significant": {
+              "precision": 0.6481,
+              "recall": 1.0,
+              "f1": 0.7865,
+              "support": 35
+            }
+          },
+          "confusion": {
+            "Marginally Significant": {
+              "Marginally Significant": 0,
+              "Not Significant": 0,
+              "Significant": 12
+            },
+            "Not Significant": {
+              "Marginally Significant": 0,
+              "Not Significant": 0,
+              "Significant": 7
+            },
+            "Significant": {
+              "Marginally Significant": 0,
+              "Not Significant": 0,
+              "Significant": 35
+            }
+          }
+        },
+        "multinomial_naive_bayes_v0": {
+          "count": 54,
+          "accuracy": 0.7593,
+          "macro_f1": 0.4935,
+          "label_counts": {
+            "Significant": 35,
+            "Marginally Significant": 12,
+            "Not Significant": 7
+          },
+          "prediction_counts": {
+            "Significant": 43,
+            "Marginally Significant": 11
+          },
+          "per_label": {
+            "Marginally Significant": {
+              "precision": 0.6364,
+              "recall": 0.5833,
+              "f1": 0.6087,
+              "support": 12
+            },
+            "Not Significant": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 7
+            },
+            "Significant": {
+              "precision": 0.7907,
+              "recall": 0.9714,
+              "f1": 0.8718,
+              "support": 35
+            }
+          },
+          "confusion": {
+            "Marginally Significant": {
+              "Marginally Significant": 7,
+              "Not Significant": 0,
+              "Significant": 5
+            },
+            "Not Significant": {
+              "Marginally Significant": 3,
+              "Not Significant": 0,
+              "Significant": 4
+            },
+            "Significant": {
+              "Marginally Significant": 1,
+              "Not Significant": 0,
+              "Significant": 34
+            }
+          }
+        }
+      }
+    },
+    "evidence": {
+      "status": "ok",
+      "label_field": "evidence_label",
+      "train_count": 199,
+      "test_count": 50,
+      "train_label_counts": {
+        "Sufficient": 193,
+        "Requires More": 6
+      },
+      "baselines": {
+        "majority_train_label": {
+          "count": 50,
+          "accuracy": 0.96,
+          "macro_f1": 0.4898,
+          "label_counts": {
+            "Sufficient": 48,
+            "Requires More": 2
+          },
+          "prediction_counts": {
+            "Sufficient": 50
+          },
+          "per_label": {
+            "Requires More": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 2
+            },
+            "Sufficient": {
+              "precision": 0.96,
+              "recall": 1.0,
+              "f1": 0.9796,
+              "support": 48
+            }
+          },
+          "confusion": {
+            "Requires More": {
+              "Requires More": 0,
+              "Sufficient": 2
+            },
+            "Sufficient": {
+              "Requires More": 0,
+              "Sufficient": 48
+            }
+          }
+        },
+        "multinomial_naive_bayes_v0": {
+          "count": 50,
+          "accuracy": 0.96,
+          "macro_f1": 0.4898,
+          "label_counts": {
+            "Sufficient": 48,
+            "Requires More": 2
+          },
+          "prediction_counts": {
+            "Sufficient": 50
+          },
+          "per_label": {
+            "Requires More": {
+              "precision": 0.0,
+              "recall": 0.0,
+              "f1": 0.0,
+              "support": 2
+            },
+            "Sufficient": {
+              "precision": 0.96,
+              "recall": 1.0,
+              "f1": 0.9796,
+              "support": 48
+            }
+          },
+          "confusion": {
+            "Requires More": {
+              "Requires More": 0,
+              "Sufficient": 2
+            },
+            "Sufficient": {
+              "Requires More": 0,
+              "Sufficient": 48
+            }
+          }
+        }
+      }
+    }
+  }
+}

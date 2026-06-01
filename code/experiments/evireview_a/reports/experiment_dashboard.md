@@ -18,6 +18,8 @@ This dashboard aggregates the current A-version experiment state across dataset 
 | Evidence blocks | Local OpenReview/PRISM | Blocks | 2597 | done | Paper-RAG substrate. |
 | Section-aware retrieval | Local OpenReview/PRISM | Top-3 section alignment | 0.8618 | done | Best local retrieval proxy so far. |
 | Substantiation verifier floor | SubstanReview | Naive Bayes Macro-F1 | 0.6411 | done | Licensed supervised review-internal substantiation baseline. |
+| Ready dataset search | External datasets | Reachable candidates | 7 | ok | Prioritizes no-new-manual-label datasets aligned with the opening report. |
+| PeerReview Bench baseline | PeerReview Bench | Significance NB Macro-F1 | 0.4935 | ok | 300 rows; labels correctness/significance/evidence. |
 | Claim retrieval | CLAIMCHECK | OpenRouter embedding Hit@3 | 0.5 | done | Semantic retrieval improves over lexical baselines. |
 | Groundedness verifier | CLAIMCHECK | Feature verifier Macro-F1 | 0.5076 | diagnostic | Verifier still weak, especially as final decision module. |
 | Evidence-aware ranker | CLAIMCHECK | bm25_max_similarity MAP | 0.7771 | diagnostic | BM25 currently beats feature-verifier probability for ranking. |
@@ -37,6 +39,7 @@ This dashboard aggregates the current A-version experiment state across dataset 
 | --- | --- | --- | --- |
 | Local OpenReview/PRISM | End-to-end A-version dataset | 50 papers, 1463 human weakness items, 2597 evidence blocks | Human weakness-evidence gold labels still incomplete |
 | SubstanReview | Supervised substantiation floor | Test Macro-F1 0.6411 | Review-internal evidence only, not full paper-grounding |
+| PeerReview Bench | No-manual-label review-quality/verifier baseline | 300 local rows from 3881 expert annotations | Sample is imbalanced; expand/full fetch before final result |
 | CLAIMCHECK | Paper-grounded critique benchmark | 155 main weaknesses; embedding Hit@3 0.5 | Raw row-level text not committed; verifier still weak |
 
 ## Current Risks
@@ -49,12 +52,13 @@ This dashboard aggregates the current A-version experiment state across dataset 
 - Retrieval comparison gold status: `needs_labels`; current gold rows: 0.
 - Generated rubric-agent weaknesses are mostly heuristic structure warnings; current verifier labels are mostly Unsupported / Mentioned.
 - Local classification is exploratory: metadata baseline is stronger than evidence-proxy features.
+- PeerReview Bench sample labels are imbalanced, so Macro-F1 is more important than accuracy.
 - CLAIMCHECK and local silver labels are diagnostics until human gold labels or licensed row-level benchmark evaluation are stronger.
 
 ## Next Experiments
 
-1. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.
-2. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.
-3. Label the 300-row retrieval comparison queue to decide whether section-aware or hierarchical retrieval is better for human reviewer weaknesses.
-4. Expand local human gold weakness-evidence labels from pilot toward 200-300 usable rows.
-5. Use generated + verified weaknesses as features in the auxiliary classifier only after generated evidence support improves over metadata baseline.
+1. Expand PeerReview Bench beyond the 300-row probe and use correctness/significance/evidence labels as no-manual-label verifier/ranker-quality supervision.
+2. Add PeerQA-XT for Paper-RAG retrieval QA over full scientific papers.
+3. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.
+4. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.
+5. Label the 300-row retrieval comparison queue only if external ready-label datasets still leave a gap in local Paper-RAG evidence support.

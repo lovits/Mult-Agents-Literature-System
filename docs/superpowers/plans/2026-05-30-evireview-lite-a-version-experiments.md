@@ -53,10 +53,12 @@ decision-note files: 50
 
 ### 1.3 外部备选数据集
 
-这些数据集不作为 A 版第一阶段主数据集，先作为论文综述、对比讨论、扩展实验候选。
+最新修正：外部数据集不再全部放到 B 版。只要已有可直接使用的标签，并且能对应开题报告里的 retrieval / verifier / ranker 实验，就优先作为 A 版外部可复现实验来源。本地 50 篇 OpenReview/PRISM 仍保留为端到端应用样本。
 
 | 数据集 | 适用性 | A 版定位 | 来源 |
 | --- | --- | --- | --- |
+| PeerReview Bench | 已有 correctness / significance / evidence expert annotations | A 版立即加入，作为 verifier / ranker / review-quality ready-label baseline | https://huggingface.co/datasets/prometheus-eval/peerreview-bench |
+| PeerQA-XT | full paper + peer-review-derived question / answer | A 版下一步加入，作为 Paper-RAG retrieval QA | https://huggingface.co/datasets/UKPLab/PeerQA-XT |
 | PeerRead | 有论文、人工评审、accept/reject，适合复现传统分类任务 | B 版扩展分类，不作为 A 版首选 | https://github.com/allenai/PeerRead |
 | NLPeer | 多领域论文与 review report，结构化程度高 | B 版扩展 review generation / skimming | https://arxiv.org/abs/2211.06651 |
 | SubstanReview | 针对 peer review 中 claim-evidence substantiation 的人工标注数据 | A 版标注规范参考，不直接替代本地数据 | https://arxiv.org/abs/2311.11967 |
@@ -85,6 +87,8 @@ A 版交付物：
 3. 至少 4 组核心实验：生成覆盖、RAG 检索、证据校验、证据感知排序。
 4. 一个探索性 accept/reject 分类实验。
 5. 一组可写入论文的消融实验与案例分析。
+
+最新执行策略：外部 ready-label 数据集优先用于快速建立 verifier / retrieval / ranker 的可复现 baseline；本地 200-300 条人工标注集保留为系统特定 gold labels，而不是阻塞前置条件。
 
 ---
 
@@ -131,11 +135,12 @@ flowchart LR
     S1 --> S2["Step 2<br/>切分论文证据块"]
     S2 --> S3["Step 3<br/>搭建检索基线"]
     S3 --> S4["Step 4<br/>Agent 生成候选弱点"]
-    S4 --> S5["Step 5<br/>人工标注 200-300 条"]
+    S4 --> S5["Step 5<br/>接入 ready-label 外部数据"]
     S5 --> S6["Step 6<br/>证据校验实验"]
     S6 --> S7["Step 7<br/>证据感知排序"]
     S7 --> S8["Step 8<br/>分类与消融"]
     S8 --> S9["Step 9<br/>案例分析与论文写作"]
+    S5 --> S5B["补充<br/>本地 200-300 条人工 gold"]
 ```
 
 ### Step 0：数据审计

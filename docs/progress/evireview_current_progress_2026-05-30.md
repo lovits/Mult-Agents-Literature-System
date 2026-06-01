@@ -312,6 +312,42 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 - Gold rows = 0，status = `needs_labels`。
 - 这表示评估管线已经就绪，但还没有人工标签，不能报告 section-aware 与 hierarchical 的最终胜负。
 
+### 2.12 Ready-label external datasets and PeerReview Bench baseline
+
+根据“优先找不需要人工标注、能直接做实验的数据集”的新要求，本轮把数据集路线从“先做本地 300 条人工标注”调整为“先接入已有标签的公开数据集，再把本地标注作为补充”。
+
+已完成脚本：
+
+- `probe_ready_datasets.py`：通过 Hugging Face API 探测可直接使用的数据集、license、字段和样本 schema。
+- `prepare_peerreview_bench.py`：拉取 PeerReview Bench 的 `expert_annotation` split，并只保存短 paper excerpt，避免提交完整论文正文。
+- `evaluate_peerreview_bench_baseline.py`：在已有专家标签上跑 majority 与 no-dependency Naive Bayes baseline。
+
+筛选出的 A/B 版数据集：
+
+| 数据集 | 标签/字段 | 适配实验 | 决策 |
+| --- | --- | --- | --- |
+| PeerReview Bench | correctness / significance / evidence expert annotations | verifier、ranker、review-quality | A 版立即加入 |
+| PeerQA-XT | full paper + peer-review-derived question + answer | Paper-RAG retrieval QA | A 版下一步加入 |
+| RottenReviews | human review-quality annotations | review quality / ranker | B 版补充 |
+| ReviewBench | 多会议 paper/review/rebuttal/decision/markdown | 泛化与扩容 | B 版补充 |
+| SPECS Review Benchmark | injected flaw specs + detection verdicts | 鲁棒性 / flaw detection | B 版补充 |
+| PeerCheck | human vs LLM reviews | reviewer generation 对比 | B 版补充 |
+
+PeerReview Bench 当前 300-row probe 结果：
+
+| Task | Train | Test | Majority Macro-F1 | NB Macro-F1 | NB Accuracy |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| correctness | 240 | 60 | 0.4643 | 0.4643 | 0.8667 |
+| significance | 214 | 54 | 0.2622 | 0.4935 | 0.7593 |
+| evidence | 199 | 50 | 0.4898 | 0.4898 | 0.9600 |
+
+解释：
+
+- accuracy 高但 Macro-F1 不高，说明标签明显不均衡；论文中应优先报告 Macro-F1 和 per-label recall。
+- significance 维度 NB 明显优于 majority，说明 review item 文本对“重要性/排序优先级”有可学习信号。
+- correctness 与 evidence 维度目前大多退化为多数类，下一步应扩到完整 3,881 行，或加入 paper-context / evidence-aware features。
+- 这条路线比本地人工标注更符合“直接拿来用的数据集做实验”的要求；本地 300 条队列保留为系统特定补充验证。
+
 ## 3. 最新论文对实验路线的修正
 
 本轮跟踪并写入 `memory/RESEARCH_LOG.md` 的论文包括：

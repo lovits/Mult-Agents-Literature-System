@@ -68,6 +68,10 @@ flowchart TD
     L --> E
     L --> H
     L --> I
+
+    M["External Ready-label Benchmarks"] --> H
+    M --> I
+    M --> E
 ```
 
 ---
@@ -230,6 +234,37 @@ A 版指标：
 限制：
 
 - A 版只有 50 篇，分类结果只能作为辅助信号，不能作为系统主要贡献。
+
+### 3.9 External Ready-label Benchmarks
+
+职责：
+
+- 优先接入不需要新增人工标注的公开数据集，补强本地 50 篇样本的外部可复现性。
+- 将外部标签映射到当前三条核心实验线：Paper-RAG retrieval、Evidence Verifier、Evidence-aware Ranker。
+- 明确 license 和仓库提交边界，避免把不清楚授权的大型原文直接提交。
+
+当前实现：
+
+- `probe_ready_datasets.py`
+- `prepare_peerreview_bench.py`
+- `evaluate_peerreview_bench_baseline.py`
+
+已选择数据集：
+
+| 数据集 | 监督信号 | 对应模块 | A 版状态 |
+| --- | --- | --- | --- |
+| PeerReview Bench | correctness / significance / evidence expert annotations | verifier、ranker、review quality | 已接入 300-row baseline |
+| PeerQA-XT | full paper + peer-review-derived QA | Paper-RAG retrieval QA | 下一步接入 |
+| RottenReviews | human review-quality labels | ranker / quality supplement | B 版 |
+| ReviewBench | papers / reviews / rebuttals / decisions | reviewer generation 泛化 | B 版 |
+| SPECS Review Benchmark | injected flaw detection | robustness | B 版 |
+| PeerCheck | human vs LLM reviews | reviewer generation alignment | B 版 |
+
+当前策略：
+
+- PeerReview Bench 用作第一外部 verifier/ranker 数据源。
+- PeerQA-XT 用作第一外部 Paper-RAG QA 数据源。
+- 本地 300 条 retrieval comparison queue 不取消，但从“第一入口”改为“系统特定 gold label 补充”。
 
 ---
 
