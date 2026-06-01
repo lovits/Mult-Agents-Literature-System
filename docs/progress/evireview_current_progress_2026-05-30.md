@@ -335,30 +335,30 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 PeerReview Bench 已从 300-row probe 扩展到完整 3,881 条 expert annotations。当前使用按 `paper_id` 分组的 deterministic 80/20 split，避免同一论文的 review item 同时出现在 train/test。
 
-| Task | Train | Test | Majority Macro-F1 | Review-item NB Macro-F1 | Context NB Macro-F1 | Context NB Accuracy |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| correctness | 3079 | 802 | 0.4646 | 0.4901 | 0.5601 | 0.8180 |
-| significance | 2720 | 696 | 0.2486 | 0.3723 | 0.3241 | 0.5833 |
-| evidence | 2266 | 602 | 0.4819 | 0.4819 | 0.5153 | 0.9169 |
+| Task | Train | Test | Majority Macro-F1 | Review NB Macro-F1 | Balanced Review NB Macro-F1 | Context NB Macro-F1 | Balanced Context NB Macro-F1 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| correctness | 3079 | 802 | 0.4646 | 0.4901 | 0.4846 | 0.5601 | 0.5686 |
+| significance | 2720 | 696 | 0.2486 | 0.3723 | 0.4207 | 0.3241 | 0.3205 |
+| evidence | 2266 | 602 | 0.4819 | 0.4819 | 0.4801 | 0.5153 | 0.5318 |
 
-Context NB per-label recall：
+Balanced context NB per-label recall：
 
 | Task | Label | Support | Recall | F1 |
 | --- | --- | ---: | ---: | ---: |
-| correctness | Correct | 696 | 0.9124 | 0.8969 |
-| correctness | Not Correct | 106 | 0.1981 | 0.2234 |
-| significance | Marginally Significant | 188 | 0.1809 | 0.2274 |
+| correctness | Correct | 696 | 0.8649 | 0.8763 |
+| correctness | Not Correct | 106 | 0.2830 | 0.2609 |
+| significance | Marginally Significant | 188 | 0.2181 | 0.2405 |
 | significance | Not Significant | 94 | 0.0000 | 0.0000 |
-| significance | Significant | 414 | 0.8986 | 0.7447 |
-| evidence | Requires More | 42 | 0.0476 | 0.0741 |
-| evidence | Sufficient | 560 | 0.9821 | 0.9565 |
+| significance | Significant | 414 | 0.8333 | 0.7210 |
+| evidence | Requires More | 42 | 0.0714 | 0.1071 |
+| evidence | Sufficient | 560 | 0.9804 | 0.9564 |
 
 解释：
 
 - accuracy 高但 Macro-F1 不高，说明标签明显不均衡；论文中应优先报告 Macro-F1 和 per-label recall。
-- significance 维度的 review-item NB 仍明显优于 majority，说明 review item 文本对“重要性/排序优先级”有可学习信号，可作为 evidence-aware ranker 的外部 ready-label baseline。
-- context NB 提升 correctness/evidence Macro-F1，但会伤害 significance；因此 ranker priority 与 verifier/evidence 应分开建模。
-- correctness 与 evidence 维度在严格 grouped split 下仍难以识别少数类，`Requires More` recall 只有 0.0476；下一步应加入更强的 evidence-aware features 或 LLM verifier，而不是继续依赖朴素词袋分类。
+- balanced review-item NB 将 significance Macro-F1 提升到 0.4207，说明 review item 文本对“重要性/排序优先级”有可学习信号，可作为 evidence-aware ranker 的外部 ready-label baseline。
+- balanced context NB 将 correctness/evidence Macro-F1 提升到 0.5686 / 0.5318；因此 ranker priority 与 verifier/evidence 应分开建模。
+- correctness 与 evidence 维度在严格 grouped split 下仍难以识别少数类，`Requires More` recall 只有 0.0714；下一步应加入更强的 evidence-aware features 或 LLM verifier，而不是继续依赖朴素词袋分类。
 - 这条路线比本地人工标注更符合“直接拿来用的数据集做实验”的要求；本地 300 条队列保留为系统特定补充验证。
 
 ### 2.13 PeerQA-XT Paper-RAG QA baseline

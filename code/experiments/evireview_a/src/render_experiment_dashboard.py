@@ -110,12 +110,12 @@ def dashboard_lines() -> list[str]:
     peerreview_sig_nb = (
         peerreview_tasks.get("significance", {})
         .get("baselines", {})
-        .get("multinomial_naive_bayes_v0", {})
+        .get("balanced_multinomial_naive_bayes_v1", {})
     )
     peerreview_evidence_context = (
         peerreview_tasks.get("evidence", {})
         .get("baselines", {})
-        .get("context_multinomial_naive_bayes_v1", {})
+        .get("balanced_context_multinomial_naive_bayes_v2", {})
     )
     peerqa_hybrid = peerqa_xt.get("methods", {}).get("hybrid_question", {})
     peerqa_bm25 = peerqa_xt.get("methods", {}).get("bm25_question", {})
@@ -207,7 +207,7 @@ def dashboard_lines() -> list[str]:
             "Significance NB Macro-F1",
             peerreview_sig_nb.get("macro_f1"),
             peerreview_bench.get("status", "not run"),
-            f"{peerreview_summary.get('downloaded_rows', 0)} rows; evidence context Macro-F1 {fmt(peerreview_evidence_context.get('macro_f1'))}.",
+            f"{peerreview_summary.get('downloaded_rows', 0)} rows; balanced evidence context Macro-F1 {fmt(peerreview_evidence_context.get('macro_f1'))}.",
         ),
         metric_line(
             "Paper-RAG QA retrieval",
@@ -324,7 +324,7 @@ def dashboard_lines() -> list[str]:
             "| --- | --- | --- | --- |",
             f"| Local OpenReview/PRISM | End-to-end A-version dataset | {human.get('paper_count', 50)} papers, {human.get('weakness_item_count', 0)} human weakness items, {evidence.get('evidence_block_count', 0)} evidence blocks | Human weakness-evidence gold labels still incomplete |",
             f"| SubstanReview | Supervised substantiation floor | Test Macro-F1 {fmt(substan_nb.get('macro_f1'))} | Review-internal evidence only, not full paper-grounding |",
-            f"| PeerReview Bench | No-manual-label review-quality/verifier baseline | {peerreview_summary.get('downloaded_rows', 0)} local rows from {peerreview_summary.get('total_available_rows', '-')} expert annotations; significance review-item Macro-F1 {fmt(peerreview_sig_nb.get('macro_f1'))}; evidence context Macro-F1 {fmt(peerreview_evidence_context.get('macro_f1'))} | Labels remain imbalanced; minority recall is the main gap |",
+            f"| PeerReview Bench | No-manual-label review-quality/verifier baseline | {peerreview_summary.get('downloaded_rows', 0)} local rows from {peerreview_summary.get('total_available_rows', '-')} expert annotations; significance balanced review Macro-F1 {fmt(peerreview_sig_nb.get('macro_f1'))}; evidence balanced context Macro-F1 {fmt(peerreview_evidence_context.get('macro_f1'))} | Labels remain imbalanced; minority recall is the main gap |",
             f"| PeerQA-XT | No-manual-label Paper-RAG QA retrieval | {peerqa_xt.get('downloaded_rows', 0)} local retrieval rows from {peerqa_xt.get('total_available_rows', '-')} test rows; best Hit@3 {fmt(peerqa_best_hit3.get('answer_support_hit_at_3'))} via {peerqa_best_hit3_name} | No gold evidence spans; current metric is answer-token support proxy |",
             f"| CLAIMCHECK | Paper-grounded critique benchmark | {claimcheck.get('main', {}).get('weakness_count', 155)} main weaknesses; embedding Hit@3 {fmt(claim_main.get('hit_at_3'))} | Raw row-level text not committed; verifier still weak |",
             "",

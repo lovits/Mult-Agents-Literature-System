@@ -75,14 +75,25 @@ def train_nb(rows: list[dict[str, Any]], label_field: str, text_getter=review_it
     }
 
 
-def predict_nb(row: dict[str, Any], model: dict[str, Any], text_getter=review_item_text) -> str:
+def prior_log_probability(label: str, model: dict[str, Any], mode: str) -> float:
+    labels = model["labels"]
+    if mode == "empirical":
+        return math.log((model["priors"][label] + 1) / (model["train_count"] + len(labels)))
+    if mode == "inverse_frequency":
+        return math.log(model["train_count"] / (len(labels) * model["priors"][label]))
+    if mode == "uniform":
+        return -math.log(len(labels))
+    raise ValueError(f"Unknown prior mode: {mode}")
+
+
+def predict_nb(row: dict[str, Any], model: dict[str, Any], text_getter=review_item_text, prior_mode: str = "empirical") -> str:
     labels = model["labels"]
     vocab_size = max(1, len(model["vocab"]))
     counts = Counter(tokenize(text_getter(row)))
     best_label = labels[0] if labels else "Unlabeled"
     best_score = -float("inf")
     for label in labels:
-        log_prob = math.log((model["priors"][label] + 1) / (model["train_count"] + len(labels)))
+        log_prob = prior_log_probability(label, model, prior_mode)
         denom = model["token_totals"][label] + model["alpha"] * vocab_size
         for token, count in counts.items():
             if token not in model["vocab"]:
@@ -163,8 +174,14 @@ def main() -> None:
         majority_preds = [majority_label for _ in test]
         nb_model = train_nb(train, label_field, review_item_text)
         nb_preds = [predict_nb(row, nb_model, review_item_text) for row in test]
+        balanced_nb_preds = [
+            predict_nb(row, nb_model, review_item_text, prior_mode="inverse_frequency") for row in test
+        ]
         context_nb_model = train_nb(train, label_field, context_text)
         context_nb_preds = [predict_nb(row, context_nb_model, context_text) for row in test]
+        balanced_context_nb_preds = [
+            predict_nb(row, context_nb_model, context_text, prior_mode="inverse_frequency") for row in test
+        ]
 
         metrics["tasks"][task_name] = {
             "status": "ok",
@@ -178,10 +195,21 @@ def main() -> None:
             "baselines": {
                 "majority_train_label": score_predictions(test, majority_preds, label_field),
                 "multinomial_naive_bayes_v0": score_predictions(test, nb_preds, label_field),
+                "balanced_multinomial_naive_bayes_v1": score_predictions(test, balanced_nb_preds, label_field),
                 "context_multinomial_naive_bayes_v1": score_predictions(test, context_nb_preds, label_field),
+                "balanced_context_multinomial_naive_bayes_v2": score_predictions(
+                    test, balanced_context_nb_preds, label_field
+                ),
             },
         }
-        for row, majority_pred, nb_pred, context_nb_pred in zip(test, majority_preds, nb_preds, context_nb_preds):
+        for row, majority_pred, nb_pred, balanced_nb_pred, context_nb_pred, balanced_context_nb_pred in zip(
+            test,
+            majority_preds,
+            nb_preds,
+            balanced_nb_preds,
+            context_nb_preds,
+            balanced_context_nb_preds,
+        ):
             predictions_out.append(
                 {
                     "task": task_name,
@@ -190,7 +218,9 @@ def main() -> None:
                     "gold_label": row[label_field],
                     "majority_pred": majority_pred,
                     "nb_pred": nb_pred,
+                    "balanced_nb_pred": balanced_nb_pred,
                     "context_nb_pred": context_nb_pred,
+                    "balanced_context_nb_pred": balanced_context_nb_pred,
                     "review_item": row["review_item"],
                 }
             )
@@ -207,8 +237,8 @@ def main() -> None:
         "- License: CC-BY-4.0",
         f"- Local rows used: {len(rows)}",
         "",
-        "| Task | Train | Test | Majority Macro-F1 | Review-item NB Macro-F1 | Context NB Macro-F1 | Context NB Accuracy |",
-        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
+        "| Task | Train | Test | Majority Macro-F1 | Review NB Macro-F1 | Balanced Review NB Macro-F1 | Context NB Macro-F1 | Balanced Context NB Macro-F1 |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for task_name, task in metrics["tasks"].items():
         if task["status"] != "ok":
@@ -216,17 +246,20 @@ def main() -> None:
             continue
         majority = task["baselines"]["majority_train_label"]
         nb = task["baselines"]["multinomial_naive_bayes_v0"]
+        balanced_nb = task["baselines"]["balanced_multinomial_naive_bayes_v1"]
         context_nb = task["baselines"]["context_multinomial_naive_bayes_v1"]
+        balanced_context_nb = task["baselines"]["balanced_context_multinomial_naive_bayes_v2"]
         lines.append(
             f"| {task_name} | {task['train_count']} | {task['test_count']} | "
-            f"{majority['macro_f1']} | {nb['macro_f1']} | {context_nb['macro_f1']} | {context_nb['accuracy']} |"
+            f"{majority['macro_f1']} | {nb['macro_f1']} | {balanced_nb['macro_f1']} | "
+            f"{context_nb['macro_f1']} | {balanced_context_nb['macro_f1']} |"
         )
     lines.extend(
         [
             "",
             "Split rule: grouped by `paper_id` with a deterministic 80/20 paper-level split, so rows from the same paper do not appear in both train and test.",
             "",
-            "## Context NB Per-label Recall",
+            "## Balanced Context NB Per-label Recall",
             "",
             "| Task | Label | Support | Recall | F1 |",
             "| --- | --- | ---: | ---: | ---: |",
@@ -235,9 +268,24 @@ def main() -> None:
     for task_name, task in metrics["tasks"].items():
         if task["status"] != "ok":
             continue
-        per_label = task["baselines"]["context_multinomial_naive_bayes_v1"]["per_label"]
+        per_label = task["baselines"]["balanced_context_multinomial_naive_bayes_v2"]["per_label"]
         for label, values in per_label.items():
             lines.append(f"| {task_name} | {label} | {values['support']} | {values['recall']} | {values['f1']} |")
+    lines.extend(
+        [
+            "",
+            "## Best Macro-F1 Baseline By Task",
+            "",
+            "| Task | Best baseline | Macro-F1 | Accuracy | Note |",
+            "| --- | --- | ---: | ---: | --- |",
+        ]
+    )
+    for task_name, task in metrics["tasks"].items():
+        if task["status"] != "ok":
+            continue
+        best_name, best_values = max(task["baselines"].items(), key=lambda item: item[1]["macro_f1"])
+        note = "review item priority signal" if task_name == "significance" else "context helps verifier signal"
+        lines.append(f"| {task_name} | {best_name} | {best_values['macro_f1']} | {best_values['accuracy']} | {note} |")
     lines.extend(
         [
             "",
@@ -247,6 +295,7 @@ def main() -> None:
             "- `correctness`, `significance`, and `evidence` map to verifier correctness, ranker priority, and evidence-grounding dimensions.",
             "- The grouped split is stricter than row-level random/modulo splitting because it blocks same-paper leakage.",
             "- Context NB concatenates paper title, short paper excerpt, review item, and annotator comments. It is still a simple lexical floor, not a final verifier.",
+            "- Balanced NB uses an inverse-frequency prior to expose minority-class recall trade-offs; it should be reported with Macro-F1 and per-label recall, not accuracy alone.",
             "- The current baseline is intentionally transparent; stronger LLM or embedding models can be added after this floor is stable.",
         ]
     )

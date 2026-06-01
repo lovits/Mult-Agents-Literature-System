@@ -119,7 +119,7 @@ flowchart LR
 
 优先级如下：
 
-1. PeerReview Bench 已扩展到完整 3,881 expert annotations；下一步要加入 context-aware features 或 LLM verifier，重点提升 correctness/evidence 少数类 recall。
+1. PeerReview Bench 已扩展到完整 3,881 expert annotations，并加入 balanced NB / context NB；下一步要加入 evidence-aware features 或 LLM verifier，重点提升 correctness/evidence 少数类 recall。
 2. PeerQA-XT 已接入 80-row Paper-RAG QA baseline，并完成 section-aware / hierarchical / domain-aware query decomposition variants；当前 section-aware 与最好 lexical floor 打平，手写 query expansion 下降，下一步要做数据驱动/LLM 子查询。
 3. 将 GLM-4.6V reviewer 扩到 5-10 篇，复跑 paired comparison。
 4. 把 paired comparison 的指标固定为 coverage、generic rate、redundancy、verifier label distribution、support score。

@@ -37,17 +37,17 @@
 
 PeerReview Bench 已接入完整 3,881 条 expert annotations，并采用按 `paper_id` 分组的 deterministic 80/20 split，避免同一论文泄漏到 train/test 两侧：
 
-| Task | Train | Test | Majority Macro-F1 | Review-item NB Macro-F1 | Context NB Macro-F1 |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| correctness | 3079 | 802 | 0.4646 | 0.4901 | 0.5601 |
-| significance | 2720 | 696 | 0.2486 | 0.3723 | 0.3241 |
-| evidence | 2266 | 602 | 0.4819 | 0.4819 | 0.5153 |
+| Task | Train | Test | Majority Macro-F1 | Review NB Macro-F1 | Balanced Review NB Macro-F1 | Context NB Macro-F1 | Balanced Context NB Macro-F1 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| correctness | 3079 | 802 | 0.4646 | 0.4901 | 0.4846 | 0.5601 | 0.5686 |
+| significance | 2720 | 696 | 0.2486 | 0.3723 | 0.4207 | 0.3241 | 0.3205 |
+| evidence | 2266 | 602 | 0.4819 | 0.4819 | 0.4801 | 0.5153 | 0.5318 |
 
 解释：
 
-- `significance` 能直接支撑 evidence-aware ranker 的优先级实验，review-item NB 仍明显强于 majority。
+- `significance` 能直接支撑 evidence-aware ranker 的优先级实验，balanced review-item NB 明显强于 majority。
 - `correctness` 和 `evidence` 在完整数据上仍类别不均衡，accuracy 高但 Macro-F1 不高；后续必须报告 Macro-F1、per-label recall 和 label distribution。
-- context NB 对 correctness/evidence 有帮助，但 `evidence` 的 `Requires More` minority recall 仍只有 0.0476，说明仅用朴素词袋上下文不足以完成 evidence verifier，需要引入 evidence-aware features 或 LLM verifier。
+- balanced context NB 对 correctness/evidence 有帮助，但 `evidence` 的 `Requires More` minority recall 仍只有 0.0714，说明仅用朴素词袋上下文不足以完成 evidence verifier，需要引入 evidence-aware features 或 LLM verifier。
 - 当前脚本只保存短 `paper_excerpt`，不保存完整 `paper_content`，避免把大型论文正文直接提交到仓库。
 
 ## 4. 与开题报告实验模块的对应关系
