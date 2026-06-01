@@ -18,7 +18,7 @@
 
 | 优先级 | 数据集 | 已有监督信号 | 对齐实验 | 当前决策 |
 | --- | --- | --- | --- | --- |
-| A | PeerReview Bench | `correctness` / `significance` / `evidence` expert annotations | Evidence verifier、evidence-aware ranker、review-quality baseline | 已接入并跑 300-row baseline |
+| A | PeerReview Bench | `correctness` / `significance` / `evidence` expert annotations | Evidence verifier、evidence-aware ranker、review-quality baseline | 已接入完整 3,881-row baseline |
 | A | PeerQA-XT | full paper、peer-review-derived question、answer | Paper-RAG retrieval QA | 已接入，并完成多检索方法 baseline |
 | B | RottenReviews | human review-quality annotations | review-quality / ranker supplement | B 版补充 |
 | B | ReviewBench | papers、reviews、rebuttals、decisions、markdown | 多会议泛化、reviewer generation 对比 | B 版补充 |
@@ -35,18 +35,19 @@
 - `code/experiments/evireview_a/src/prepare_peerreview_bench.py`
 - `code/experiments/evireview_a/src/evaluate_peerreview_bench_baseline.py`
 
-PeerReview Bench 当前 300-row probe：
+PeerReview Bench 已接入完整 3,881 条 expert annotations，并采用按 `paper_id` 分组的 deterministic 80/20 split，避免同一论文泄漏到 train/test 两侧：
 
-| Task | Train | Test | Majority Macro-F1 | NB Macro-F1 | NB Accuracy |
+| Task | Train | Test | Majority Macro-F1 | Review-item NB Macro-F1 | Context NB Macro-F1 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| correctness | 240 | 60 | 0.4643 | 0.4643 | 0.8667 |
-| significance | 214 | 54 | 0.2622 | 0.4935 | 0.7593 |
-| evidence | 199 | 50 | 0.4898 | 0.4898 | 0.9600 |
+| correctness | 3079 | 802 | 0.4646 | 0.4901 | 0.5601 |
+| significance | 2720 | 696 | 0.2486 | 0.3723 | 0.3241 |
+| evidence | 2266 | 602 | 0.4819 | 0.4819 | 0.5153 |
 
 解释：
 
-- `significance` 能直接支撑 evidence-aware ranker 的优先级实验，NB 明显强于 majority。
-- `correctness` 和 `evidence` 在 300-row 小样本里类别不均衡，accuracy 高但 Macro-F1 不高；后续必须报告 Macro-F1、per-label recall 和 label distribution。
+- `significance` 能直接支撑 evidence-aware ranker 的优先级实验，review-item NB 仍明显强于 majority。
+- `correctness` 和 `evidence` 在完整数据上仍类别不均衡，accuracy 高但 Macro-F1 不高；后续必须报告 Macro-F1、per-label recall 和 label distribution。
+- context NB 对 correctness/evidence 有帮助，但 `evidence` 的 `Requires More` minority recall 仍只有 0.0476，说明仅用朴素词袋上下文不足以完成 evidence verifier，需要引入 evidence-aware features 或 LLM verifier。
 - 当前脚本只保存短 `paper_excerpt`，不保存完整 `paper_content`，避免把大型论文正文直接提交到仓库。
 
 ## 4. 与开题报告实验模块的对应关系
@@ -61,7 +62,7 @@ PeerReview Bench 当前 300-row probe：
 
 ## 5. 下一步实验顺序
 
-1. 将 PeerReview Bench 从 300-row probe 扩展到完整 3,881 expert annotations，复跑三类标签的 Macro-F1 和 per-label recall。
+1. PeerReview Bench 已扩展到完整 3,881 expert annotations，并加入 context NB；下一步加入 evidence-aware features 或 LLM verifier，重点提升 minority recall。
 2. PeerQA-XT 已完成 question-only、section-aware、hierarchical 和 domain-aware query decomposition baseline；当前 section-aware 与最好 lexical floor 打平，手写 query expansion 下降，下一步应改成数据驱动/LLM 子查询。
 3. 把 PeerReview Bench 的 `significance` 标签并入 evidence-aware ranker 设计，验证它是否比纯 lexical score 更适合排序。
 4. RottenReviews / ReviewBench / PeerCheck 只在 A 版核心链路稳定后作为补充，不抢主实验。

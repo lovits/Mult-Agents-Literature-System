@@ -23,8 +23,10 @@ def safe_div(num: float, den: float) -> float:
 
 def split_rows(rows: list[dict[str, Any]], label_field: str) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     labeled = [row for row in rows if row[label_field] != "Unlabeled"]
-    train = [row for idx, row in enumerate(labeled) if idx % 5 != 0]
-    test = [row for idx, row in enumerate(labeled) if idx % 5 == 0]
+    paper_ids = sorted({row["paper_id"] for row in labeled})
+    test_papers = {paper_id for idx, paper_id in enumerate(paper_ids) if idx % 5 == 0}
+    train = [row for row in labeled if row["paper_id"] not in test_papers]
+    test = [row for row in labeled if row["paper_id"] in test_papers]
     return train, test
 
 
@@ -33,7 +35,22 @@ def train_majority(rows: list[dict[str, Any]], label_field: str) -> str:
     return counts.most_common(1)[0][0] if counts else "Unlabeled"
 
 
-def train_nb(rows: list[dict[str, Any]], label_field: str) -> dict[str, Any]:
+def review_item_text(row: dict[str, Any]) -> str:
+    return row["review_item"]
+
+
+def context_text(row: dict[str, Any]) -> str:
+    return " ".join(
+        [
+            row.get("paper_title", ""),
+            row.get("paper_excerpt", ""),
+            row.get("review_item", ""),
+            row.get("annotator_comments", ""),
+        ]
+    )
+
+
+def train_nb(rows: list[dict[str, Any]], label_field: str, text_getter=review_item_text) -> dict[str, Any]:
     labels = sorted({row[label_field] for row in rows})
     priors = Counter(row[label_field] for row in rows)
     token_counts = {label: Counter() for label in labels}
@@ -41,7 +58,7 @@ def train_nb(rows: list[dict[str, Any]], label_field: str) -> dict[str, Any]:
     vocab = set()
     for row in rows:
         label = row[label_field]
-        counts = Counter(tokenize(row["review_item"]))
+        counts = Counter(tokenize(text_getter(row)))
         for token, count in counts.items():
             clipped = min(count, 3)
             token_counts[label][token] += clipped
@@ -58,10 +75,10 @@ def train_nb(rows: list[dict[str, Any]], label_field: str) -> dict[str, Any]:
     }
 
 
-def predict_nb(row: dict[str, Any], model: dict[str, Any]) -> str:
+def predict_nb(row: dict[str, Any], model: dict[str, Any], text_getter=review_item_text) -> str:
     labels = model["labels"]
     vocab_size = max(1, len(model["vocab"]))
-    counts = Counter(tokenize(row["review_item"]))
+    counts = Counter(tokenize(text_getter(row)))
     best_label = labels[0] if labels else "Unlabeled"
     best_score = -float("inf")
     for label in labels:
@@ -144,21 +161,27 @@ def main() -> None:
 
         majority_label = train_majority(train, label_field)
         majority_preds = [majority_label for _ in test]
-        nb_model = train_nb(train, label_field)
-        nb_preds = [predict_nb(row, nb_model) for row in test]
+        nb_model = train_nb(train, label_field, review_item_text)
+        nb_preds = [predict_nb(row, nb_model, review_item_text) for row in test]
+        context_nb_model = train_nb(train, label_field, context_text)
+        context_nb_preds = [predict_nb(row, context_nb_model, context_text) for row in test]
 
         metrics["tasks"][task_name] = {
             "status": "ok",
             "label_field": label_field,
+            "split_rule": "grouped_by_paper_id_modulo_5",
             "train_count": len(train),
             "test_count": len(test),
+            "train_paper_count": len({row["paper_id"] for row in train}),
+            "test_paper_count": len({row["paper_id"] for row in test}),
             "train_label_counts": dict(Counter(row[label_field] for row in train)),
             "baselines": {
                 "majority_train_label": score_predictions(test, majority_preds, label_field),
                 "multinomial_naive_bayes_v0": score_predictions(test, nb_preds, label_field),
+                "context_multinomial_naive_bayes_v1": score_predictions(test, context_nb_preds, label_field),
             },
         }
-        for row, majority_pred, nb_pred in zip(test, majority_preds, nb_preds):
+        for row, majority_pred, nb_pred, context_nb_pred in zip(test, majority_preds, nb_preds, context_nb_preds):
             predictions_out.append(
                 {
                     "task": task_name,
@@ -167,6 +190,7 @@ def main() -> None:
                     "gold_label": row[label_field],
                     "majority_pred": majority_pred,
                     "nb_pred": nb_pred,
+                    "context_nb_pred": context_nb_pred,
                     "review_item": row["review_item"],
                 }
             )
@@ -183,8 +207,8 @@ def main() -> None:
         "- License: CC-BY-4.0",
         f"- Local rows used: {len(rows)}",
         "",
-        "| Task | Train | Test | Majority Macro-F1 | NB Macro-F1 | NB Accuracy |",
-        "| --- | ---: | ---: | ---: | ---: | ---: |",
+        "| Task | Train | Test | Majority Macro-F1 | Review-item NB Macro-F1 | Context NB Macro-F1 | Context NB Accuracy |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for task_name, task in metrics["tasks"].items():
         if task["status"] != "ok":
@@ -192,10 +216,28 @@ def main() -> None:
             continue
         majority = task["baselines"]["majority_train_label"]
         nb = task["baselines"]["multinomial_naive_bayes_v0"]
+        context_nb = task["baselines"]["context_multinomial_naive_bayes_v1"]
         lines.append(
             f"| {task_name} | {task['train_count']} | {task['test_count']} | "
-            f"{majority['macro_f1']} | {nb['macro_f1']} | {nb['accuracy']} |"
+            f"{majority['macro_f1']} | {nb['macro_f1']} | {context_nb['macro_f1']} | {context_nb['accuracy']} |"
         )
+    lines.extend(
+        [
+            "",
+            "Split rule: grouped by `paper_id` with a deterministic 80/20 paper-level split, so rows from the same paper do not appear in both train and test.",
+            "",
+            "## Context NB Per-label Recall",
+            "",
+            "| Task | Label | Support | Recall | F1 |",
+            "| --- | --- | ---: | ---: | ---: |",
+        ]
+    )
+    for task_name, task in metrics["tasks"].items():
+        if task["status"] != "ok":
+            continue
+        per_label = task["baselines"]["context_multinomial_naive_bayes_v1"]["per_label"]
+        for label, values in per_label.items():
+            lines.append(f"| {task_name} | {label} | {values['support']} | {values['recall']} | {values['f1']} |")
     lines.extend(
         [
             "",
@@ -203,6 +245,8 @@ def main() -> None:
             "",
             "- This is a direct no-manual-label verifier/ranker-quality baseline aligned with the thesis modules.",
             "- `correctness`, `significance`, and `evidence` map to verifier correctness, ranker priority, and evidence-grounding dimensions.",
+            "- The grouped split is stricter than row-level random/modulo splitting because it blocks same-paper leakage.",
+            "- Context NB concatenates paper title, short paper excerpt, review item, and annotator comments. It is still a simple lexical floor, not a final verifier.",
             "- The current baseline is intentionally transparent; stronger LLM or embedding models can be added after this floor is stable.",
         ]
     )

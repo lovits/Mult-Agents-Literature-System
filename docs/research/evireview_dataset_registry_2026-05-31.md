@@ -50,7 +50,7 @@ Datasets are scored against the current thesis objective:
 
 The latest search shifts the A-version away from new local manual labeling as the first evaluation source. The immediate ready-to-use route is:
 
-1. **PeerReview Bench**: 3,881 expert annotation rows with review item-level `correctness`, `significance`, and `evidence` labels, CC-BY-4.0. A 300-row no-dependency probe is already prepared in `peerreview_bench_expert_annotations.jsonl`.
+1. **PeerReview Bench**: 3,881 expert annotation rows with review item-level `correctness`, `significance`, and `evidence` labels, CC-BY-4.0. The full split is now prepared in `peerreview_bench_expert_annotations.jsonl`; grouped-split NB is useful for significance but weak on evidence minority recall.
 2. **PeerQA-XT**: 12,628 train/validation/test scientific QA pairs with full paper text and peer-review-derived questions, CC-BY-NC-SA-4.0. A first 80-row test retrieval baseline is now prepared for Paper-RAG QA without hand labels.
 3. **RottenReviews / ReviewBench / PeerCheck / SPECS**: keep as B-version supplements for review quality, reviewer generation alignment, generalization, and robustness.
 

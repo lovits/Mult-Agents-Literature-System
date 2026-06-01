@@ -15,7 +15,7 @@ CONFIG = "expert_annotation"
 SPLIT = "eval"
 OUT_FILE = "peerreview_bench_expert_annotations.jsonl"
 SUMMARY_FILE = "peerreview_bench_summary.json"
-DEFAULT_LIMIT = 300
+DEFAULT_LIMIT = 3881
 PAGE_SIZE = 100
 
 
@@ -78,6 +78,7 @@ def main() -> None:
             break
         rows.extend(normalize_row(item) for item in batch)
         offset += len(batch)
+        print(f"fetched={len(rows)} total_available={total_available}", flush=True)
 
     write_jsonl(DATA_DIR / OUT_FILE, rows)
     summary = {

@@ -253,7 +253,7 @@ A 版指标：
 
 | 数据集 | 监督信号 | 对应模块 | A 版状态 |
 | --- | --- | --- | --- |
-| PeerReview Bench | correctness / significance / evidence expert annotations | verifier、ranker、review quality | 已接入 300-row baseline |
+| PeerReview Bench | correctness / significance / evidence expert annotations | verifier、ranker、review quality | 已接入完整 3,881-row grouped baseline |
 | PeerQA-XT | full paper + peer-review-derived QA | Paper-RAG retrieval QA | 已接入 80-row question-only / section-aware / hierarchical / domain-aware retrieval baseline |
 | RottenReviews | human review-quality labels | ranker / quality supplement | B 版 |
 | ReviewBench | papers / reviews / rebuttals / decisions | reviewer generation 泛化 | B 版 |

@@ -333,19 +333,32 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | SPECS Review Benchmark | injected flaw specs + detection verdicts | 鲁棒性 / flaw detection | B 版补充 |
 | PeerCheck | human vs LLM reviews | reviewer generation 对比 | B 版补充 |
 
-PeerReview Bench 当前 300-row probe 结果：
+PeerReview Bench 已从 300-row probe 扩展到完整 3,881 条 expert annotations。当前使用按 `paper_id` 分组的 deterministic 80/20 split，避免同一论文的 review item 同时出现在 train/test。
 
-| Task | Train | Test | Majority Macro-F1 | NB Macro-F1 | NB Accuracy |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| correctness | 240 | 60 | 0.4643 | 0.4643 | 0.8667 |
-| significance | 214 | 54 | 0.2622 | 0.4935 | 0.7593 |
-| evidence | 199 | 50 | 0.4898 | 0.4898 | 0.9600 |
+| Task | Train | Test | Majority Macro-F1 | Review-item NB Macro-F1 | Context NB Macro-F1 | Context NB Accuracy |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| correctness | 3079 | 802 | 0.4646 | 0.4901 | 0.5601 | 0.8180 |
+| significance | 2720 | 696 | 0.2486 | 0.3723 | 0.3241 | 0.5833 |
+| evidence | 2266 | 602 | 0.4819 | 0.4819 | 0.5153 | 0.9169 |
+
+Context NB per-label recall：
+
+| Task | Label | Support | Recall | F1 |
+| --- | --- | ---: | ---: | ---: |
+| correctness | Correct | 696 | 0.9124 | 0.8969 |
+| correctness | Not Correct | 106 | 0.1981 | 0.2234 |
+| significance | Marginally Significant | 188 | 0.1809 | 0.2274 |
+| significance | Not Significant | 94 | 0.0000 | 0.0000 |
+| significance | Significant | 414 | 0.8986 | 0.7447 |
+| evidence | Requires More | 42 | 0.0476 | 0.0741 |
+| evidence | Sufficient | 560 | 0.9821 | 0.9565 |
 
 解释：
 
 - accuracy 高但 Macro-F1 不高，说明标签明显不均衡；论文中应优先报告 Macro-F1 和 per-label recall。
-- significance 维度 NB 明显优于 majority，说明 review item 文本对“重要性/排序优先级”有可学习信号。
-- correctness 与 evidence 维度目前大多退化为多数类，下一步应扩到完整 3,881 行，或加入 paper-context / evidence-aware features。
+- significance 维度的 review-item NB 仍明显优于 majority，说明 review item 文本对“重要性/排序优先级”有可学习信号，可作为 evidence-aware ranker 的外部 ready-label baseline。
+- context NB 提升 correctness/evidence Macro-F1，但会伤害 significance；因此 ranker priority 与 verifier/evidence 应分开建模。
+- correctness 与 evidence 维度在严格 grouped split 下仍难以识别少数类，`Requires More` recall 只有 0.0476；下一步应加入更强的 evidence-aware features 或 LLM verifier，而不是继续依赖朴素词袋分类。
 - 这条路线比本地人工标注更符合“直接拿来用的数据集做实验”的要求；本地 300 条队列保留为系统特定补充验证。
 
 ### 2.13 PeerQA-XT Paper-RAG QA baseline

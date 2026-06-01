@@ -19,7 +19,7 @@ This dashboard aggregates the current A-version experiment state across dataset 
 | Section-aware retrieval | Local OpenReview/PRISM | Top-3 section alignment | 0.8618 | done | Best local retrieval proxy so far. |
 | Substantiation verifier floor | SubstanReview | Naive Bayes Macro-F1 | 0.6411 | done | Licensed supervised review-internal substantiation baseline. |
 | Ready dataset search | External datasets | Reachable candidates | 7 | ok | Prioritizes no-new-manual-label datasets aligned with the opening report. |
-| PeerReview Bench baseline | PeerReview Bench | Significance NB Macro-F1 | 0.4935 | ok | 300 rows; labels correctness/significance/evidence. |
+| PeerReview Bench baseline | PeerReview Bench | Significance NB Macro-F1 | 0.3723 | ok | 3881 rows; evidence context Macro-F1 0.5153. |
 | Paper-RAG QA retrieval | PeerQA-XT | section_aware_question Hit@3 | 0.7 | ok | 80 rows; section-aware Hit@3 0.7; oracle ceiling Hit@3 0.9125. |
 | Claim retrieval | CLAIMCHECK | OpenRouter embedding Hit@3 | 0.5 | done | Semantic retrieval improves over lexical baselines. |
 | Groundedness verifier | CLAIMCHECK | Feature verifier Macro-F1 | 0.5076 | diagnostic | Verifier still weak, especially as final decision module. |
@@ -40,7 +40,7 @@ This dashboard aggregates the current A-version experiment state across dataset 
 | --- | --- | --- | --- |
 | Local OpenReview/PRISM | End-to-end A-version dataset | 50 papers, 1463 human weakness items, 2597 evidence blocks | Human weakness-evidence gold labels still incomplete |
 | SubstanReview | Supervised substantiation floor | Test Macro-F1 0.6411 | Review-internal evidence only, not full paper-grounding |
-| PeerReview Bench | No-manual-label review-quality/verifier baseline | 300 local rows from 3881 expert annotations | Sample is imbalanced; expand/full fetch before final result |
+| PeerReview Bench | No-manual-label review-quality/verifier baseline | 3881 local rows from 3881 expert annotations; significance review-item Macro-F1 0.3723; evidence context Macro-F1 0.5153 | Labels remain imbalanced; minority recall is the main gap |
 | PeerQA-XT | No-manual-label Paper-RAG QA retrieval | 80 local retrieval rows from 1252 test rows; best Hit@3 0.7 via section_aware_question | No gold evidence spans; current metric is answer-token support proxy |
 | CLAIMCHECK | Paper-grounded critique benchmark | 155 main weaknesses; embedding Hit@3 0.5 | Raw row-level text not committed; verifier still weak |
 
@@ -60,7 +60,7 @@ This dashboard aggregates the current A-version experiment state across dataset 
 
 ## Next Experiments
 
-1. Expand PeerReview Bench beyond the 300-row probe and use correctness/significance/evidence labels as no-manual-label verifier/ranker-quality supervision.
+1. Add context-aware PeerReview Bench features or an LLM verifier because full-data review-item NB still misses minority evidence labels.
 2. Improve PeerQA-XT query decomposition using data-driven or LLM-generated subqueries; current hand-written expansion hurts retrieval while section-aware scoring only ties the best lexical floor.
 3. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.
 4. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.
