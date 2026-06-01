@@ -16,6 +16,8 @@ def main() -> None:
     ensure_dirs()
     gold = load_json_if_exists("weakness_evidence_gold_summary.json")
     metrics = load_json_if_exists("verification_metrics_rule_based.json")
+    retrieval_gold = load_json_if_exists("retrieval_comparison_gold_summary.json")
+    retrieval_metrics = load_json_if_exists("retrieval_comparison_gold_metrics.json")
     lines = [
         "# Gold Annotation Status",
         "",
@@ -58,6 +60,34 @@ def main() -> None:
             ]
         )
 
+    lines.extend(["", "## Retrieval Comparison Gold", ""])
+    if retrieval_gold is None:
+        lines.append("Retrieval comparison labels have not been imported yet.")
+    else:
+        lines.extend(
+            [
+                f"- Status: `{retrieval_gold['status']}`",
+                f"- Total rows: {retrieval_gold['total_rows']}",
+                f"- Gold rows: {retrieval_gold['gold_rows']}",
+                f"- Best retriever counts: `{retrieval_gold['best_retriever_counts']}`",
+                f"- Label counts: `{retrieval_gold['label_counts']}`",
+                f"- Invalid rows: {len(retrieval_gold['invalid_rows'])}",
+            ]
+        )
+
+    lines.extend(["", "## Retrieval Comparison Evaluation", ""])
+    if retrieval_metrics is None:
+        lines.append("Retrieval comparison metrics have not been generated yet.")
+    elif retrieval_metrics.get("status") == "blocked":
+        lines.append(f"Blocked: {retrieval_metrics['reason']}")
+    else:
+        lines.extend(
+            [
+                f"- Gold rows: {retrieval_metrics['gold_rows']}",
+                f"- Best retriever counts: `{retrieval_metrics['best_retriever_counts']}`",
+            ]
+        )
+
     out_path = REPORT_DIR / "gold_annotation_status.md"
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Wrote {out_path}")
@@ -65,4 +95,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

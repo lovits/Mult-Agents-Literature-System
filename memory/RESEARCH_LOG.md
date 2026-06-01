@@ -107,3 +107,13 @@
 - **Authors**: Wenchuan Zhang, Jingru Guo, Hengzhe Zhang, Penghao Zhang, Jie Chen, Shuwan Zhang, Zhang Zhang, Yuhao Yi, Hong Bu
 - **Link**: https://arxiv.org/abs/2508.02258
 - **Summary**: Applies multimodal agentic retrieval to pathology VLMs, combining text-image retrieval, task decomposition, and multi-turn search to reduce hallucination in a high-stakes evidence-grounded domain. Relevance: useful as related work showing agentic RAG's broader grounding motivation, but not an A-version dependency because EviReview-Lite is text-only paper-review retrieval.
+
+### [2026-06-01] LongTraceRL: Learning Long-Context Reasoning from Search Agent Trajectories with Rubric Rewards
+- **Authors**: Nianyi Lin, Jiajie Zhang, Lei Hou, Juanzi Li
+- **Link**: https://arxiv.org/abs/2605.31584
+- **Summary**: Uses search-agent trajectories and rubric rewards to train long-context reasoning with more fine-grained process supervision than outcome-only rewards. Relevance: supports treating EviReview-Lite's weakness -> retrieval trajectory -> verifier rationale as an evaluable process trace; defer RL/training to B-version because the A-version needs gold-label validation first.
+
+### [2026-06-01] SPECTRA: Synthetic IR Test Collections with Relevance Oracles and Controlled Distractor Diagnostics
+- **Authors**: Eric Liang
+- **Link**: https://arxiv.org/abs/2605.31575
+- **Summary**: Generates synthetic IR corpora with deterministic relevance oracles and controlled distractors to diagnose retrieval scaling and failure modes. Relevance: useful for future Paper-RAG stress tests around distractor density, but should remain auxiliary because the thesis core depends on real paper-review weaknesses and human labels.

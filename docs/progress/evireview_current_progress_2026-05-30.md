@@ -275,6 +275,8 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 - `retrieve_human_hierarchical.py`：对 1463 条 human weaknesses 运行 keyword_search / semantic_search / section_read / RRF merge。
 - `build_retrieval_comparison_annotation_queue.py`：把 section-aware top-k 与 hierarchical top-k 配对，按 retriever disagreement、decision、category 分层抽取 300 条标注队列。
+- `import_retrieval_comparison_gold.py`：导入人工填写后的 retrieval comparison gold labels。
+- `evaluate_retrieval_comparison_gold.py`：基于 gold labels 计算 best-retriever 分布和 Evidence Hit@1/3/5。
 
 结果：
 
@@ -303,6 +305,13 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 结论：hierarchical retrieval 的 section-alignment proxy 很高，但真正有价值的是它与 section-aware baseline 的证据块差异很大；这使 300 条队列适合作为下一阶段人工 gold labels 标注入口。正式论文结论仍应等待人工判断 `gold_best_retriever` 与 `gold_label` 后再写。
 
+当前 gold 状态：
+
+- `retrieval_comparison_gold_summary.json` 已生成。
+- `retrieval_comparison_gold_metrics.json` 已生成 blocked 状态。
+- Gold rows = 0，status = `needs_labels`。
+- 这表示评估管线已经就绪，但还没有人工标签，不能报告 section-aware 与 hierarchical 的最终胜负。
+
 ## 3. 最新论文对实验路线的修正
 
 本轮跟踪并写入 `memory/RESEARCH_LOG.md` 的论文包括：
@@ -328,6 +337,8 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | A-RAG: https://arxiv.org/abs/2602.03442 | 通过 keyword search、semantic search、chunk read 三层检索接口让模型参与检索决策，支持本项目后续把 section-aware Paper-RAG 升级为 hierarchical retrieval tools。 |
 | AgenticRAG: https://arxiv.org/abs/2605.05538 | 企业知识库场景中 search / find / open / summarize 工具化检索显著优于单次检索，支持本项目把论文内证据检索写成可审计工具轨迹。 |
 | Patho-AgenticRAG: https://arxiv.org/abs/2508.02258 | 高风险医学视觉场景中使用多轮检索和任务分解降低幻觉，作为 Agentic RAG grounding 动机的旁证；A 版不扩展到多模态。 |
+| LongTraceRL: https://arxiv.org/abs/2605.31584 | 使用 search-agent trajectories 和 rubric rewards 监督长上下文证据推理；支持把 weakness -> retrieval trace -> verifier rationale 写成可评估过程轨迹，但 RL/training 放到 B 版。 |
+| SPECTRA: https://arxiv.org/abs/2605.31575 | 合成 IR 测试集可控制 distractor density，适合未来 Paper-RAG 压力测试；A 版仍以真实论文评审和人工标签为核心。 |
 | Beyond Correctness / VERITAS: https://arxiv.org/abs/2510.13272 | 强调 search agent 不能只看最终答案正确性，还要看 intermediate reasoning faithfulness；支持本项目把 weakness -> evidence -> verifier trace 作为主贡献证据。 |
 | Fintech Agentic RAG: https://arxiv.org/abs/2510.25518 | 模块化 agentic RAG 在专业领域通过 query reformulation、sub-query decomposition、reranking 提升检索鲁棒性，但有延迟代价；支持本项目把多 agent workflow 写成质量优先而非低延迟系统。 |
 
@@ -363,7 +374,7 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 
 核心未完成：
 
-- 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注；当前已生成 300 条 section-aware vs hierarchical retrieval 对比标注队列。
+- 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注；当前已生成 300 条 section-aware vs hierarchical retrieval 对比标注队列，并补齐导入/评估脚本。
 - Agent weakness generation 已跑 rubric-agent 全量 baseline、GLM-4.6V 3-paper 小样本，以及 GLM overlap 上的 paired comparison，但还没有完成 5-10 篇 provider 对比。
 - Rubric-agent generation baseline 已完成；GLM-4.6V 已接入并完成重叠样本公平对比，小样本仍需扩大后再作为正式 provider 结果。
 - Hierarchical Paper-RAG tools 已有本地生成弱点诊断和 1463 条 human weakness 检索诊断，但还没有用人工 gold labels 做正式对比。

@@ -58,6 +58,8 @@ def dashboard_lines() -> list[str]:
     hierarchical_retrieval = load_json("generated_hierarchical_retrieval_summary.json", {})
     human_hierarchical = load_json("retrieval_human_hierarchical_summary.json", {})
     retrieval_queue = load_json("retrieval_comparison_annotation_queue_summary.json", {})
+    retrieval_comparison_gold = load_json("retrieval_comparison_gold_summary.json", {})
+    retrieval_comparison_metrics = load_json("retrieval_comparison_gold_metrics.json", {})
     reranker = load_json("claimcheck_openrouter_rerank_metrics.json", {})
 
     retrieval_results = retrieval.get("results", {})
@@ -238,6 +240,14 @@ def dashboard_lines() -> list[str]:
             f"Top-1 disagreement {retrieval_queue.get('top1_disagreement_rate', '-')}; Top-3 disagreement {retrieval_queue.get('top3_disagreement_rate', '-')}",
         ),
         metric_line(
+            "Retrieval comparison gold",
+            "Human weaknesses",
+            "Gold rows",
+            retrieval_comparison_gold.get("gold_rows", 0),
+            retrieval_comparison_gold.get("status", "not imported"),
+            f"Evaluation status: {retrieval_comparison_metrics.get('status', 'not run')}",
+        ),
+        metric_line(
             "Generated weakness verifier/ranker",
             "Local OpenReview/PRISM",
             "Generated weaknesses verified",
@@ -265,6 +275,7 @@ def dashboard_lines() -> list[str]:
             "- Paired GLM-vs-rubric comparison currently covers only the GLM overlap papers.",
             "- Hierarchical Paper-RAG currently uses silver verifier labels; treat support gains as architecture diagnostics, not final truth.",
             "- Human hierarchical retrieval has high section-alignment proxy scores, but true evidence support still needs the 300-row comparison queue to be labeled.",
+            f"- Retrieval comparison gold status: `{retrieval_comparison_gold.get('status', 'not imported')}`; current gold rows: {retrieval_comparison_gold.get('gold_rows', 0)}.",
             "- Generated rubric-agent weaknesses are mostly heuristic structure warnings; current verifier labels are mostly Unsupported / Mentioned.",
             "- Local classification is exploratory: metadata baseline is stronger than evidence-proxy features.",
             "- CLAIMCHECK and local silver labels are diagnostics until human gold labels or licensed row-level benchmark evaluation are stronger.",

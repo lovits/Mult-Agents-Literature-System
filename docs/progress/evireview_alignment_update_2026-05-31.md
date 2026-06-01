@@ -84,6 +84,12 @@ flowchart LR
 
 这一步的意义是：不再只用 generated weaknesses 做架构诊断，而是把检索对比推进到开题报告核心数据源，即真实人工 reviewer weaknesses。由于 Top-1 / Top-3 disagreement 很高，300 条对比队列适合作为下一阶段 gold labels 标注入口。
 
+已补齐评估闭环脚手架：
+
+- `import_retrieval_comparison_gold.py`：从 300 条 CSV 队列导入人工填写的 `gold_best_retriever`、`gold_label`、`gold_evidence_block_ids`。
+- `evaluate_retrieval_comparison_gold.py`：在 gold rows 存在后计算 section-aware 与 hierarchical 的 Hit@1/3/5 和 best-retriever 分布。
+- 当前状态为 `needs_labels`，gold rows = 0；因此仍不能写最终 retriever 胜负结论。
+
 ## 4. 近两年 Agentic RAG 文献带来的路线修正
 
 | 文献方向 | 对本项目的修正 |
@@ -93,6 +99,7 @@ flowchart LR
 | AgenticRAG enterprise retrieval | 强化“search / open / in-document navigation”式工具化检索，而不是把所有 grounding 压给一次性 top-k 检索。 |
 | RAGCap-Bench / InfoDeepSeek | 评价指标要覆盖中间能力：检索决策、证据压缩、utility、compactness，而不是只看最终报告。 |
 | RAGCHECKER / VERITAS | 主贡献应强调 weakness-level / claim-level traceability 和 faithfulness，而不是生成文本流畅度。 |
+| LongTraceRL / trajectory supervision | 支持把检索轨迹和 rubric rationale 当作可评估过程，但 A 版只做评估与标注，不做 RL 训练。 |
 | ReviewGrounder / FactReview / CLAIMCHECK | 论文评审场景的核心风险是 critique 是否 grounded 和 methodologically sound。 |
 
 ## 5. 创新点优化
@@ -115,7 +122,7 @@ flowchart LR
 1. 将 GLM-4.6V reviewer 扩到 5-10 篇，复跑 paired comparison。
 2. 把 paired comparison 的指标固定为 coverage、generic rate、redundancy、verifier label distribution、support score。
 3. 优先标注 `retrieval_comparison_annotation_queue.csv` 中的 300 条队列，用于替代 silver / proxy 指标。
-4. 用人工 gold labels 对比 section-aware retrieval 与 hierarchical retrieval，避免只依赖 section alignment。
+4. 标注后运行 `import_retrieval_comparison_gold.py` 和 `evaluate_retrieval_comparison_gold.py`，正式比较 section-aware retrieval 与 hierarchical retrieval。
 5. 在开题报告实验章节中明确写出：retrieval、verifier、ranker 是三个独立实验模块，分类只是辅助实验。
 
 ## 7. 仍未完成

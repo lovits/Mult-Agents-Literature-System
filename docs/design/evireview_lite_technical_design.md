@@ -173,6 +173,8 @@ flowchart TD
 
 - `build_annotation_candidates.py`
 - `build_retrieval_comparison_annotation_queue.py`
+- `import_retrieval_comparison_gold.py`
+- `evaluate_retrieval_comparison_gold.py`
 
 本轮新增：
 
@@ -343,7 +345,8 @@ papers_manifest.csv
 15. Generated reviewer paired comparison：在 GLM overlap 的 3 篇论文 / 107 条 human weaknesses 上，GLM-4.6V 的 coverage recall@0.18 为 0.5047，高于同批 rubric-agent 的 0.3738；GLM mean support score 为 0.3448，高于 rubric-agent 的 0.2030。该结果只作为小样本诊断，用于决定下一步扩到 5-10 篇。
 16. Hierarchical Paper-RAG retrieval tools：新增 keyword_search、semantic_search、section_read 和 RRF merge，对已有 generated weaknesses 重新检索证据。GLM 样本的 mean support score 从 0.3448 提升到 0.4411，Partially Supported-or-better rate 从 0.25 提升到 0.625；rubric-agent 提升有限，说明 hierarchical retrieval 更适合具体 weakness，而不是泛化结构风险提示。该结果仍是 silver verifier 诊断，后续需用人工 gold labels 验证。
 17. Human weakness hierarchical retrieval：对 1463 条人工 reviewer weaknesses 运行 hierarchical Paper-RAG，non-empty retrieval=1.0、Top-1 section alignment=0.9993、Top-3 alignment=1.0；section-aware 与 hierarchical 的 Top-1 disagreement=0.6138、Top-3 disagreement=0.9645，并已生成 300 条 retrieval comparison annotation queue。该队列是下一步人工 gold 检索对比的主入口。
-18. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
+18. Retrieval comparison gold scaffold：已实现 comparison gold 导入和 evaluation 脚本；当前 gold rows=0、status=needs_labels，因此只说明管线就绪，不说明 retriever 最终胜负。
+19. OpenRouter chat reranker/verifier 诊断：免费 chat reranker 当前受 429 限速影响；embedding max-similarity verifier 的 pilot-selected main Macro-F1 仍为 0.4106，说明 embedding 适合 retrieval，但不能单独承担 verifier。
 
 ### 当前阶段
 

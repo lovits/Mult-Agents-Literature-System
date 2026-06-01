@@ -28,6 +28,7 @@ This dashboard aggregates the current A-version experiment state across dataset 
 | Hierarchical Paper-RAG | Generated weaknesses | GLM mean support | 0.4411 | diagnostic | GLM partial+ 0.625; rubric support 0.1999 |
 | Human hierarchical retrieval | Local OpenReview/PRISM | Top-1 section alignment | 0.9993 | diagnostic | 1463 human weaknesses; top tools {'semantic_search': 807, 'keyword_search': 567, 'section_read': 89} |
 | Retrieval comparison queue | Human weaknesses | Selected annotation rows | 300 | ready | Top-1 disagreement 0.6138; Top-3 disagreement 0.9645 |
+| Retrieval comparison gold | Human weaknesses | Gold rows | 0 | needs_labels | Evaluation status: blocked |
 | Generated weakness verifier/ranker | Local OpenReview/PRISM | Generated weaknesses verified | 194 | pipeline baseline | Label counts: {'Unsupported': 121, 'Mentioned but Not Problem': 70, 'Partially Supported': 3} |
 
 ## Dataset Coverage
@@ -45,6 +46,7 @@ This dashboard aggregates the current A-version experiment state across dataset 
 - Paired GLM-vs-rubric comparison currently covers only the GLM overlap papers.
 - Hierarchical Paper-RAG currently uses silver verifier labels; treat support gains as architecture diagnostics, not final truth.
 - Human hierarchical retrieval has high section-alignment proxy scores, but true evidence support still needs the 300-row comparison queue to be labeled.
+- Retrieval comparison gold status: `needs_labels`; current gold rows: 0.
 - Generated rubric-agent weaknesses are mostly heuristic structure warnings; current verifier labels are mostly Unsupported / Mentioned.
 - Local classification is exploratory: metadata baseline is stronger than evidence-proxy features.
 - CLAIMCHECK and local silver labels are diagnostics until human gold labels or licensed row-level benchmark evaluation are stronger.

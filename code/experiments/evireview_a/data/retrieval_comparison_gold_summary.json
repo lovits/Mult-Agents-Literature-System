@@ -1,0 +1,17 @@
+{
+  "source": "retrieval_comparison_annotation_queue.csv",
+  "total_rows": 300,
+  "gold_rows": 0,
+  "best_retriever_counts": {},
+  "label_counts": {},
+  "decision_counts": {},
+  "category_counts": {},
+  "invalid_rows": [],
+  "status": "needs_labels",
+  "valid_best_retriever_labels": [
+    "hierarchical",
+    "neither",
+    "section",
+    "tie"
+  ]
+}
