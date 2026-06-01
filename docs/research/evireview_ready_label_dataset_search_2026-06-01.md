@@ -62,7 +62,7 @@ PeerReview Bench 当前 300-row probe：
 ## 5. 下一步实验顺序
 
 1. 将 PeerReview Bench 从 300-row probe 扩展到完整 3,881 expert annotations，复跑三类标签的 Macro-F1 和 per-label recall。
-2. PeerQA-XT 已完成第一版 question-only BM25 / TF-IDF / hybrid baseline；下一步加入 section-aware 和 hierarchical retrieval，指标继续用 answer-support Hit@K，并重点看 Hit@1/Hit@3。
+2. PeerQA-XT 已完成 question-only BM25 / TF-IDF / hybrid baseline，并加入 lightweight section-aware / hierarchical retrieval；当前结构先验没有超过 question-only floor，下一步应改成 domain-aware section mapping 或 query decomposition。
 3. 把 PeerReview Bench 的 `significance` 标签并入 evidence-aware ranker 设计，验证它是否比纯 lexical score 更适合排序。
 4. RottenReviews / ReviewBench / PeerCheck 只在 A 版核心链路稳定后作为补充，不抢主实验。
 5. 本地 300 条 retrieval comparison queue 保留为最终系统特定人工 gold，对外部数据集不能覆盖的“论文内证据块选择”做补充。
@@ -76,6 +76,8 @@ PeerReview Bench 当前 300-row probe：
 | bm25_question | 0.2750 | 0.6500 | 0.8625 | 0.5248 |
 | tfidf_question | 0.2500 | 0.7000 | 0.8000 | 0.5216 |
 | hybrid_question | 0.2625 | 0.6750 | 0.8375 | 0.5232 |
+| section_aware_question | 0.2625 | 0.6750 | 0.8375 | 0.5236 |
+| hierarchical_question | 0.2500 | 0.6750 | 0.8375 | 0.5237 |
 | oracle_answer_query | 0.5000 | 0.9125 | 0.9750 | 0.6337 |
 
-该结果说明 PeerQA-XT 可以直接支撑 Paper-RAG 检索实验，但因为它没有 gold evidence span，当前指标仍是 answer-token support proxy。正式论文中应把它写成“外部检索 QA 诊断集”，不能替代本地 weakness-evidence gold labels。
+该结果说明 PeerQA-XT 可以直接支撑 Paper-RAG 检索实验，但因为它没有 gold evidence span，当前指标仍是 answer-token support proxy。正式论文中应把它写成“外部检索 QA 诊断集”，不能替代本地 weakness-evidence gold labels。当前 lightweight section-aware / hierarchical variants 没有超过 question-only floor，因此这一结果也提示：section prior 必须针对数据集领域和论文结构重新设计，不能机械迁移。

@@ -363,14 +363,17 @@ PeerReview Bench 当前 300-row probe 结果：
 | bm25_question | 80 | 0.2750 | 0.6500 | 0.8625 | 0.5248 |
 | tfidf_question | 80 | 0.2500 | 0.7000 | 0.8000 | 0.5216 |
 | hybrid_question | 80 | 0.2625 | 0.6750 | 0.8375 | 0.5232 |
+| section_aware_question | 80 | 0.2625 | 0.6750 | 0.8375 | 0.5236 |
+| hierarchical_question | 80 | 0.2500 | 0.6750 | 0.8375 | 0.5237 |
 | oracle_answer_query | 80 | 0.5000 | 0.9125 | 0.9750 | 0.6337 |
 
 解释：
 
 - PeerQA-XT 没有 gold evidence spans，因此当前 Hit@K 是 answer-token support proxy，不是最终证据精确率。
 - question-only BM25/TF-IDF 已经能在 Top-5 找到较多 answer-support chunks，说明该数据集适合作为 Paper-RAG retrieval QA 的外部验证集。
+- 轻量 section-aware / hierarchical variants 没有超过 question-only floor，说明本地论文评审 section prior 不能直接迁移到 PeerQA-XT 的跨领域医学/公共卫生论文；下一步需要 domain-aware section mapping 或 query decomposition。
 - `oracle_answer_query` 只用于诊断上界，不能作为系统方法。
-- 下一步应把本项目已有的 section-aware / hierarchical Paper-RAG tools 迁移到 PeerQA-XT，并比较是否能提高 Hit@1/Hit@3，而不是只看 Top-5。
+- 下一步应重点提高 Hit@1/Hit@3，而不是只看 Top-5。
 
 ## 3. 最新论文对实验路线的修正
 

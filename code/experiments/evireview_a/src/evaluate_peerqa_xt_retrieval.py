@@ -9,7 +9,19 @@ import urllib.request
 from collections import Counter
 from typing import Any
 
-from common import DATA_DIR, REPORT_DIR, cosine_sparse, ensure_dirs, normalize_ws, tokenize, write_json, write_jsonl
+from common import (
+    DATA_DIR,
+    REPORT_DIR,
+    classify_section,
+    classify_weakness_category,
+    cosine_sparse,
+    ensure_dirs,
+    normalize_ws,
+    section_prior,
+    tokenize,
+    write_json,
+    write_jsonl,
+)
 
 
 DATASET_ID = "UKPLab/PeerQA-XT"
@@ -144,6 +156,7 @@ def chunk_paper(text: str) -> list[dict[str, Any]]:
                 "chunk_id": f"c{chunk_idx:04d}",
                 "chunk_index": chunk_idx,
                 "heading": heading_for_position(text, char_start),
+                "section_type": classify_section(heading_for_position(text, char_start)),
                 "text": chunk_text,
                 "token_count": end - start,
             }
@@ -210,9 +223,34 @@ def normalize_scores(scores: dict[str, float]) -> dict[str, float]:
     return {key: value / max_score for key, value in scores.items()}
 
 
+def rank_ids(scores: dict[str, float], chunks: list[dict[str, Any]]) -> list[str]:
+    return [
+        chunk["chunk_id"]
+        for chunk in sorted(
+            chunks,
+            key=lambda item: (scores.get(item["chunk_id"], 0.0), -item["chunk_index"]),
+            reverse=True,
+        )
+    ]
+
+
+def rrf_scores(rankings: list[list[str]], weights: list[float] | None = None, k: int = 60) -> dict[str, float]:
+    scores: Counter[str] = Counter()
+    weights = weights or [1.0] * len(rankings)
+    for ranking, weight in zip(rankings, weights):
+        for rank, chunk_id in enumerate(ranking, start=1):
+            scores[chunk_id] += weight / (k + rank)
+    return dict(scores)
+
+
 def rank_chunks(method: str, query: str, chunks: list[dict[str, Any]], idf: dict[str, float]) -> list[dict[str, Any]]:
     bm25 = bm25_scores(query, chunks)
     tfidf = tfidf_scores(query, chunks, idf)
+    question_category = classify_weakness_category(query)
+    section_scores = {
+        chunk["chunk_id"]: section_prior(question_category, chunk.get("section_type", "other"))
+        for chunk in chunks
+    }
     if method == "bm25_question":
         scores = bm25
     elif method == "tfidf_question":
@@ -225,6 +263,24 @@ def rank_chunks(method: str, query: str, chunks: list[dict[str, Any]], idf: dict
             + 0.4 * tfidf_norm.get(chunk["chunk_id"], 0.0)
             for chunk in chunks
         }
+    elif method == "section_aware_question":
+        bm25_norm = normalize_scores(bm25)
+        tfidf_norm = normalize_scores(tfidf)
+        scores = {
+            chunk["chunk_id"]: 0.55 * bm25_norm.get(chunk["chunk_id"], 0.0)
+            + 0.35 * tfidf_norm.get(chunk["chunk_id"], 0.0)
+            + 0.10 * section_scores.get(chunk["chunk_id"], 0.0)
+            for chunk in chunks
+        }
+    elif method == "hierarchical_question":
+        scores = rrf_scores(
+            [
+                rank_ids(bm25, chunks),
+                rank_ids(tfidf, chunks),
+                rank_ids(section_scores, chunks),
+            ],
+            weights=[1.0, 1.0, 0.25],
+        )
     elif method == "oracle_answer_query":
         scores = bm25_scores(query, chunks)
     else:
@@ -237,6 +293,7 @@ def rank_chunks(method: str, query: str, chunks: list[dict[str, Any]], idf: dict
             "chunk_id": chunk["chunk_id"],
             "score": round(scores.get(chunk["chunk_id"], 0.0), 6),
             "heading": chunk["heading"],
+            "section_type": chunk.get("section_type", "other"),
             "text": chunk["text"][:700],
         }
         for rank, chunk in enumerate(ranked[: max(TOP_K_VALUES)], start=1)
@@ -304,7 +361,14 @@ def main() -> None:
     limit = int(os.getenv("PEERQA_XT_LIMIT", str(DEFAULT_LIMIT)))
     rows, total_available = fetch_sample(split, limit)
 
-    methods = ["bm25_question", "tfidf_question", "hybrid_question", "oracle_answer_query"]
+    methods = [
+        "bm25_question",
+        "tfidf_question",
+        "hybrid_question",
+        "section_aware_question",
+        "hierarchical_question",
+        "oracle_answer_query",
+    ]
     metrics = {
         "status": "ok",
         "dataset_id": DATASET_ID,
@@ -356,8 +420,9 @@ def main() -> None:
             "## Interpretation",
             "",
             "- PeerQA-XT fits the thesis retrieval module because each row has a peer-review-derived question, a final answer, and full paper context.",
-            "- `hybrid_question` is the fair baseline for question-only retrieval; `oracle_answer_query` is a diagnostic ceiling, not a deployable system.",
-            "- The next improvement should add section-aware / hierarchical retrieval tools and compare them against this question-only floor.",
+            "- `hybrid_question` is the fair baseline for question-only retrieval; `section_aware_question` adds a lightweight question-category to section prior.",
+            "- `hierarchical_question` fuses BM25, TF-IDF, and weak section_read rankings with weighted reciprocal rank fusion, mirroring the current Agentic Paper-RAG tool design.",
+            "- `oracle_answer_query` is a diagnostic ceiling, not a deployable system.",
         ]
     )
     (REPORT_DIR / "peerqa_xt_retrieval_report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -367,4 +432,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

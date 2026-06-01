@@ -42,6 +42,26 @@
       "mean_answer_token_recall_at_5": 0.5232,
       "answer_support_hit_at_5": 0.8375
     },
+    "section_aware_question": {
+      "usable_rows": 80,
+      "min_answer_recall_for_hit": 0.35,
+      "mean_answer_token_recall_at_1": 0.2438,
+      "answer_support_hit_at_1": 0.2625,
+      "mean_answer_token_recall_at_3": 0.4589,
+      "answer_support_hit_at_3": 0.675,
+      "mean_answer_token_recall_at_5": 0.5236,
+      "answer_support_hit_at_5": 0.8375
+    },
+    "hierarchical_question": {
+      "usable_rows": 80,
+      "min_answer_recall_for_hit": 0.35,
+      "mean_answer_token_recall_at_1": 0.2352,
+      "answer_support_hit_at_1": 0.25,
+      "mean_answer_token_recall_at_3": 0.4498,
+      "answer_support_hit_at_3": 0.675,
+      "mean_answer_token_recall_at_5": 0.5237,
+      "answer_support_hit_at_5": 0.8375
+    },
     "oracle_answer_query": {
       "usable_rows": 80,
       "min_answer_recall_for_hit": 0.35,

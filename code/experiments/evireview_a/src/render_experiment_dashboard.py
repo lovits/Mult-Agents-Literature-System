@@ -114,6 +114,7 @@ def dashboard_lines() -> list[str]:
     )
     peerqa_hybrid = peerqa_xt.get("methods", {}).get("hybrid_question", {})
     peerqa_bm25 = peerqa_xt.get("methods", {}).get("bm25_question", {})
+    peerqa_hierarchical = peerqa_xt.get("methods", {}).get("hierarchical_question", {})
     ready_count = len([item for item in ready_datasets.get("candidates", []) if item.get("status") == "reachable"])
 
     lines = [
@@ -194,7 +195,7 @@ def dashboard_lines() -> list[str]:
             "Hybrid answer-support Hit@5",
             peerqa_hybrid.get("answer_support_hit_at_5"),
             peerqa_xt.get("status", "not run"),
-            f"{peerqa_xt.get('downloaded_rows', 0)} rows; BM25 Hit@5 {fmt(peerqa_bm25.get('answer_support_hit_at_5'))}.",
+            f"{peerqa_xt.get('downloaded_rows', 0)} rows; BM25 Hit@5 {fmt(peerqa_bm25.get('answer_support_hit_at_5'))}; hierarchical Hit@5 {fmt(peerqa_hierarchical.get('answer_support_hit_at_5'))}.",
         ),
         metric_line(
             "Claim retrieval",
@@ -324,7 +325,7 @@ def dashboard_lines() -> list[str]:
             "## Next Experiments",
             "",
             "1. Expand PeerReview Bench beyond the 300-row probe and use correctness/significance/evidence labels as no-manual-label verifier/ranker-quality supervision.",
-            "2. Upgrade PeerQA-XT from question-only BM25/TF-IDF/hybrid retrieval to section-aware and hierarchical Paper-RAG tools.",
+            "2. Improve PeerQA-XT with domain-aware section mapping; current lightweight section-aware/hierarchical variants do not beat the question-only floor.",
             "3. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.",
             "4. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.",
             "5. Label the 300-row retrieval comparison queue only if external ready-label datasets still leave a gap in local Paper-RAG evidence support.",
