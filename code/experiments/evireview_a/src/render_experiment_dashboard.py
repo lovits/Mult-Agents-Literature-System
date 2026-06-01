@@ -114,7 +114,22 @@ def dashboard_lines() -> list[str]:
     )
     peerqa_hybrid = peerqa_xt.get("methods", {}).get("hybrid_question", {})
     peerqa_bm25 = peerqa_xt.get("methods", {}).get("bm25_question", {})
+    peerqa_section = peerqa_xt.get("methods", {}).get("section_aware_question", {})
     peerqa_hierarchical = peerqa_xt.get("methods", {}).get("hierarchical_question", {})
+    peerqa_methods = {
+        name: item for name, item in peerqa_xt.get("methods", {}).items() if name != "oracle_answer_query"
+    }
+    peerqa_oracle = peerqa_xt.get("methods", {}).get("oracle_answer_query", {})
+    peerqa_best_hit3_name = "-"
+    peerqa_best_hit3 = {}
+    if peerqa_methods:
+        peerqa_best_hit3_name, peerqa_best_hit3 = max(
+            peerqa_methods.items(),
+            key=lambda item: (
+                item[1].get("answer_support_hit_at_3", 0.0),
+                item[1].get("answer_support_hit_at_1", 0.0),
+            ),
+        )
     ready_count = len([item for item in ready_datasets.get("candidates", []) if item.get("status") == "reachable"])
 
     lines = [
@@ -192,10 +207,10 @@ def dashboard_lines() -> list[str]:
         metric_line(
             "Paper-RAG QA retrieval",
             "PeerQA-XT",
-            "Hybrid answer-support Hit@5",
-            peerqa_hybrid.get("answer_support_hit_at_5"),
+            f"{peerqa_best_hit3_name} Hit@3",
+            peerqa_best_hit3.get("answer_support_hit_at_3"),
             peerqa_xt.get("status", "not run"),
-            f"{peerqa_xt.get('downloaded_rows', 0)} rows; BM25 Hit@5 {fmt(peerqa_bm25.get('answer_support_hit_at_5'))}; hierarchical Hit@5 {fmt(peerqa_hierarchical.get('answer_support_hit_at_5'))}.",
+            f"{peerqa_xt.get('downloaded_rows', 0)} rows; section-aware Hit@3 {fmt(peerqa_section.get('answer_support_hit_at_3'))}; oracle ceiling Hit@3 {fmt(peerqa_oracle.get('answer_support_hit_at_3'))}.",
         ),
         metric_line(
             "Claim retrieval",
@@ -305,7 +320,7 @@ def dashboard_lines() -> list[str]:
             f"| Local OpenReview/PRISM | End-to-end A-version dataset | {human.get('paper_count', 50)} papers, {human.get('weakness_item_count', 0)} human weakness items, {evidence.get('evidence_block_count', 0)} evidence blocks | Human weakness-evidence gold labels still incomplete |",
             f"| SubstanReview | Supervised substantiation floor | Test Macro-F1 {fmt(substan_nb.get('macro_f1'))} | Review-internal evidence only, not full paper-grounding |",
             f"| PeerReview Bench | No-manual-label review-quality/verifier baseline | {peerreview_summary.get('downloaded_rows', 0)} local rows from {peerreview_summary.get('total_available_rows', '-')} expert annotations | Sample is imbalanced; expand/full fetch before final result |",
-            f"| PeerQA-XT | No-manual-label Paper-RAG QA retrieval | {peerqa_xt.get('downloaded_rows', 0)} local retrieval rows from {peerqa_xt.get('total_available_rows', '-')} test rows; hybrid Hit@5 {fmt(peerqa_hybrid.get('answer_support_hit_at_5'))} | No gold evidence spans; current metric is answer-token support proxy |",
+            f"| PeerQA-XT | No-manual-label Paper-RAG QA retrieval | {peerqa_xt.get('downloaded_rows', 0)} local retrieval rows from {peerqa_xt.get('total_available_rows', '-')} test rows; best Hit@3 {fmt(peerqa_best_hit3.get('answer_support_hit_at_3'))} via {peerqa_best_hit3_name} | No gold evidence spans; current metric is answer-token support proxy |",
             f"| CLAIMCHECK | Paper-grounded critique benchmark | {claimcheck.get('main', {}).get('weakness_count', 155)} main weaknesses; embedding Hit@3 {fmt(claim_main.get('hit_at_3'))} | Raw row-level text not committed; verifier still weak |",
             "",
             "## Current Risks",
@@ -325,7 +340,7 @@ def dashboard_lines() -> list[str]:
             "## Next Experiments",
             "",
             "1. Expand PeerReview Bench beyond the 300-row probe and use correctness/significance/evidence labels as no-manual-label verifier/ranker-quality supervision.",
-            "2. Improve PeerQA-XT with domain-aware section mapping; current lightweight section-aware/hierarchical variants do not beat the question-only floor.",
+            "2. Improve PeerQA-XT query decomposition using data-driven or LLM-generated subqueries; current hand-written expansion hurts retrieval while section-aware scoring only ties the best lexical floor.",
             "3. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.",
             "4. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.",
             "5. Label the 300-row retrieval comparison queue only if external ready-label datasets still leave a gap in local Paper-RAG evidence support.",

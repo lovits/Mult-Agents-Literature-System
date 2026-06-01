@@ -9,19 +9,7 @@ import urllib.request
 from collections import Counter
 from typing import Any
 
-from common import (
-    DATA_DIR,
-    REPORT_DIR,
-    classify_section,
-    classify_weakness_category,
-    cosine_sparse,
-    ensure_dirs,
-    normalize_ws,
-    section_prior,
-    tokenize,
-    write_json,
-    write_jsonl,
-)
+from common import DATA_DIR, REPORT_DIR, cosine_sparse, ensure_dirs, normalize_ws, tokenize, write_json, write_jsonl
 
 
 DATASET_ID = "UKPLab/PeerQA-XT"
@@ -35,6 +23,34 @@ CHUNK_OVERLAP = 45
 MIN_ANSWER_RECALL = 0.35
 OUT_METRICS = "peerqa_xt_retrieval_metrics.json"
 OUT_PREDICTIONS = "peerqa_xt_retrieval_predictions.jsonl"
+
+SECTION_ALIASES = {
+    "abstract": "abstract",
+    "background": "introduction",
+    "introduction": "introduction",
+    "aim": "introduction",
+    "objective": "introduction",
+    "objectives": "introduction",
+    "methods": "method",
+    "method": "method",
+    "materials and methods": "method",
+    "study design": "method",
+    "participants": "method",
+    "patients": "method",
+    "data collection": "method",
+    "statistical analysis": "method",
+    "results": "experiment",
+    "findings": "experiment",
+    "outcomes": "experiment",
+    "discussion": "limitation",
+    "limitations": "limitation",
+    "limitation": "limitation",
+    "clinical implications": "limitation",
+    "conclusion": "conclusion",
+    "conclusions": "conclusion",
+    "keywords": "other",
+    "references": "reference",
+}
 
 STOPWORDS = {
     "about",
@@ -129,11 +145,34 @@ def answer_terms(answer: str) -> set[str]:
 
 def heading_for_position(text: str, char_pos: int) -> str:
     heading = "document"
-    for match in re.finditer(r"(?m)^#{1,6}\s+(.+?)\s*$", text):
+    heading_re = re.compile(r"(?m)^#{1,6}\s+(.+?)\s*$|\*\*([A-Z][A-Za-z /-]{2,60})\*\*")
+    for match in heading_re.finditer(text):
         if match.start() > char_pos:
             break
-        heading = normalize_ws(match.group(1))[:120] or heading
+        raw = match.group(1) or match.group(2) or ""
+        candidate = normalize_ws(raw).strip(":")
+        if not candidate:
+            continue
+        if candidate.lower() in SECTION_ALIASES or match.group(1):
+            heading = candidate[:120]
     return heading
+
+
+def classify_peerqa_section(heading: str) -> str:
+    lower = normalize_ws(heading).lower().strip(":")
+    if lower in SECTION_ALIASES:
+        return SECTION_ALIASES[lower]
+    if any(token in lower for token in ["method", "design", "participant", "patient", "cohort", "criteria"]):
+        return "method"
+    if any(token in lower for token in ["result", "finding", "outcome", "performance", "accuracy"]):
+        return "experiment"
+    if any(token in lower for token in ["discussion", "limitation", "implication", "future"]):
+        return "limitation"
+    if any(token in lower for token in ["background", "introduction", "literature"]):
+        return "introduction"
+    if "reference" in lower:
+        return "reference"
+    return "other"
 
 
 def chunk_paper(text: str) -> list[dict[str, Any]]:
@@ -151,12 +190,13 @@ def chunk_paper(text: str) -> list[dict[str, Any]]:
         chunk_text = normalize_ws(text[char_start:char_end])
         if len(chunk_text) < 80:
             continue
+        heading = heading_for_position(text, char_start)
         chunks.append(
             {
                 "chunk_id": f"c{chunk_idx:04d}",
                 "chunk_index": chunk_idx,
-                "heading": heading_for_position(text, char_start),
-                "section_type": classify_section(heading_for_position(text, char_start)),
+                "heading": heading,
+                "section_type": classify_peerqa_section(heading),
                 "text": chunk_text,
                 "token_count": end - start,
             }
@@ -243,14 +283,69 @@ def rrf_scores(rankings: list[list[str]], weights: list[float] | None = None, k:
     return dict(scores)
 
 
-def rank_chunks(method: str, query: str, chunks: list[dict[str, Any]], idf: dict[str, float]) -> list[dict[str, Any]]:
-    bm25 = bm25_scores(query, chunks)
-    tfidf = tfidf_scores(query, chunks, idf)
-    question_category = classify_weakness_category(query)
-    section_scores = {
-        chunk["chunk_id"]: section_prior(question_category, chunk.get("section_type", "other"))
-        for chunk in chunks
+def classify_peerqa_question(question: str) -> str:
+    lower = question.lower()
+    if any(token in lower for token in ["method", "methods", "criteria", "design", "isolate", "preprocess", "implement"]):
+        return "method"
+    if any(
+        token in lower
+        for token in [
+            "accuracy",
+            "precision",
+            "percentage",
+            "result",
+            "findings",
+            "observed",
+            "effect",
+            "outcome",
+            "experiments",
+            "validate",
+        ]
+    ):
+        return "experiment"
+    if any(token in lower for token in ["sample size", "generalizability", "limitation", "justify", "discussion"]):
+        return "validity"
+    if any(token in lower for token in ["literature", "previous studies", "other countries", "compared to"]):
+        return "related_work"
+    if any(token in lower for token in ["why", "explanation", "cause", "factors"]):
+        return "validity"
+    return "other"
+
+
+def expand_question_query(question: str) -> str:
+    category = classify_peerqa_question(question)
+    expansions = {
+        "method": "methods study design participants patients inclusion criteria data collection procedure analysis implementation preprocessing model",
+        "experiment": "results findings outcomes accuracy precision percentage performance evaluation experiment validation",
+        "validity": "discussion limitations generalizability sample size justification interpretation clinical implications future work",
+        "related_work": "background literature previous studies related work comparison context country countries",
+        "other": "abstract background methods results discussion conclusion",
     }
+    return f"{question} {expansions[category]}"
+
+
+def peerqa_section_prior(question_category: str, section_type: str) -> float:
+    priors = {
+        "method": {"method": 1.0, "experiment": 0.35, "abstract": 0.25, "introduction": 0.2},
+        "experiment": {"experiment": 1.0, "method": 0.45, "limitation": 0.35, "abstract": 0.3},
+        "validity": {"limitation": 1.0, "experiment": 0.55, "method": 0.45, "introduction": 0.25, "abstract": 0.2},
+        "related_work": {"introduction": 1.0, "reference": 0.65, "limitation": 0.35, "abstract": 0.25},
+        "other": {"abstract": 0.5, "introduction": 0.45, "method": 0.4, "experiment": 0.4, "limitation": 0.35},
+    }
+    return priors.get(question_category, priors["other"]).get(section_type, 0.0)
+
+
+def rank_chunks(method: str, query: str, chunks: list[dict[str, Any]], idf: dict[str, float]) -> list[dict[str, Any]]:
+    expanded_query = expand_question_query(query)
+    retrieval_query = expanded_query if method in {
+        "query_decomposed_question",
+        "domain_section_aware_question",
+        "domain_hierarchical_question",
+    } else query
+    bm25 = bm25_scores(retrieval_query, chunks)
+    tfidf = tfidf_scores(retrieval_query, chunks, idf)
+    question_category = classify_peerqa_question(query)
+    section_scores = {chunk["chunk_id"]: peerqa_section_prior(question_category, chunk.get("section_type", "other")) for chunk in chunks}
     if method == "bm25_question":
         scores = bm25
     elif method == "tfidf_question":
@@ -281,6 +376,32 @@ def rank_chunks(method: str, query: str, chunks: list[dict[str, Any]], idf: dict
             ],
             weights=[1.0, 1.0, 0.25],
         )
+    elif method == "query_decomposed_question":
+        bm25_norm = normalize_scores(bm25)
+        tfidf_norm = normalize_scores(tfidf)
+        scores = {
+            chunk["chunk_id"]: 0.6 * bm25_norm.get(chunk["chunk_id"], 0.0)
+            + 0.4 * tfidf_norm.get(chunk["chunk_id"], 0.0)
+            for chunk in chunks
+        }
+    elif method == "domain_section_aware_question":
+        bm25_norm = normalize_scores(bm25)
+        tfidf_norm = normalize_scores(tfidf)
+        scores = {
+            chunk["chunk_id"]: 0.55 * bm25_norm.get(chunk["chunk_id"], 0.0)
+            + 0.35 * tfidf_norm.get(chunk["chunk_id"], 0.0)
+            + 0.10 * section_scores.get(chunk["chunk_id"], 0.0)
+            for chunk in chunks
+        }
+    elif method == "domain_hierarchical_question":
+        scores = rrf_scores(
+            [
+                rank_ids(bm25, chunks),
+                rank_ids(tfidf, chunks),
+                rank_ids(section_scores, chunks),
+            ],
+            weights=[1.0, 1.0, 0.30],
+        )
     elif method == "oracle_answer_query":
         scores = bm25_scores(query, chunks)
     else:
@@ -294,6 +415,7 @@ def rank_chunks(method: str, query: str, chunks: list[dict[str, Any]], idf: dict
             "score": round(scores.get(chunk["chunk_id"], 0.0), 6),
             "heading": chunk["heading"],
             "section_type": chunk.get("section_type", "other"),
+            "question_category": question_category,
             "text": chunk["text"][:700],
         }
         for rank, chunk in enumerate(ranked[: max(TOP_K_VALUES)], start=1)
@@ -367,6 +489,9 @@ def main() -> None:
         "hybrid_question",
         "section_aware_question",
         "hierarchical_question",
+        "query_decomposed_question",
+        "domain_section_aware_question",
+        "domain_hierarchical_question",
         "oracle_answer_query",
     ]
     metrics = {
@@ -420,8 +545,10 @@ def main() -> None:
             "## Interpretation",
             "",
             "- PeerQA-XT fits the thesis retrieval module because each row has a peer-review-derived question, a final answer, and full paper context.",
-            "- `hybrid_question` is the fair baseline for question-only retrieval; `section_aware_question` adds a lightweight question-category to section prior.",
-            "- `hierarchical_question` fuses BM25, TF-IDF, and weak section_read rankings with weighted reciprocal rank fusion, mirroring the current Agentic Paper-RAG tool design.",
+            "- `hybrid_question` is the fair baseline for question-only retrieval; `query_decomposed_question` adds rule-based QA intent expansion.",
+            "- `domain_section_aware_question` uses biomedical article section markers such as Background, Methods, Results, and Discussion.",
+            "- `domain_hierarchical_question` fuses BM25, TF-IDF, and domain-aware section_read rankings with weighted reciprocal rank fusion.",
+            "- In this probe, section-aware retrieval ties the best lexical Hit@1/Hit@3 floor, while hand-written query expansion degrades retrieval.",
             "- `oracle_answer_query` is a diagnostic ceiling, not a deployable system.",
         ]
     )

@@ -327,7 +327,7 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | 数据集 | 标签/字段 | 适配实验 | 决策 |
 | --- | --- | --- | --- |
 | PeerReview Bench | correctness / significance / evidence expert annotations | verifier、ranker、review-quality | A 版立即加入 |
-| PeerQA-XT | full paper + peer-review-derived question + answer | Paper-RAG retrieval QA | A 版下一步加入 |
+| PeerQA-XT | full paper + peer-review-derived question + answer | Paper-RAG retrieval QA | A 版已加入 |
 | RottenReviews | human review-quality annotations | review quality / ranker | B 版补充 |
 | ReviewBench | 多会议 paper/review/rebuttal/decision/markdown | 泛化与扩容 | B 版补充 |
 | SPECS Review Benchmark | injected flaw specs + detection verdicts | 鲁棒性 / flaw detection | B 版补充 |
@@ -354,7 +354,7 @@ PeerReview Bench 当前 300-row probe 结果：
 
 已完成脚本：
 
-- `evaluate_peerqa_xt_retrieval.py`：通过 Hugging Face Dataset Viewer API 拉取 PeerQA-XT test split，运行 BM25、TF-IDF、Hybrid question retrieval 和 oracle answer-query diagnostic。
+- `evaluate_peerqa_xt_retrieval.py`：通过 Hugging Face Dataset Viewer API 拉取 PeerQA-XT test split，运行 BM25、TF-IDF、Hybrid、section-aware、hierarchical、query decomposition、domain-aware retrieval 和 oracle answer-query diagnostic。
 
 当前 80-row test probe 结果：
 
@@ -363,15 +363,19 @@ PeerReview Bench 当前 300-row probe 结果：
 | bm25_question | 80 | 0.2750 | 0.6500 | 0.8625 | 0.5248 |
 | tfidf_question | 80 | 0.2500 | 0.7000 | 0.8000 | 0.5216 |
 | hybrid_question | 80 | 0.2625 | 0.6750 | 0.8375 | 0.5232 |
-| section_aware_question | 80 | 0.2625 | 0.6750 | 0.8375 | 0.5236 |
-| hierarchical_question | 80 | 0.2500 | 0.6750 | 0.8375 | 0.5237 |
+| section_aware_question | 80 | 0.2750 | 0.7000 | 0.8375 | 0.5248 |
+| hierarchical_question | 80 | 0.2375 | 0.6750 | 0.8250 | 0.5161 |
+| query_decomposed_question | 80 | 0.1875 | 0.6250 | 0.7625 | 0.5113 |
+| domain_section_aware_question | 80 | 0.1875 | 0.6125 | 0.7750 | 0.5144 |
+| domain_hierarchical_question | 80 | 0.2125 | 0.5750 | 0.7875 | 0.5067 |
 | oracle_answer_query | 80 | 0.5000 | 0.9125 | 0.9750 | 0.6337 |
 
 解释：
 
 - PeerQA-XT 没有 gold evidence spans，因此当前 Hit@K 是 answer-token support proxy，不是最终证据精确率。
 - question-only BM25/TF-IDF 已经能在 Top-5 找到较多 answer-support chunks，说明该数据集适合作为 Paper-RAG retrieval QA 的外部验证集。
-- 轻量 section-aware / hierarchical variants 没有超过 question-only floor，说明本地论文评审 section prior 不能直接迁移到 PeerQA-XT 的跨领域医学/公共卫生论文；下一步需要 domain-aware section mapping 或 query decomposition。
+- 修正 BMC inline section marker 后，`section_aware_question` 的 Hit@1/Hit@3 达到 0.2750/0.7000，和 BM25/TF-IDF 的最好单项打平，但没有超过最佳 lexical floor。
+- 手写 query decomposition 与 domain-aware expansion 明显下降，说明 query expansion 不能靠静态规则硬加；下一步应尝试数据驱动/LLM 生成的子查询，或只保留 section-aware rerank 作为低风险结构先验。
 - `oracle_answer_query` 只用于诊断上界，不能作为系统方法。
 - 下一步应重点提高 Hit@1/Hit@3，而不是只看 Top-5。
 

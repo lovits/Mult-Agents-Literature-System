@@ -120,7 +120,7 @@ flowchart LR
 优先级如下：
 
 1. 优先扩展 PeerReview Bench：它已有 correctness / significance / evidence 专家标注，可直接支撑 verifier、ranker 和 review-quality baseline，不需要新增人工标注。
-2. PeerQA-XT 已接入 80-row Paper-RAG QA baseline，并完成 lightweight section-aware / hierarchical variants；当前没有超过 question-only floor，下一步要做 domain-aware section mapping 或 query decomposition。
+2. PeerQA-XT 已接入 80-row Paper-RAG QA baseline，并完成 section-aware / hierarchical / domain-aware query decomposition variants；当前 section-aware 与最好 lexical floor 打平，手写 query expansion 下降，下一步要做数据驱动/LLM 子查询。
 3. 将 GLM-4.6V reviewer 扩到 5-10 篇，复跑 paired comparison。
 4. 把 paired comparison 的指标固定为 coverage、generic rate、redundancy、verifier label distribution、support score。
 5. 本地 `retrieval_comparison_annotation_queue.csv` 的 300 条队列保留为系统特定 gold label；只有当外部 ready-label 数据集无法覆盖论文内证据块选择时再优先标注。
@@ -129,7 +129,7 @@ flowchart LR
 ## 7. 仍未完成
 
 - PeerReview Bench 目前只跑了 300-row probe，还没有扩展到完整 3,881 expert annotations。
-- PeerQA-XT 已有 question-only、section-aware、hierarchical Paper-RAG QA baseline，但结构先验还没有带来显著提升。
+- PeerQA-XT 已有 question-only、section-aware、hierarchical、domain-aware query decomposition Paper-RAG QA baseline；结构先验还没有显著超过 lexical floor。
 - GLM-4.6V 还没有 5-10 篇稳定样本。
 - Evidence verifier 仍以 silver / heuristic 诊断为主，缺少足够人工 gold labels。
 - 前后端工程化尚未开始。
