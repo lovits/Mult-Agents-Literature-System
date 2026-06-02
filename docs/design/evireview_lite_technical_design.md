@@ -254,7 +254,7 @@ A 版指标：
 | 数据集 | 监督信号 | 对应模块 | A 版状态 |
 | --- | --- | --- | --- |
 | PeerReview Bench | correctness / significance / evidence expert annotations | verifier、ranker、review quality | 已接入完整 3,881-row grouped baseline |
-| PeerQA-XT | full paper + peer-review-derived QA | Paper-RAG retrieval QA | 已接入 80-row question-only / section-aware / hierarchical / domain-aware retrieval baseline |
+| PeerQA-XT | full paper + peer-review-derived QA | Paper-RAG retrieval QA | 已接入 500-row question-only / section-aware / hierarchical / domain-aware retrieval baseline |
 | RottenReviews | human review-quality labels | ranker / quality supplement | B 版 |
 | ReviewBench | papers / reviews / rebuttals / decisions | reviewer generation 泛化 | B 版 |
 | SPECS Review Benchmark | injected flaw detection | robustness | B 版 |
@@ -263,7 +263,7 @@ A 版指标：
 当前策略：
 
 - PeerReview Bench 用作第一外部 verifier/ranker 数据源。
-- PeerQA-XT 用作第一外部 Paper-RAG QA 数据源；当前已跑 BM25 / TF-IDF / hybrid / section-aware / hierarchical / query decomposition retrieval，结果显示 section-aware 可作为低风险结构先验，但手写 query expansion 不可靠。
+- PeerQA-XT 用作第一外部 Paper-RAG QA 数据源；当前已跑 500-row BM25 / TF-IDF / hybrid / section-aware / hierarchical / query decomposition retrieval，结果显示 section-aware 是最稳 non-oracle 方法，但提升幅度有限；手写 query expansion 不可靠。
 - 本地 300 条 retrieval comparison queue 不取消，但从“第一入口”改为“系统特定 gold label 补充”。
 
 ---

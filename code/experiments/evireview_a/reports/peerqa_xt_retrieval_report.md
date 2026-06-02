@@ -5,20 +5,20 @@ This experiment uses PeerQA-XT as a no-new-manual-label Paper-RAG QA dataset.
 - Dataset: https://huggingface.co/datasets/UKPLab/PeerQA-XT
 - Paper: https://arxiv.org/abs/2502.13668
 - License: CC-BY-NC-SA-4.0
-- Split / rows used: `test` / 80 of 1252
+- Split / rows used: `test` / 500 of 1252
 - Gold evidence spans are not provided, so this report uses answer-token support as a retrieval proxy.
 
 | Method | Rows | Hit@1 | Hit@3 | Hit@5 | Mean answer recall@5 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| bm25_question | 80 | 0.275 | 0.65 | 0.8625 | 0.5248 |
-| tfidf_question | 80 | 0.25 | 0.7 | 0.8 | 0.5216 |
-| hybrid_question | 80 | 0.2625 | 0.675 | 0.8375 | 0.5232 |
-| section_aware_question | 80 | 0.275 | 0.7 | 0.8375 | 0.5248 |
-| hierarchical_question | 80 | 0.2375 | 0.675 | 0.825 | 0.5161 |
-| query_decomposed_question | 80 | 0.1875 | 0.625 | 0.7625 | 0.5113 |
-| domain_section_aware_question | 80 | 0.1875 | 0.6125 | 0.775 | 0.5144 |
-| domain_hierarchical_question | 80 | 0.2125 | 0.575 | 0.7875 | 0.5067 |
-| oracle_answer_query | 80 | 0.5 | 0.9125 | 0.975 | 0.6337 |
+| bm25_question | 500 | 0.24 | 0.598 | 0.794 | 0.5001 |
+| tfidf_question | 500 | 0.23 | 0.592 | 0.774 | 0.4906 |
+| hybrid_question | 500 | 0.242 | 0.596 | 0.792 | 0.4988 |
+| section_aware_question | 500 | 0.246 | 0.606 | 0.806 | 0.5005 |
+| hierarchical_question | 500 | 0.222 | 0.59 | 0.788 | 0.4995 |
+| query_decomposed_question | 500 | 0.208 | 0.532 | 0.734 | 0.4751 |
+| domain_section_aware_question | 500 | 0.208 | 0.536 | 0.742 | 0.4774 |
+| domain_hierarchical_question | 500 | 0.214 | 0.526 | 0.734 | 0.4752 |
+| oracle_answer_query | 500 | 0.496 | 0.902 | 0.966 | 0.6257 |
 
 ## Interpretation
 

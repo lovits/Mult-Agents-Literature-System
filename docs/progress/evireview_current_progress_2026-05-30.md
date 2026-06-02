@@ -369,25 +369,25 @@ Balanced context NB per-label recall：
 
 - `evaluate_peerqa_xt_retrieval.py`：通过 Hugging Face Dataset Viewer API 拉取 PeerQA-XT test split，运行 BM25、TF-IDF、Hybrid、section-aware、hierarchical、query decomposition、domain-aware retrieval 和 oracle answer-query diagnostic。
 
-当前 80-row test probe 结果：
+当前 500-row test probe 结果：
 
 | Method | Rows | Hit@1 | Hit@3 | Hit@5 | Mean answer recall@5 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| bm25_question | 80 | 0.2750 | 0.6500 | 0.8625 | 0.5248 |
-| tfidf_question | 80 | 0.2500 | 0.7000 | 0.8000 | 0.5216 |
-| hybrid_question | 80 | 0.2625 | 0.6750 | 0.8375 | 0.5232 |
-| section_aware_question | 80 | 0.2750 | 0.7000 | 0.8375 | 0.5248 |
-| hierarchical_question | 80 | 0.2375 | 0.6750 | 0.8250 | 0.5161 |
-| query_decomposed_question | 80 | 0.1875 | 0.6250 | 0.7625 | 0.5113 |
-| domain_section_aware_question | 80 | 0.1875 | 0.6125 | 0.7750 | 0.5144 |
-| domain_hierarchical_question | 80 | 0.2125 | 0.5750 | 0.7875 | 0.5067 |
-| oracle_answer_query | 80 | 0.5000 | 0.9125 | 0.9750 | 0.6337 |
+| bm25_question | 500 | 0.2400 | 0.5980 | 0.7940 | 0.5001 |
+| tfidf_question | 500 | 0.2300 | 0.5920 | 0.7740 | 0.4906 |
+| hybrid_question | 500 | 0.2420 | 0.5960 | 0.7920 | 0.4988 |
+| section_aware_question | 500 | 0.2460 | 0.6060 | 0.8060 | 0.5005 |
+| hierarchical_question | 500 | 0.2220 | 0.5900 | 0.7880 | 0.4995 |
+| query_decomposed_question | 500 | 0.2080 | 0.5320 | 0.7340 | 0.4751 |
+| domain_section_aware_question | 500 | 0.2080 | 0.5360 | 0.7420 | 0.4774 |
+| domain_hierarchical_question | 500 | 0.2140 | 0.5260 | 0.7340 | 0.4752 |
+| oracle_answer_query | 500 | 0.4960 | 0.9020 | 0.9660 | 0.6257 |
 
 解释：
 
 - PeerQA-XT 没有 gold evidence spans，因此当前 Hit@K 是 answer-token support proxy，不是最终证据精确率。
 - question-only BM25/TF-IDF 已经能在 Top-5 找到较多 answer-support chunks，说明该数据集适合作为 Paper-RAG retrieval QA 的外部验证集。
-- 修正 BMC inline section marker 后，`section_aware_question` 的 Hit@1/Hit@3 达到 0.2750/0.7000，和 BM25/TF-IDF 的最好单项打平，但没有超过最佳 lexical floor。
+- 扩展到 500 条后，`section_aware_question` 的 Hit@1/Hit@3/Hit@5 达到 0.2460/0.6060/0.8060，是当前最稳 non-oracle 方法，但相对 BM25/Hybrid 只小幅提升。
 - 手写 query decomposition 与 domain-aware expansion 明显下降，说明 query expansion 不能靠静态规则硬加；下一步应尝试数据驱动/LLM 生成的子查询，或只保留 section-aware rerank 作为低风险结构先验。
 - `oracle_answer_query` 只用于诊断上界，不能作为系统方法。
 - 下一步应重点提高 Hit@1/Hit@3，而不是只看 Top-5。

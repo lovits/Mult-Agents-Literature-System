@@ -15,7 +15,7 @@ from common import DATA_DIR, REPORT_DIR, cosine_sparse, ensure_dirs, normalize_w
 DATASET_ID = "UKPLab/PeerQA-XT"
 CONFIG = "default"
 DEFAULT_SPLIT = "test"
-DEFAULT_LIMIT = 80
+DEFAULT_LIMIT = 500
 PAGE_SIZE = 100
 TOP_K_VALUES = (1, 3, 5)
 CHUNK_TOKENS = 170

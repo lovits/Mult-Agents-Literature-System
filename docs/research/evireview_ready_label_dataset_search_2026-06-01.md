@@ -63,25 +63,25 @@ PeerReview Bench 已接入完整 3,881 条 expert annotations，并采用按 `pa
 ## 5. 下一步实验顺序
 
 1. PeerReview Bench 已扩展到完整 3,881 expert annotations，并加入 context NB；下一步加入 evidence-aware features 或 LLM verifier，重点提升 minority recall。
-2. PeerQA-XT 已完成 question-only、section-aware、hierarchical 和 domain-aware query decomposition baseline；当前 section-aware 与最好 lexical floor 打平，手写 query expansion 下降，下一步应改成数据驱动/LLM 子查询。
+2. PeerQA-XT 已扩展到 500-row question-only、section-aware、hierarchical 和 domain-aware query decomposition baseline；当前 section-aware 是最稳 non-oracle 方法，但只小幅超过 lexical floor，手写 query/domain expansion 下降，下一步应改成数据驱动/LLM 子查询。
 3. 把 PeerReview Bench 的 `significance` 标签并入 evidence-aware ranker 设计，验证它是否比纯 lexical score 更适合排序。
 4. RottenReviews / ReviewBench / PeerCheck 只在 A 版核心链路稳定后作为补充，不抢主实验。
 5. 本地 300 条 retrieval comparison queue 保留为最终系统特定人工 gold，对外部数据集不能覆盖的“论文内证据块选择”做补充。
 
 ## 6. PeerQA-XT 已完成 baseline
 
-当前 80-row test probe：
+当前 500-row test probe：
 
 | Method | Hit@1 | Hit@3 | Hit@5 | Mean answer recall@5 |
 | --- | ---: | ---: | ---: | ---: |
-| bm25_question | 0.2750 | 0.6500 | 0.8625 | 0.5248 |
-| tfidf_question | 0.2500 | 0.7000 | 0.8000 | 0.5216 |
-| hybrid_question | 0.2625 | 0.6750 | 0.8375 | 0.5232 |
-| section_aware_question | 0.2750 | 0.7000 | 0.8375 | 0.5248 |
-| hierarchical_question | 0.2375 | 0.6750 | 0.8250 | 0.5161 |
-| query_decomposed_question | 0.1875 | 0.6250 | 0.7625 | 0.5113 |
-| domain_section_aware_question | 0.1875 | 0.6125 | 0.7750 | 0.5144 |
-| domain_hierarchical_question | 0.2125 | 0.5750 | 0.7875 | 0.5067 |
-| oracle_answer_query | 0.5000 | 0.9125 | 0.9750 | 0.6337 |
+| bm25_question | 0.2400 | 0.5980 | 0.7940 | 0.5001 |
+| tfidf_question | 0.2300 | 0.5920 | 0.7740 | 0.4906 |
+| hybrid_question | 0.2420 | 0.5960 | 0.7920 | 0.4988 |
+| section_aware_question | 0.2460 | 0.6060 | 0.8060 | 0.5005 |
+| hierarchical_question | 0.2220 | 0.5900 | 0.7880 | 0.4995 |
+| query_decomposed_question | 0.2080 | 0.5320 | 0.7340 | 0.4751 |
+| domain_section_aware_question | 0.2080 | 0.5360 | 0.7420 | 0.4774 |
+| domain_hierarchical_question | 0.2140 | 0.5260 | 0.7340 | 0.4752 |
+| oracle_answer_query | 0.4960 | 0.9020 | 0.9660 | 0.6257 |
 
-该结果说明 PeerQA-XT 可以直接支撑 Paper-RAG 检索实验，但因为它没有 gold evidence span，当前指标仍是 answer-token support proxy。正式论文中应把它写成“外部检索 QA 诊断集”，不能替代本地 weakness-evidence gold labels。修正 BMC inline section markers 后，section-aware rerank 能打平最好 lexical floor；但手写 query decomposition 和 domain-aware expansion 会伤害结果，因此不能把“多工具/多查询”直接写成必然提升，只能写成需要验证的 agentic retrieval 组件。
+该结果说明 PeerQA-XT 可以直接支撑 Paper-RAG 检索实验，但因为它没有 gold evidence span，当前指标仍是 answer-token support proxy。正式论文中应把它写成“外部检索 QA 诊断集”，不能替代本地 weakness-evidence gold labels。扩展到 500 条后，section-aware rerank 是最稳 non-oracle 方法，但相对 BM25/Hybrid 只小幅提升；手写 query decomposition 和 domain-aware expansion 会伤害结果，因此不能把“多工具/多查询”直接写成必然提升，只能写成需要验证的 agentic retrieval 组件。
