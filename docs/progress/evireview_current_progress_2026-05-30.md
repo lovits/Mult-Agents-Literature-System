@@ -395,6 +395,28 @@ Balanced context NB per-label recall：
 - `oracle_answer_query` 只用于诊断上界，不能作为系统方法。
 - 下一步应重点提高 Hit@1/Hit@3，而不是只看 Top-5。
 
+### 2.14 实验章节表格冻结
+
+定位：把当前 A 版实验结果整理成毕业论文实验章节可直接引用的表格，避免后续从多个 JSON / report 中手工抄数导致口径漂移。
+
+已新增：
+
+- `render_thesis_experiment_tables.py`：从已落盘 metrics JSON 自动生成实验章节表格。
+- `reports/thesis_experiment_tables.md`：实验报告目录下的表格产物。
+- `docs/progress/evireview_thesis_experiment_tables_2026-06-02.md`：进度文档目录下的可引用版本。
+
+表格覆盖：
+
+- 数据集与实验角色。
+- 本地 OpenReview Paper-RAG 检索。
+- PeerQA-XT Paper-RAG QA 检索。
+- Verifier / review-quality baselines。
+- Reviewer Agent 生成与 GLM clean 10-paper paired comparison。
+- Hierarchical Paper-RAG 与 generated weakness ranker。
+- CLAIMCHECK ranker 与辅助 accept/reject 分类。
+
+写作口径：所有无人工 gold 的结果统一标注为 proxy / diagnostic；GLM-4.6V clean 10-paper 结果只作为 provider diagnostic，不写成最终模型优劣结论。
+
 ## 3. 最新论文对实验路线的修正
 
 本轮跟踪并写入 `memory/RESEARCH_LOG.md` 的论文包括：
