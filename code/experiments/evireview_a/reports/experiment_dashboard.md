@@ -26,9 +26,9 @@ This dashboard aggregates the current A-version experiment state across dataset 
 | Evidence-aware ranker | CLAIMCHECK | bm25_max_similarity MAP | 0.7771 | diagnostic | BM25 currently beats feature-verifier probability for ranking. |
 | Auxiliary classifier | Local OpenReview/PRISM | metadata Macro-F1 | 0.68 | diagnostic | Classification remains auxiliary; metadata baseline is strongest. |
 | Rubric-agent generation | Local OpenReview/PRISM | Coverage recall @ 0.18 | 0.4805 | pipeline baseline | Deterministic reviewer validates Agent -> RAG interface. |
-| GLM-4.6V reviewer sample | Local OpenReview/PRISM | Coverage recall @ 0.18 | 0.5677 | ok | 21 generated; labels: {'Mentioned but Not Problem': 6, 'Partially Supported': 10, 'Unsupported': 3, 'Supported': 2} |
-| Paired reviewer comparison | GLM overlap papers | Coverage recall @ 0.18 | 0.5677 | diagnostic | GLM vs rubric: 0.5677 vs 0.4148 |
-| Hierarchical Paper-RAG | Generated weaknesses | GLM mean support | 0.5304 | diagnostic | GLM partial+ 0.7143; rubric support 0.1999 |
+| GLM-4.6V reviewer sample | Local OpenReview/PRISM | Coverage recall @ 0.18 | 0.5952 | ok | 27 generated; labels: {'Mentioned but Not Problem': 9, 'Partially Supported': 13, 'Unsupported': 3, 'Supported': 2} |
+| Paired reviewer comparison | GLM overlap papers | Coverage recall @ 0.18 | 0.5952 | diagnostic | GLM vs rubric: 0.5952 vs 0.3875 |
+| Hierarchical Paper-RAG | Generated weaknesses | GLM mean support | 0.5212 | diagnostic | GLM partial+ 0.6667; rubric support 0.1999 |
 | Human hierarchical retrieval | Local OpenReview/PRISM | Top-1 section alignment | 0.9993 | diagnostic | 1463 human weaknesses; top tools {'semantic_search': 807, 'keyword_search': 567, 'section_read': 89} |
 | Retrieval comparison queue | Human weaknesses | Selected annotation rows | 300 | ready | Top-1 disagreement 0.6138; Top-3 disagreement 0.9645 |
 | Retrieval comparison gold | Human weaknesses | Gold rows | 0 | needs_labels | Evaluation status: blocked |
@@ -47,7 +47,7 @@ This dashboard aggregates the current A-version experiment state across dataset 
 ## Current Risks
 
 - OpenRouter chat reranker status: `blocked`; reason: OpenRouter HTTP error 429: Provider returned error; provider=Venice; retry_after_seconds=12.
-- GLM-4.6V reviewer result now covers 8 valid papers; 2 requested papers still failed JSON parsing and should be retried with stricter output repair.
+- GLM-4.6V reviewer result now covers 10 valid papers; current JSON parsing failures: 0.
 - Paired GLM-vs-rubric comparison currently covers only the GLM overlap papers.
 - Hierarchical Paper-RAG currently uses silver verifier labels; treat support gains as architecture diagnostics, not final truth.
 - Human hierarchical retrieval has high section-alignment proxy scores, but true evidence support still needs the 300-row comparison queue to be labeled.
@@ -62,6 +62,6 @@ This dashboard aggregates the current A-version experiment state across dataset 
 
 1. Add context-aware PeerReview Bench features or an LLM verifier because full-data review-item NB still misses minority evidence labels.
 2. Improve PeerQA-XT query decomposition using data-driven or LLM-generated subqueries; current hand-written expansion hurts retrieval while section-aware scoring only ties the best lexical floor.
-3. Harden GLM JSON parsing / retry the two failed papers, then freeze the 8-paper diagnostic table for the experiment chapter unless a clean 10-paper run is obtained.
+3. Freeze the clean 10-paper GLM diagnostic table for the experiment chapter, while keeping the conclusion scoped as silver-label evidence rather than human-gold evaluation.
 4. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.
 5. Label the 300-row retrieval comparison queue only if external ready-label datasets still leave a gap in local Paper-RAG evidence support.

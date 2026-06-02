@@ -18,21 +18,21 @@ flowchart LR
 
 ## 2. 本轮新增实验
 
-新增 `GLM-4.6V reviewer` 与 `rubric-agent` 在同一 8 篇论文 overlap 上的公平对比：
+新增 `GLM-4.6V reviewer` 与 `rubric-agent` 在同一 10 篇论文 overlap 上的公平对比：
 
 | 指标 | Rubric-agent | GLM-4.6V reviewer |
 | --- | ---: | ---: |
-| Generated weaknesses | 30 | 21 |
-| Coverage recall @ 0.18 | 0.4148 | 0.5677 |
-| Mean paper recall @ 0.18 | 0.4303 | 0.5725 |
-| Mean support score | 0.2079 | 0.4744 |
-| Partially-supported-or-better rate | 0.0000 | 0.5714 |
+| Generated weaknesses | 34 | 27 |
+| Coverage recall @ 0.18 | 0.3875 | 0.5952 |
+| Mean paper recall @ 0.18 | 0.4072 | 0.5968 |
+| Mean support score | 0.2000 | 0.4670 |
+| Partially-supported-or-better rate | 0.0000 | 0.5556 |
 
 解释：
 
 - rubric-agent 适合保留为可复现、可解释、低成本的结构风险 baseline。
 - GLM-4.6V 在小样本上更像可用的候选弱点生成器，但仍必须经过 evidence retrieval 和 verifier。
-- 当前样本已从 3 篇 pilot 扩到 8 篇有效论文 / 21 条 weakness，但仍不能写成最终模型优劣结论；另外 2 篇请求因 JSONDecodeError 失败，下一步应做严格 JSON repair / retry，或把当前结果作为 8-paper diagnostic 写入实验章节。
+- 当前样本已从 3 篇 pilot 扩到 clean 10 篇有效论文 / 27 条 weakness；JSON 正规化和最多 3 次 retry 已补齐先前失败的 2 篇。该结果可以作为实验章节的小样本 provider diagnostic，但仍不能写成最终模型优劣结论。
 
 ## 3. 本轮新增架构实验：Hierarchical Paper-RAG
 
@@ -61,12 +61,12 @@ flowchart LR
 
 | Source | Weaknesses | Top-1 section align | Mean support | Partially-supported-or-better |
 | --- | ---: | ---: | ---: | ---: |
-| GLM-4.6V reviewer | 21 | 1.0000 | 0.5304 | 0.7143 |
+| GLM-4.6V reviewer | 27 | 1.0000 | 0.5212 | 0.6667 |
 | Rubric-agent | 194 | 1.0000 | 0.1999 | 0.0258 |
 
 解释：
 
-- GLM 样本在 hierarchical Paper-RAG 下的 support score 从原先 0.4744 提升到 0.5304，Partially Supported-or-better 从 0.5714 提升到 0.7143。
+- GLM 样本在 hierarchical Paper-RAG 下的 support score 从原先 0.4670 提升到 0.5212，Partially Supported-or-better 从 0.5556 提升到 0.6667。
 - Rubric-agent 也有小幅提升，但大部分仍为 Unsupported / Mentioned，说明它仍是结构风险 baseline，不是最终 reviewer。
 - 这个结果支持将“section-aware Paper-RAG”升级为“hierarchical Paper-RAG tools”作为论文创新点，但目前 verifier 仍是 silver label，不能夸大为最终真实性指标。
 
@@ -121,7 +121,7 @@ flowchart LR
 
 1. PeerReview Bench 已扩展到完整 3,881 expert annotations，并加入 balanced NB / context NB / evidence-aware feature logistic；evidence Macro-F1 从 0.5318 提升到 0.5730，下一步要做 LLM verifier 或更强特征，继续提升 correctness/evidence 少数类 recall。
 2. PeerQA-XT 已扩展到 500-row Paper-RAG QA baseline，并完成 section-aware / hierarchical / domain-aware query decomposition variants；当前 section-aware 是最稳 non-oracle 方法，但只小幅超过 lexical floor，手写 query/domain expansion 下降，下一步要做数据驱动/LLM 子查询。
-3. GLM-4.6V reviewer 已完成 10 篇请求中的 8 篇有效扩样；下一步先修复 2 篇 JSONDecodeError，再决定是否冻结 8-paper diagnostic。
+3. GLM-4.6V reviewer 已完成 clean 10-paper diagnostic；下一步冻结 paired comparison、hierarchical retrieval 和 ranker 表格进入实验章节。
 4. 把 paired comparison 的指标固定为 coverage、generic rate、redundancy、verifier label distribution、support score。
 5. 本地 `retrieval_comparison_annotation_queue.csv` 的 300 条队列保留为系统特定 gold label；只有当外部 ready-label 数据集无法覆盖论文内证据块选择时再优先标注。
 6. 在开题报告实验章节中明确写出：retrieval、verifier、ranker 是三个独立实验模块，分类只是辅助实验。
@@ -130,7 +130,7 @@ flowchart LR
 
 - PeerReview Bench 已扩展到完整 3,881 expert annotations，并完成 evidence-aware feature baseline；当前缺口仍是少数类 recall，尤其 evidence 的 `Requires More` 仍只有 0.2381。
 - PeerQA-XT 已有 500-row question-only、section-aware、hierarchical、domain-aware query decomposition Paper-RAG QA baseline；结构先验还没有显著超过 lexical floor。
-- GLM-4.6V 扩样已得到 8 篇有效样本 / 21 条 weakness，但仍有 2 篇 JSON 解析失败，不能夸大为完整 10-paper provider benchmark。
+- GLM-4.6V 扩样已得到 10 篇有效样本 / 27 条 weakness；仍需强调这是 silver-label diagnostic，不是完整 human-gold provider benchmark。
 - Evidence verifier 仍以 silver / heuristic 诊断为主，缺少足够人工 gold labels。
 - 前后端工程化尚未开始。
 - Hierarchical retrieval tools 已有 generated weakness 与 human weakness 两条诊断脚本，但还没有落成完整 LangGraph-style agent graph。

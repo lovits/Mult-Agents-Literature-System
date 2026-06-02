@@ -80,12 +80,12 @@
 - PeerQA-XT 仍没有 gold evidence spans，answer-token support 只能作为 retrieval proxy。
 - 本地 OpenReview/PRISM 的 300 条 retrieval comparison queue 仍未人工标注，不能替代最终系统特定 evidence gold labels。
 - PeerReview Bench evidence-aware feature baseline 已完成，evidence Macro-F1 从 0.5318 提升到 0.5730，但 `Requires More` recall 仍只有 0.2381，需要继续优化。
-- GLM reviewer 已完成默认 10 篇请求中的 8 篇有效扩样，生成 21 条 weakness；当前还有 2 篇 JSONDecodeError 失败，需要输出修复或严格 retry。
+- GLM reviewer 已完成默认 10 篇 clean 扩样，生成 27 条 weakness；JSON 正规化与最多 3 次 retry 已补齐先前失败的 2 篇。
 - Hierarchical retrieval tools 还没有落成完整 LangGraph-style agent graph。
 
 ## 7. 下一步建议顺序
 
 1. 基于 PeerQA-XT 500-row probe 尝试数据驱动/LLM 子查询生成，验证能否提高 Hit@1/Hit@3。
 2. 在 PeerReview Bench 上继续做 LLM verifier 或更强特征，重点提升 `Requires More` recall。
-3. 修复 GLM reviewer 的 2 篇 JSON 解析失败；若短期不稳定，则把 8-paper diagnostic 作为实验章节的小样本 provider 对比。
+3. 冻结 GLM reviewer clean 10-paper diagnostic，整理进实验章节的小样本 provider 对比表。
 4. 整理实验章节表格：数据集表、retrieval 表、verifier 表、ranker 表、消融实验表。

@@ -3,21 +3,22 @@
   "retriever": "generated_hierarchical_paper_rag_v0",
   "sources": {
     "glm_reviewer": {
-      "generated_weakness_count": 21,
-      "non_empty_retrieval_count": 21,
+      "generated_weakness_count": 27,
+      "non_empty_retrieval_count": 27,
       "top1_section_alignment_rate": 1.0,
       "top3_section_alignment_rate": 1.0,
-      "mean_support_score": 0.5304,
-      "partially_supported_or_better_rate": 0.7143,
+      "mean_support_score": 0.5212,
+      "partially_supported_or_better_rate": 0.6667,
       "label_counts": {
-        "Partially Supported": 12,
-        "Mentioned but Not Problem": 4,
+        "Partially Supported": 14,
+        "Mentioned but Not Problem": 7,
         "Unsupported": 2,
-        "Supported": 3
+        "Supported": 4
       },
       "top1_tool_mix": {
-        "semantic_search": 14,
-        "keyword_search": 7
+        "semantic_search": 18,
+        "keyword_search": 8,
+        "section_read": 1
       }
     },
     "rubric_agent": {

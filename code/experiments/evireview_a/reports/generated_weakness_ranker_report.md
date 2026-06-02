@@ -13,7 +13,7 @@ This report ranks generated review weaknesses after hierarchical Paper-RAG retri
 
 | Source | Candidates | Papers | Top-3 rows | Candidate mean support | Top-3 mean support | Candidate partial+ | Top-3 partial+ | Top-3 labels |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| glm_reviewer | 21 | 8 | 21 | 0.5304 | 0.5304 | 0.7143 | 0.7143 | {'Supported': 3, 'Partially Supported': 12, 'Mentioned but Not Problem': 4, 'Unsupported': 2} |
+| glm_reviewer | 27 | 10 | 27 | 0.5212 | 0.5212 | 0.6667 | 0.6667 | {'Supported': 4, 'Partially Supported': 14, 'Mentioned but Not Problem': 7, 'Unsupported': 2} |
 | rubric_agent | 194 | 49 | 141 | 0.1999 | 0.2343 | 0.0258 | 0.0355 | {'Unsupported': 64, 'Mentioned but Not Problem': 72, 'Partially Supported': 5} |
 
 ## Interpretation

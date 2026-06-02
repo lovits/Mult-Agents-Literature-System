@@ -1,11 +1,11 @@
 {
-  "retrieved_count": 21,
-  "verified_count": 21,
+  "retrieved_count": 27,
+  "verified_count": 27,
   "label_counts": {
-    "Mentioned but Not Problem": 6,
-    "Partially Supported": 10,
+    "Mentioned but Not Problem": 9,
+    "Partially Supported": 13,
     "Unsupported": 3,
     "Supported": 2
   },
-  "mean_support_score": 0.4744
+  "mean_support_score": 0.467
 }

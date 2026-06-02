@@ -7,120 +7,122 @@
     "BqHaLnans2",
     "CpgoO6j6W1",
     "D0zeqL7Vnz",
+    "EhrzQwsV4K",
+    "EmQSOi1X2f",
     "ITq4ZRUT4a",
     "cfL8zApofK",
     "gDlsMWost9",
     "xnUIMz5u2s"
   ],
-  "overlap_paper_count": 8,
-  "human_weakness_count": 229,
+  "overlap_paper_count": 10,
+  "human_weakness_count": 289,
   "generators": {
     "rubric_agent": {
       "generator": "rubric_agent",
       "display": "Rubric-agent",
-      "paper_count": 8,
-      "generated_weakness_count": 30,
-      "human_weakness_count": 229,
-      "mean_generated_per_paper": 3.75,
+      "paper_count": 10,
+      "generated_weakness_count": 34,
+      "human_weakness_count": 289,
+      "mean_generated_per_paper": 3.4,
       "category_counts": {
         "experiment": 10,
-        "related_work": 6,
-        "method": 8,
-        "limitation": 5,
+        "related_work": 7,
+        "method": 10,
+        "limitation": 6,
         "reproducibility": 1
       },
       "severity_counts": {
-        "major": 24,
-        "minor": 6
+        "major": 27,
+        "minor": 7
       },
-      "generic_rate": 0.2,
-      "redundancy_rate": 0.1333,
+      "generic_rate": 0.2059,
+      "redundancy_rate": 0.1373,
       "coverage_by_threshold": [
         {
           "threshold": 0.12,
-          "human_weakness_count": 229,
-          "covered_human_weakness_count": 182,
-          "human_weakness_recall": 0.7948,
-          "mean_paper_recall": 0.8194
+          "human_weakness_count": 289,
+          "covered_human_weakness_count": 206,
+          "human_weakness_recall": 0.7128,
+          "mean_paper_recall": 0.7444
         },
         {
           "threshold": 0.18,
-          "human_weakness_count": 229,
-          "covered_human_weakness_count": 95,
-          "human_weakness_recall": 0.4148,
-          "mean_paper_recall": 0.4303
+          "human_weakness_count": 289,
+          "covered_human_weakness_count": 112,
+          "human_weakness_recall": 0.3875,
+          "mean_paper_recall": 0.4072
         },
         {
           "threshold": 0.24,
-          "human_weakness_count": 229,
-          "covered_human_weakness_count": 14,
-          "human_weakness_recall": 0.0611,
-          "mean_paper_recall": 0.0623
+          "human_weakness_count": 289,
+          "covered_human_weakness_count": 19,
+          "human_weakness_recall": 0.0657,
+          "mean_paper_recall": 0.0683
         }
       ],
       "support": {
-        "verified_count": 30,
+        "verified_count": 34,
         "label_counts": {
-          "Mentioned but Not Problem": 14,
-          "Unsupported": 16
+          "Mentioned but Not Problem": 15,
+          "Unsupported": 19
         },
-        "mean_support_score": 0.2079,
+        "mean_support_score": 0.2,
         "partially_supported_or_better_rate": 0.0
       }
     },
     "glm_reviewer": {
       "generator": "glm_reviewer",
       "display": "GLM-4.6V reviewer",
-      "paper_count": 8,
-      "generated_weakness_count": 21,
-      "human_weakness_count": 229,
-      "mean_generated_per_paper": 2.625,
+      "paper_count": 10,
+      "generated_weakness_count": 27,
+      "human_weakness_count": 289,
+      "mean_generated_per_paper": 2.7,
       "category_counts": {
-        "experiment": 12,
-        "validity": 2,
-        "method": 2,
-        "clarity": 4,
-        "reproducibility": 1
+        "experiment": 13,
+        "validity": 3,
+        "method": 3,
+        "clarity": 5,
+        "reproducibility": 3
       },
       "severity_counts": {
-        "major": 15,
-        "minor": 6
+        "major": 20,
+        "minor": 7
       },
-      "generic_rate": 0.0952,
+      "generic_rate": 0.1111,
       "redundancy_rate": 0.0,
       "coverage_by_threshold": [
         {
           "threshold": 0.12,
-          "human_weakness_count": 229,
-          "covered_human_weakness_count": 188,
-          "human_weakness_recall": 0.821,
-          "mean_paper_recall": 0.8425
+          "human_weakness_count": 289,
+          "covered_human_weakness_count": 239,
+          "human_weakness_recall": 0.827,
+          "mean_paper_recall": 0.8427
         },
         {
           "threshold": 0.18,
-          "human_weakness_count": 229,
-          "covered_human_weakness_count": 130,
-          "human_weakness_recall": 0.5677,
-          "mean_paper_recall": 0.5725
+          "human_weakness_count": 289,
+          "covered_human_weakness_count": 172,
+          "human_weakness_recall": 0.5952,
+          "mean_paper_recall": 0.5968
         },
         {
           "threshold": 0.24,
-          "human_weakness_count": 229,
-          "covered_human_weakness_count": 30,
-          "human_weakness_recall": 0.131,
-          "mean_paper_recall": 0.1294
+          "human_weakness_count": 289,
+          "covered_human_weakness_count": 39,
+          "human_weakness_recall": 0.1349,
+          "mean_paper_recall": 0.1328
         }
       ],
       "support": {
-        "verified_count": 21,
+        "verified_count": 27,
         "label_counts": {
-          "Mentioned but Not Problem": 6,
-          "Partially Supported": 10,
+          "Mentioned but Not Problem": 9,
+          "Partially Supported": 13,
           "Unsupported": 3,
           "Supported": 2
         },
-        "mean_support_score": 0.4744,
-        "partially_supported_or_better_rate": 0.5714
+        "mean_support_score": 0.467,
+        "partially_supported_or_better_rate": 0.5556
       }
     }
   }

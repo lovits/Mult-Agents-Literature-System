@@ -20,6 +20,7 @@ GENERATOR = "glm_structured_reviewer_v0"
 DEFAULT_ENDPOINT = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 DEFAULT_MODEL = "glm-4.6v"
 DEFAULT_LIMIT = 10
+DEFAULT_MAX_ATTEMPTS = 3
 TOP_K = 5
 API_KEY_ENV_NAMES = ("GLM_API_KEY", "ZHIPU_API_KEY", "ZHIPUAI_API_KEY", "BIGMODEL_API_KEY", "ZAI_API_KEY")
 
@@ -116,24 +117,85 @@ def call_glm(api_key: str, model: str, endpoint: str, prompt: str, timeout: int 
         method="POST",
     )
     with urllib.request.urlopen(request, timeout=timeout) as response:
-        body = json.loads(response.read().decode("utf-8"))
+        raw_body = response.read().decode("utf-8")
+    if not raw_body.strip():
+        raise ValueError("GLM API returned an empty response body")
+    body = json.loads(raw_body)
     return body["choices"][0]["message"]["content"]
 
 
+def json_span(text: str) -> str | None:
+    start = text.find("{")
+    end = text.rfind("}")
+    if start == -1 or end == -1 or end <= start:
+        return None
+    return text[start : end + 1]
+
+
+def normalize_json_text(text: str) -> str:
+    text = text.strip()
+    text = re.sub(r"^```(?:json)?", "", text, flags=re.IGNORECASE).strip()
+    text = re.sub(r"```$", "", text).strip()
+    # Some providers escape a JSON object as a JSON string even with json_object mode.
+    if text.startswith('"') and text.endswith('"'):
+        try:
+            unescaped = json.loads(text)
+            if isinstance(unescaped, str):
+                text = unescaped.strip()
+        except json.JSONDecodeError:
+            pass
+    return text
+
+
 def parse_json(text: str) -> dict[str, Any]:
-    text = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.MULTILINE).strip()
+    text = normalize_json_text(text)
     try:
         payload = json.loads(text)
     except json.JSONDecodeError:
-        match = re.search(r"\{.*\}", text, flags=re.DOTALL)
-        if not match:
+        candidate = json_span(text)
+        if not candidate:
             raise
-        payload = json.loads(match.group(0))
+        payload = json.loads(candidate)
     if isinstance(payload, list):
         payload = {"weaknesses": payload}
     if not isinstance(payload.get("weaknesses"), list):
         raise ValueError("GLM response JSON does not contain weaknesses list")
     return payload
+
+
+def generate_paper_weaknesses(
+    api_key: str,
+    model: str,
+    endpoint: str,
+    paper: dict[str, str],
+    blocks: list[dict[str, Any]],
+    max_attempts: int,
+) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    errors = []
+    prompt = build_prompt(paper, blocks)
+    for attempt in range(1, max_attempts + 1):
+        try:
+            content = call_glm(api_key, model, endpoint, prompt)
+            payload = parse_json(content)
+            rows = []
+            for index, item in enumerate(payload["weaknesses"][:3], start=1):
+                normalized = normalize_item(item, paper, index, model)
+                if normalized["weakness_text"] and len(tokenize(normalized["weakness_text"])) >= 6:
+                    rows.append(normalized)
+            if rows:
+                return rows, errors
+            raise ValueError("GLM response contained no usable weakness_text rows")
+        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError, ValueError, KeyError) as exc:
+            errors.append(
+                {
+                    "paper_id": paper["paper_id"],
+                    "attempt": str(attempt),
+                    "error": type(exc).__name__,
+                    "message": str(exc)[:300],
+                }
+            )
+            time.sleep(min(2 * attempt, 6))
+    return [], errors
 
 
 def normalize_item(raw: dict[str, Any], paper: dict[str, str], index: int, model: str) -> dict[str, Any]:
@@ -322,6 +384,7 @@ def main() -> None:
     model = os.getenv("GLM_MODEL", DEFAULT_MODEL)
     endpoint = os.getenv("GLM_ENDPOINT", DEFAULT_ENDPOINT)
     limit = int(os.getenv("GLM_PAPER_LIMIT", str(DEFAULT_LIMIT)))
+    max_attempts = int(os.getenv("GLM_MAX_ATTEMPTS", str(DEFAULT_MAX_ATTEMPTS)))
     output_prefix = "glm_reviewer"
     existing_generated = existing_generated_rows(output_prefix)
     if not api_key:
@@ -352,15 +415,17 @@ def main() -> None:
     for paper in selected:
         if paper["paper_id"] in existing_papers:
             continue
-        try:
-            content = call_glm(api_key, model, endpoint, build_prompt(paper, blocks_by_paper[paper["paper_id"]]))
-            payload = parse_json(content)
-            for index, item in enumerate(payload["weaknesses"][:3], start=1):
-                normalized = normalize_item(item, paper, index, model)
-                if normalized["weakness_text"] and len(tokenize(normalized["weakness_text"])) >= 6:
-                    generated.append(normalized)
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError, ValueError, KeyError) as exc:
-            errors.append({"paper_id": paper["paper_id"], "error": type(exc).__name__, "message": str(exc)[:300]})
+        paper_rows, paper_errors = generate_paper_weaknesses(
+            api_key,
+            model,
+            endpoint,
+            paper,
+            blocks_by_paper[paper["paper_id"]],
+            max_attempts,
+        )
+        generated.extend(paper_rows)
+        if paper_errors and not paper_rows:
+            errors.append(paper_errors[-1])
 
     status = "ok" if generated else "blocked"
     summary = {
@@ -375,6 +440,7 @@ def main() -> None:
         "papers_with_generation": len({row["paper_id"] for row in generated}),
         "new_papers_requested": len([paper for paper in selected if paper["paper_id"] not in existing_papers]),
         "existing_papers_preserved": len(existing_papers),
+        "max_attempts_per_new_paper": max_attempts,
         "category_counts": dict(Counter(row["category"] for row in generated)),
         "severity_counts": dict(Counter(row["severity"] for row in generated)),
         "elapsed_seconds": round(time.time() - started, 2),

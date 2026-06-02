@@ -6,33 +6,23 @@
   "api_key_source": "GLM_API_KEY",
   "requested_paper_count": 10,
   "selected_paper_count": 10,
-  "generated_weakness_count": 21,
-  "papers_with_generation": 8,
+  "generated_weakness_count": 27,
+  "papers_with_generation": 10,
   "new_papers_requested": 2,
   "existing_papers_preserved": 8,
+  "max_attempts_per_new_paper": 3,
   "category_counts": {
-    "experiment": 12,
-    "validity": 2,
-    "method": 2,
-    "clarity": 4,
-    "reproducibility": 1
+    "experiment": 13,
+    "validity": 3,
+    "method": 3,
+    "clarity": 5,
+    "reproducibility": 3
   },
   "severity_counts": {
-    "major": 15,
-    "minor": 6
+    "major": 20,
+    "minor": 7
   },
-  "elapsed_seconds": 92.48,
-  "errors": [
-    {
-      "paper_id": "EmQSOi1X2f",
-      "error": "JSONDecodeError",
-      "message": "Expecting value: line 1 column 1 (char 0)"
-    },
-    {
-      "paper_id": "EhrzQwsV4K",
-      "error": "JSONDecodeError",
-      "message": "Expecting value: line 1 column 1 (char 0)"
-    }
-  ],
+  "elapsed_seconds": 48.56,
+  "errors": [],
   "warning": "Small GLM-4.6V reviewer diagnostic sample; API key is never written to disk."
 }

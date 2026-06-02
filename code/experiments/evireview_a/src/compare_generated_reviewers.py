@@ -169,7 +169,7 @@ def render_report(payload: dict[str, Any]) -> None:
         "",
         f"- On this {payload['overlap_paper_count']}-paper overlap, GLM-4.6V produces fewer but more supported weaknesses than the deterministic rubric-agent.",
         "- Rubric-agent remains useful as a cheap structure-risk generator, but its overlap-sample support score is much lower.",
-        "- The current 8-paper effective sample is a stronger diagnostic than the initial deployment sample, but still not a final provider benchmark.",
+        "- The current clean 10-paper effective sample is stronger than the initial deployment sample, but still not a final provider benchmark.",
     ]
     (REPORT_DIR / "generated_reviewer_comparison_report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 

@@ -338,7 +338,7 @@ def dashboard_lines() -> list[str]:
             "## Current Risks",
             "",
             f"- OpenRouter chat reranker status: `{reranker.get('status', 'unknown')}`; reason: {reranker.get('reason', 'not recorded')}.",
-            f"- GLM-4.6V reviewer result now covers {glm_effective_papers} valid papers; {glm_error_count} requested papers still failed JSON parsing and should be retried with stricter output repair.",
+            f"- GLM-4.6V reviewer result now covers {glm_effective_papers} valid papers; current JSON parsing failures: {glm_error_count}.",
             "- Paired GLM-vs-rubric comparison currently covers only the GLM overlap papers.",
             "- Hierarchical Paper-RAG currently uses silver verifier labels; treat support gains as architecture diagnostics, not final truth.",
             "- Human hierarchical retrieval has high section-alignment proxy scores, but true evidence support still needs the 300-row comparison queue to be labeled.",
@@ -353,7 +353,7 @@ def dashboard_lines() -> list[str]:
             "",
             "1. Add context-aware PeerReview Bench features or an LLM verifier because full-data review-item NB still misses minority evidence labels.",
             "2. Improve PeerQA-XT query decomposition using data-driven or LLM-generated subqueries; current hand-written expansion hurts retrieval while section-aware scoring only ties the best lexical floor.",
-            "3. Harden GLM JSON parsing / retry the two failed papers, then freeze the 8-paper diagnostic table for the experiment chapter unless a clean 10-paper run is obtained.",
+            "3. Freeze the clean 10-paper GLM diagnostic table for the experiment chapter, while keeping the conclusion scoped as silver-label evidence rather than human-gold evaluation.",
             "4. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.",
             "5. Label the 300-row retrieval comparison queue only if external ready-label datasets still leave a gap in local Paper-RAG evidence support.",
         ]

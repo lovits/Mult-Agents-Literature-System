@@ -13,7 +13,7 @@ This report evaluates a transparent hierarchical retrieval interface for generat
 
 | Source | Weaknesses | Top-1 section align | Top-3 section align | Mean support | Partially-supported-or-better | Labels |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| glm_reviewer | 21 | 1.0 | 1.0 | 0.5304 | 0.7143 | {'Partially Supported': 12, 'Mentioned but Not Problem': 4, 'Unsupported': 2, 'Supported': 3} |
+| glm_reviewer | 27 | 1.0 | 1.0 | 0.5212 | 0.6667 | {'Partially Supported': 14, 'Mentioned but Not Problem': 7, 'Unsupported': 2, 'Supported': 4} |
 | rubric_agent | 194 | 1.0 | 1.0 | 0.1999 | 0.0258 | {'Unsupported': 113, 'Mentioned but Not Problem': 76, 'Partially Supported': 5} |
 
 ## Interpretation

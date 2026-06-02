@@ -209,39 +209,39 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 | 指标 | 数值 |
 | --- | ---: |
 | Selected papers | 10 |
-| Papers with generation | 8 |
-| Generated weaknesses | 21 |
-| JSON parse failures | 2 |
-| Generic rate | 0.0476 |
-| Coverage recall @ 0.18 | 0.5677 |
-| Verifier Mentioned but Not Problem | 6 |
-| Verifier Partially Supported | 10 |
+| Papers with generation | 10 |
+| Generated weaknesses | 27 |
+| JSON parse failures | 0 |
+| Generic rate | 0.0741 |
+| Coverage recall @ 0.18 | 0.5952 |
+| Verifier Mentioned but Not Problem | 9 |
+| Verifier Partially Supported | 13 |
 | Verifier Supported | 2 |
 | Verifier Unsupported | 3 |
-| Mean support score | 0.4744 |
+| Mean support score | 0.4670 |
 
-结论：GLM-4.6V 已经从最初 3 篇 pilot 扩到 8 篇有效论文 / 21 条 structured weaknesses，并进入 generation -> retrieval -> verifier -> ranker 闭环；相较 deterministic rubric-agent，当前 support distribution 更好。但这仍是 small paired diagnostic，不是最终 provider benchmark。2 篇论文仍因 JSONDecodeError 失败，后续应优先做输出修复或严格 JSON retry。
+结论：GLM-4.6V 已经从最初 3 篇 pilot 扩到 clean 10 篇有效论文 / 27 条 structured weaknesses，并进入 generation -> retrieval -> verifier -> ranker 闭环；相较 deterministic rubric-agent，当前 support distribution 更好。JSON 解析修复和最多 3 次 retry 已补齐先前失败的 2 篇论文，但这仍是 small paired diagnostic，不是最终 provider benchmark。
 
 2026-06-02 更新：`run_glm_reviewer_experiment.py` 已默认请求 10 篇，并加入续跑保护：已有 GLM 输出的论文会被跳过；没有设置 `GLM_API_KEY` / `ZAI_API_KEY` 等环境变量时，脚本只报告缺少 key，不覆盖已有结果。本轮通过环境变量完成扩样，API key 未写入仓库。
 
 ### 2.9 GLM overlap 上的 reviewer 公平对比
 
-定位：把 GLM 已生成的 8 篇有效论文与 rubric-agent 限定在同一批论文上比较，避免“GLM 小样本 vs rubric 全量 50 篇”的不公平对照。
+定位：把 GLM 已生成的 10 篇有效论文与 rubric-agent 限定在同一批论文上比较，避免“GLM 小样本 vs rubric 全量 50 篇”的不公平对照。
 
-重叠样本：8 篇论文 / 229 条 human weaknesses。
+重叠样本：10 篇论文 / 289 条 human weaknesses。
 
 | 指标 | Rubric-agent | GLM-4.6V reviewer |
 | --- | ---: | ---: |
-| Generated weaknesses | 30 | 21 |
-| Mean generated per paper | 3.7500 | 2.6250 |
-| Generic rate | 0.2000 | 0.0952 |
-| Redundancy rate | 0.1333 | 0.0000 |
-| Coverage recall @ 0.18 | 0.4148 | 0.5677 |
-| Mean paper recall @ 0.18 | 0.4303 | 0.5725 |
-| Mean support score | 0.2079 | 0.4744 |
-| Partially-supported-or-better rate | 0.0000 | 0.5714 |
+| Generated weaknesses | 34 | 27 |
+| Mean generated per paper | 3.4000 | 2.7000 |
+| Generic rate | 0.2059 | 0.1111 |
+| Redundancy rate | 0.1373 | 0.0000 |
+| Coverage recall @ 0.18 | 0.3875 | 0.5952 |
+| Mean paper recall @ 0.18 | 0.4072 | 0.5968 |
+| Mean support score | 0.2000 | 0.4670 |
+| Partially-supported-or-better rate | 0.0000 | 0.5556 |
 
-结论：在 8 篇 GLM overlap 上，GLM-4.6V 生成更少，但 coverage proxy、support score、Partially Supported-or-better 比例均高于 rubric-agent。这个结果支持“rubric-agent 是可解释结构风险 baseline，GLM/LLM reviewer 是候选生成器，但必须进入 evidence verifier”的实验路线。下一步不能直接写成 GLM 优于 rubric 的最终结论，应写成 8-paper diagnostic，并报告 2 篇 JSON 解析失败。
+结论：在 10 篇 GLM overlap 上，GLM-4.6V 生成更少，但 coverage proxy、support score、Partially Supported-or-better 比例均高于 rubric-agent。这个结果支持“rubric-agent 是可解释结构风险 baseline，GLM/LLM reviewer 是候选生成器，但必须进入 evidence verifier”的实验路线。下一步不能直接写成 GLM 优于 rubric 的最终结论，应写成 clean 10-paper diagnostic，并明确 verifier 仍是 silver label。
 
 ### 2.10 Hierarchical Paper-RAG retrieval tools
 
@@ -258,13 +258,13 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 | Source | Weaknesses | Top-1 section align | Top-3 section align | Mean support | Partially-supported-or-better |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| GLM-4.6V reviewer | 21 | 1.0000 | 1.0000 | 0.5304 | 0.7143 |
+| GLM-4.6V reviewer | 27 | 1.0000 | 1.0000 | 0.5212 | 0.6667 |
 | Rubric-agent | 194 | 1.0000 | 1.0000 | 0.1999 | 0.0258 |
 
 对比原 retrieval/verifier：
 
-- GLM 原 mean support score 为 0.4744，hierarchical retrieval 后为 0.5304。
-- GLM 原 Partially Supported-or-better rate 为 0.5714，hierarchical retrieval 后为 0.7143。
+- GLM 原 mean support score 为 0.4670，hierarchical retrieval 后为 0.5212。
+- GLM 原 Partially Supported-or-better rate 为 0.5556，hierarchical retrieval 后为 0.6667。
 - Rubric-agent 原 verifier 标签中 Partially Supported 为 3/194，hierarchical retrieval 后为 5/194，改善有限。
 
 结论：hierarchical Paper-RAG 对 GLM 这类更具体的 weakness 生成结果更有帮助；对 rubric-agent 的泛化结构风险提示帮助有限。这支持把系统架构从“section-aware rerank”升级为“可审计 hierarchical retrieval tools”，但最终结论仍需人工 gold labels 验证。
@@ -458,8 +458,8 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 核心未完成：
 
 - 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注；当前已生成 300 条 section-aware vs hierarchical retrieval 对比标注队列，并补齐导入/评估脚本。
-- Agent weakness generation 已跑 rubric-agent 全量 baseline、GLM-4.6V 8-paper 有效扩样，以及 GLM overlap 上的 paired comparison；GLM 扩样脚本已支持默认 10 篇和续跑保护，当前仍有 2 篇 JSONDecodeError 失败。
-- Rubric-agent generation baseline 已完成；GLM-4.6V 已接入并完成 8 篇重叠样本公平对比，实际结论仍应限定为 small paired diagnostic。
+- Agent weakness generation 已跑 rubric-agent 全量 baseline、GLM-4.6V clean 10-paper 有效扩样，以及 GLM overlap 上的 paired comparison；GLM 扩样脚本已支持默认 10 篇、续跑保护、JSON 正规化和最多 3 次 retry。
+- Rubric-agent generation baseline 已完成；GLM-4.6V 已接入并完成 10 篇重叠样本公平对比，实际结论仍应限定为 small paired diagnostic。
 - Hierarchical Paper-RAG tools 已有本地生成弱点诊断和 1463 条 human weakness 检索诊断，但还没有用人工 gold labels 做正式对比。
 - Evidence-aware ranker 已有 CLAIMCHECK 诊断，但还没有进入本地端到端主实验。
 - Accept/reject 分类已有探索性 baseline，但还没有使用 agent-generated weakness。
@@ -483,7 +483,7 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 4. 把 feature-fusion verifier 的失败案例转成标注规范补充：哪些 weak criticism 是 generic，哪些需要 external literature。
 5. 用人工 gold labels 对比 section-aware retrieval 与 hierarchical Paper-RAG，而不是只看 silver verifier 或 section-alignment proxy。
 6. 做 evidence-aware ranker：支持度、严重性、section confidence、novelty category 综合排序。
-7. 优先修复 GLM-4.6V 输出 JSON 解析失败的 2 篇论文，争取得到 clean 10-paper run；若短期不稳定，则冻结当前 8-paper diagnostic 表格进入实验章节。
+7. GLM-4.6V clean 10-paper diagnostic 已完成；下一步应冻结该表进入实验章节，并把主要精力转向 PeerQA-XT 数据驱动/LLM 子查询、PeerReview Bench 少数类 verifier 优化和实验章节表格整理。
 
 近期最小可交付：
 

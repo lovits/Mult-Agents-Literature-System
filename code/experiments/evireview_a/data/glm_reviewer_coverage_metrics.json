@@ -1,23 +1,23 @@
 {
-  "generic_rate": 0.0476,
+  "generic_rate": 0.0741,
   "coverage_by_threshold": [
     {
       "threshold": 0.12,
-      "evaluated_human_weakness_count": 229,
-      "covered_human_weakness_count": 188,
-      "human_weakness_recall": 0.821
+      "evaluated_human_weakness_count": 289,
+      "covered_human_weakness_count": 239,
+      "human_weakness_recall": 0.827
     },
     {
       "threshold": 0.18,
-      "evaluated_human_weakness_count": 229,
-      "covered_human_weakness_count": 130,
-      "human_weakness_recall": 0.5677
+      "evaluated_human_weakness_count": 289,
+      "covered_human_weakness_count": 172,
+      "human_weakness_recall": 0.5952
     },
     {
       "threshold": 0.24,
-      "evaluated_human_weakness_count": 229,
-      "covered_human_weakness_count": 30,
-      "human_weakness_recall": 0.131
+      "evaluated_human_weakness_count": 289,
+      "covered_human_weakness_count": 39,
+      "human_weakness_recall": 0.1349
     }
   ]
 }

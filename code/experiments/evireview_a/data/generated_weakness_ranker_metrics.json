@@ -2,9 +2,9 @@
   "status": "ok",
   "ranker": "generated_weakness_evidence_aware_ranker_v0",
   "input_file": "generated_hierarchical_verified_weaknesses.jsonl",
-  "candidate_count": 215,
-  "paper_group_count": 57,
-  "top3_count": 162,
+  "candidate_count": 221,
+  "paper_group_count": 59,
+  "top3_count": 168,
   "score_formula": "(0.45 + support_score) * verifier_label_weight * severity_weight",
   "label_weights": {
     "Supported": 1.0,
@@ -21,31 +21,31 @@
   },
   "sources": {
     "glm_reviewer": {
-      "candidate_count": 21,
-      "paper_count": 8,
-      "top3_count": 21,
-      "candidate_mean_support": 0.5304,
-      "top3_mean_support": 0.5304,
-      "candidate_partially_supported_or_better_rate": 0.7143,
-      "top3_partially_supported_or_better_rate": 0.7143,
+      "candidate_count": 27,
+      "paper_count": 10,
+      "top3_count": 27,
+      "candidate_mean_support": 0.5212,
+      "top3_mean_support": 0.5212,
+      "candidate_partially_supported_or_better_rate": 0.6667,
+      "top3_partially_supported_or_better_rate": 0.6667,
       "candidate_label_counts": {
-        "Partially Supported": 12,
-        "Mentioned but Not Problem": 4,
+        "Partially Supported": 14,
+        "Mentioned but Not Problem": 7,
         "Unsupported": 2,
-        "Supported": 3
+        "Supported": 4
       },
       "top3_label_counts": {
-        "Supported": 3,
-        "Partially Supported": 12,
-        "Mentioned but Not Problem": 4,
+        "Supported": 4,
+        "Partially Supported": 14,
+        "Mentioned but Not Problem": 7,
         "Unsupported": 2
       },
       "top3_category_counts": {
-        "experiment": 12,
-        "clarity": 4,
-        "reproducibility": 1,
-        "validity": 2,
-        "method": 2
+        "experiment": 13,
+        "clarity": 5,
+        "reproducibility": 3,
+        "method": 3,
+        "validity": 3
       }
     },
     "rubric_agent": {
