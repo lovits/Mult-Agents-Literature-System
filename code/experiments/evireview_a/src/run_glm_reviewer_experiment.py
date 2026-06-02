@@ -379,7 +379,7 @@ def main() -> None:
         "severity_counts": dict(Counter(row["severity"] for row in generated)),
         "elapsed_seconds": round(time.time() - started, 2),
         "errors": errors,
-        "warning": "Small GLM-4.6V reviewer deployment sample; API key is never written to disk.",
+        "warning": "Small GLM-4.6V reviewer diagnostic sample; API key is never written to disk.",
     }
     write_jsonl(DATA_DIR / f"{output_prefix}_weaknesses.jsonl", generated)
     write_json(DATA_DIR / f"{output_prefix}_weaknesses_summary.json", summary)

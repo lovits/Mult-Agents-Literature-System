@@ -1,0 +1,79 @@
+{
+  "status": "ok",
+  "ranker": "generated_weakness_evidence_aware_ranker_v0",
+  "input_file": "generated_hierarchical_verified_weaknesses.jsonl",
+  "candidate_count": 215,
+  "paper_group_count": 57,
+  "top3_count": 162,
+  "score_formula": "(0.45 + support_score) * verifier_label_weight * severity_weight",
+  "label_weights": {
+    "Supported": 1.0,
+    "Partially Supported": 0.8,
+    "Mentioned but Not Problem": 0.45,
+    "Generic / Vague": 0.2,
+    "Unsupported": 0.05,
+    "Contradicted": 0.0
+  },
+  "severity_weights": {
+    "major": 1.0,
+    "minor": 0.65,
+    "unknown": 0.75
+  },
+  "sources": {
+    "glm_reviewer": {
+      "candidate_count": 21,
+      "paper_count": 8,
+      "top3_count": 21,
+      "candidate_mean_support": 0.5304,
+      "top3_mean_support": 0.5304,
+      "candidate_partially_supported_or_better_rate": 0.7143,
+      "top3_partially_supported_or_better_rate": 0.7143,
+      "candidate_label_counts": {
+        "Partially Supported": 12,
+        "Mentioned but Not Problem": 4,
+        "Unsupported": 2,
+        "Supported": 3
+      },
+      "top3_label_counts": {
+        "Supported": 3,
+        "Partially Supported": 12,
+        "Mentioned but Not Problem": 4,
+        "Unsupported": 2
+      },
+      "top3_category_counts": {
+        "experiment": 12,
+        "clarity": 4,
+        "reproducibility": 1,
+        "validity": 2,
+        "method": 2
+      }
+    },
+    "rubric_agent": {
+      "candidate_count": 194,
+      "paper_count": 49,
+      "top3_count": 141,
+      "candidate_mean_support": 0.1999,
+      "top3_mean_support": 0.2343,
+      "candidate_partially_supported_or_better_rate": 0.0258,
+      "top3_partially_supported_or_better_rate": 0.0355,
+      "candidate_label_counts": {
+        "Unsupported": 113,
+        "Mentioned but Not Problem": 76,
+        "Partially Supported": 5
+      },
+      "top3_label_counts": {
+        "Unsupported": 64,
+        "Mentioned but Not Problem": 72,
+        "Partially Supported": 5
+      },
+      "top3_category_counts": {
+        "related_work": 22,
+        "limitation": 17,
+        "experiment": 46,
+        "method": 51,
+        "reproducibility": 5
+      }
+    }
+  },
+  "warning": "This is a silver-label ranker diagnostic over generated weaknesses, not human gold evaluation."
+}

@@ -106,6 +106,8 @@ def dashboard_lines() -> list[str]:
     hierarchical_sources = hierarchical_retrieval.get("sources", {})
     hierarchical_glm = hierarchical_sources.get("glm_reviewer", {})
     hierarchical_rubric = hierarchical_sources.get("rubric_agent", {})
+    glm_error_count = len(glm_generation.get("errors", []))
+    glm_effective_papers = glm_generation.get("papers_with_generation", 0)
     peerreview_tasks = peerreview_bench.get("tasks", {})
     peerreview_sig_nb = (
         peerreview_tasks.get("significance", {})
@@ -336,7 +338,7 @@ def dashboard_lines() -> list[str]:
             "## Current Risks",
             "",
             f"- OpenRouter chat reranker status: `{reranker.get('status', 'unknown')}`; reason: {reranker.get('reason', 'not recorded')}.",
-            "- GLM-4.6V reviewer result is a 3-paper deployment sample, so it proves provider integration and pipeline handoff only.",
+            f"- GLM-4.6V reviewer result now covers {glm_effective_papers} valid papers; {glm_error_count} requested papers still failed JSON parsing and should be retried with stricter output repair.",
             "- Paired GLM-vs-rubric comparison currently covers only the GLM overlap papers.",
             "- Hierarchical Paper-RAG currently uses silver verifier labels; treat support gains as architecture diagnostics, not final truth.",
             "- Human hierarchical retrieval has high section-alignment proxy scores, but true evidence support still needs the 300-row comparison queue to be labeled.",
@@ -351,7 +353,7 @@ def dashboard_lines() -> list[str]:
             "",
             "1. Add context-aware PeerReview Bench features or an LLM verifier because full-data review-item NB still misses minority evidence labels.",
             "2. Improve PeerQA-XT query decomposition using data-driven or LLM-generated subqueries; current hand-written expansion hurts retrieval while section-aware scoring only ties the best lexical floor.",
-            "3. Expand the GLM-4.6V structured-reviewer sample to 5-10 papers and compare it with rubric-agent on coverage, generic rate, redundancy, and verifier-label distribution.",
+            "3. Harden GLM JSON parsing / retry the two failed papers, then freeze the 8-paper diagnostic table for the experiment chapter unless a clean 10-paper run is obtained.",
             "4. Keep OpenRouter chat reranker/verifier as optional because the free provider is rate-limited.",
             "5. Label the 300-row retrieval comparison queue only if external ready-label datasets still leave a gap in local Paper-RAG evidence support.",
         ]

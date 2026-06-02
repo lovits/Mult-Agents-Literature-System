@@ -7,28 +7,28 @@ This report validates a GLM-4.6V structured reviewer deployment on the local Ope
 - Status: `ok`
 - Model: `glm-4.6v`
 - Endpoint: `https://open.bigmodel.cn/api/paas/v4/chat/completions`
-- Selected papers: 3
-- Generated weaknesses: 8
-- Papers with generation: 3
-- Elapsed seconds: 93.53
+- Selected papers: 10
+- Generated weaknesses: 21
+- Papers with generation: 8
+- Elapsed seconds: 92.48
 - Warning: Small GLM-4.6V reviewer deployment sample; API key is never written to disk.
 
 ## Coverage Proxy
 
-- Generic rate: 0.125
+- Generic rate: 0.0476
 
 | Similarity threshold | Evaluated human weaknesses | Covered | Recall |
 | ---: | ---: | ---: | ---: |
-| 0.12 | 107 | 83 | 0.7757 |
-| 0.18 | 107 | 54 | 0.5047 |
-| 0.24 | 107 | 14 | 0.1308 |
+| 0.12 | 229 | 188 | 0.821 |
+| 0.18 | 229 | 130 | 0.5677 |
+| 0.24 | 229 | 30 | 0.131 |
 
 ## Verifier Handoff
 
-- Retrieved generated weaknesses: 8
-- Verified generated weaknesses: 8
-- Label counts: {'Mentioned but Not Problem': 4, 'Partially Supported': 2, 'Unsupported': 2}
-- Mean support score: 0.3448
+- Retrieved generated weaknesses: 21
+- Verified generated weaknesses: 21
+- Label counts: {'Mentioned but Not Problem': 6, 'Partially Supported': 10, 'Unsupported': 3, 'Supported': 2}
+- Mean support score: 0.4744
 
 ## Interpretation
 
