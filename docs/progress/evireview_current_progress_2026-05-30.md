@@ -320,7 +320,7 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 - `probe_ready_datasets.py`：通过 Hugging Face API 探测可直接使用的数据集、license、字段和样本 schema。
 - `prepare_peerreview_bench.py`：拉取 PeerReview Bench 的 `expert_annotation` split，并只保存短 paper excerpt，避免提交完整论文正文。
-- `evaluate_peerreview_bench_baseline.py`：在已有专家标签上跑 majority 与 no-dependency Naive Bayes baseline。
+- `evaluate_peerreview_bench_baseline.py`：在已有专家标签上跑 majority、no-dependency Naive Bayes baseline 与 evidence-aware feature logistic baseline。
 
 筛选出的 A/B 版数据集：
 
@@ -335,11 +335,11 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 PeerReview Bench 已从 300-row probe 扩展到完整 3,881 条 expert annotations。当前使用按 `paper_id` 分组的 deterministic 80/20 split，避免同一论文的 review item 同时出现在 train/test。
 
-| Task | Train | Test | Majority Macro-F1 | Review NB Macro-F1 | Balanced Review NB Macro-F1 | Context NB Macro-F1 | Balanced Context NB Macro-F1 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| correctness | 3079 | 802 | 0.4646 | 0.4901 | 0.4846 | 0.5601 | 0.5686 |
-| significance | 2720 | 696 | 0.2486 | 0.3723 | 0.4207 | 0.3241 | 0.3205 |
-| evidence | 2266 | 602 | 0.4819 | 0.4819 | 0.4801 | 0.5153 | 0.5318 |
+| Task | Train | Test | Majority Macro-F1 | Review NB Macro-F1 | Balanced Review NB Macro-F1 | Context NB Macro-F1 | Balanced Context NB Macro-F1 | Evidence-aware Feature Macro-F1 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| correctness | 3079 | 802 | 0.4646 | 0.4901 | 0.4846 | 0.5601 | 0.5686 | - |
+| significance | 2720 | 696 | 0.2486 | 0.3723 | 0.4207 | 0.3241 | 0.3205 | - |
+| evidence | 2266 | 602 | 0.4819 | 0.4819 | 0.4801 | 0.5153 | 0.5318 | 0.5730 |
 
 Balanced context NB per-label recall：
 
@@ -350,15 +350,16 @@ Balanced context NB per-label recall：
 | significance | Marginally Significant | 188 | 0.2181 | 0.2405 |
 | significance | Not Significant | 94 | 0.0000 | 0.0000 |
 | significance | Significant | 414 | 0.8333 | 0.7210 |
-| evidence | Requires More | 42 | 0.0714 | 0.1071 |
-| evidence | Sufficient | 560 | 0.9804 | 0.9564 |
+| evidence | Requires More | 42 | 0.2381 | 0.2128 |
+| evidence | Sufficient | 560 | 0.9250 | 0.9333 |
 
 解释：
 
 - accuracy 高但 Macro-F1 不高，说明标签明显不均衡；论文中应优先报告 Macro-F1 和 per-label recall。
 - balanced review-item NB 将 significance Macro-F1 提升到 0.4207，说明 review item 文本对“重要性/排序优先级”有可学习信号，可作为 evidence-aware ranker 的外部 ready-label baseline。
 - balanced context NB 将 correctness/evidence Macro-F1 提升到 0.5686 / 0.5318；因此 ranker priority 与 verifier/evidence 应分开建模。
-- correctness 与 evidence 维度在严格 grouped split 下仍难以识别少数类，`Requires More` recall 只有 0.0714；下一步应加入更强的 evidence-aware features 或 LLM verifier，而不是继续依赖朴素词袋分类。
+- evidence-aware feature logistic 将 evidence Macro-F1 进一步提升到 0.5730，并把 `Requires More` recall 从 0.0714 提升到 0.2381，但少数类仍未解决。
+- correctness 与 evidence 维度在严格 grouped split 下仍难以识别少数类；下一步应加入 LLM verifier 或更强 evidence-aware features，而不是继续依赖朴素词袋分类。
 - 这条路线比本地人工标注更符合“直接拿来用的数据集做实验”的要求；本地 300 条队列保留为系统特定补充验证。
 
 ### 2.13 PeerQA-XT Paper-RAG QA baseline

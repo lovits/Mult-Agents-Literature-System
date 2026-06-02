@@ -670,7 +670,127 @@
               "Sufficient": 549
             }
           }
+        },
+        "evidence_aware_feature_logistic_v1": {
+          "count": 602,
+          "accuracy": 0.8771,
+          "macro_f1": 0.573,
+          "label_counts": {
+            "Sufficient": 560,
+            "Requires More": 42
+          },
+          "prediction_counts": {
+            "Sufficient": 550,
+            "Requires More": 52
+          },
+          "per_label": {
+            "Requires More": {
+              "precision": 0.1923,
+              "recall": 0.2381,
+              "f1": 0.2128,
+              "support": 42
+            },
+            "Sufficient": {
+              "precision": 0.9418,
+              "recall": 0.925,
+              "f1": 0.9333,
+              "support": 560
+            }
+          },
+          "confusion": {
+            "Requires More": {
+              "Requires More": 10,
+              "Sufficient": 32
+            },
+            "Sufficient": {
+              "Requires More": 42,
+              "Sufficient": 518
+            }
+          },
+          "probability_threshold": 0.6574,
+          "feature_count": 24
         }
+      },
+      "evidence_aware_features": {
+        "feature_names": [
+          "avg_sentence_len_scaled",
+          "category_clarity",
+          "category_experiment",
+          "category_method",
+          "category_other",
+          "category_related_work",
+          "category_reproducibility",
+          "category_validity",
+          "evidence_demand_count_log",
+          "has_citation_year",
+          "hedge_count_log",
+          "mentions_experiment",
+          "mentions_missing",
+          "mentions_table_figure",
+          "number_count_log",
+          "paper_overlap_ratio",
+          "question_count_log",
+          "quote_count_log",
+          "review_char_count_log",
+          "review_token_count_log",
+          "sentence_count_log",
+          "strong_claim_count_log",
+          "sufficient_marker_count_log",
+          "url_count_log"
+        ],
+        "mean_feature_weights": [
+          {
+            "feature": "paper_overlap_ratio",
+            "weight": 0.3305
+          },
+          {
+            "feature": "evidence_demand_count_log",
+            "weight": -0.2561
+          },
+          {
+            "feature": "category_reproducibility",
+            "weight": -0.2494
+          },
+          {
+            "feature": "strong_claim_count_log",
+            "weight": -0.2247
+          },
+          {
+            "feature": "quote_count_log",
+            "weight": 0.2095
+          },
+          {
+            "feature": "review_token_count_log",
+            "weight": -0.1952
+          },
+          {
+            "feature": "question_count_log",
+            "weight": -0.1819
+          },
+          {
+            "feature": "mentions_missing",
+            "weight": 0.1693
+          },
+          {
+            "feature": "sufficient_marker_count_log",
+            "weight": -0.1612
+          },
+          {
+            "feature": "number_count_log",
+            "weight": -0.1343
+          },
+          {
+            "feature": "category_clarity",
+            "weight": -0.132
+          },
+          {
+            "feature": "category_method",
+            "weight": 0.1112
+          }
+        ],
+        "positive_label": "Requires More",
+        "negative_label": "Sufficient",
+        "method": "balanced binary logistic regression on review/context evidence proxy features"
       }
     }
   }
