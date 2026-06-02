@@ -32,7 +32,7 @@ flowchart LR
 
 - rubric-agent 适合保留为可复现、可解释、低成本的结构风险 baseline。
 - GLM-4.6V 在小样本上更像可用的候选弱点生成器，但仍必须经过 evidence retrieval 和 verifier。
-- 当前样本太小，不能写成最终模型优劣结论；下一步扩到 5-10 篇后复跑同一 paired comparison。
+- 当前样本太小，不能写成最终模型优劣结论；扩样脚本已支持默认 10 篇和续跑保护，下一步在注入 GLM key 后扩到 5-10 篇并复跑同一 paired comparison。
 
 ## 3. 本轮新增架构实验：Hierarchical Paper-RAG
 
@@ -121,7 +121,7 @@ flowchart LR
 
 1. PeerReview Bench 已扩展到完整 3,881 expert annotations，并加入 balanced NB / context NB / evidence-aware feature logistic；evidence Macro-F1 从 0.5318 提升到 0.5730，下一步要做 LLM verifier 或更强特征，继续提升 correctness/evidence 少数类 recall。
 2. PeerQA-XT 已扩展到 500-row Paper-RAG QA baseline，并完成 section-aware / hierarchical / domain-aware query decomposition variants；当前 section-aware 是最稳 non-oracle 方法，但只小幅超过 lexical floor，手写 query/domain expansion 下降，下一步要做数据驱动/LLM 子查询。
-3. 将 GLM-4.6V reviewer 扩到 5-10 篇，复跑 paired comparison。
+3. GLM-4.6V reviewer 脚本已改为默认 10 篇并支持续跑保护；设置 `GLM_API_KEY` / `ZAI_API_KEY` 后即可扩到 5-10 篇并复跑 paired comparison。
 4. 把 paired comparison 的指标固定为 coverage、generic rate、redundancy、verifier label distribution、support score。
 5. 本地 `retrieval_comparison_annotation_queue.csv` 的 300 条队列保留为系统特定 gold label；只有当外部 ready-label 数据集无法覆盖论文内证据块选择时再优先标注。
 6. 在开题报告实验章节中明确写出：retrieval、verifier、ranker 是三个独立实验模块，分类只是辅助实验。
@@ -130,7 +130,7 @@ flowchart LR
 
 - PeerReview Bench 已扩展到完整 3,881 expert annotations，并完成 evidence-aware feature baseline；当前缺口仍是少数类 recall，尤其 evidence 的 `Requires More` 仍只有 0.2381。
 - PeerQA-XT 已有 500-row question-only、section-aware、hierarchical、domain-aware query decomposition Paper-RAG QA baseline；结构先验还没有显著超过 lexical floor。
-- GLM-4.6V 还没有 5-10 篇稳定样本。
+- GLM-4.6V 扩样执行准备已完成，但当前环境未设置 GLM key，还没有 5-10 篇稳定样本。
 - Evidence verifier 仍以 silver / heuristic 诊断为主，缺少足够人工 gold labels。
 - 前后端工程化尚未开始。
 - Hierarchical retrieval tools 已有 generated weakness 与 human weakness 两条诊断脚本，但还没有落成完整 LangGraph-style agent graph。

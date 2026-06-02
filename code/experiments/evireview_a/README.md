@@ -87,6 +87,9 @@ OpenRouter embedding retrieval requires `OPENROUTER_API_KEY`. The default free e
 GLM-4.6V reviewer generation requires one of `GLM_API_KEY`, `ZHIPU_API_KEY`, `ZHIPUAI_API_KEY`,
 `BIGMODEL_API_KEY`, or `ZAI_API_KEY`. The experiment records only the environment-variable name used,
 never the secret value. Override the model or endpoint with `GLM_MODEL` and `GLM_ENDPOINT`.
+The default `GLM_PAPER_LIMIT` is 10. The script preserves existing generated GLM rows and only calls
+the provider for selected papers that do not already have GLM output; if no API key is set, it exits
+without overwriting the previous successful sample.
 
 Current retrieval outputs:
 

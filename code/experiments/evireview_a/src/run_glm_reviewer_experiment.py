@@ -19,7 +19,7 @@ from evaluate_claimcheck_retrieval import char_ngrams, set_cosine
 GENERATOR = "glm_structured_reviewer_v0"
 DEFAULT_ENDPOINT = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 DEFAULT_MODEL = "glm-4.6v"
-DEFAULT_LIMIT = 3
+DEFAULT_LIMIT = 10
 TOP_K = 5
 API_KEY_ENV_NAMES = ("GLM_API_KEY", "ZHIPU_API_KEY", "ZHIPUAI_API_KEY", "BIGMODEL_API_KEY", "ZAI_API_KEY")
 
@@ -51,6 +51,13 @@ def select_papers(limit: int) -> list[dict[str, str]]:
         if len(selected) >= limit:
             break
     return selected[:limit]
+
+
+def existing_generated_rows(output_prefix: str) -> list[dict[str, Any]]:
+    path = DATA_DIR / f"{output_prefix}_weaknesses.jsonl"
+    if not path.exists():
+        return []
+    return read_jsonl(path)
 
 
 def section_excerpt(blocks: list[dict[str, Any]], section_type: str, limit: int) -> str:
@@ -316,15 +323,21 @@ def main() -> None:
     endpoint = os.getenv("GLM_ENDPOINT", DEFAULT_ENDPOINT)
     limit = int(os.getenv("GLM_PAPER_LIMIT", str(DEFAULT_LIMIT)))
     output_prefix = "glm_reviewer"
+    existing_generated = existing_generated_rows(output_prefix)
     if not api_key:
+        previous_summary_path = DATA_DIR / f"{output_prefix}_weaknesses_summary.json"
+        previous_summary = json.loads(previous_summary_path.read_text(encoding="utf-8")) if previous_summary_path.exists() else {}
         summary = {
-            "status": "blocked",
+            "status": previous_summary.get("status", "blocked"),
             "reason": f"None of {', '.join(API_KEY_ENV_NAMES)} is set.",
             "model": model,
             "endpoint": endpoint,
             "accepted_api_key_env_names": list(API_KEY_ENV_NAMES),
+            "requested_paper_count": limit,
+            "existing_generated_weakness_count": len(existing_generated),
+            "existing_papers_with_generation": len({row["paper_id"] for row in existing_generated}),
+            "warning": "GLM API key is missing; preserved existing generated rows and did not overwrite prior experiment outputs.",
         }
-        write_json(DATA_DIR / f"{output_prefix}_weaknesses_summary.json", summary)
         print(summary["reason"])
         return
 
@@ -332,10 +345,13 @@ def main() -> None:
     for block in read_jsonl(DATA_DIR / "evidence_blocks.jsonl"):
         blocks_by_paper[block["paper_id"]].append(block)
     selected = select_papers(limit)
-    generated = []
+    generated = list(existing_generated)
     errors = []
+    existing_papers = {row["paper_id"] for row in existing_generated}
     started = time.time()
     for paper in selected:
+        if paper["paper_id"] in existing_papers:
+            continue
         try:
             content = call_glm(api_key, model, endpoint, build_prompt(paper, blocks_by_paper[paper["paper_id"]]))
             payload = parse_json(content)
@@ -357,6 +373,8 @@ def main() -> None:
         "selected_paper_count": len(selected),
         "generated_weakness_count": len(generated),
         "papers_with_generation": len({row["paper_id"] for row in generated}),
+        "new_papers_requested": len([paper for paper in selected if paper["paper_id"] not in existing_papers]),
+        "existing_papers_preserved": len(existing_papers),
         "category_counts": dict(Counter(row["category"] for row in generated)),
         "severity_counts": dict(Counter(row["severity"] for row in generated)),
         "elapsed_seconds": round(time.time() - started, 2),

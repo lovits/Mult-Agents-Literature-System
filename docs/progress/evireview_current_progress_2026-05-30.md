@@ -222,6 +222,8 @@ OpenRouter chat reranker 已实现脚本，但全量实验受免费模型上游 
 
 结论：GLM-4.6V 已经跑通结构化生成与后续检索/验证链路；相较 deterministic rubric-agent，小样本中的 support distribution 更好，但样本只有 3 篇，不能写成最终性能结论。下一步应扩展到 5-10 篇，与 rubric-agent 按 coverage、generic rate、redundancy、verifier label distribution 做同一套对比。
 
+2026-06-02 更新：`run_glm_reviewer_experiment.py` 已改为默认请求 10 篇，并加入续跑保护：已有 GLM 输出的论文会被跳过；没有设置 `GLM_API_KEY` / `ZAI_API_KEY` 等环境变量时，脚本只报告缺少 key，不覆盖已有 3 篇结果。当前环境未检测到 GLM key，因此本轮完成的是扩样执行准备，实际 5-10 篇 API 生成仍待 key 注入后复跑。
+
 ### 2.9 GLM overlap 上的 reviewer 公平对比
 
 定位：在不重新调用外部 API 的前提下，先把 GLM 已生成的 3 篇论文与 rubric-agent 限定在同一批论文上比较，避免“GLM 小样本 vs rubric 全量 50 篇”的不公平对照。
@@ -456,8 +458,8 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 核心未完成：
 
 - 本地 OpenReview 样本上的人工 gold labels 还没有完成最终标注；当前已生成 300 条 section-aware vs hierarchical retrieval 对比标注队列，并补齐导入/评估脚本。
-- Agent weakness generation 已跑 rubric-agent 全量 baseline、GLM-4.6V 3-paper 小样本，以及 GLM overlap 上的 paired comparison，但还没有完成 5-10 篇 provider 对比。
-- Rubric-agent generation baseline 已完成；GLM-4.6V 已接入并完成重叠样本公平对比，小样本仍需扩大后再作为正式 provider 结果。
+- Agent weakness generation 已跑 rubric-agent 全量 baseline、GLM-4.6V 3-paper 小样本，以及 GLM overlap 上的 paired comparison；GLM 扩样脚本已支持默认 10 篇和续跑保护，但还没有实际完成 5-10 篇 provider 对比。
+- Rubric-agent generation baseline 已完成；GLM-4.6V 已接入并完成重叠样本公平对比，实际扩样仍需在环境变量中注入 GLM key 后再运行。
 - Hierarchical Paper-RAG tools 已有本地生成弱点诊断和 1463 条 human weakness 检索诊断，但还没有用人工 gold labels 做正式对比。
 - Evidence-aware ranker 已有 CLAIMCHECK 诊断，但还没有进入本地端到端主实验。
 - Accept/reject 分类已有探索性 baseline，但还没有使用 agent-generated weakness。
@@ -481,7 +483,7 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 4. 把 feature-fusion verifier 的失败案例转成标注规范补充：哪些 weak criticism 是 generic，哪些需要 external literature。
 5. 用人工 gold labels 对比 section-aware retrieval 与 hierarchical Paper-RAG，而不是只看 silver verifier 或 section-alignment proxy。
 6. 做 evidence-aware ranker：支持度、严重性、section confidence、novelty category 综合排序。
-7. 用 GLM-4.6V 跑 5-10 篇 structured reviewer 小样本，与 rubric-agent baseline 对比 coverage / generic rate / redundancy / verifier label distribution。
+7. 注入 `GLM_API_KEY` / `ZAI_API_KEY` 后，用 GLM-4.6V 跑 5-10 篇 structured reviewer 小样本，与 rubric-agent baseline 对比 coverage / generic rate / redundancy / verifier label distribution。
 
 近期最小可交付：
 
