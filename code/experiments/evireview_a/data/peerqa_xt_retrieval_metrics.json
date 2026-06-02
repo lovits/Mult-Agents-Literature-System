@@ -62,6 +62,16 @@
       "mean_answer_token_recall_at_5": 0.4995,
       "answer_support_hit_at_5": 0.788
     },
+    "prf_section_aware_question": {
+      "usable_rows": 500,
+      "min_answer_recall_for_hit": 0.35,
+      "mean_answer_token_recall_at_1": 0.2522,
+      "answer_support_hit_at_1": 0.244,
+      "mean_answer_token_recall_at_3": 0.4188,
+      "answer_support_hit_at_3": 0.582,
+      "mean_answer_token_recall_at_5": 0.498,
+      "answer_support_hit_at_5": 0.78
+    },
     "query_decomposed_question": {
       "usable_rows": 500,
       "min_answer_recall_for_hit": 0.35,

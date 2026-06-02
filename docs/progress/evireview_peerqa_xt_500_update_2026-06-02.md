@@ -73,7 +73,8 @@
 2. `section_aware_question` 是当前最稳 non-oracle 方法，Hit@3 为 0.6060，Hit@5 为 0.8060。
 3. `oracle_answer_query` Hit@3 为 0.9020，说明检索空间中存在足够支持信息，问题在于如何从 question 构造更好的 evidence-seeking query。
 4. 手写 query decomposition 和 domain-aware expansion 明显下降，说明不能把“多查询/多工具”直接写成必然提升。
-5. 下一步应把 query expansion 改成数据驱动或 LLM 生成，并通过同一 500-row PeerQA-XT probe 验证。
+5. 2026-06-02 追加：pseudo-relevance feedback 的 `prf_section_aware_question` 也未超过 section-aware，Hit@3 为 0.582，低于 `section_aware_question` 的 0.606。这说明数据驱动扩词如果没有 query gating，也会引入噪声。
+6. 下一步应把 query expansion 改成受控 LLM 子查询或先做 query gating：只在原始 query 信号弱、section-aware top-k 低置信时才扩展。
 
 ## 6. 仍未完成
 
@@ -85,7 +86,7 @@
 
 ## 7. 下一步建议顺序
 
-1. 基于 PeerQA-XT 500-row probe 尝试数据驱动/LLM 子查询生成，验证能否提高 Hit@1/Hit@3。
+1. 基于 PeerQA-XT 500-row probe 尝试受控 LLM 子查询或 query gating，验证能否提高 Hit@1/Hit@3；不要再无条件扩词。
 2. 在 PeerReview Bench 上继续做 LLM verifier 或更强特征，重点提升 `Requires More` recall。
 3. 冻结 GLM reviewer clean 10-paper diagnostic，整理进实验章节的小样本 provider 对比表。
 4. 整理实验章节表格：数据集表、retrieval 表、verifier 表、ranker 表、消融实验表。

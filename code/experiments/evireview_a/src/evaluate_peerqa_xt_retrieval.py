@@ -21,8 +21,11 @@ TOP_K_VALUES = (1, 3, 5)
 CHUNK_TOKENS = 170
 CHUNK_OVERLAP = 45
 MIN_ANSWER_RECALL = 0.35
+PRF_TOP_CHUNKS = 3
+PRF_TERM_COUNT = 8
 OUT_METRICS = "peerqa_xt_retrieval_metrics.json"
 OUT_PREDICTIONS = "peerqa_xt_retrieval_predictions.jsonl"
+ROW_STATE_CACHE: dict[int, dict[str, Any]] = {}
 
 SECTION_ALIASES = {
     "abstract": "abstract",
@@ -335,13 +338,45 @@ def peerqa_section_prior(question_category: str, section_type: str) -> float:
     return priors.get(question_category, priors["other"]).get(section_type, 0.0)
 
 
+def pseudo_relevance_terms(query: str, chunks: list[dict[str, Any]], idf: dict[str, float]) -> list[str]:
+    """Extract local expansion terms from initial top chunks without using the answer."""
+    query_terms = set(tokenize(query))
+    bm25 = bm25_scores(query, chunks)
+    tfidf = tfidf_scores(query, chunks, idf)
+    question_category = classify_peerqa_question(query)
+    section_scores = {chunk["chunk_id"]: peerqa_section_prior(question_category, chunk.get("section_type", "other")) for chunk in chunks}
+    bm25_norm = normalize_scores(bm25)
+    tfidf_norm = normalize_scores(tfidf)
+    initial_scores = {
+        chunk["chunk_id"]: 0.55 * bm25_norm.get(chunk["chunk_id"], 0.0)
+        + 0.35 * tfidf_norm.get(chunk["chunk_id"], 0.0)
+        + 0.10 * section_scores.get(chunk["chunk_id"], 0.0)
+        for chunk in chunks
+    }
+    top_chunks = sorted(chunks, key=lambda chunk: initial_scores.get(chunk["chunk_id"], 0.0), reverse=True)[:PRF_TOP_CHUNKS]
+    term_scores: Counter[str] = Counter()
+    for rank, chunk in enumerate(top_chunks, start=1):
+        rank_weight = 1.0 / rank
+        for term, count in Counter(tokenize(chunk["text"])).items():
+            if term in STOPWORDS or term in query_terms or term.isdigit() or len(term) < 4:
+                continue
+            term_scores[term] += rank_weight * count * idf.get(term, 0.0)
+    return [term for term, _ in term_scores.most_common(PRF_TERM_COUNT)]
+
+
+def pseudo_relevance_query(query: str, chunks: list[dict[str, Any]], idf: dict[str, float]) -> str:
+    terms = pseudo_relevance_terms(query, chunks, idf)
+    return f"{query} {' '.join(terms)}" if terms else query
+
+
 def rank_chunks(method: str, query: str, chunks: list[dict[str, Any]], idf: dict[str, float]) -> list[dict[str, Any]]:
     expanded_query = expand_question_query(query)
+    prf_query = pseudo_relevance_query(query, chunks, idf) if method == "prf_section_aware_question" else query
     retrieval_query = expanded_query if method in {
         "query_decomposed_question",
         "domain_section_aware_question",
         "domain_hierarchical_question",
-    } else query
+    } else prf_query if method == "prf_section_aware_question" else query
     bm25 = bm25_scores(retrieval_query, chunks)
     tfidf = tfidf_scores(retrieval_query, chunks, idf)
     question_category = classify_peerqa_question(query)
@@ -376,6 +411,17 @@ def rank_chunks(method: str, query: str, chunks: list[dict[str, Any]], idf: dict
             ],
             weights=[1.0, 1.0, 0.25],
         )
+    elif method == "prf_section_aware_question":
+        bm25_norm = normalize_scores(bm25)
+        tfidf_norm = normalize_scores(tfidf)
+        original_bm25_norm = normalize_scores(bm25_scores(query, chunks))
+        scores = {
+            chunk["chunk_id"]: 0.35 * original_bm25_norm.get(chunk["chunk_id"], 0.0)
+            + 0.35 * bm25_norm.get(chunk["chunk_id"], 0.0)
+            + 0.20 * tfidf_norm.get(chunk["chunk_id"], 0.0)
+            + 0.10 * section_scores.get(chunk["chunk_id"], 0.0)
+            for chunk in chunks
+        }
     elif method == "query_decomposed_question":
         bm25_norm = normalize_scores(bm25)
         tfidf_norm = normalize_scores(tfidf)
@@ -436,12 +482,23 @@ def evaluate_method(rows: list[dict[str, Any]], method: str) -> tuple[dict[str, 
     hit_counts = Counter()
     usable_rows = 0
     for row in rows:
-        chunks = chunk_paper(row.get("paper", ""))
-        terms = answer_terms(row.get("answer", ""))
+        row_index = int(row["row_index"])
+        state = ROW_STATE_CACHE.get(row_index)
+        if state is None:
+            chunks = chunk_paper(row.get("paper", ""))
+            terms = answer_terms(row.get("answer", ""))
+            state = {
+                "chunks": chunks,
+                "terms": terms,
+                "idf": build_idf(chunks) if chunks else {},
+            }
+            ROW_STATE_CACHE[row_index] = state
+        chunks = state["chunks"]
+        terms = state["terms"]
         if not chunks or not terms:
             continue
         usable_rows += 1
-        idf = build_idf(chunks)
+        idf = state["idf"]
         query = row["answer"] if method == "oracle_answer_query" else row["question"]
         retrieved = rank_chunks(method, query, chunks, idf)
         per_k = {}
@@ -489,6 +546,7 @@ def main() -> None:
         "hybrid_question",
         "section_aware_question",
         "hierarchical_question",
+        "prf_section_aware_question",
         "query_decomposed_question",
         "domain_section_aware_question",
         "domain_hierarchical_question",
@@ -548,7 +606,8 @@ def main() -> None:
             "- `hybrid_question` is the fair baseline for question-only retrieval; `query_decomposed_question` adds rule-based QA intent expansion.",
             "- `domain_section_aware_question` uses biomedical article section markers such as Background, Methods, Results, and Discussion.",
             "- `domain_hierarchical_question` fuses BM25, TF-IDF, and domain-aware section_read rankings with weighted reciprocal rank fusion.",
-            "- In this probe, section-aware retrieval ties the best lexical Hit@1/Hit@3 floor, while hand-written query expansion degrades retrieval.",
+            "- `prf_section_aware_question` uses pseudo-relevance feedback from initial top chunks and does not use the answer field.",
+            "- In this probe, section-aware retrieval remains the best non-oracle method; both hand-written expansion and PRF expansion degrade retrieval.",
             "- `oracle_answer_query` is a diagnostic ceiling, not a deployable system.",
         ]
     )

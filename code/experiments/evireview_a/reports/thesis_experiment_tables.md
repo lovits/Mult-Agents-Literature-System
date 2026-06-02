@@ -31,11 +31,12 @@
 | Hybrid question | 0.242 | 0.596 | 0.792 | 0.4193 |
 | Section-aware question | 0.246 | 0.606 | 0.806 | 0.4234 |
 | Hierarchical question | 0.222 | 0.59 | 0.788 | 0.4209 |
+| PRF section-aware question | 0.244 | 0.582 | 0.78 | 0.4188 |
 | Query decomposed question | 0.208 | 0.532 | 0.734 | 0.3929 |
 | Domain section-aware question | 0.208 | 0.536 | 0.742 | 0.3951 |
 | Oracle answer query | 0.496 | 0.902 | 0.966 | 0.5547 |
 
-结论口径：section-aware 是当前最稳 non-oracle 方法；oracle answer query 显示检索空间存在足够证据，但手写 query decomposition 会降低结果。
+结论口径：section-aware 是当前最稳 non-oracle 方法；oracle answer query 显示检索空间存在足够证据，但手写 query decomposition 与 PRF expansion 都会降低结果。
 
 ## Table 4. Verifier / Review-quality Baselines
 

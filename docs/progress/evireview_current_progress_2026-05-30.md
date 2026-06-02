@@ -381,6 +381,7 @@ Balanced context NB per-label recall：
 | hybrid_question | 500 | 0.2420 | 0.5960 | 0.7920 | 0.4988 |
 | section_aware_question | 500 | 0.2460 | 0.6060 | 0.8060 | 0.5005 |
 | hierarchical_question | 500 | 0.2220 | 0.5900 | 0.7880 | 0.4995 |
+| prf_section_aware_question | 500 | 0.2440 | 0.5820 | 0.7800 | 0.4980 |
 | query_decomposed_question | 500 | 0.2080 | 0.5320 | 0.7340 | 0.4751 |
 | domain_section_aware_question | 500 | 0.2080 | 0.5360 | 0.7420 | 0.4774 |
 | domain_hierarchical_question | 500 | 0.2140 | 0.5260 | 0.7340 | 0.4752 |
@@ -391,7 +392,7 @@ Balanced context NB per-label recall：
 - PeerQA-XT 没有 gold evidence spans，因此当前 Hit@K 是 answer-token support proxy，不是最终证据精确率。
 - question-only BM25/TF-IDF 已经能在 Top-5 找到较多 answer-support chunks，说明该数据集适合作为 Paper-RAG retrieval QA 的外部验证集。
 - 扩展到 500 条后，`section_aware_question` 的 Hit@1/Hit@3/Hit@5 达到 0.2460/0.6060/0.8060，是当前最稳 non-oracle 方法，但相对 BM25/Hybrid 只小幅提升。
-- 手写 query decomposition 与 domain-aware expansion 明显下降，说明 query expansion 不能靠静态规则硬加；下一步应尝试数据驱动/LLM 生成的子查询，或只保留 section-aware rerank 作为低风险结构先验。
+- 手写 query decomposition、domain-aware expansion 和 pseudo-relevance feedback 均下降，说明 query expansion 不能无条件硬加；下一步应尝试受控 LLM 子查询或 query gating，只有在原始 query 低置信时才扩展。
 - `oracle_answer_query` 只用于诊断上界，不能作为系统方法。
 - 下一步应重点提高 Hit@1/Hit@3，而不是只看 Top-5。
 
