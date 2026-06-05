@@ -1,0 +1,2 @@
+{"weakness_id":"w1","paper_id":"p1","weakness_text":"The paper lacks ablation baselines for the reranker.","category":"experiment","severity":"major","source":"fixture"}
+{"weakness_id":"w2","paper_id":"p1","weakness_text":"The motivation for evidence-grounded review assistance is unclear.","category":"clarity","severity":"minor","source":"fixture"}

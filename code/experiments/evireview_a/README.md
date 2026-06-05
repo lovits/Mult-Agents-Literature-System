@@ -191,3 +191,20 @@ OpenRouter embedding caches are also ignored; only aggregate metrics and reports
 
 The feature verifier intentionally excludes gold-only fields such as target-claim count, annotation confidence,
 target-claim text, and human weakness type annotations to avoid label leakage.
+
+## Refactor boundary
+
+`code/experiments/evireview_a` remains the reproducible experiment sandbox. Stable, dependency-free logic is being extracted into `packages/evireview_core` so that future API, worker, and frontend code can reuse the same domain contracts.
+
+Current boundary:
+
+- Keep experiment scripts and existing metrics in this directory.
+- Put reusable dataclasses, JSONL helpers, markdown section parsing, BM25 retrieval, hierarchical retrieval, heuristic verification, evidence-aware ranking, and deterministic workflow helpers in `packages/evireview_core`.
+- Do not store provider secrets in either location.
+- Treat heuristic or model-generated labels as `silver diagnostic` outputs only; do not treat them as human gold labels.
+
+Run the core regression suite from repo root:
+
+```bash
+PYTHONPATH=packages/evireview_core python3 -m unittest discover -s tests/evireview_core -v
+```

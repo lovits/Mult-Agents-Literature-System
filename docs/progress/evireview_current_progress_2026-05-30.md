@@ -560,3 +560,9 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 - `code/experiments/evireview_a/data/generated_hierarchical_verified_weaknesses.jsonl`
 - `code/experiments/evireview_a/data/generated_hierarchical_retrieval_summary.json`
 - `code/experiments/evireview_a/reports/hierarchical_paper_rag_report.md`
+
+### Core refactor implementation plan
+
+2026-06-05 update: the Agent-RAG frontend/backend architecture has been converted into a first implementation plan at `docs/superpowers/plans/2026-06-05-agent-rag-refactor-foundation.md`.
+
+The first implementation increment is intentionally scoped to `packages/evireview_core`: domain contracts, JSONL helpers, markdown section parsing, BM25 retrieval, section-routed hierarchical retrieval, heuristic verifier, evidence-aware ranker, and a deterministic review-audit workflow. API, worker, frontend, and Qdrant work remain separate follow-up plans so the current experiment sandbox is not disrupted. The extracted workflow reports `silver diagnostic` labels only; these labels must not be treated as human gold evidence labels.
