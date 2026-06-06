@@ -6,6 +6,7 @@ from uuid import uuid4
 from app.repositories.sqlite_run_repository import SQLiteRunRepository
 from app.schemas.runs import PersistedPaperReviewAuditRequest
 from app.services.review_audit_service import QueueDeliveryError, ReviewAuditService
+from evireview_core.evaluation.metrics import MetricRecord, sort_metric_records
 
 
 class ExperimentManifestService:
@@ -99,6 +100,80 @@ class ExperimentManifestService:
         public = self._public_manifest(manifest, include_runs=False)
         public["runs"] = [self._run_snapshot(run_id) for run_id in self.repository.list_experiment_run_ids(manifest_id)]
         return public
+
+    def metrics(self, manifest_id: str) -> list[dict[str, Any]]:
+        manifest = self.repository.get_experiment_manifest(manifest_id)
+        runs = [self.repository.get_run(run_id) for run_id in self.repository.list_experiment_run_ids(manifest_id)]
+        source = f"manifest:{manifest_id}"
+        values: list[MetricRecord] = [
+            MetricRecord(manifest["dataset_name"], "review_audit", "agent_rag", "manifest", "run_count", len(runs), "silver", source)
+        ]
+        for status in ("queued", "running", "succeeded", "failed", "cancelled"):
+            count = sum(run["status"] == status for run in runs)
+            if count:
+                values.append(
+                    MetricRecord(
+                        manifest["dataset_name"], "review_audit", "agent_rag", "manifest", f"{status}_run_count", count, "silver", source
+                    )
+                )
+        succeeded = [run for run in runs if run["status"] == "succeeded"]
+        values.append(
+            MetricRecord(
+                manifest["dataset_name"],
+                "review_audit",
+                "agent_rag",
+                "manifest",
+                "succeeded_rate",
+                round(len(succeeded) / len(runs), 4) if runs else 0.0,
+                "silver",
+                source,
+            )
+        )
+        results = [run["result"] for run in succeeded if isinstance(run.get("result"), dict)]
+        support_scores = [
+            float(item["support_score"])
+            for result in results
+            for item in result.get("verification", {}).values()
+            if isinstance(item, dict) and isinstance(item.get("support_score"), (int, float))
+        ]
+        if support_scores:
+            values.append(
+                MetricRecord(
+                    manifest["dataset_name"],
+                    "review_audit",
+                    "verification",
+                    "manifest",
+                    "mean_support_score",
+                    round(sum(support_scores) / len(support_scores), 4),
+                    "silver",
+                    source,
+                )
+            )
+        values.extend(
+            [
+                MetricRecord(
+                    manifest["dataset_name"],
+                    "review_audit",
+                    "generation",
+                    "manifest",
+                    "weakness_count",
+                    sum(int(result.get("weakness_count", 0)) for result in results),
+                    "silver",
+                    source,
+                ),
+                MetricRecord(
+                    manifest["dataset_name"],
+                    "review_audit",
+                    "ranking",
+                    "manifest",
+                    "ranked_finding_count",
+                    sum(len(result.get("ranked_findings", [])) for result in results),
+                    "silver",
+                    source,
+                ),
+            ]
+        )
+        return [item.to_dict() for item in sort_metric_records(values)]
 
     def _run_snapshot(self, run_id: str) -> dict[str, Any]:
         run = self.repository.get_run(run_id)

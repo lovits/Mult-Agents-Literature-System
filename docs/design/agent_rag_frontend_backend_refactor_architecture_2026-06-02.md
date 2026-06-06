@@ -745,6 +745,11 @@ code/
 4. `/api/jobs/{job_id}/events`。
 5. 本地 SQLite dev mode。
 
+当前后端阶段已继续细分到 Phase 2H：
+
+- Phase 2H-A：统一 experiment manifest runs 与历史实验 JSON 的指标契约和 JSON/CSV/Markdown 导出。
+- Phase 2H-B：在统一导出契约稳定后，执行 validator-gated 实验复跑与优化。
+
 ### Phase 3：前端 Paper Workspace
 
 目标：把“弱点 -> 检索证据 -> verifier -> ranker”变成可视化工作流。

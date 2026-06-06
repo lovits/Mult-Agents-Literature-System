@@ -37,6 +37,14 @@ def get_experiment(manifest_id: str, request: Request) -> dict[str, Any]:
         raise _not_found(exc) from exc
 
 
+@router.get("/experiments/{manifest_id}/metrics")
+def get_experiment_metrics(manifest_id: str, request: Request) -> list[dict[str, Any]]:
+    try:
+        return request.app.state.experiment_service.metrics(manifest_id)
+    except KeyError as exc:
+        raise _not_found(exc) from exc
+
+
 @router.post("/experiments/{manifest_id}/runs/{run_id}")
 def attach_experiment_run(manifest_id: str, run_id: str, request: Request) -> dict[str, Any]:
     try:

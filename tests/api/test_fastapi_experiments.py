@@ -173,6 +173,16 @@ class FastApiExperimentsTest(unittest.TestCase):
         self.assertEqual(len(snapshot["runs"]), 1)
         self.assertEqual(snapshot["runs"][0]["status"], "failed")
 
+    def test_manifest_metrics_endpoint_returns_public_metric_records(self) -> None:
+        manifest = self._create_manifest()
+
+        response = self.client.get(f"/api/experiments/{manifest['manifest_id']}/metrics")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()[0]["metric"], "run_count")
+        self.assertEqual(response.json()[0]["metric_boundary"], "silver")
+        self.assertNotIn("input_json", response.text)
+
 
 if __name__ == "__main__":
     unittest.main()

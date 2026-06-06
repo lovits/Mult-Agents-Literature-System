@@ -76,6 +76,35 @@ class ExperimentManifestServiceTest(unittest.TestCase):
         self.assertEqual(snapshot["runs"][0]["status"], "failed")
         self.assertNotIn("private failure", str(result))
 
+    def test_metrics_aggregate_manifest_run_status_support_and_findings(self) -> None:
+        self.repository.create_run_and_job("run-metrics", "job-metrics", {"paper_id": "p1", "weaknesses": [], "evidence_blocks": []})
+        claimed = self.repository.claim_job("job-metrics")
+        self.repository.save_result(
+            "run-metrics",
+            "job-metrics",
+            claimed["attempt_token"],
+            {
+                "weakness_count": 2,
+                "verification": {
+                    "w1": {"support_score": 0.8},
+                    "w2": {"support_score": 0.4},
+                },
+                "ranked_findings": [{"weakness_id": "w1"}],
+            },
+        )
+        manifest = self.service.create("Audit", "Local OpenReview/PRISM", "v1", {})
+        self.service.attach_run(manifest["manifest_id"], "run-metrics")
+
+        metrics = {item["metric"]: item for item in self.service.metrics(manifest["manifest_id"])}
+
+        self.assertEqual(metrics["run_count"]["value"], 1)
+        self.assertEqual(metrics["succeeded_rate"]["value"], 1.0)
+        self.assertEqual(metrics["mean_support_score"]["value"], 0.6)
+        self.assertEqual(metrics["ranked_finding_count"]["value"], 1)
+        self.assertTrue(all(item["metric_boundary"] == "silver" for item in metrics.values()))
+        self.assertNotIn("weakness_text", str(metrics))
+        self.assertNotIn("evidence_block_ids", str(metrics))
+
 
 if __name__ == "__main__":
     unittest.main()
