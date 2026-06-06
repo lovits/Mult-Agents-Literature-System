@@ -57,6 +57,8 @@ def table_lines() -> list[str]:
     rubric_coverage = load_json("rubric_agent_coverage_metrics.json", {})
     glm_generation = load_json("glm_reviewer_weaknesses_summary.json", {})
     glm_coverage = load_json("glm_reviewer_coverage_metrics.json", {})
+    minimax_generation = load_json("minimax_reviewer_weaknesses_summary.json", {})
+    minimax_coverage = load_json("minimax_reviewer_coverage_metrics.json", {})
     local_classifier = load_json("local_decision_classifier_metrics.json", {})
     claimcheck_main = claimcheck.get("splits", {}).get("main", {})
 
@@ -84,10 +86,13 @@ def table_lines() -> list[str]:
     comparison_generators = generated_comparison.get("generators", {})
     comparison_rubric = comparison_generators.get("rubric_agent", {})
     comparison_glm = comparison_generators.get("glm_reviewer", {})
+    comparison_minimax = comparison_generators.get("minimax_reviewer", {})
     comparison_rubric_018 = coverage_at(comparison_rubric, 0.18)
     comparison_glm_018 = coverage_at(comparison_glm, 0.18)
+    comparison_minimax_018 = coverage_at(comparison_minimax, 0.18)
     rubric_018 = coverage_at(rubric_coverage, 0.18)
     glm_018 = coverage_at(glm_coverage, 0.18)
+    minimax_018 = coverage_at(minimax_coverage, 0.18)
     claim_ranker_metrics = claim_ranker.get("metrics", {})
     best_claim_ranker_name = "-"
     best_claim_ranker = {}
@@ -138,6 +143,10 @@ def table_lines() -> list[str]:
         (
             f"| GLM-4.6V reviewer sample | {glm_generation.get('papers_with_generation', 0)} papers / "
             f"{glm_generation.get('generated_weakness_count', 0)} weaknesses | LLM reviewer candidate generation | model-generated + silver verifier | clean 10-paper diagnostic，不是最终 provider benchmark |"
+        ),
+        (
+            f"| MiniMax-M2.7 reviewer sample | {minimax_generation.get('papers_with_generation', 0)} papers / "
+            f"{minimax_generation.get('generated_weakness_count', 0)} weaknesses | LLM reviewer candidate generation | model-generated + silver verifier | 5-paper diagnostic，不是最终 provider benchmark |"
         ),
         "",
         "## Table 2. 本地 OpenReview Paper-RAG 检索",
@@ -218,6 +227,12 @@ def table_lines() -> list[str]:
                 f"{fmt((load_json('glm_reviewer_verifier_summary.json', {}).get('label_counts', {}).get('Partially Supported', 0) + load_json('glm_reviewer_verifier_summary.json', {}).get('label_counts', {}).get('Supported', 0)) / max(load_json('glm_reviewer_verifier_summary.json', {}).get('verified_count', 0), 1))} | clean 10-paper diagnostic |"
             ),
             (
+                f"| MiniMax-M2.7 sample | {minimax_generation.get('papers_with_generation', 0)} | "
+                f"{minimax_generation.get('generated_weakness_count', 0)} | {fmt(minimax_coverage.get('generic_rate'))} | "
+                f"{fmt(minimax_018.get('human_weakness_recall'))} | {fmt(load_json('minimax_reviewer_verifier_summary.json', {}).get('mean_support_score'))} | "
+                f"{fmt((load_json('minimax_reviewer_verifier_summary.json', {}).get('label_counts', {}).get('Partially Supported', 0) + load_json('minimax_reviewer_verifier_summary.json', {}).get('label_counts', {}).get('Supported', 0)) / max(load_json('minimax_reviewer_verifier_summary.json', {}).get('verified_count', 0), 1))} | 5-paper diagnostic |"
+            ),
+            (
                 f"| Rubric-agent on GLM overlap | {comparison_rubric.get('paper_count', 0)} | {comparison_rubric.get('generated_weakness_count', 0)} | "
                 f"{fmt(comparison_rubric.get('generic_rate'))} | {fmt(comparison_rubric_018.get('human_weakness_recall'))} | "
                 f"{fmt(comparison_rubric.get('support', {}).get('mean_support_score'))} | "
@@ -228,6 +243,12 @@ def table_lines() -> list[str]:
                 f"{fmt(comparison_glm.get('generic_rate'))} | {fmt(comparison_glm_018.get('human_weakness_recall'))} | "
                 f"{fmt(comparison_glm.get('support', {}).get('mean_support_score'))} | "
                 f"{fmt(comparison_glm.get('support', {}).get('partially_supported_or_better_rate'))} | paired comparison |"
+            ),
+            (
+                f"| MiniMax-M2.7 on overlap | {comparison_minimax.get('paper_count', 0)} | {comparison_minimax.get('generated_weakness_count', 0)} | "
+                f"{fmt(comparison_minimax.get('generic_rate'))} | {fmt(comparison_minimax_018.get('human_weakness_recall'))} | "
+                f"{fmt(comparison_minimax.get('support', {}).get('mean_support_score'))} | "
+                f"{fmt(comparison_minimax.get('support', {}).get('partially_supported_or_better_rate'))} | paired comparison |"
             ),
             "",
             "## Table 6. Hierarchical Paper-RAG 与 Generated Weakness Ranker",

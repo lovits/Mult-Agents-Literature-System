@@ -64,3 +64,14 @@ Phase 2H-A 只建立稳定聚合基线；实验复跑和算法优化进入 Phase
 3. 复跑 verifier minority-class、ranker ablation 和 retrieval query-planner/hybrid 实验。
 4. 所有新结果必须重新通过统一聚合 CLI 进入论文表格。
 
+## Phase 2H-B 已完成任务 1：Provider Paired Comparison
+
+在 MiniMax、GLM 和 rubric-agent 的共同 5 篇论文上完成公平 paired diagnostic：
+
+| Generator | Weaknesses | Recall@0.18 | Mean support | Partial+ |
+| --- | ---: | ---: | ---: | ---: |
+| Rubric-agent | 20 | 0.4437 | 0.2061 | 0.0000 |
+| GLM-4.6V | 12 | 0.5232 | 0.3751 | 0.3333 |
+| MiniMax-M2.7 | 15 | 0.5232 | 0.4670 | 0.4667 |
+
+结果已通过独立 validator，并重新进入统一指标导出和论文实验表格。该结果仍是 5-paper diagnostic，不是最终 provider 排名。

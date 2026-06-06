@@ -12,6 +12,7 @@
 | PeerQA-XT | 500 / 1252 test rows | Paper-RAG QA retrieval | peer-review-derived question + answer | answer-token support proxy，不是 gold evidence span |
 | CLAIMCHECK | 155 main weaknesses | paper-grounded critique verifier/ranker | Grounded / Ungrounded labels | 只提交聚合结果，不提交 raw row text |
 | GLM-4.6V reviewer sample | 10 papers / 27 weaknesses | LLM reviewer candidate generation | model-generated + silver verifier | clean 10-paper diagnostic，不是最终 provider benchmark |
+| MiniMax-M2.7 reviewer sample | 5 papers / 15 weaknesses | LLM reviewer candidate generation | model-generated + silver verifier | 5-paper diagnostic，不是最终 provider benchmark |
 
 ## Table 2. 本地 OpenReview Paper-RAG 检索
 
@@ -54,8 +55,10 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | Rubric-agent full baseline | 50 | 194 | 0.1804 | 0.4805 | - | - | deterministic pipeline baseline |
 | GLM-4.6V clean sample | 10 | 27 | 0.0741 | 0.5952 | 0.467 | 0.5556 | clean 10-paper diagnostic |
-| Rubric-agent on GLM overlap | 10 | 34 | 0.2059 | 0.3875 | 0.2 | 0 | paired comparison |
-| GLM-4.6V on overlap | 10 | 27 | 0.1111 | 0.5952 | 0.467 | 0.5556 | paired comparison |
+| MiniMax-M2.7 sample | 5 | 15 | 0.0667 | 0.5232 | 0.467 | 0.4667 | 5-paper diagnostic |
+| Rubric-agent on GLM overlap | 5 | 20 | 0.15 | 0.4437 | 0.2061 | 0 | paired comparison |
+| GLM-4.6V on overlap | 5 | 12 | 0.0833 | 0.5232 | 0.3751 | 0.3333 | paired comparison |
+| MiniMax-M2.7 on overlap | 5 | 15 | 0.0667 | 0.5232 | 0.467 | 0.4667 | paired comparison |
 
 ## Table 6. Hierarchical Paper-RAG 与 Generated Weakness Ranker
 

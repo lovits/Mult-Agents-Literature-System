@@ -7665,7 +7665,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "category_counts.clarity",
-    "value": 5,
+    "value": 2,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7675,7 +7675,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "category_counts.experiment",
-    "value": 13,
+    "value": 5,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7685,7 +7685,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "category_counts.method",
-    "value": 3,
+    "value": 1,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7695,7 +7695,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "category_counts.reproducibility",
-    "value": 3,
+    "value": 1,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7715,7 +7715,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "covered_human_weakness_count_at_0.12",
-    "value": 239,
+    "value": 118,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7725,7 +7725,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "covered_human_weakness_count_at_0.18",
-    "value": 172,
+    "value": 79,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7735,7 +7735,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "covered_human_weakness_count_at_0.24",
-    "value": 39,
+    "value": 19,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7745,7 +7745,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "generated_weakness_count",
-    "value": 27,
+    "value": 12,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7755,7 +7755,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "generic_rate",
-    "value": 0.1111,
+    "value": 0.0833,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7765,7 +7765,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "human_weakness_count",
-    "value": 289,
+    "value": 151,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7775,7 +7775,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "human_weakness_count_at_0.12",
-    "value": 289,
+    "value": 151,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7785,7 +7785,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "human_weakness_count_at_0.18",
-    "value": 289,
+    "value": 151,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7795,7 +7795,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "human_weakness_count_at_0.24",
-    "value": 289,
+    "value": 151,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7805,7 +7805,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "human_weakness_recall_at_0.12",
-    "value": 0.827,
+    "value": 0.7815,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7815,7 +7815,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "human_weakness_recall_at_0.18",
-    "value": 0.5952,
+    "value": 0.5232,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7825,7 +7825,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "human_weakness_recall_at_0.24",
-    "value": 0.1349,
+    "value": 0.1258,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7835,7 +7835,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "mean_generated_per_paper",
-    "value": 2.7,
+    "value": 2.4,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7845,7 +7845,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "mean_paper_recall_at_0.12",
-    "value": 0.8427,
+    "value": 0.8098,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7855,7 +7855,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "mean_paper_recall_at_0.18",
-    "value": 0.5968,
+    "value": 0.53,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7865,7 +7865,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "mean_paper_recall_at_0.24",
-    "value": 0.1328,
+    "value": 0.125,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7875,7 +7875,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "paper_count",
-    "value": 10,
+    "value": 5,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7895,26 +7895,6 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "severity_counts.major",
-    "value": 20,
-    "metric_boundary": "diagnostic",
-    "source_artifact": "generated_reviewer_comparison_metrics.json"
-  },
-  {
-    "dataset": "Local OpenReview/PRISM",
-    "task": "generation",
-    "module": "reviewer_comparison",
-    "method": "glm_reviewer",
-    "metric": "severity_counts.minor",
-    "value": 7,
-    "metric_boundary": "diagnostic",
-    "source_artifact": "generated_reviewer_comparison_metrics.json"
-  },
-  {
-    "dataset": "Local OpenReview/PRISM",
-    "task": "generation",
-    "module": "reviewer_comparison",
-    "method": "glm_reviewer",
-    "metric": "support.label_counts.Mentioned but Not Problem",
     "value": 9,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
@@ -7924,27 +7904,7 @@
     "task": "generation",
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
-    "metric": "support.label_counts.Partially Supported",
-    "value": 13,
-    "metric_boundary": "diagnostic",
-    "source_artifact": "generated_reviewer_comparison_metrics.json"
-  },
-  {
-    "dataset": "Local OpenReview/PRISM",
-    "task": "generation",
-    "module": "reviewer_comparison",
-    "method": "glm_reviewer",
-    "metric": "support.label_counts.Supported",
-    "value": 2,
-    "metric_boundary": "diagnostic",
-    "source_artifact": "generated_reviewer_comparison_metrics.json"
-  },
-  {
-    "dataset": "Local OpenReview/PRISM",
-    "task": "generation",
-    "module": "reviewer_comparison",
-    "method": "glm_reviewer",
-    "metric": "support.label_counts.Unsupported",
+    "metric": "severity_counts.minor",
     "value": 3,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
@@ -7954,8 +7914,38 @@
     "task": "generation",
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
+    "metric": "support.label_counts.Mentioned but Not Problem",
+    "value": 6,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "glm_reviewer",
+    "metric": "support.label_counts.Partially Supported",
+    "value": 4,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "glm_reviewer",
+    "metric": "support.label_counts.Unsupported",
+    "value": 2,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "glm_reviewer",
     "metric": "support.mean_support_score",
-    "value": 0.467,
+    "value": 0.3751,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7965,7 +7955,7 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "support.partially_supported_or_better_rate",
-    "value": 0.5556,
+    "value": 0.3333,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7975,7 +7965,327 @@
     "module": "reviewer_comparison",
     "method": "glm_reviewer",
     "metric": "support.verified_count",
-    "value": 27,
+    "value": 12,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "category_counts.experiment",
+    "value": 7,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "category_counts.method",
+    "value": 3,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "category_counts.related_work",
+    "value": 1,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "category_counts.reproducibility",
+    "value": 3,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "category_counts.validity",
+    "value": 1,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "covered_human_weakness_count_at_0.12",
+    "value": 130,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "covered_human_weakness_count_at_0.18",
+    "value": 79,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "covered_human_weakness_count_at_0.24",
+    "value": 24,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "generated_weakness_count",
+    "value": 15,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "generic_rate",
+    "value": 0.0667,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "human_weakness_count",
+    "value": 151,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "human_weakness_count_at_0.12",
+    "value": 151,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "human_weakness_count_at_0.18",
+    "value": 151,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "human_weakness_count_at_0.24",
+    "value": 151,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "human_weakness_recall_at_0.12",
+    "value": 0.8609,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "human_weakness_recall_at_0.18",
+    "value": 0.5232,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "human_weakness_recall_at_0.24",
+    "value": 0.1589,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "mean_generated_per_paper",
+    "value": 3.0,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "mean_paper_recall_at_0.12",
+    "value": 0.8684,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "mean_paper_recall_at_0.18",
+    "value": 0.5421,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "mean_paper_recall_at_0.24",
+    "value": 0.1686,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "paper_count",
+    "value": 5,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "redundancy_rate",
+    "value": 0.0,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "severity_counts.major",
+    "value": 9,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "severity_counts.minor",
+    "value": 6,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "support.label_counts.Mentioned but Not Problem",
+    "value": 7,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "support.label_counts.Partially Supported",
+    "value": 5,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "support.label_counts.Supported",
+    "value": 2,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "support.label_counts.Unsupported",
+    "value": 1,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "support.mean_support_score",
+    "value": 0.467,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "support.partially_supported_or_better_rate",
+    "value": 0.4667,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "minimax_reviewer",
+    "metric": "support.verified_count",
+    "value": 15,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -7985,16 +8295,6 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "category_counts.experiment",
-    "value": 10,
-    "metric_boundary": "diagnostic",
-    "source_artifact": "generated_reviewer_comparison_metrics.json"
-  },
-  {
-    "dataset": "Local OpenReview/PRISM",
-    "task": "generation",
-    "module": "reviewer_comparison",
-    "method": "rubric_agent",
-    "metric": "category_counts.limitation",
     "value": 6,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
@@ -8004,8 +8304,18 @@
     "task": "generation",
     "module": "reviewer_comparison",
     "method": "rubric_agent",
+    "metric": "category_counts.limitation",
+    "value": 5,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "generated_reviewer_comparison_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "generation",
+    "module": "reviewer_comparison",
+    "method": "rubric_agent",
     "metric": "category_counts.method",
-    "value": 10,
+    "value": 5,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8015,7 +8325,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "category_counts.related_work",
-    "value": 7,
+    "value": 3,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8035,7 +8345,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "covered_human_weakness_count_at_0.12",
-    "value": 206,
+    "value": 120,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8045,7 +8355,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "covered_human_weakness_count_at_0.18",
-    "value": 112,
+    "value": 67,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8055,7 +8365,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "covered_human_weakness_count_at_0.24",
-    "value": 19,
+    "value": 14,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8065,7 +8375,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "generated_weakness_count",
-    "value": 34,
+    "value": 20,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8075,7 +8385,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "generic_rate",
-    "value": 0.2059,
+    "value": 0.15,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8085,7 +8395,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "human_weakness_count",
-    "value": 289,
+    "value": 151,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8095,7 +8405,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "human_weakness_count_at_0.12",
-    "value": 289,
+    "value": 151,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8105,7 +8415,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "human_weakness_count_at_0.18",
-    "value": 289,
+    "value": 151,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8115,7 +8425,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "human_weakness_count_at_0.24",
-    "value": 289,
+    "value": 151,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8125,7 +8435,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "human_weakness_recall_at_0.12",
-    "value": 0.7128,
+    "value": 0.7947,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8135,7 +8445,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "human_weakness_recall_at_0.18",
-    "value": 0.3875,
+    "value": 0.4437,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8145,7 +8455,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "human_weakness_recall_at_0.24",
-    "value": 0.0657,
+    "value": 0.0927,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8155,7 +8465,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "mean_generated_per_paper",
-    "value": 3.4,
+    "value": 4.0,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8165,7 +8475,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "mean_paper_recall_at_0.12",
-    "value": 0.7444,
+    "value": 0.8288,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8175,7 +8485,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "mean_paper_recall_at_0.18",
-    "value": 0.4072,
+    "value": 0.4483,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8185,7 +8495,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "mean_paper_recall_at_0.24",
-    "value": 0.0683,
+    "value": 0.0985,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8195,7 +8505,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "paper_count",
-    "value": 10,
+    "value": 5,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8205,7 +8515,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "redundancy_rate",
-    "value": 0.1373,
+    "value": 0.1316,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8215,7 +8525,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "severity_counts.major",
-    "value": 27,
+    "value": 14,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8225,7 +8535,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "severity_counts.minor",
-    "value": 7,
+    "value": 6,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8235,7 +8545,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "support.label_counts.Mentioned but Not Problem",
-    "value": 15,
+    "value": 10,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8245,7 +8555,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "support.label_counts.Unsupported",
-    "value": 19,
+    "value": 10,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8255,7 +8565,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "support.mean_support_score",
-    "value": 0.2,
+    "value": 0.2061,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },
@@ -8275,7 +8585,7 @@
     "module": "reviewer_comparison",
     "method": "rubric_agent",
     "metric": "support.verified_count",
-    "value": 34,
+    "value": 20,
     "metric_boundary": "diagnostic",
     "source_artifact": "generated_reviewer_comparison_metrics.json"
   },

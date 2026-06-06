@@ -10,9 +10,19 @@ SRC_DIR = Path(__file__).resolve().parents[2] / "code" / "experiments" / "evirev
 sys.path.insert(0, str(SRC_DIR))
 
 from metric_adapter_registry import collect_historical_metrics
+from compare_generated_reviewers import common_paper_ids
 
 
 class MetricAdapterRegistryTest(unittest.TestCase):
+    def test_paired_reviewer_comparison_uses_only_common_papers(self) -> None:
+        raw = {
+            "rubric": {"generated": [{"paper_id": "p1"}, {"paper_id": "p2"}]},
+            "glm": {"generated": [{"paper_id": "p1"}, {"paper_id": "p3"}]},
+            "minimax": {"generated": [{"paper_id": "p1"}, {"paper_id": "p4"}]},
+        }
+
+        self.assertEqual(common_paper_ids(raw), {"p1"})
+
     def test_collects_method_metrics_with_explicit_proxy_boundary(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

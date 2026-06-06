@@ -18,6 +18,11 @@ GENERATORS = {
         "verified": "glm_reviewer_verified_weaknesses.jsonl",
         "display": "GLM-4.6V reviewer",
     },
+    "minimax_reviewer": {
+        "weaknesses": "minimax_reviewer_weaknesses.jsonl",
+        "verified": "minimax_reviewer_verified_weaknesses.jsonl",
+        "display": "MiniMax-M2.7 reviewer",
+    },
 }
 
 
@@ -53,6 +58,11 @@ def by_paper(rows: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     for row in rows:
         grouped[row["paper_id"]].append(row)
     return grouped
+
+
+def common_paper_ids(raw: dict[str, dict[str, list[dict[str, Any]]]]) -> set[str]:
+    paper_sets = [{row["paper_id"] for row in rows["generated"]} for rows in raw.values()]
+    return set.intersection(*paper_sets) if paper_sets else set()
 
 
 def coverage_by_threshold(generated: list[dict[str, Any]], human_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -132,14 +142,22 @@ def coverage_at(metrics: dict[str, Any], threshold: float) -> dict[str, Any]:
 
 
 def render_report(payload: dict[str, Any]) -> None:
-    rubric = payload["generators"]["rubric_agent"]
-    glm = payload["generators"]["glm_reviewer"]
-    rubric_018 = coverage_at(rubric, 0.18)
-    glm_018 = coverage_at(glm, 0.18)
+    generators = payload["generators"]
+    displays = [item["display"] for item in generators.values()]
+    metric_rows = [
+        ("Generated weaknesses", lambda item: item["generated_weakness_count"]),
+        ("Mean generated per paper", lambda item: item["mean_generated_per_paper"]),
+        ("Generic rate", lambda item: item["generic_rate"]),
+        ("Redundancy rate", lambda item: item["redundancy_rate"]),
+        ("Coverage recall @ 0.18", lambda item: coverage_at(item, 0.18)["human_weakness_recall"]),
+        ("Mean paper recall @ 0.18", lambda item: coverage_at(item, 0.18)["mean_paper_recall"]),
+        ("Mean support score", lambda item: item["support"]["mean_support_score"]),
+        ("Partially-supported-or-better rate", lambda item: item["support"]["partially_supported_or_better_rate"]),
+    ]
     lines = [
         "# Generated Reviewer Fair Comparison",
         "",
-        "This report compares the deterministic rubric-agent and GLM-4.6V reviewer on the exact paper overlap where GLM output is available.",
+        "This report compares all available reviewer generators on their exact common paper overlap.",
         "",
         "## Scope",
         "",
@@ -149,27 +167,21 @@ def render_report(payload: dict[str, Any]) -> None:
         "",
         "## Paired Metrics",
         "",
-        "| Metric | Rubric-agent | GLM-4.6V reviewer |",
-        "| --- | ---: | ---: |",
-        f"| Generated weaknesses | {rubric['generated_weakness_count']} | {glm['generated_weakness_count']} |",
-        f"| Mean generated per paper | {rubric['mean_generated_per_paper']} | {glm['mean_generated_per_paper']} |",
-        f"| Generic rate | {rubric['generic_rate']} | {glm['generic_rate']} |",
-        f"| Redundancy rate | {rubric['redundancy_rate']} | {glm['redundancy_rate']} |",
-        f"| Coverage recall @ 0.18 | {rubric_018['human_weakness_recall']} | {glm_018['human_weakness_recall']} |",
-        f"| Mean paper recall @ 0.18 | {rubric_018['mean_paper_recall']} | {glm_018['mean_paper_recall']} |",
-        f"| Mean support score | {rubric['support']['mean_support_score']} | {glm['support']['mean_support_score']} |",
-        f"| Partially-supported-or-better rate | {rubric['support']['partially_supported_or_better_rate']} | {glm['support']['partially_supported_or_better_rate']} |",
+        f"| Metric | {' | '.join(displays)} |",
+        f"| --- | {' | '.join('---:' for _ in displays)} |",
+        *[
+            f"| {label} | {' | '.join(str(getter(item)) for item in generators.values())} |"
+            for label, getter in metric_rows
+        ],
         "",
         "## Verifier Label Counts",
         "",
-        f"- Rubric-agent: {rubric['support']['label_counts']}",
-        f"- GLM-4.6V reviewer: {glm['support']['label_counts']}",
+        *[f"- {item['display']}: {item['support']['label_counts']}" for item in generators.values()],
         "",
         "## Interpretation",
         "",
-        f"- On this {payload['overlap_paper_count']}-paper overlap, GLM-4.6V produces fewer but more supported weaknesses than the deterministic rubric-agent.",
-        "- Rubric-agent remains useful as a cheap structure-risk generator, but its overlap-sample support score is much lower.",
-        "- The current clean 10-paper effective sample is stronger than the initial deployment sample, but still not a final provider benchmark.",
+        f"- The {payload['overlap_paper_count']}-paper common overlap enables a paired diagnostic without paper-selection differences.",
+        "- This remains a small provider diagnostic and must not be interpreted as a final model ranking.",
     ]
     (REPORT_DIR / "generated_reviewer_comparison_report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -184,11 +196,11 @@ def main() -> None:
         }
         for key, spec in GENERATORS.items()
     }
-    overlap_papers = set(row["paper_id"] for row in raw["glm_reviewer"]["generated"])
+    overlap_papers = common_paper_ids(raw)
     human_overlap = [row for row in human_all if row["paper_id"] in overlap_papers]
     payload = {
         "status": "ok",
-        "task": "paired generated reviewer comparison on GLM paper overlap",
+        "task": "paired generated reviewer comparison on common provider overlap",
         "warning": "Small paired diagnostic; use for experiment planning only.",
         "overlap_paper_ids": sorted(overlap_papers),
         "overlap_paper_count": len(overlap_papers),
@@ -200,14 +212,11 @@ def main() -> None:
     }
     write_json(DATA_DIR / "generated_reviewer_comparison_metrics.json", payload)
     render_report(payload)
-    rubric_018 = coverage_at(payload["generators"]["rubric_agent"], 0.18)
-    glm_018 = coverage_at(payload["generators"]["glm_reviewer"], 0.18)
-    print(
-        "generated_reviewer_comparison "
-        f"papers={payload['overlap_paper_count']} "
-        f"rubric_recall@0.18={rubric_018['human_weakness_recall']} "
-        f"glm_recall@0.18={glm_018['human_weakness_recall']}"
+    summaries = " ".join(
+        f"{key}_recall@0.18={coverage_at(item, 0.18)['human_weakness_recall']}"
+        for key, item in payload["generators"].items()
     )
+    print(f"generated_reviewer_comparison papers={payload['overlap_paper_count']} {summaries}")
 
 
 if __name__ == "__main__":
