@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.schemas.runs import ReviewAuditRequest
+from app.schemas.runs import PersistedPaperReviewAuditRequest, ReviewAuditRequest
 from evireview_core.domain.models import EvidenceBlock, Weakness
 
 
@@ -72,6 +72,24 @@ class PersistedPaperReviewAuditInput(BaseModel):
 
     def to_weaknesses(self) -> list[Weakness]:
         return [Weakness.from_dict(item.model_dump()) for item in self.weaknesses]
+
+
+class ExperimentPaperAuditInput(PersistedPaperReviewAuditInput):
+    paper_id: str = Field(min_length=1)
+
+    def to_request(self) -> PersistedPaperReviewAuditRequest:
+        return PersistedPaperReviewAuditRequest(
+            paper_id=self.paper_id,
+            weaknesses=self.to_weaknesses(),
+            top_k=self.top_k,
+            finding_top_k=self.finding_top_k,
+        )
+
+
+class ExperimentPaperAuditBatchInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[ExperimentPaperAuditInput] = Field(min_length=1, max_length=100)
 
 
 class ExperimentManifestInput(BaseModel):

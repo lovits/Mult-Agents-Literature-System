@@ -5,6 +5,8 @@ import unittest
 from pathlib import Path
 
 from app.repositories.sqlite_run_repository import SQLiteRunRepository
+from app.schemas.runs import PersistedPaperReviewAuditRequest
+from app.services.review_audit_service import ReviewAuditService
 
 
 class ExperimentManifestServiceTest(unittest.TestCase):
@@ -51,6 +53,28 @@ class ExperimentManifestServiceTest(unittest.TestCase):
         self.assertNotIn("artifact_path", str(snapshot))
         self.assertNotIn("sensitive weakness text", str(snapshot))
         self.assertNotIn("input_json", str(snapshot))
+
+    def test_batch_attaches_created_run_when_queue_delivery_fails(self) -> None:
+        class FailingQueue:
+            def enqueue(self, job_id: str) -> str:
+                raise RuntimeError(f"private failure for {job_id}")
+
+        from app.services.experiment_manifest_service import ExperimentManifestService
+
+        self.repository.replace_paper_assets("p1", "Paper", [], [], version_id="version-1")
+        service = ExperimentManifestService(self.repository, ReviewAuditService(self.repository, FailingQueue()))
+        manifest = service.create("Batch Audit", "PeerReview", "v1", {})
+
+        result = service.schedule_paper_audits(
+            manifest["manifest_id"],
+            [PersistedPaperReviewAuditRequest(paper_id="p1", weaknesses=[])],
+        )
+
+        self.assertEqual(result["failed_count"], 1)
+        self.assertEqual(result["results"][0]["error_code"], "queue_unavailable")
+        snapshot = service.get(manifest["manifest_id"])
+        self.assertEqual(snapshot["runs"][0]["status"], "failed")
+        self.assertNotIn("private failure", str(result))
 
 
 if __name__ == "__main__":

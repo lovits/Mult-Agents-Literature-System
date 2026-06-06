@@ -4,11 +4,14 @@ from typing import Any
 from uuid import uuid4
 
 from app.repositories.sqlite_run_repository import SQLiteRunRepository
+from app.schemas.runs import PersistedPaperReviewAuditRequest
+from app.services.review_audit_service import QueueDeliveryError, ReviewAuditService
 
 
 class ExperimentManifestService:
-    def __init__(self, repository: SQLiteRunRepository) -> None:
+    def __init__(self, repository: SQLiteRunRepository, review_audit_service: ReviewAuditService | None = None) -> None:
         self.repository = repository
+        self.review_audit_service = review_audit_service
 
     def create(
         self,
@@ -24,6 +27,69 @@ class ExperimentManifestService:
     def attach_run(self, manifest_id: str, run_id: str) -> dict[str, Any]:
         self.repository.attach_run_to_experiment(manifest_id, run_id)
         return self.get(manifest_id)
+
+    def schedule_paper_audits(
+        self,
+        manifest_id: str,
+        items: list[PersistedPaperReviewAuditRequest],
+    ) -> dict[str, Any]:
+        self.repository.get_experiment_manifest(manifest_id)
+        if self.review_audit_service is None:
+            raise QueueDeliveryError("review audit service is not configured")
+
+        results = [self._schedule_paper_audit(manifest_id, index, item) for index, item in enumerate(items)]
+        scheduled_count = sum(item["status"] == "scheduled" for item in results)
+        return {
+            "manifest_id": manifest_id,
+            "requested_count": len(items),
+            "scheduled_count": scheduled_count,
+            "failed_count": len(items) - scheduled_count,
+            "results": results,
+        }
+
+    def _schedule_paper_audit(
+        self,
+        manifest_id: str,
+        index: int,
+        item: PersistedPaperReviewAuditRequest,
+    ) -> dict[str, Any]:
+        try:
+            created = self.review_audit_service.create_from_paper_and_enqueue(
+                item.paper_id,
+                item.weaknesses,
+                top_k=item.top_k,
+                finding_top_k=item.finding_top_k,
+            )
+        except KeyError:
+            return self._failed_item(index, item.paper_id, "paper_not_found")
+        except ValueError:
+            return self._failed_item(index, item.paper_id, "invalid_paper_input")
+        except QueueDeliveryError as exc:
+            if exc.run_id is not None:
+                self.repository.attach_run_to_experiment(manifest_id, exc.run_id)
+            return self._failed_item(index, item.paper_id, "queue_unavailable", run_id=exc.run_id)
+
+        self.repository.attach_run_to_experiment(manifest_id, created["run"]["run_id"])
+        return {
+            "index": index,
+            "paper_id": item.paper_id,
+            "status": "scheduled",
+            "run_id": created["run"]["run_id"],
+            "job_id": created["job"]["job_id"],
+            "delivery_id": created["delivery_id"],
+        }
+
+    @staticmethod
+    def _failed_item(index: int, paper_id: str, error_code: str, run_id: str | None = None) -> dict[str, Any]:
+        result = {
+            "index": index,
+            "paper_id": paper_id,
+            "status": "failed",
+            "error_code": error_code,
+        }
+        if run_id is not None:
+            result["run_id"] = run_id
+        return result
 
     def list(self) -> list[dict[str, Any]]:
         return [self._public_manifest(item, include_runs=False) for item in self.repository.list_experiment_manifests()]

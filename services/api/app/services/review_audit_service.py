@@ -9,7 +9,9 @@ from evireview_core.domain.models import EvidenceBlock, Weakness
 
 
 class QueueDeliveryError(RuntimeError):
-    pass
+    def __init__(self, message: str, run_id: str | None = None) -> None:
+        super().__init__(message)
+        self.run_id = run_id
 
 
 class ReviewAuditService:
@@ -67,7 +69,7 @@ class ReviewAuditService:
             delivery_id = self.queue.enqueue(created["job"]["job_id"])
         except Exception as exc:
             self.repository.mark_delivery_failed(created["run"]["run_id"], created["job"]["job_id"], str(exc))
-            raise QueueDeliveryError("queue delivery failed") from exc
+            raise QueueDeliveryError("queue delivery failed", run_id=created["run"]["run_id"]) from exc
         return {**created, "delivery_id": delivery_id}
 
     def _require_queue(self) -> None:

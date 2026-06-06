@@ -35,7 +35,7 @@ def create_app(settings: Settings | None = None, queue: JobQueue | None = None) 
     app.state.service = ReviewAuditService(repository, resolved_queue)
     app.state.paper_service = PaperService(repository)
     app.state.report_service = ReportService(repository, resolved.sqlite_path.parent / "reports")
-    app.state.experiment_service = ExperimentManifestService(repository)
+    app.state.experiment_service = ExperimentManifestService(repository, app.state.service)
     app.state.queue = resolved_queue
 
     @app.get("/health")

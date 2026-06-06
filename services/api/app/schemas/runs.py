@@ -40,6 +40,14 @@ class ReviewAuditRequest:
 
 
 @dataclass(frozen=True)
+class PersistedPaperReviewAuditRequest:
+    paper_id: str
+    weaknesses: list[Weakness]
+    top_k: int = 5
+    finding_top_k: int = 3
+
+
+@dataclass(frozen=True)
 class RunRecord:
     run_id: str
     paper_id: str

@@ -4,7 +4,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request, status
 
-from app.schemas.http import ExperimentManifestInput
+from app.schemas.http import ExperimentManifestInput, ExperimentPaperAuditBatchInput
 
 
 router = APIRouter()
@@ -41,5 +41,20 @@ def get_experiment(manifest_id: str, request: Request) -> dict[str, Any]:
 def attach_experiment_run(manifest_id: str, run_id: str, request: Request) -> dict[str, Any]:
     try:
         return request.app.state.experiment_service.attach_run(manifest_id, run_id)
+    except KeyError as exc:
+        raise _not_found(exc) from exc
+
+
+@router.post("/experiments/{manifest_id}/paper-audits", status_code=status.HTTP_202_ACCEPTED)
+def schedule_experiment_paper_audits(
+    manifest_id: str,
+    payload: ExperimentPaperAuditBatchInput,
+    request: Request,
+) -> dict[str, Any]:
+    try:
+        return request.app.state.experiment_service.schedule_paper_audits(
+            manifest_id,
+            [item.to_request() for item in payload.items],
+        )
     except KeyError as exc:
         raise _not_found(exc) from exc
