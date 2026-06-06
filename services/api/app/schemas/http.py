@@ -53,3 +53,11 @@ class CreatedRunResponse(BaseModel):
     run: dict[str, Any]
     job: dict[str, Any]
     delivery_id: str
+
+
+class PaperImportInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    paper_id: str = Field(min_length=1)
+    title: str = Field(min_length=1)
+    markdown: str = Field(min_length=1)

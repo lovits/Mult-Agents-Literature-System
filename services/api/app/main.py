@@ -4,11 +4,15 @@ from fastapi import FastAPI
 from redis import Redis
 from rq import Queue
 
+from app.api.routes.papers import router as papers_router
+from app.api.routes.reports import router as reports_router
 from app.api.routes.runs import router as runs_router
 from app.core.config import Settings
 from app.queue.base import JobQueue
 from app.queue.rq_queue import RQQueueAdapter
 from app.repositories.sqlite_run_repository import SQLiteRunRepository
+from app.services.paper_service import PaperService
+from app.services.report_service import ReportService
 from app.services.review_audit_service import ReviewAuditService
 
 
@@ -25,6 +29,8 @@ def create_app(settings: Settings | None = None, queue: JobQueue | None = None) 
     app.state.settings = resolved
     app.state.repository = repository
     app.state.service = ReviewAuditService(repository, resolved_queue)
+    app.state.paper_service = PaperService(repository)
+    app.state.report_service = ReportService(repository, resolved.sqlite_path.parent / "reports")
     app.state.queue = resolved_queue
 
     @app.get("/health")
@@ -32,4 +38,6 @@ def create_app(settings: Settings | None = None, queue: JobQueue | None = None) 
         return {"status": "ok"}
 
     app.include_router(runs_router, prefix="/api")
+    app.include_router(papers_router, prefix="/api")
+    app.include_router(reports_router, prefix="/api")
     return app

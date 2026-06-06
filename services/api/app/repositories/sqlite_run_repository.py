@@ -75,8 +75,119 @@ class SQLiteRunRepository:
                     payload_json TEXT NOT NULL,
                     created_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS papers (
+                    paper_id TEXT PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    source_type TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS paper_sections (
+                    section_id TEXT PRIMARY KEY,
+                    paper_id TEXT NOT NULL REFERENCES papers(paper_id) ON DELETE CASCADE,
+                    ordinal INTEGER NOT NULL,
+                    section_path TEXT NOT NULL,
+                    section_type TEXT NOT NULL,
+                    text TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS evidence_blocks (
+                    block_id TEXT PRIMARY KEY,
+                    paper_id TEXT NOT NULL REFERENCES papers(paper_id) ON DELETE CASCADE,
+                    ordinal INTEGER NOT NULL,
+                    section_path TEXT NOT NULL,
+                    section_type TEXT NOT NULL,
+                    text TEXT NOT NULL,
+                    score REAL NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS reports (
+                    report_id TEXT PRIMARY KEY,
+                    run_id TEXT NOT NULL REFERENCES runs(run_id) ON DELETE CASCADE,
+                    paper_id TEXT NOT NULL,
+                    metric_boundary TEXT NOT NULL,
+                    artifact_path TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
                 """
             )
+
+    def replace_paper_assets(
+        self,
+        paper_id: str,
+        title: str,
+        sections: list[dict[str, Any]],
+        blocks: list[dict[str, Any]],
+    ) -> None:
+        timestamp = _now()
+        with self._connection() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            existing = connection.execute("SELECT created_at FROM papers WHERE paper_id = ?", (paper_id,)).fetchone()
+            created_at = existing["created_at"] if existing else timestamp
+            connection.execute(
+                """
+                INSERT INTO papers(paper_id, title, source_type, created_at, updated_at) VALUES (?, ?, 'markdown', ?, ?)
+                ON CONFLICT(paper_id) DO UPDATE SET title = excluded.title, source_type = excluded.source_type,
+                    updated_at = excluded.updated_at
+                """,
+                (paper_id, title, created_at, timestamp),
+            )
+            connection.execute("DELETE FROM paper_sections WHERE paper_id = ?", (paper_id,))
+            connection.execute("DELETE FROM evidence_blocks WHERE paper_id = ?", (paper_id,))
+            connection.executemany(
+                """
+                INSERT INTO paper_sections(section_id, paper_id, ordinal, section_path, section_type, text)
+                VALUES (:section_id, :paper_id, :ordinal, :section_path, :section_type, :text)
+                """,
+                sections,
+            )
+            connection.executemany(
+                """
+                INSERT INTO evidence_blocks(block_id, paper_id, ordinal, section_path, section_type, text, score)
+                VALUES (:block_id, :paper_id, :ordinal, :section_path, :section_type, :text, :score)
+                """,
+                blocks,
+            )
+
+    def get_paper(self, paper_id: str) -> dict[str, Any]:
+        with self._connection() as connection:
+            row = connection.execute("SELECT * FROM papers WHERE paper_id = ?", (paper_id,)).fetchone()
+        if row is None:
+            raise KeyError(f"paper not found: {paper_id}")
+        return dict(row)
+
+    def list_paper_sections(self, paper_id: str) -> list[dict[str, Any]]:
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT * FROM paper_sections WHERE paper_id = ? ORDER BY ordinal, section_id", (paper_id,)
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def list_evidence_blocks(self, paper_id: str) -> list[dict[str, Any]]:
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT * FROM evidence_blocks WHERE paper_id = ? ORDER BY ordinal, block_id", (paper_id,)
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def create_report(
+        self,
+        report_id: str,
+        run_id: str,
+        paper_id: str,
+        metric_boundary: str,
+        artifact_path: str,
+    ) -> None:
+        with self._connection() as connection:
+            connection.execute(
+                "INSERT INTO reports VALUES (?, ?, ?, ?, ?, ?)",
+                (report_id, run_id, paper_id, metric_boundary, artifact_path, _now()),
+            )
+
+    def get_report(self, report_id: str) -> dict[str, Any]:
+        with self._connection() as connection:
+            row = connection.execute("SELECT * FROM reports WHERE report_id = ?", (report_id,)).fetchone()
+        if row is None:
+            raise KeyError(f"report not found: {report_id}")
+        return dict(row)
 
     def create_run_and_job(self, run_id: str, job_id: str, input_payload: dict[str, Any]) -> None:
         timestamp = _now()
