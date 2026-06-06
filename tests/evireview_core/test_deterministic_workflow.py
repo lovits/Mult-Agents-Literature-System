@@ -4,10 +4,12 @@ import unittest
 from pathlib import Path
 
 from evireview_core.domain.models import EvidenceBlock, Weakness
+from evireview_core.generation.structured_reviewer import StructuredReviewerGenerator
 from evireview_core.io.jsonl import read_jsonl
+from evireview_core.providers.base import ProviderGeneration
 from evireview_core.workflow.deterministic import run_deterministic_review_audit
 from evireview_core.workflow.graph import ReviewAuditGraph
-from evireview_core.workflow.state import ReviewAuditState
+from evireview_core.workflow.state import ReviewAuditState, WeaknessGenerationResult
 
 
 class DeterministicWorkflowTest(unittest.TestCase):
@@ -23,9 +25,63 @@ class DeterministicWorkflowTest(unittest.TestCase):
 
         result = ReviewAuditGraph().run(state)
 
-        self.assertEqual([item["node"] for item in result.agent_trace], ["retrieve_evidence", "verify_weaknesses", "rank_findings"])
+        self.assertEqual(
+            [item["node"] for item in result.agent_trace],
+            ["generate_or_import_weaknesses", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
+        )
         self.assertTrue(all(item["status"] == "succeeded" for item in result.agent_trace))
+        self.assertEqual(result.agent_trace[0]["mode"], "imported")
         self.assertEqual(len(result.ranked_findings), 1)
+
+    def test_graph_generates_weaknesses_when_none_are_imported(self) -> None:
+        def generator(_state: ReviewAuditState) -> WeaknessGenerationResult:
+            return WeaknessGenerationResult(
+                weaknesses=[Weakness("w-generated", "p1", "The evaluation omits ablations.", "experiment", "major", "minimax_reviewer")],
+                metadata={"provider_name": "minimax", "model_name": "MiniMax-M2.7", "is_silver": True},
+            )
+
+        state = ReviewAuditState(
+            weaknesses=[],
+            evidence_blocks=[EvidenceBlock("b1", "p1", "Experiments", "experiment", "The evaluation reports no ablations.")],
+            weakness_generator=generator,
+        )
+
+        result = ReviewAuditGraph().run(state)
+
+        self.assertEqual(result.weaknesses[0].source, "minimax_reviewer")
+        self.assertEqual(result.generation_metadata["provider_name"], "minimax")
+        self.assertEqual(result.agent_trace[0], {"node": "generate_or_import_weaknesses", "status": "succeeded", "mode": "generated", "weakness_count": 1})
+
+    def test_structured_reviewer_connects_provider_generation_to_graph(self) -> None:
+        class FakeProvider:
+            def generate_json(self, _system: str, user: str, **_kwargs: object) -> ProviderGeneration:
+                self.user_prompt = user
+                return ProviderGeneration(
+                    payload={
+                        "weaknesses": [
+                            {
+                                "weakness_text": "The evaluation does not isolate the reranker contribution.",
+                                "category": "experiment",
+                                "severity": "major",
+                            }
+                        ]
+                    },
+                    metadata={"provider_name": "minimax", "model_name": "MiniMax-M2.7", "is_silver": True},
+                )
+
+        provider = FakeProvider()
+        state = ReviewAuditState(
+            weaknesses=[],
+            evidence_blocks=[EvidenceBlock("b1", "p1", "Experiments", "experiment", "The full system is compared against BM25.")],
+            weakness_generator=StructuredReviewerGenerator(provider, source="minimax_reviewer"),
+        )
+
+        result = ReviewAuditGraph().run(state)
+
+        self.assertIn("The full system is compared against BM25.", provider.user_prompt)
+        self.assertEqual(result.weaknesses[0].paper_id, "p1")
+        self.assertEqual(result.weaknesses[0].source, "minimax_reviewer")
+        self.assertEqual(result.generation_metadata["provider_name"], "minimax")
 
     def test_graph_records_failed_node_without_recording_private_error_text(self) -> None:
         def fail_node(_state: ReviewAuditState) -> None:
@@ -59,7 +115,7 @@ class DeterministicWorkflowTest(unittest.TestCase):
         self.assertGreaterEqual(len(result["ranked_findings"]), 1)
         self.assertEqual(
             [item["node"] for item in result["agent_trace"]],
-            ["retrieve_evidence", "verify_weaknesses", "rank_findings"],
+            ["generate_or_import_weaknesses", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
         )
 
     def test_workflow_runs_on_committed_jsonl_fixtures(self) -> None:

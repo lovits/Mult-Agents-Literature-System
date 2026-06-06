@@ -103,7 +103,7 @@ class FastApiRunsTest(unittest.TestCase):
         agent_trace = self.client.get(f"/api/runs/{run_id}/agent-trace").json()
         self.assertEqual(
             [event["node"] for event in agent_trace],
-            ["retrieve_evidence", "verify_weaknesses", "rank_findings"],
+            ["generate_or_import_weaknesses", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
         )
 
     def test_workspace_read_model_combines_weakness_evidence_results_and_trace(self) -> None:

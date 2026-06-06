@@ -1,0 +1,24 @@
+{
+  "status": "ok",
+  "generator": "minimax_structured_reviewer_v1",
+  "model": "MiniMax-M2.7",
+  "endpoint": "https://api.minimaxi.com/v1/chat/completions",
+  "selected_paper_count": 5,
+  "generated_weakness_count": 15,
+  "papers_with_generation": 5,
+  "existing_papers_preserved": 0,
+  "category_counts": {
+    "method": 3,
+    "experiment": 7,
+    "reproducibility": 3,
+    "validity": 1,
+    "related_work": 1
+  },
+  "severity_counts": {
+    "major": 9,
+    "minor": 6
+  },
+  "elapsed_seconds": 87.13,
+  "errors": [],
+  "warning": "MiniMax M2.7 provider diagnostic; key is environment-only and metrics are silver diagnostics."
+}

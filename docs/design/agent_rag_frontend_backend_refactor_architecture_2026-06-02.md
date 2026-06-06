@@ -148,7 +148,7 @@
 | 词面向量 baseline | TF-IDF | 无依赖、可解释，保留为实验对照 |
 | Dense retrieval | Qdrant + embedding adapter | B 版或规模扩大后启用 |
 | Hybrid fusion | RRF + section prior | 与当前 hierarchical Paper-RAG 结果对齐 |
-| LLM provider | GLM / OpenRouter / local-compatible adapter | 所有模型接入走统一 provider interface |
+| LLM provider | MiniMax / GLM / OpenRouter / local-compatible adapter | 所有模型接入走统一 provider interface |
 | 报告 | Markdown + JSON summary | 论文材料和前端展示都能复用 |
 
 核心架构不把 LangChain / LlamaIndex 作为必须依赖。可以借鉴其数据抽象，但先保持本项目的 domain schema 自主可控，避免为了框架而重写实验。
@@ -283,7 +283,7 @@ Domain core 不依赖 FastAPI、数据库、Qdrant 或具体 LLM provider。
 
 职责：
 
-1. 统一 GLM、OpenRouter、本地 OpenAI-compatible provider。
+1. 统一 MiniMax、GLM、OpenRouter、本地 OpenAI-compatible provider。
 2. 统一 structured JSON output schema。
 3. 处理 retry、JSON repair、timeout、rate limit、redaction。
 4. 所有密钥只通过环境变量，例如 `GLM_API_KEY` 或 `ZAI_API_KEY`。
@@ -705,7 +705,7 @@ code/
 3. `retrieve_*` -> `evireview_core.retrieval`。
 4. `verify_*` -> `evireview_core.verification`。
 5. `rank_generated_weaknesses.py` -> `evireview_core.ranking`。
-6. `run_glm_reviewer_experiment.py` 中 provider 调用 -> `evireview_core.providers.glm`。
+6. `run_glm_reviewer_experiment.py` 中 provider 调用 -> `evireview_core.providers.glm`；MiniMax 已先按相同 contract 接入。
 
 ---
 

@@ -8,7 +8,7 @@ Review audits are orchestrated by an explicit dependency-free Agent-RAG state gr
 
 `retrieve_evidence -> verify_weaknesses -> rank_findings`
 
-The graph records a public node trace and keeps nodes pure enough to substitute retrievers, verifiers, rankers, and provider-backed generation in later experiments.
+The graph records a public node trace and supports imported or provider-backed weakness generation before substitutable retrieval, verification, and ranking nodes.
 
 Verifier and workflow labels from this package are `silver diagnostic` outputs. They are not human gold evidence labels.
 

@@ -1,0 +1,11 @@
+{
+  "retrieved_count": 15,
+  "verified_count": 15,
+  "label_counts": {
+    "Partially Supported": 5,
+    "Mentioned but Not Problem": 7,
+    "Supported": 2,
+    "Unsupported": 1
+  },
+  "mean_support_score": 0.467
+}

@@ -1,9 +1,16 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
 from evireview_core.domain.models import EvidenceBlock, RankedFinding, RetrievalCandidate, VerificationResult, Weakness
+
+
+@dataclass(frozen=True)
+class WeaknessGenerationResult:
+    weaknesses: list[Weakness]
+    metadata: dict[str, Any]
 
 
 @dataclass
@@ -15,6 +22,8 @@ class ReviewAuditState:
     retrieval: dict[str, list[RetrievalCandidate]] = field(default_factory=dict)
     verification: dict[str, VerificationResult] = field(default_factory=dict)
     ranked_findings: list[RankedFinding] = field(default_factory=list)
+    weakness_generator: Callable[["ReviewAuditState"], WeaknessGenerationResult] | None = None
+    generation_metadata: dict[str, Any] = field(default_factory=dict)
     agent_trace: list[dict[str, Any]] = field(default_factory=list)
 
     def record(self, node: str, status: str, **details: Any) -> None:

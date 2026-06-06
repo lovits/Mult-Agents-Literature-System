@@ -15,6 +15,7 @@
    - 统一保存弱点、证据块、top-k 配置、检索候选、校验结果、排序结果和 Agent 节点轨迹。
 
 2. 纯节点拆分
+   - `generate_or_import_weaknesses`
    - `retrieve_evidence`
    - `verify_weaknesses`
    - `rank_findings`
@@ -51,9 +52,9 @@
 ## 当前限制
 
 - 当前图是显式固定状态图，尚未加入条件分支、节点重试和动态路由。
-- weakness generation 仍在图外部，后续需要增加 `generate_or_import_weaknesses` 节点。
+- weakness generation 已进入图，并已通过 MiniMax M2.7 真实调用验证；worker 配置注册表尚未开放 provider 选择。
 - 当前只接入 deterministic hierarchical + heuristic 路径。
-- 尚未接入统一 GLM/OpenRouter provider adapter。
+- 已接入统一 structured provider contract 与 MiniMax adapter；GLM/OpenRouter 尚待迁移。
 - 尚未接入 Dense/Qdrant；现有 BM25/hierarchical baseline 保持不变。
 
 ## 真实后端链路验证
@@ -69,7 +70,7 @@
 
 ## 下一步后端顺序
 
-1. 增加 `generate_or_import_weaknesses` 节点与统一 provider interface。
-2. 增加图配置注册表，使 retriever/verifier/ranker 可按实验清单切换。
+1. 增加图配置注册表，使 provider/retriever/verifier/ranker 可按实验清单切换。
+2. 迁移 GLM 调用到统一 provider contract。
 3. 增加实验指标聚合与节点消融导出。
 4. 最后接入 Dense/Qdrant hybrid retrieval。
