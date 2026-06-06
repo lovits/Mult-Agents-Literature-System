@@ -566,3 +566,9 @@ A 版最重要的是可追溯上下文，而不是“聊天机器人式长期记
 2026-06-05 update: the Agent-RAG frontend/backend architecture has been converted into a first implementation plan at `docs/superpowers/plans/2026-06-05-agent-rag-refactor-foundation.md`.
 
 The first implementation increment is intentionally scoped to `packages/evireview_core`: domain contracts, JSONL helpers, markdown section parsing, BM25 retrieval, section-routed hierarchical retrieval, heuristic verifier, evidence-aware ranker, and a deterministic review-audit workflow. API, worker, frontend, and Qdrant work remain separate follow-up plans so the current experiment sandbox is not disrupted. The extracted workflow reports `silver diagnostic` labels only; these labels must not be treated as human gold evidence labels.
+
+### Backend Phase 2A: SQLite application layer and local worker
+
+2026-06-06 update: the no-frontend backend increment is implemented under `services/api` and `services/worker`. It adds validated review-audit requests, SQLite dev-mode persistence, run/job lifecycle tracking, ordered trace events, lease-based stale-running-job recovery, attempt-token protection against late-worker writes, and a local worker that calls `packages/evireview_core`.
+
+This increment intentionally does not add FastAPI, Pydantic, Uvicorn, Redis, RQ, SQLAlchemy, Qdrant, or provider calls. The current environment does not contain those dependencies, and the repository rule requires explicit approval before adding new dependencies. No user data, API key, or manual annotation is required for Phase 2A. Phase 2B should add FastAPI/RQ adapters only after dependency approval.

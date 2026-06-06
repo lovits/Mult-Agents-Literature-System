@@ -1,0 +1,277 @@
+from __future__ import annotations
+
+import json
+import sqlite3
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
+from typing import Any
+from uuid import uuid4
+
+
+def _now() -> str:
+    return datetime.now(UTC).isoformat()
+
+
+def _encode(payload: dict[str, Any]) -> str:
+    return json.dumps(payload, ensure_ascii=False, sort_keys=True)
+
+
+def _decode(payload: str | None) -> Any:
+    return json.loads(payload) if payload else None
+
+
+class SQLiteRunRepository:
+    def __init__(self, path: Path) -> None:
+        self.path = path
+
+    def _connect(self) -> sqlite3.Connection:
+        connection = sqlite3.connect(self.path)
+        connection.row_factory = sqlite3.Row
+        connection.execute("PRAGMA foreign_keys = ON")
+        return connection
+
+    def initialize(self) -> None:
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with self._connect() as connection:
+            connection.executescript(
+                """
+                CREATE TABLE IF NOT EXISTS runs (
+                    run_id TEXT PRIMARY KEY,
+                    paper_id TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    config_json TEXT NOT NULL,
+                    input_json TEXT NOT NULL,
+                    result_json TEXT,
+                    error TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS jobs (
+                    job_id TEXT PRIMARY KEY,
+                    run_id TEXT NOT NULL UNIQUE REFERENCES runs(run_id) ON DELETE CASCADE,
+                    status TEXT NOT NULL,
+                    progress REAL NOT NULL,
+                    lease_expires_at TEXT,
+                    attempt_token TEXT,
+                    error TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS job_events (
+                    event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    job_id TEXT NOT NULL REFERENCES jobs(job_id) ON DELETE CASCADE,
+                    event_type TEXT NOT NULL,
+                    payload_json TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
+                """
+            )
+
+    def create_run_and_job(self, run_id: str, job_id: str, input_payload: dict[str, Any]) -> None:
+        timestamp = _now()
+        config = {
+            "top_k": input_payload.get("top_k", 5),
+            "finding_top_k": input_payload.get("finding_top_k", 3),
+            "workflow": "deterministic_review_audit_v1",
+            "metric_boundary": "silver diagnostic",
+        }
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            connection.execute(
+                "INSERT INTO runs VALUES (?, ?, 'queued', ?, ?, NULL, NULL, ?, ?)",
+                (run_id, str(input_payload["paper_id"]), _encode(config), _encode(input_payload), timestamp, timestamp),
+            )
+            connection.execute(
+                "INSERT INTO jobs VALUES (?, ?, 'queued', 0.0, NULL, NULL, NULL, ?, ?)",
+                (job_id, run_id, timestamp, timestamp),
+            )
+            self._insert_event(connection, job_id, "queued", {"run_id": run_id})
+
+    def get_run(self, run_id: str) -> dict[str, Any]:
+        with self._connect() as connection:
+            row = connection.execute("SELECT * FROM runs WHERE run_id = ?", (run_id,)).fetchone()
+        if row is None:
+            raise KeyError(f"run not found: {run_id}")
+        return self._run_dict(row)
+
+    def get_job(self, job_id: str) -> dict[str, Any]:
+        with self._connect() as connection:
+            row = connection.execute("SELECT * FROM jobs WHERE job_id = ?", (job_id,)).fetchone()
+        if row is None:
+            raise KeyError(f"job not found: {job_id}")
+        return dict(row)
+
+    def get_job_for_run(self, run_id: str) -> dict[str, Any]:
+        with self._connect() as connection:
+            row = connection.execute("SELECT * FROM jobs WHERE run_id = ?", (run_id,)).fetchone()
+        if row is None:
+            raise KeyError(f"job not found for run: {run_id}")
+        return dict(row)
+
+    def list_events(self, job_id: str) -> list[dict[str, Any]]:
+        with self._connect() as connection:
+            rows = connection.execute(
+                "SELECT * FROM job_events WHERE job_id = ? ORDER BY event_id", (job_id,)
+            ).fetchall()
+        return [
+            {
+                **dict(row),
+                "payload": _decode(row["payload_json"]),
+            }
+            for row in rows
+        ]
+
+    def load_input(self, run_id: str) -> dict[str, Any]:
+        with self._connect() as connection:
+            row = connection.execute("SELECT input_json FROM runs WHERE run_id = ?", (run_id,)).fetchone()
+        if row is None:
+            raise KeyError(f"run not found: {run_id}")
+        return _decode(row["input_json"])
+
+    def claim_next_job(self, lease_seconds: int = 300) -> dict[str, Any] | None:
+        timestamp = _now()
+        lease_expires_at = (datetime.now(UTC) + timedelta(seconds=lease_seconds)).isoformat()
+        attempt_token = uuid4().hex
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute(
+                "SELECT * FROM jobs WHERE status = 'queued' ORDER BY created_at, job_id LIMIT 1"
+            ).fetchone()
+            if row is None:
+                return None
+            connection.execute(
+                """
+                UPDATE jobs SET status = 'running', progress = 0.1, lease_expires_at = ?, attempt_token = ?, updated_at = ?
+                WHERE job_id = ? AND status = 'queued'
+                """,
+                (lease_expires_at, attempt_token, timestamp, row["job_id"]),
+            )
+            connection.execute(
+                "UPDATE runs SET status = 'running', updated_at = ? WHERE run_id = ?",
+                (timestamp, row["run_id"]),
+            )
+            self._insert_event(connection, row["job_id"], "running", {"progress": 0.1})
+            return {
+                **dict(row),
+                "status": "running",
+                "progress": 0.1,
+                "lease_expires_at": lease_expires_at,
+                "attempt_token": attempt_token,
+            }
+
+    def save_result(self, run_id: str, job_id: str, attempt_token: str, result: dict[str, Any]) -> None:
+        timestamp = _now()
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            pair = connection.execute(
+                """
+                SELECT runs.status AS run_status, jobs.status AS job_status, jobs.attempt_token
+                FROM runs JOIN jobs ON jobs.run_id = runs.run_id
+                WHERE runs.run_id = ? AND jobs.job_id = ?
+                """,
+                (run_id, job_id),
+            ).fetchone()
+            if pair is not None and pair["run_status"] == "succeeded" and pair["job_status"] == "succeeded":
+                raise RuntimeError(f"run already succeeded: {run_id}")
+            if pair is None or pair["run_status"] != "running" or pair["job_status"] != "running":
+                raise RuntimeError(f"result requires matching running run and job: {run_id}, {job_id}")
+            if pair["attempt_token"] != attempt_token:
+                raise RuntimeError(f"result requires current attempt token: {job_id}")
+            run_update = connection.execute(
+                """
+                UPDATE runs SET status = 'succeeded', result_json = ?, error = NULL, updated_at = ?
+                WHERE run_id = ? AND status = 'running'
+                """,
+                (_encode(result), timestamp, run_id),
+            )
+            job_update = connection.execute(
+                """
+                UPDATE jobs SET status = 'succeeded', progress = 1.0, lease_expires_at = NULL, attempt_token = NULL,
+                    error = NULL, updated_at = ?
+                WHERE job_id = ? AND run_id = ? AND status = 'running' AND attempt_token = ?
+                """,
+                (timestamp, job_id, run_id, attempt_token),
+            )
+            if run_update.rowcount != 1 or job_update.rowcount != 1:
+                raise RuntimeError(f"result requires matching running run and job: {run_id}, {job_id}")
+            self._insert_event(connection, job_id, "succeeded", {"progress": 1.0})
+
+    def mark_failed(self, run_id: str, job_id: str, attempt_token: str, error: str) -> bool:
+        timestamp = _now()
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            pair = connection.execute(
+                """
+                SELECT runs.status AS run_status, jobs.status AS job_status, jobs.attempt_token
+                FROM runs JOIN jobs ON jobs.run_id = runs.run_id
+                WHERE runs.run_id = ? AND jobs.job_id = ?
+                """,
+                (run_id, job_id),
+            ).fetchone()
+            if (
+                pair is None
+                or pair["run_status"] != "running"
+                or pair["job_status"] != "running"
+                or pair["attempt_token"] != attempt_token
+            ):
+                return False
+            connection.execute(
+                "UPDATE runs SET status = 'failed', error = ?, updated_at = ? WHERE run_id = ? AND status = 'running'",
+                (error, timestamp, run_id),
+            )
+            connection.execute(
+                """
+                UPDATE jobs SET status = 'failed', lease_expires_at = NULL, attempt_token = NULL, error = ?, updated_at = ?
+                WHERE job_id = ? AND run_id = ? AND status = 'running' AND attempt_token = ?
+                """,
+                (error, timestamp, job_id, run_id, attempt_token),
+            )
+            self._insert_event(connection, job_id, "failed", {"error": error})
+            return True
+
+    def recover_running_jobs(self) -> int:
+        timestamp = _now()
+        with self._connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            rows = connection.execute(
+                """
+                SELECT job_id, run_id FROM jobs
+                WHERE status = 'running' AND lease_expires_at IS NOT NULL AND lease_expires_at <= ?
+                """,
+                (timestamp,),
+            ).fetchall()
+            for row in rows:
+                connection.execute(
+                    """
+                    UPDATE jobs SET status = 'queued', progress = 0.0, lease_expires_at = NULL, attempt_token = NULL,
+                        updated_at = ?
+                    WHERE job_id = ? AND status = 'running'
+                    """,
+                    (timestamp, row["job_id"]),
+                )
+                connection.execute(
+                    "UPDATE runs SET status = 'queued', updated_at = ? WHERE run_id = ? AND status = 'running'",
+                    (timestamp, row["run_id"]),
+                )
+                self._insert_event(connection, row["job_id"], "recovered", {"previous_status": "running"})
+            return len(rows)
+
+    @staticmethod
+    def _insert_event(
+        connection: sqlite3.Connection,
+        job_id: str,
+        event_type: str,
+        payload: dict[str, Any],
+    ) -> None:
+        connection.execute(
+            "INSERT INTO job_events(job_id, event_type, payload_json, created_at) VALUES (?, ?, ?, ?)",
+            (job_id, event_type, _encode(payload), _now()),
+        )
+
+    @staticmethod
+    def _run_dict(row: sqlite3.Row) -> dict[str, Any]:
+        return {
+            **dict(row),
+            "config": _decode(row["config_json"]),
+            "result": _decode(row["result_json"]),
+        }
