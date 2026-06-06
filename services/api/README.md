@@ -26,8 +26,14 @@ Phase 2C routes:
 - `POST /api/runs/{run_id}/report`
 - `GET /api/reports/{report_id}`
 - `GET /api/reports/{report_id}/markdown`
+- `POST /api/experiments`
+- `GET /api/experiments`
+- `GET /api/experiments/{manifest_id}`
+- `POST /api/experiments/{manifest_id}/runs/{run_id}`
 
 The paper-scoped review-audit endpoint snapshots the active immutable paper version and ordered evidence-block IDs into the run input. It does not require the client to send evidence text, and later paper re-imports do not alter historical runs. Existing pre-version paper assets are backfilled into an initial immutable version during repository initialization.
+
+Experiment manifests connect a named dataset version and experiment-level configuration to existing audit runs. Manifest snapshots expose immutable paper versions, run configuration/status, and report metadata without returning raw run inputs, evidence text, or internal artifact paths.
 
 Install and run from the repository root:
 

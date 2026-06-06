@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from redis import Redis
 from rq import Queue
 
+from app.api.routes.experiments import router as experiments_router
 from app.api.routes.papers import router as papers_router
 from app.api.routes.reports import router as reports_router
 from app.api.routes.runs import router as runs_router
@@ -11,6 +14,7 @@ from app.core.config import Settings
 from app.queue.base import JobQueue
 from app.queue.rq_queue import RQQueueAdapter
 from app.repositories.sqlite_run_repository import SQLiteRunRepository
+from app.services.experiment_manifest_service import ExperimentManifestService
 from app.services.paper_service import PaperService
 from app.services.report_service import ReportService
 from app.services.review_audit_service import ReviewAuditService
@@ -31,13 +35,23 @@ def create_app(settings: Settings | None = None, queue: JobQueue | None = None) 
     app.state.service = ReviewAuditService(repository, resolved_queue)
     app.state.paper_service = PaperService(repository)
     app.state.report_service = ReportService(repository, resolved.sqlite_path.parent / "reports")
+    app.state.experiment_service = ExperimentManifestService(repository)
     app.state.queue = resolved_queue
 
     @app.get("/health")
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
+    @app.exception_handler(RequestValidationError)
+    async def redact_validation_error(_request, exc: RequestValidationError) -> JSONResponse:
+        detail = [
+            {key: error[key] for key in ("type", "loc", "msg") if key in error}
+            for error in exc.errors()
+        ]
+        return JSONResponse(status_code=422, content={"detail": detail})
+
     app.include_router(runs_router, prefix="/api")
     app.include_router(papers_router, prefix="/api")
     app.include_router(reports_router, prefix="/api")
+    app.include_router(experiments_router, prefix="/api")
     return app

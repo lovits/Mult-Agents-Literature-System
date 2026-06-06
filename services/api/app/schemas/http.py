@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.schemas.runs import ReviewAuditRequest
 from evireview_core.domain.models import EvidenceBlock, Weakness
@@ -72,3 +72,30 @@ class PersistedPaperReviewAuditInput(BaseModel):
 
     def to_weaknesses(self) -> list[Weakness]:
         return [Weakness.from_dict(item.model_dump()) for item in self.weaknesses]
+
+
+class ExperimentManifestInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(min_length=1)
+    dataset_name: str = Field(min_length=1)
+    dataset_version: str = Field(min_length=1)
+    config: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("config")
+    @classmethod
+    def reject_secret_config_keys(cls, config: dict[str, Any]) -> dict[str, Any]:
+        secret_keys = {"api_key", "apikey", "access_token", "secret", "password"}
+
+        def visit(value: Any) -> None:
+            if isinstance(value, dict):
+                for key, item in value.items():
+                    if str(key).lower() in secret_keys:
+                        raise ValueError("experiment config must not contain secret-like keys")
+                    visit(item)
+            elif isinstance(value, list):
+                for item in value:
+                    visit(item)
+
+        visit(config)
+        return config

@@ -145,6 +145,22 @@ class SQLiteRunRepository:
                     artifact_path TEXT NOT NULL,
                     created_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS experiment_manifests (
+                    manifest_id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    dataset_name TEXT NOT NULL,
+                    dataset_version TEXT NOT NULL,
+                    config_json TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS experiment_manifest_runs (
+                    membership_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    manifest_id TEXT NOT NULL REFERENCES experiment_manifests(manifest_id) ON DELETE CASCADE,
+                    run_id TEXT NOT NULL REFERENCES runs(run_id) ON DELETE CASCADE,
+                    created_at TEXT NOT NULL,
+                    UNIQUE(manifest_id, run_id)
+                );
                 """
             )
             self._backfill_paper_versions(connection)
@@ -410,6 +426,71 @@ class SQLiteRunRepository:
         if row is None:
             raise KeyError(f"report not found: {report_id}")
         return dict(row)
+
+    def list_reports_for_run(self, run_id: str) -> list[dict[str, Any]]:
+        self.get_run(run_id)
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT * FROM reports WHERE run_id = ? ORDER BY created_at, report_id",
+                (run_id,),
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def create_experiment_manifest(
+        self,
+        manifest_id: str,
+        name: str,
+        dataset_name: str,
+        dataset_version: str,
+        config: dict[str, Any],
+    ) -> None:
+        timestamp = _now()
+        with self._connection() as connection:
+            connection.execute(
+                "INSERT INTO experiment_manifests VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (manifest_id, name, dataset_name, dataset_version, _encode(config), timestamp, timestamp),
+            )
+
+    def get_experiment_manifest(self, manifest_id: str) -> dict[str, Any]:
+        with self._connection() as connection:
+            row = connection.execute(
+                "SELECT * FROM experiment_manifests WHERE manifest_id = ?",
+                (manifest_id,),
+            ).fetchone()
+        if row is None:
+            raise KeyError(f"experiment manifest not found: {manifest_id}")
+        return {**dict(row), "config": _decode(row["config_json"])}
+
+    def list_experiment_manifests(self) -> list[dict[str, Any]]:
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT * FROM experiment_manifests ORDER BY created_at, manifest_id"
+            ).fetchall()
+        return [{**dict(row), "config": _decode(row["config_json"])} for row in rows]
+
+    def attach_run_to_experiment(self, manifest_id: str, run_id: str) -> None:
+        self.get_experiment_manifest(manifest_id)
+        self.get_run(run_id)
+        with self._connection() as connection:
+            connection.execute(
+                """
+                INSERT OR IGNORE INTO experiment_manifest_runs(manifest_id, run_id, created_at)
+                VALUES (?, ?, ?)
+                """,
+                (manifest_id, run_id, _now()),
+            )
+
+    def list_experiment_run_ids(self, manifest_id: str) -> list[str]:
+        self.get_experiment_manifest(manifest_id)
+        with self._connection() as connection:
+            rows = connection.execute(
+                """
+                SELECT run_id FROM experiment_manifest_runs
+                WHERE manifest_id = ? ORDER BY membership_id
+                """,
+                (manifest_id,),
+            ).fetchall()
+        return [str(row["run_id"]) for row in rows]
 
     def create_run_and_job(self, run_id: str, job_id: str, input_payload: dict[str, Any]) -> None:
         timestamp = _now()

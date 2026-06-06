@@ -197,6 +197,37 @@ class SQLiteRunRepositoryTest(unittest.TestCase):
             "Legacy evidence.",
         )
 
+    def test_experiment_manifest_persists_ordered_idempotent_run_membership(self) -> None:
+        self.repository.create_run_and_job("run-1", "job-1", self.input_payload)
+        self.repository.create_run_and_job("run-2", "job-2", {**self.input_payload, "paper_id": "p2"})
+
+        self.repository.create_experiment_manifest(
+            "experiment-1",
+            "PeerQA Retrieval",
+            "PeerQA-XT",
+            "500-v1",
+            {"top_k": 5},
+        )
+        self.repository.attach_run_to_experiment("experiment-1", "run-2")
+        self.repository.attach_run_to_experiment("experiment-1", "run-1")
+        self.repository.attach_run_to_experiment("experiment-1", "run-2")
+
+        manifest = self.repository.get_experiment_manifest("experiment-1")
+        self.assertEqual(manifest["dataset_version"], "500-v1")
+        self.assertEqual(manifest["config"], {"top_k": 5})
+        self.assertEqual(self.repository.list_experiment_run_ids("experiment-1"), ["run-2", "run-1"])
+
+        with self.assertRaises(KeyError):
+            self.repository.attach_run_to_experiment("experiment-1", "missing")
+
+    def test_lists_reports_for_run(self) -> None:
+        self.repository.create_run_and_job("run-1", "job-1", self.input_payload)
+        self.repository.create_report("report-1", "run-1", "p1", "silver diagnostic", "/internal/report.md")
+
+        reports = self.repository.list_reports_for_run("run-1")
+
+        self.assertEqual([item["report_id"] for item in reports], ["report-1"])
+
 
 if __name__ == "__main__":
     unittest.main()
