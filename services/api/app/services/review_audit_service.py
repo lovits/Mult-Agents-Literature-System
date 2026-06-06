@@ -126,6 +126,17 @@ class ReviewAuditService:
         job = self.repository.get_job_for_run(run_id)
         return [self._public_event(event) for event in self.repository.list_events(job["job_id"])]
 
+    def get_agent_trace(self, run_id: str) -> list[dict]:
+        result = self.repository.get_run(run_id).get("result") or {}
+        return [
+            {
+                key: event[key]
+                for key in ("node", "status", "error_type")
+                if key in event
+            }
+            for event in result.get("agent_trace", [])
+        ]
+
     @staticmethod
     def _public_run(run: dict) -> dict:
         hidden = {"config_json", "input_json", "result_json", "result"}

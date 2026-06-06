@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from evireview_core.domain.models import EvidenceBlock, VerificationResult, Weakness
-from evireview_core.ranking.evidence_aware import rank_weaknesses
-from evireview_core.retrieval.hierarchical import hierarchical_search
-from evireview_core.verification.heuristic import verify_with_heuristics
+from evireview_core.domain.models import EvidenceBlock, Weakness
+from evireview_core.workflow.graph import ReviewAuditGraph
+from evireview_core.workflow.state import ReviewAuditState
 
 
 def run_deterministic_review_audit(
@@ -14,12 +13,16 @@ def run_deterministic_review_audit(
     top_k: int = 5,
     finding_top_k: int = 3,
 ) -> dict[str, Any]:
-    retrieval: dict[str, list[dict[str, Any]]] = {}
-    verification: dict[str, VerificationResult] = {}
-
-    for weakness in weaknesses:
-        candidates = hierarchical_search(weakness, blocks, top_k=top_k)
-        retrieval[weakness.weakness_id] = [
+    state = ReviewAuditGraph().run(
+        ReviewAuditState(
+            weaknesses=weaknesses,
+            evidence_blocks=blocks,
+            top_k=top_k,
+            finding_top_k=finding_top_k,
+        )
+    )
+    retrieval = {
+        weakness_id: [
             {
                 "block_id": item.block_id,
                 "rank": item.rank,
@@ -29,15 +32,15 @@ def run_deterministic_review_audit(
             }
             for item in candidates
         ]
-        verification[weakness.weakness_id] = verify_with_heuristics(weakness, candidates)
-
-    ranked = rank_weaknesses(weaknesses, verification, top_k=finding_top_k)
+        for weakness_id, candidates in state.retrieval.items()
+    }
     return {
         "workflow": "deterministic_review_audit_v1",
         "weakness_count": len(weaknesses),
         "evidence_block_count": len(blocks),
         "retrieval": retrieval,
-        "verification": {key: value.to_dict() for key, value in verification.items()},
-        "ranked_findings": [item.to_dict() for item in ranked],
+        "verification": {key: value.to_dict() for key, value in state.verification.items()},
+        "ranked_findings": [item.to_dict() for item in state.ranked_findings],
+        "agent_trace": state.agent_trace,
         "metric_boundary": "silver diagnostic",
     }

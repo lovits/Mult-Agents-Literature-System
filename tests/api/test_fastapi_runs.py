@@ -100,6 +100,11 @@ class FastApiRunsTest(unittest.TestCase):
         self.assertEqual(self.client.get(f"/api/jobs/{job_id}").json()["status"], "succeeded")
         events = self.client.get(f"/api/runs/{run_id}/trace").json()
         self.assertEqual([event["event_type"] for event in events], ["queued", "running", "succeeded"])
+        agent_trace = self.client.get(f"/api/runs/{run_id}/agent-trace").json()
+        self.assertEqual(
+            [event["node"] for event in agent_trace],
+            ["retrieve_evidence", "verify_weaknesses", "rank_findings"],
+        )
 
     def test_workspace_read_model_combines_weakness_evidence_results_and_trace(self) -> None:
         imported = self.client.post(
@@ -152,6 +157,7 @@ class FastApiRunsTest(unittest.TestCase):
         response = self.client.get("/api/runs/missing")
 
         self.assertEqual(response.status_code, 404)
+        self.assertEqual(self.client.get("/api/runs/missing/agent-trace").status_code, 404)
 
     def test_cross_paper_request_returns_422(self) -> None:
         response = self.client.post(

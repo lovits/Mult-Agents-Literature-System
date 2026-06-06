@@ -6,9 +6,41 @@ from pathlib import Path
 from evireview_core.domain.models import EvidenceBlock, Weakness
 from evireview_core.io.jsonl import read_jsonl
 from evireview_core.workflow.deterministic import run_deterministic_review_audit
+from evireview_core.workflow.graph import ReviewAuditGraph
+from evireview_core.workflow.state import ReviewAuditState
 
 
 class DeterministicWorkflowTest(unittest.TestCase):
+    def test_graph_executes_explicit_retrieval_verification_and_ranking_nodes(self) -> None:
+        state = ReviewAuditState(
+            weaknesses=[Weakness("w1", "p1", "The paper lacks ablation baselines.", "experiment", "major")],
+            evidence_blocks=[
+                EvidenceBlock("b1", "p1", "Experiments", "experiment", "The ablation baseline removes the reranker.")
+            ],
+            top_k=1,
+            finding_top_k=1,
+        )
+
+        result = ReviewAuditGraph().run(state)
+
+        self.assertEqual([item["node"] for item in result.agent_trace], ["retrieve_evidence", "verify_weaknesses", "rank_findings"])
+        self.assertTrue(all(item["status"] == "succeeded" for item in result.agent_trace))
+        self.assertEqual(len(result.ranked_findings), 1)
+
+    def test_graph_records_failed_node_without_recording_private_error_text(self) -> None:
+        def fail_node(_state: ReviewAuditState) -> None:
+            raise RuntimeError("private provider response")
+
+        graph = ReviewAuditGraph()
+        graph.nodes = (("provider_generation", fail_node),)
+        state = ReviewAuditState(weaknesses=[], evidence_blocks=[])
+
+        with self.assertRaisesRegex(RuntimeError, "agent node failed"):
+            graph.run(state)
+
+        self.assertEqual(state.agent_trace, [{"node": "provider_generation", "status": "failed", "error_type": "RuntimeError"}])
+        self.assertNotIn("private provider response", str(state.agent_trace))
+
     def test_workflow_returns_retrieval_verification_and_ranking(self) -> None:
         weaknesses = [
             Weakness("w1", "p1", "The paper lacks ablation baselines.", "experiment", "major"),
@@ -25,6 +57,10 @@ class DeterministicWorkflowTest(unittest.TestCase):
         self.assertEqual(len(result["retrieval"]), 2)
         self.assertEqual(len(result["verification"]), 2)
         self.assertGreaterEqual(len(result["ranked_findings"]), 1)
+        self.assertEqual(
+            [item["node"] for item in result["agent_trace"]],
+            ["retrieve_evidence", "verify_weaknesses", "rank_findings"],
+        )
 
     def test_workflow_runs_on_committed_jsonl_fixtures(self) -> None:
         fixture_dir = Path(__file__).resolve().parent / "fixtures"

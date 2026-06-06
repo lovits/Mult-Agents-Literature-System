@@ -37,6 +37,11 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
         self.assertEqual(result["status"], "succeeded")
         self.assertEqual(self.service.get_run(created["run"]["run_id"])["status"], "succeeded")
         self.assertEqual(len(self.service.get_findings(created["run"]["run_id"])), 1)
+        stored_result = self.repository.get_run(created["run"]["run_id"])["result"]
+        self.assertEqual(
+            [item["node"] for item in stored_result["agent_trace"]],
+            ["retrieve_evidence", "verify_weaknesses", "rank_findings"],
+        )
 
     def test_worker_records_invalid_input_failure(self) -> None:
         self.repository.create_run_and_job(
