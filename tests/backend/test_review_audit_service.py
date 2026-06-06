@@ -88,6 +88,81 @@ class ReviewAuditServiceTest(unittest.TestCase):
         job = self.repository.get_job_for_run(self.repository.list_runs()[0]["run_id"])
         self.assertEqual(job["status"], "failed")
 
+    def test_create_from_paper_snapshots_ids_without_evidence_text(self) -> None:
+        class RecordingQueue:
+            def __init__(self) -> None:
+                self.job_ids: list[str] = []
+
+            def enqueue(self, job_id: str) -> str:
+                self.job_ids.append(job_id)
+                return f"delivery-{job_id}"
+
+        from app.services.review_audit_service import ReviewAuditService
+
+        self.repository.replace_paper_assets(
+            "p1",
+            "Paper",
+            [],
+            [
+                {
+                    "block_id": "b1",
+                    "paper_id": "p1",
+                    "ordinal": 0,
+                    "section_path": "Experiments",
+                    "section_type": "experiment",
+                    "text": "Sensitive evidence text.",
+                    "score": 0.0,
+                }
+            ],
+        )
+        queue = RecordingQueue()
+        service = ReviewAuditService(self.repository, queue)
+
+        created = service.create_from_paper_and_enqueue(
+            "p1",
+            [Weakness("w1", "p1", "Missing ablation.", "experiment")],
+            top_k=2,
+            finding_top_k=1,
+        )
+
+        stored = self.repository.load_input(created["run"]["run_id"])
+        self.assertEqual(stored["evidence_block_ids"], ["b1"])
+        self.assertNotIn("evidence_blocks", stored)
+        self.assertNotIn("Sensitive evidence text", str(stored))
+        self.assertEqual(queue.job_ids, [created["job"]["job_id"]])
+
+    def test_create_from_paper_rejects_missing_paper_and_cross_paper_weakness(self) -> None:
+        class RecordingQueue:
+            def enqueue(self, job_id: str) -> str:
+                return f"delivery-{job_id}"
+
+        from app.services.review_audit_service import ReviewAuditService
+
+        service = ReviewAuditService(self.repository, RecordingQueue())
+
+        with self.assertRaises(KeyError):
+            service.create_from_paper_and_enqueue("missing", [])
+
+        self.repository.replace_paper_assets("p1", "Paper", [], [])
+        with self.assertRaisesRegex(ValueError, "same paper"):
+            service.create_from_paper_and_enqueue(
+                "p1",
+                [Weakness("w1", "p2", "Missing.", "other")],
+            )
+
+    def test_missing_queue_does_not_persist_orphaned_run(self) -> None:
+        from app.schemas.runs import ReviewAuditRequest
+        from app.services.review_audit_service import QueueDeliveryError
+
+        self.repository.replace_paper_assets("p1", "Paper", [], [])
+
+        with self.assertRaises(QueueDeliveryError):
+            self.service.create_and_enqueue(ReviewAuditRequest(paper_id="p1", weaknesses=[], evidence_blocks=[]))
+        with self.assertRaises(QueueDeliveryError):
+            self.service.create_from_paper_and_enqueue("p1", [])
+
+        self.assertEqual(self.repository.list_runs(), [])
+
 
 if __name__ == "__main__":
     unittest.main()

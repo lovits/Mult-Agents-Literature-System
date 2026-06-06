@@ -168,6 +168,29 @@ class SQLiteRunRepository:
             ).fetchall()
         return [dict(row) for row in rows]
 
+    def list_evidence_block_ids(self, paper_id: str) -> list[str]:
+        self.get_paper(paper_id)
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT block_id FROM evidence_blocks WHERE paper_id = ? ORDER BY ordinal, block_id", (paper_id,)
+            ).fetchall()
+        return [str(row["block_id"]) for row in rows]
+
+    def get_evidence_blocks_by_ids(self, paper_id: str, block_ids: list[str]) -> list[dict[str, Any]]:
+        if not block_ids:
+            return []
+        placeholders = ", ".join("?" for _ in block_ids)
+        with self._connection() as connection:
+            rows = connection.execute(
+                f"SELECT * FROM evidence_blocks WHERE paper_id = ? AND block_id IN ({placeholders})",
+                (paper_id, *block_ids),
+            ).fetchall()
+        by_id = {str(row["block_id"]): dict(row) for row in rows}
+        missing = [block_id for block_id in block_ids if block_id not in by_id]
+        if missing:
+            raise KeyError(f"evidence block not found for paper {paper_id}: {missing[0]}")
+        return [by_id[block_id] for block_id in block_ids]
+
     def create_report(
         self,
         report_id: str,

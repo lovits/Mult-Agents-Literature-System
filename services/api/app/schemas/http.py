@@ -61,3 +61,14 @@ class PaperImportInput(BaseModel):
     paper_id: str = Field(min_length=1)
     title: str = Field(min_length=1)
     markdown: str = Field(min_length=1)
+
+
+class PersistedPaperReviewAuditInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    weaknesses: list[WeaknessInput] = Field(default_factory=list)
+    top_k: int = Field(default=5, gt=0)
+    finding_top_k: int = Field(default=3, gt=0)
+
+    def to_weaknesses(self) -> list[Weakness]:
+        return [Weakness.from_dict(item.model_dump()) for item in self.weaknesses]

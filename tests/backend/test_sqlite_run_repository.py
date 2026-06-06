@@ -105,6 +105,40 @@ class SQLiteRunRepositoryTest(unittest.TestCase):
         self.repository.save_result("run-1", "job-1", second["attempt_token"], {"ranked_findings": []})
         self.assertEqual(self.repository.get_run("run-1")["status"], "succeeded")
 
+    def test_snapshot_and_resolve_evidence_block_ids_preserve_order(self) -> None:
+        self.repository.replace_paper_assets(
+            "p1",
+            "Paper",
+            [],
+            [
+                {
+                    "block_id": "b1",
+                    "paper_id": "p1",
+                    "ordinal": 0,
+                    "section_path": "Abstract",
+                    "section_type": "abstract",
+                    "text": "First.",
+                    "score": 0.0,
+                },
+                {
+                    "block_id": "b2",
+                    "paper_id": "p1",
+                    "ordinal": 1,
+                    "section_path": "Experiments",
+                    "section_type": "experiment",
+                    "text": "Second.",
+                    "score": 0.0,
+                },
+            ],
+        )
+
+        self.assertEqual(self.repository.list_evidence_block_ids("p1"), ["b1", "b2"])
+        resolved = self.repository.get_evidence_blocks_by_ids("p1", ["b2", "b1"])
+        self.assertEqual([item["block_id"] for item in resolved], ["b2", "b1"])
+
+        with self.assertRaises(KeyError):
+            self.repository.get_evidence_blocks_by_ids("p1", ["b1", "missing"])
+
 
 if __name__ == "__main__":
     unittest.main()

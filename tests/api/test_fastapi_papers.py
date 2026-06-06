@@ -69,6 +69,53 @@ class FastApiPapersTest(unittest.TestCase):
 
         self.assertEqual(response.status_code, 202)
 
+    def test_create_review_audit_from_imported_paper_without_evidence_text(self) -> None:
+        self.client.post(
+            "/api/papers/import",
+            json={"paper_id": "paper-1", "title": "Agent RAG", "markdown": "# Experiments\nNo ablation is reported."},
+        )
+
+        response = self.client.post(
+            "/api/papers/paper-1/review-audit",
+            json={
+                "weaknesses": [
+                    {
+                        "weakness_id": "w1",
+                        "paper_id": "paper-1",
+                        "weakness_text": "The paper lacks an ablation.",
+                        "category": "experiment",
+                    }
+                ],
+                "finding_top_k": 1,
+            },
+        )
+
+        self.assertEqual(response.status_code, 202)
+        self.assertNotIn("evidence", response.text)
+
+    def test_persisted_paper_audit_validates_scope_and_missing_paper(self) -> None:
+        self.client.post(
+            "/api/papers/import",
+            json={"paper_id": "paper-1", "title": "Agent RAG", "markdown": "# Experiments\nNo ablation is reported."},
+        )
+
+        invalid_scope = self.client.post(
+            "/api/papers/paper-1/review-audit",
+            json={
+                "weaknesses": [
+                    {"weakness_id": "w1", "paper_id": "paper-2", "weakness_text": "Missing.", "category": "other"}
+                ]
+            },
+        )
+        inline_evidence = self.client.post(
+            "/api/papers/paper-1/review-audit",
+            json={"weaknesses": [], "evidence_blocks": []},
+        )
+
+        self.assertEqual(invalid_scope.status_code, 422)
+        self.assertEqual(inline_evidence.status_code, 422)
+        self.assertEqual(self.client.post("/api/papers/missing/review-audit", json={"weaknesses": []}).status_code, 404)
+
 
 if __name__ == "__main__":
     unittest.main()

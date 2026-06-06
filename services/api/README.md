@@ -17,12 +17,15 @@ The API never accepts or stores provider API keys. Raw weakness/evidence inputs 
 Phase 2C routes:
 
 - `POST /api/papers/import`
+- `POST /api/papers/{paper_id}/review-audit`
 - `GET /api/papers/{paper_id}`
 - `GET /api/papers/{paper_id}/sections`
 - `GET /api/papers/{paper_id}/evidence-blocks`
 - `POST /api/runs/{run_id}/report`
 - `GET /api/reports/{report_id}`
 - `GET /api/reports/{report_id}/markdown`
+
+The paper-scoped review-audit endpoint snapshots ordered evidence-block IDs into the run input. It does not require the client to send evidence text, and the worker fails explicitly if any snapshotted evidence block is no longer available.
 
 Install and run from the repository root:
 

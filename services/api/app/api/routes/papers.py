@@ -4,7 +4,8 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request, status
 
-from app.schemas.http import PaperImportInput
+from app.schemas.http import CreatedRunResponse, PaperImportInput, PersistedPaperReviewAuditInput
+from app.services.review_audit_service import QueueDeliveryError
 
 
 router = APIRouter()
@@ -44,3 +45,28 @@ def get_evidence_blocks(paper_id: str, request: Request) -> list[dict[str, Any]]
         return request.app.state.paper_service.get_evidence_blocks(paper_id)
     except KeyError as exc:
         raise _not_found(exc) from exc
+
+
+@router.post(
+    "/papers/{paper_id}/review-audit",
+    status_code=status.HTTP_202_ACCEPTED,
+    response_model=CreatedRunResponse,
+)
+def create_persisted_paper_review_audit(
+    paper_id: str,
+    payload: PersistedPaperReviewAuditInput,
+    request: Request,
+) -> dict[str, Any]:
+    try:
+        return request.app.state.service.create_from_paper_and_enqueue(
+            paper_id,
+            payload.to_weaknesses(),
+            top_k=payload.top_k,
+            finding_top_k=payload.finding_top_k,
+        )
+    except KeyError as exc:
+        raise _not_found(exc) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)) from exc
+    except QueueDeliveryError as exc:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="queue unavailable") from exc

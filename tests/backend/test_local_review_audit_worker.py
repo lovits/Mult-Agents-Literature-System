@@ -68,6 +68,60 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
         self.assertEqual(results, [])
         self.assertEqual(self.service.get_run(created["run"]["run_id"])["status"], "running")
 
+    def test_worker_resolves_persisted_evidence_block_ids(self) -> None:
+        self.repository.replace_paper_assets(
+            "p1",
+            "Paper",
+            [],
+            [
+                {
+                    "block_id": "b1",
+                    "paper_id": "p1",
+                    "ordinal": 0,
+                    "section_path": "Experiments",
+                    "section_type": "experiment",
+                    "text": "The paper has limited ablation baselines.",
+                    "score": 0.0,
+                }
+            ],
+        )
+        self.repository.create_run_and_job(
+            "run-ref",
+            "job-ref",
+            {
+                "paper_id": "p1",
+                "weaknesses": [
+                    Weakness("w1", "p1", "The paper has limited ablation baselines.", "experiment", "major").to_dict()
+                ],
+                "evidence_block_ids": ["b1"],
+                "top_k": 5,
+                "finding_top_k": 3,
+            },
+        )
+
+        result = run_next_job(self.repository)
+
+        self.assertEqual(result["status"], "succeeded")
+        self.assertEqual(self.repository.get_run("run-ref")["result"]["evidence_block_count"], 1)
+
+    def test_worker_fails_when_snapshotted_evidence_is_missing(self) -> None:
+        self.repository.create_run_and_job(
+            "run-missing",
+            "job-missing",
+            {
+                "paper_id": "p1",
+                "weaknesses": [],
+                "evidence_block_ids": ["missing"],
+                "top_k": 5,
+                "finding_top_k": 3,
+            },
+        )
+
+        result = run_next_job(self.repository)
+
+        self.assertEqual(result["status"], "failed")
+        self.assertIn("evidence block", self.repository.get_run("run-missing")["error"])
+
 
 if __name__ == "__main__":
     unittest.main()

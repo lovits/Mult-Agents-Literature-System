@@ -5,6 +5,7 @@ from uuid import uuid4
 from app.repositories.sqlite_run_repository import SQLiteRunRepository
 from app.queue.base import JobQueue
 from app.schemas.runs import ReviewAuditRequest
+from evireview_core.domain.models import EvidenceBlock, Weakness
 
 
 class QueueDeliveryError(RuntimeError):
@@ -17,24 +18,59 @@ class ReviewAuditService:
         self.queue = queue
 
     def create_review_audit(self, request: ReviewAuditRequest) -> dict[str, dict]:
+        return self._create_review_audit(request.to_payload())
+
+    def _create_review_audit(self, payload: dict) -> dict[str, dict]:
         run_id = f"run-{uuid4().hex}"
         job_id = f"job-{uuid4().hex}"
-        self.repository.create_run_and_job(run_id, job_id, request.to_payload())
+        self.repository.create_run_and_job(run_id, job_id, payload)
         return {
             "run": self._public_run(self.repository.get_run(run_id)),
             "job": self._public_job(self.repository.get_job(job_id)),
         }
 
     def create_and_enqueue(self, request: ReviewAuditRequest) -> dict:
-        if self.queue is None:
-            raise QueueDeliveryError("queue is not configured")
-        created = self.create_review_audit(request)
+        self._require_queue()
+        return self._enqueue_created(self.create_review_audit(request))
+
+    def create_from_paper_and_enqueue(
+        self,
+        paper_id: str,
+        weaknesses: list[Weakness],
+        top_k: int = 5,
+        finding_top_k: int = 3,
+    ) -> dict:
+        self._require_queue()
+        block_ids = self.repository.list_evidence_block_ids(paper_id)
+        blocks = [
+            EvidenceBlock.from_dict(item)
+            for item in self.repository.get_evidence_blocks_by_ids(paper_id, block_ids)
+        ]
+        request = ReviewAuditRequest(
+            paper_id=paper_id,
+            weaknesses=weaknesses,
+            evidence_blocks=blocks,
+            top_k=top_k,
+            finding_top_k=finding_top_k,
+        )
+        payload = request.to_payload()
+        payload.pop("evidence_blocks")
+        payload["evidence_block_ids"] = block_ids
+        payload["evidence_source"] = "persisted_paper_snapshot"
+        return self._enqueue_created(self._create_review_audit(payload))
+
+    def _enqueue_created(self, created: dict[str, dict]) -> dict:
+        self._require_queue()
         try:
             delivery_id = self.queue.enqueue(created["job"]["job_id"])
         except Exception as exc:
             self.repository.mark_delivery_failed(created["run"]["run_id"], created["job"]["job_id"], str(exc))
             raise QueueDeliveryError("queue delivery failed") from exc
         return {**created, "delivery_id": delivery_id}
+
+    def _require_queue(self) -> None:
+        if self.queue is None:
+            raise QueueDeliveryError("queue is not configured")
 
     def get_run(self, run_id: str) -> dict:
         return self._public_run(self.repository.get_run(run_id))

@@ -25,7 +25,14 @@ def _execute_claimed_job(repository: SQLiteRunRepository, job: dict[str, Any] | 
     try:
         payload = repository.load_input(run_id)
         weaknesses = [Weakness.from_dict(item) for item in payload["weaknesses"]]
-        blocks = [EvidenceBlock.from_dict(item) for item in payload["evidence_blocks"]]
+        if "evidence_blocks" in payload:
+            block_payloads = payload["evidence_blocks"]
+        else:
+            block_payloads = repository.get_evidence_blocks_by_ids(
+                str(payload["paper_id"]),
+                [str(item) for item in payload.get("evidence_block_ids", [])],
+            )
+        blocks = [EvidenceBlock.from_dict(item) for item in block_payloads]
         result = run_deterministic_review_audit(
             weaknesses,
             blocks,
