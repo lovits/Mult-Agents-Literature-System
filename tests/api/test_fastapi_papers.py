@@ -46,6 +46,25 @@ class FastApiPapersTest(unittest.TestCase):
         self.assertEqual(len(self.client.get("/api/papers/paper-1/sections").json()), 2)
         self.assertEqual(len(self.client.get("/api/papers/paper-1/evidence-blocks").json()), 2)
 
+    def test_list_papers_and_paper_runs_for_workspace_navigation(self) -> None:
+        self.client.post(
+            "/api/papers/import",
+            json={"paper_id": "paper-1", "title": "Agent RAG", "markdown": "# Experiments\nEvidence."},
+        )
+        created = self.client.post(
+            "/api/papers/paper-1/review-audit",
+            json={"weaknesses": []},
+        ).json()
+
+        papers = self.client.get("/api/papers")
+        runs = self.client.get("/api/papers/paper-1/runs")
+
+        self.assertEqual(papers.status_code, 200)
+        self.assertEqual(papers.json()[0]["paper_id"], "paper-1")
+        self.assertEqual(runs.status_code, 200)
+        self.assertEqual(runs.json()[0]["run_id"], created["run"]["run_id"])
+        self.assertNotIn("input_json", runs.text)
+
     def test_paper_request_validation_and_missing_resource(self) -> None:
         invalid = self.client.post(
             "/api/papers/import",
@@ -54,6 +73,7 @@ class FastApiPapersTest(unittest.TestCase):
 
         self.assertEqual(invalid.status_code, 422)
         self.assertEqual(self.client.get("/api/papers/missing").status_code, 404)
+        self.assertEqual(self.client.get("/api/papers/missing/runs").status_code, 404)
 
     def test_imported_evidence_blocks_can_be_submitted_to_review_audit(self) -> None:
         self.client.post(

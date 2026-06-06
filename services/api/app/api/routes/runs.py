@@ -49,6 +49,14 @@ def get_trace(run_id: str, request: Request) -> list[dict[str, Any]]:
         raise _not_found(exc) from exc
 
 
+@router.get("/runs/{run_id}/workspace")
+def get_workspace(run_id: str, request: Request) -> dict[str, Any]:
+    try:
+        return request.app.state.service.get_workspace(run_id)
+    except KeyError as exc:
+        raise _not_found(exc) from exc
+
+
 @router.get("/jobs/{job_id}")
 def get_job(job_id: str, request: Request) -> dict[str, Any]:
     try:

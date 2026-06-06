@@ -101,6 +101,53 @@ class FastApiRunsTest(unittest.TestCase):
         events = self.client.get(f"/api/runs/{run_id}/trace").json()
         self.assertEqual([event["event_type"] for event in events], ["queued", "running", "succeeded"])
 
+    def test_workspace_read_model_combines_weakness_evidence_results_and_trace(self) -> None:
+        imported = self.client.post(
+            "/api/papers/import",
+            json={
+                "paper_id": "p1",
+                "title": "Workspace Paper",
+                "markdown": "# Experiments\nThe paper reports only one baseline and no ablation.",
+            },
+        ).json()
+        created = self.client.post(
+            "/api/papers/p1/review-audit",
+            json={
+                "weaknesses": [
+                    {
+                        "weakness_id": "w1",
+                        "paper_id": "p1",
+                        "weakness_text": "The paper lacks an ablation.",
+                        "category": "experiment",
+                        "severity": "major",
+                    }
+                ],
+                "finding_top_k": 1,
+            },
+        ).json()
+        run_job(self.app.state.repository, created["job"]["job_id"])
+
+        response = self.client.get(f"/api/runs/{created['run']['run_id']}/workspace")
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["paper"]["active_version_id"], imported["active_version_id"])
+        self.assertEqual(payload["run"]["paper_version_id"], imported["active_version_id"])
+        self.assertEqual(payload["weaknesses"][0]["weakness_text"], "The paper lacks an ablation.")
+        self.assertIn("The paper reports only one baseline", payload["evidence_blocks"][0]["text"])
+        self.assertEqual(payload["metric_boundary"], "silver diagnostic")
+        self.assertEqual([event["event_type"] for event in payload["trace"]], ["queued", "running", "succeeded"])
+        self.assertNotIn("input_json", response.text)
+        self.assertNotIn("artifact_path", response.text)
+        self.assertNotIn("attempt_token", response.text)
+
+    def test_workspace_static_application_is_served(self) -> None:
+        response = self.client.get("/workspace/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("EviReview Paper Workspace", response.text)
+        self.assertIn("/workspace/app.js", response.text)
+
     def test_missing_resource_returns_404(self) -> None:
         response = self.client.get("/api/runs/missing")
 

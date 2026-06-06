@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from redis import Redis
 from rq import Queue
 
@@ -54,4 +57,5 @@ def create_app(settings: Settings | None = None, queue: JobQueue | None = None) 
     app.include_router(papers_router, prefix="/api")
     app.include_router(reports_router, prefix="/api")
     app.include_router(experiments_router, prefix="/api")
+    app.mount("/workspace", StaticFiles(directory=Path(__file__).resolve().parents[3] / "apps" / "web", html=True))
     return app

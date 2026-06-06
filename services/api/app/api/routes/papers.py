@@ -23,10 +23,23 @@ def import_paper(payload: PaperImportInput, request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)) from exc
 
 
+@router.get("/papers")
+def list_papers(request: Request) -> list[dict[str, Any]]:
+    return request.app.state.paper_service.list_papers()
+
+
 @router.get("/papers/{paper_id}")
 def get_paper(paper_id: str, request: Request) -> dict[str, Any]:
     try:
         return request.app.state.paper_service.get_paper(paper_id)
+    except KeyError as exc:
+        raise _not_found(exc) from exc
+
+
+@router.get("/papers/{paper_id}/runs")
+def list_paper_runs(paper_id: str, request: Request) -> list[dict[str, Any]]:
+    try:
+        return request.app.state.service.list_runs_for_paper(paper_id)
     except KeyError as exc:
         raise _not_found(exc) from exc
 

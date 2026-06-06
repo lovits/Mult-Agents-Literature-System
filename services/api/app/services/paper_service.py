@@ -56,6 +56,9 @@ class PaperService:
     def get_paper(self, paper_id: str) -> dict[str, Any]:
         return self.repository.get_paper(paper_id)
 
+    def list_papers(self) -> list[dict[str, Any]]:
+        return self.repository.list_papers()
+
     def get_sections(self, paper_id: str) -> list[dict[str, Any]]:
         self.repository.get_paper(paper_id)
         return self.repository.list_paper_sections(paper_id)

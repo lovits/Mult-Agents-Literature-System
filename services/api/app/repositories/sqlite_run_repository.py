@@ -297,6 +297,11 @@ class SQLiteRunRepository:
         paper["active_version_id"] = self.get_active_paper_version(paper_id)["version_id"]
         return paper
 
+    def list_papers(self) -> list[dict[str, Any]]:
+        with self._connection() as connection:
+            rows = connection.execute("SELECT paper_id FROM papers ORDER BY updated_at DESC, paper_id").fetchall()
+        return [self.get_paper(str(row["paper_id"])) for row in rows]
+
     def get_active_paper_version(self, paper_id: str) -> dict[str, Any]:
         with self._connection() as connection:
             row = connection.execute(
@@ -522,6 +527,15 @@ class SQLiteRunRepository:
     def list_runs(self) -> list[dict[str, Any]]:
         with self._connection() as connection:
             rows = connection.execute("SELECT * FROM runs ORDER BY created_at, run_id").fetchall()
+        return [self._run_dict(row) for row in rows]
+
+    def list_runs_for_paper(self, paper_id: str) -> list[dict[str, Any]]:
+        self.get_paper(paper_id)
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT * FROM runs WHERE paper_id = ? ORDER BY created_at DESC, run_id DESC",
+                (paper_id,),
+            ).fetchall()
         return [self._run_dict(row) for row in rows]
 
     def get_job(self, job_id: str) -> dict[str, Any]:

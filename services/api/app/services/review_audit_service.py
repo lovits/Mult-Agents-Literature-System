@@ -79,6 +79,42 @@ class ReviewAuditService:
     def get_run(self, run_id: str) -> dict:
         return self._public_run(self.repository.get_run(run_id))
 
+    def list_runs_for_paper(self, paper_id: str) -> list[dict]:
+        return [self._public_run(run) for run in self.repository.list_runs_for_paper(paper_id)]
+
+    def get_workspace(self, run_id: str) -> dict:
+        run = self.repository.get_run(run_id)
+        input_payload = self.repository.load_input(run_id)
+        result = run.get("result") or {}
+        version_id = input_payload.get("paper_version_id")
+        if version_id:
+            evidence_blocks = self.repository.list_version_evidence_blocks(run["paper_id"], version_id)
+        else:
+            evidence_blocks = list(input_payload.get("evidence_blocks", []))
+        reports = [
+            {key: value for key, value in report.items() if key != "artifact_path"}
+            for report in self.repository.list_reports_for_run(run_id)
+        ]
+        return {
+            "paper": self.repository.get_paper(run["paper_id"]),
+            "run": {
+                **self._public_run(run),
+                "paper_version_id": version_id,
+                "evidence_source": input_payload.get("evidence_source", "inline"),
+            },
+            "metric_boundary": result.get("metric_boundary", run["config"].get("metric_boundary", "silver diagnostic")),
+            "weaknesses": list(input_payload.get("weaknesses", [])),
+            "evidence_blocks": [
+                {key: value for key, value in block.items() if key not in {"ordinal", "version_id"}}
+                for block in evidence_blocks
+            ],
+            "retrieval": result.get("retrieval", {}),
+            "verification": result.get("verification", {}),
+            "ranked_findings": result.get("ranked_findings", []),
+            "trace": self.get_trace(run_id),
+            "reports": reports,
+        }
+
     def get_job(self, job_id: str) -> dict:
         return self._public_job(self.repository.get_job(job_id))
 

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EviReview Paper Workspace</title>
+    <link rel="stylesheet" href="/workspace/styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <strong>EviReview</strong>
+        <span>Paper Workspace</span>
+      </div>
+      <div class="header-actions">
+        <span id="metric-boundary" class="boundary-badge">未选择运行</span>
+        <button id="refresh-button" type="button" title="刷新工作区">刷新</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="navigation-pane" aria-label="论文和运行导航">
+        <section>
+          <h1>论文</h1>
+          <div id="paper-list" class="list-region" aria-live="polite"></div>
+        </section>
+        <section>
+          <h2>审计运行</h2>
+          <div id="run-list" class="list-region" aria-live="polite"></div>
+        </section>
+      </aside>
+
+      <section class="evidence-pane" aria-label="弱点与证据">
+        <div class="pane-heading">
+          <div>
+            <p id="paper-id" class="eyebrow">请选择论文</p>
+            <h2 id="paper-title">Paper Workspace</h2>
+          </div>
+          <span id="run-status" class="status-badge">idle</span>
+        </div>
+        <div class="section-band">
+          <h3>弱点与排序结果</h3>
+          <div id="weakness-list" class="weakness-list"></div>
+        </div>
+        <div class="section-band evidence-band">
+          <div class="section-title-row">
+            <h3>论文证据</h3>
+            <span id="evidence-count">0 blocks</span>
+          </div>
+          <div id="evidence-list" class="evidence-list"></div>
+        </div>
+      </section>
+
+      <aside class="detail-pane" aria-label="校验详情与运行轨迹">
+        <section>
+          <h2>Verifier / Ranker</h2>
+          <div id="finding-detail" class="detail-region"></div>
+        </section>
+        <section>
+          <h2>运行轨迹</h2>
+          <ol id="trace-list" class="trace-list"></ol>
+        </section>
+        <section class="report-section">
+          <h2>审计报告</h2>
+          <button id="report-button" type="button">生成并打开报告</button>
+          <p id="report-status" class="muted"></p>
+        </section>
+      </aside>
+    </main>
+
+    <script src="/workspace/app.js" defer></script>
+  </body>
+</html>
