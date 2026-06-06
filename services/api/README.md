@@ -21,11 +21,13 @@ Phase 2C routes:
 - `GET /api/papers/{paper_id}`
 - `GET /api/papers/{paper_id}/sections`
 - `GET /api/papers/{paper_id}/evidence-blocks`
+- `GET /api/papers/{paper_id}/versions`
+- `GET /api/papers/{paper_id}/versions/{version_id}/evidence-blocks`
 - `POST /api/runs/{run_id}/report`
 - `GET /api/reports/{report_id}`
 - `GET /api/reports/{report_id}/markdown`
 
-The paper-scoped review-audit endpoint snapshots ordered evidence-block IDs into the run input. It does not require the client to send evidence text, and the worker fails explicitly if any snapshotted evidence block is no longer available.
+The paper-scoped review-audit endpoint snapshots the active immutable paper version and ordered evidence-block IDs into the run input. It does not require the client to send evidence text, and later paper re-imports do not alter historical runs. Existing pre-version paper assets are backfilled into an initial immutable version during repository initialization.
 
 Install and run from the repository root:
 

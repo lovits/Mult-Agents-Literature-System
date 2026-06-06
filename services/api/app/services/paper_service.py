@@ -17,6 +17,7 @@ class PaperService:
         self.repository = repository
 
     def import_markdown(self, paper_id: str, title: str, markdown: str) -> dict[str, Any]:
+        version_id = _stable_id("version", paper_id, title, markdown)
         sections: list[dict[str, Any]] = []
         blocks: list[dict[str, Any]] = []
         for section_ordinal, section in enumerate(iter_sections(markdown)):
@@ -45,7 +46,7 @@ class PaperService:
                 )
         if not sections:
             raise ValueError("markdown must contain usable text")
-        self.repository.replace_paper_assets(paper_id, title, sections, blocks)
+        self.repository.replace_paper_assets(paper_id, title, sections, blocks, version_id=version_id)
         return {
             **self.get_paper(paper_id),
             "section_count": len(sections),
@@ -64,4 +65,13 @@ class PaperService:
         return [
             {key: value for key, value in block.items() if key != "ordinal"}
             for block in self.repository.list_evidence_blocks(paper_id)
+        ]
+
+    def list_versions(self, paper_id: str) -> list[dict[str, Any]]:
+        return self.repository.list_paper_versions(paper_id)
+
+    def get_version_evidence_blocks(self, paper_id: str, version_id: str) -> list[dict[str, Any]]:
+        return [
+            {key: value for key, value in block.items() if key not in {"ordinal", "version_id"}}
+            for block in self.repository.list_version_evidence_blocks(paper_id, version_id)
         ]

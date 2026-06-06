@@ -122,6 +122,40 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
         self.assertEqual(result["status"], "failed")
         self.assertIn("evidence block", self.repository.get_run("run-missing")["error"])
 
+    def test_worker_uses_immutable_version_after_paper_reimport(self) -> None:
+        original = {
+            "block_id": "b-original",
+            "paper_id": "p1",
+            "ordinal": 0,
+            "section_path": "Experiments",
+            "section_type": "experiment",
+            "text": "The original paper lacks an ablation study.",
+            "score": 0.0,
+        }
+        changed = {**original, "block_id": "b-changed", "text": "The changed paper includes an ablation study."}
+        self.repository.replace_paper_assets("p1", "Paper", [], [original], version_id="version-1")
+        self.repository.create_run_and_job(
+            "run-versioned",
+            "job-versioned",
+            {
+                "paper_id": "p1",
+                "paper_version_id": "version-1",
+                "weaknesses": [
+                    Weakness("w1", "p1", "The paper lacks an ablation study.", "experiment", "major").to_dict()
+                ],
+                "evidence_block_ids": ["b-original"],
+                "evidence_source": "persisted_paper_version",
+                "top_k": 5,
+                "finding_top_k": 3,
+            },
+        )
+        self.repository.replace_paper_assets("p1", "Paper", [], [changed], version_id="version-2")
+
+        result = run_next_job(self.repository)
+
+        self.assertEqual(result["status"], "succeeded")
+        self.assertEqual(self.repository.get_run("run-versioned")["result"]["evidence_block_count"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

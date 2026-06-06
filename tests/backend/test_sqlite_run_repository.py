@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+import sqlite3
 from pathlib import Path
 
 from app.repositories.sqlite_run_repository import SQLiteRunRepository
@@ -138,6 +139,63 @@ class SQLiteRunRepositoryTest(unittest.TestCase):
 
         with self.assertRaises(KeyError):
             self.repository.get_evidence_blocks_by_ids("p1", ["b1", "missing"])
+
+    def test_versioned_evidence_is_immutable_when_active_assets_change(self) -> None:
+        original = {
+            "block_id": "b1",
+            "paper_id": "p1",
+            "ordinal": 0,
+            "section_path": "Abstract",
+            "section_type": "abstract",
+            "text": "Original.",
+            "score": 0.0,
+        }
+        changed = {**original, "block_id": "b2", "text": "Changed."}
+
+        self.repository.replace_paper_assets("p1", "Paper", [], [original], version_id="version-1")
+        self.repository.replace_paper_assets("p1", "Paper", [], [changed], version_id="version-2")
+
+        self.assertEqual(self.repository.get_active_paper_version("p1")["version_id"], "version-2")
+        self.assertEqual([item["version_id"] for item in self.repository.list_paper_versions("p1")], ["version-1", "version-2"])
+        self.assertEqual(
+            self.repository.get_version_evidence_blocks_by_ids("p1", "version-1", ["b1"])[0]["text"],
+            "Original.",
+        )
+        with self.assertRaises(KeyError):
+            self.repository.get_version_evidence_blocks_by_ids("p1", "version-1", ["b2"])
+
+    def test_initialize_backfills_pre_version_paper_assets(self) -> None:
+        path = Path(self.temp_dir.name) / "legacy.sqlite3"
+        with sqlite3.connect(path) as connection:
+            connection.executescript(
+                """
+                CREATE TABLE papers (
+                    paper_id TEXT PRIMARY KEY, title TEXT NOT NULL, source_type TEXT NOT NULL,
+                    created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+                );
+                CREATE TABLE paper_sections (
+                    section_id TEXT PRIMARY KEY, paper_id TEXT NOT NULL, ordinal INTEGER NOT NULL,
+                    section_path TEXT NOT NULL, section_type TEXT NOT NULL, text TEXT NOT NULL
+                );
+                CREATE TABLE evidence_blocks (
+                    block_id TEXT PRIMARY KEY, paper_id TEXT NOT NULL, ordinal INTEGER NOT NULL,
+                    section_path TEXT NOT NULL, section_type TEXT NOT NULL, text TEXT NOT NULL, score REAL NOT NULL
+                );
+                INSERT INTO papers VALUES ('legacy', 'Legacy Paper', 'markdown', '2026-01-01', '2026-01-01');
+                INSERT INTO paper_sections VALUES ('s1', 'legacy', 0, 'Abstract', 'abstract', 'Legacy section.');
+                INSERT INTO evidence_blocks VALUES ('b1', 'legacy', 0, 'Abstract', 'abstract', 'Legacy evidence.', 0.0);
+                """
+            )
+        repository = SQLiteRunRepository(path)
+
+        repository.initialize()
+
+        paper = repository.get_paper("legacy")
+        self.assertTrue(paper["active_version_id"].startswith("version-"))
+        self.assertEqual(
+            repository.list_version_evidence_blocks("legacy", paper["active_version_id"])[0]["text"],
+            "Legacy evidence.",
+        )
 
 
 if __name__ == "__main__":

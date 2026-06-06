@@ -116,6 +116,31 @@ class FastApiPapersTest(unittest.TestCase):
         self.assertEqual(inline_evidence.status_code, 422)
         self.assertEqual(self.client.post("/api/papers/missing/review-audit", json={"weaknesses": []}).status_code, 404)
 
+    def test_lists_immutable_versions_and_historical_evidence(self) -> None:
+        first = self.client.post(
+            "/api/papers/import",
+            json={"paper_id": "paper-1", "title": "Paper", "markdown": "# Abstract\nOriginal evidence."},
+        ).json()
+        second = self.client.post(
+            "/api/papers/import",
+            json={"paper_id": "paper-1", "title": "Paper", "markdown": "# Abstract\nChanged evidence."},
+        ).json()
+
+        paper = self.client.get("/api/papers/paper-1").json()
+        versions = self.client.get("/api/papers/paper-1/versions").json()
+        historical = self.client.get(
+            f"/api/papers/paper-1/versions/{first['active_version_id']}/evidence-blocks"
+        ).json()
+
+        self.assertEqual(paper["active_version_id"], second["active_version_id"])
+        self.assertEqual(len(versions), 2)
+        self.assertIn("Original evidence.", historical[0]["text"])
+        self.assertNotIn("ordinal", historical[0])
+        self.assertEqual(
+            self.client.get("/api/papers/paper-1/versions/missing/evidence-blocks").status_code,
+            404,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

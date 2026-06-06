@@ -48,6 +48,21 @@ class PaperServiceTest(unittest.TestCase):
         with self.assertRaises(KeyError):
             self.service.get_paper("missing")
 
+    def test_import_creates_immutable_versions_and_reuses_identical_content(self) -> None:
+        first = self.service.import_markdown("paper-1", "Paper", "# Abstract\nOriginal evidence.")
+        identical = self.service.import_markdown("paper-1", "Paper", "# Abstract\nOriginal evidence.")
+        changed = self.service.import_markdown("paper-1", "Paper", "# Abstract\nChanged evidence.")
+
+        versions = self.service.list_versions("paper-1")
+        original_blocks = self.service.get_version_evidence_blocks("paper-1", first["active_version_id"])
+
+        self.assertEqual(first["active_version_id"], identical["active_version_id"])
+        self.assertNotEqual(first["active_version_id"], changed["active_version_id"])
+        self.assertEqual(len(versions), 2)
+        self.assertEqual(self.service.get_paper("paper-1")["active_version_id"], changed["active_version_id"])
+        self.assertIn("Original evidence.", original_blocks[0]["text"])
+        self.assertIn("Changed evidence.", self.service.get_evidence_blocks("paper-1")[0]["text"])
+
 
 if __name__ == "__main__":
     unittest.main()

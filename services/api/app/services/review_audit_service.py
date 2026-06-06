@@ -41,10 +41,11 @@ class ReviewAuditService:
         finding_top_k: int = 3,
     ) -> dict:
         self._require_queue()
-        block_ids = self.repository.list_evidence_block_ids(paper_id)
+        version_id = str(self.repository.get_active_paper_version(paper_id)["version_id"])
+        block_ids = self.repository.list_version_evidence_block_ids(paper_id, version_id)
         blocks = [
             EvidenceBlock.from_dict(item)
-            for item in self.repository.get_evidence_blocks_by_ids(paper_id, block_ids)
+            for item in self.repository.get_version_evidence_blocks_by_ids(paper_id, version_id, block_ids)
         ]
         request = ReviewAuditRequest(
             paper_id=paper_id,
@@ -55,8 +56,9 @@ class ReviewAuditService:
         )
         payload = request.to_payload()
         payload.pop("evidence_blocks")
+        payload["paper_version_id"] = version_id
         payload["evidence_block_ids"] = block_ids
-        payload["evidence_source"] = "persisted_paper_snapshot"
+        payload["evidence_source"] = "persisted_paper_version"
         return self._enqueue_created(self._create_review_audit(payload))
 
     def _enqueue_created(self, created: dict[str, dict]) -> dict:

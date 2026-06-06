@@ -114,6 +114,7 @@ class ReviewAuditServiceTest(unittest.TestCase):
                     "score": 0.0,
                 }
             ],
+            version_id="version-1",
         )
         queue = RecordingQueue()
         service = ReviewAuditService(self.repository, queue)
@@ -127,6 +128,7 @@ class ReviewAuditServiceTest(unittest.TestCase):
 
         stored = self.repository.load_input(created["run"]["run_id"])
         self.assertEqual(stored["evidence_block_ids"], ["b1"])
+        self.assertEqual(stored["paper_version_id"], "version-1")
         self.assertNotIn("evidence_blocks", stored)
         self.assertNotIn("Sensitive evidence text", str(stored))
         self.assertEqual(queue.job_ids, [created["job"]["job_id"]])

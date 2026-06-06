@@ -47,6 +47,22 @@ def get_evidence_blocks(paper_id: str, request: Request) -> list[dict[str, Any]]
         raise _not_found(exc) from exc
 
 
+@router.get("/papers/{paper_id}/versions")
+def list_paper_versions(paper_id: str, request: Request) -> list[dict[str, Any]]:
+    try:
+        return request.app.state.paper_service.list_versions(paper_id)
+    except KeyError as exc:
+        raise _not_found(exc) from exc
+
+
+@router.get("/papers/{paper_id}/versions/{version_id}/evidence-blocks")
+def get_version_evidence_blocks(paper_id: str, version_id: str, request: Request) -> list[dict[str, Any]]:
+    try:
+        return request.app.state.paper_service.get_version_evidence_blocks(paper_id, version_id)
+    except KeyError as exc:
+        raise _not_found(exc) from exc
+
+
 @router.post(
     "/papers/{paper_id}/review-audit",
     status_code=status.HTTP_202_ACCEPTED,

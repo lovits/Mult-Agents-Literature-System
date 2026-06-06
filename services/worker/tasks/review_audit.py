@@ -27,6 +27,12 @@ def _execute_claimed_job(repository: SQLiteRunRepository, job: dict[str, Any] | 
         weaknesses = [Weakness.from_dict(item) for item in payload["weaknesses"]]
         if "evidence_blocks" in payload:
             block_payloads = payload["evidence_blocks"]
+        elif "paper_version_id" in payload:
+            block_payloads = repository.get_version_evidence_blocks_by_ids(
+                str(payload["paper_id"]),
+                str(payload["paper_version_id"]),
+                [str(item) for item in payload.get("evidence_block_ids", [])],
+            )
         else:
             block_payloads = repository.get_evidence_blocks_by_ids(
                 str(payload["paper_id"]),

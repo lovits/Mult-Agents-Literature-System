@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import sqlite3
 from contextlib import contextmanager
 from collections.abc import Iterator
@@ -20,6 +21,11 @@ def _encode(payload: dict[str, Any]) -> str:
 
 def _decode(payload: str | None) -> Any:
     return json.loads(payload) if payload else None
+
+
+def _derived_version_id(paper_id: str, title: str, sections: list[dict[str, Any]], blocks: list[dict[str, Any]]) -> str:
+    payload = _encode({"paper_id": paper_id, "title": title, "sections": sections, "blocks": blocks})
+    return f"version-{hashlib.sha256(payload.encode('utf-8')).hexdigest()[:24]}"
 
 
 class SQLiteRunRepository:
@@ -99,6 +105,38 @@ class SQLiteRunRepository:
                     text TEXT NOT NULL,
                     score REAL NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS paper_versions (
+                    version_id TEXT PRIMARY KEY,
+                    paper_id TEXT NOT NULL REFERENCES papers(paper_id) ON DELETE CASCADE,
+                    title TEXT NOT NULL,
+                    source_type TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS paper_active_versions (
+                    paper_id TEXT PRIMARY KEY REFERENCES papers(paper_id) ON DELETE CASCADE,
+                    version_id TEXT NOT NULL REFERENCES paper_versions(version_id)
+                );
+                CREATE TABLE IF NOT EXISTS paper_version_sections (
+                    version_id TEXT NOT NULL REFERENCES paper_versions(version_id) ON DELETE CASCADE,
+                    section_id TEXT NOT NULL,
+                    paper_id TEXT NOT NULL,
+                    ordinal INTEGER NOT NULL,
+                    section_path TEXT NOT NULL,
+                    section_type TEXT NOT NULL,
+                    text TEXT NOT NULL,
+                    PRIMARY KEY(version_id, section_id)
+                );
+                CREATE TABLE IF NOT EXISTS paper_version_evidence_blocks (
+                    version_id TEXT NOT NULL REFERENCES paper_versions(version_id) ON DELETE CASCADE,
+                    block_id TEXT NOT NULL,
+                    paper_id TEXT NOT NULL,
+                    ordinal INTEGER NOT NULL,
+                    section_path TEXT NOT NULL,
+                    section_type TEXT NOT NULL,
+                    text TEXT NOT NULL,
+                    score REAL NOT NULL,
+                    PRIMARY KEY(version_id, block_id)
+                );
                 CREATE TABLE IF NOT EXISTS reports (
                     report_id TEXT PRIMARY KEY,
                     run_id TEXT NOT NULL REFERENCES runs(run_id) ON DELETE CASCADE,
@@ -109,6 +147,61 @@ class SQLiteRunRepository:
                 );
                 """
             )
+            self._backfill_paper_versions(connection)
+
+    @staticmethod
+    def _backfill_paper_versions(connection: sqlite3.Connection) -> None:
+        papers = connection.execute(
+            """
+            SELECT papers.* FROM papers
+            LEFT JOIN paper_active_versions ON paper_active_versions.paper_id = papers.paper_id
+            WHERE paper_active_versions.paper_id IS NULL
+            ORDER BY papers.paper_id
+            """
+        ).fetchall()
+        for paper in papers:
+            sections = [
+                dict(row)
+                for row in connection.execute(
+                    "SELECT * FROM paper_sections WHERE paper_id = ? ORDER BY ordinal, section_id",
+                    (paper["paper_id"],),
+                ).fetchall()
+            ]
+            blocks = [
+                dict(row)
+                for row in connection.execute(
+                    "SELECT * FROM evidence_blocks WHERE paper_id = ? ORDER BY ordinal, block_id",
+                    (paper["paper_id"],),
+                ).fetchall()
+            ]
+            version_id = _derived_version_id(str(paper["paper_id"]), str(paper["title"]), sections, blocks)
+            connection.execute(
+                """
+                INSERT OR IGNORE INTO paper_versions(version_id, paper_id, title, source_type, created_at)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (version_id, paper["paper_id"], paper["title"], paper["source_type"], paper["updated_at"]),
+            )
+            connection.executemany(
+                """
+                INSERT OR IGNORE INTO paper_version_sections(
+                    version_id, section_id, paper_id, ordinal, section_path, section_type, text
+                ) VALUES (:version_id, :section_id, :paper_id, :ordinal, :section_path, :section_type, :text)
+                """,
+                [{**section, "version_id": version_id} for section in sections],
+            )
+            connection.executemany(
+                """
+                INSERT OR IGNORE INTO paper_version_evidence_blocks(
+                    version_id, block_id, paper_id, ordinal, section_path, section_type, text, score
+                ) VALUES (:version_id, :block_id, :paper_id, :ordinal, :section_path, :section_type, :text, :score)
+                """,
+                [{**block, "version_id": version_id} for block in blocks],
+            )
+            connection.execute(
+                "INSERT INTO paper_active_versions(paper_id, version_id) VALUES (?, ?)",
+                (paper["paper_id"], version_id),
+            )
 
     def replace_paper_assets(
         self,
@@ -116,8 +209,10 @@ class SQLiteRunRepository:
         title: str,
         sections: list[dict[str, Any]],
         blocks: list[dict[str, Any]],
+        version_id: str | None = None,
     ) -> None:
         timestamp = _now()
+        resolved_version_id = version_id or _derived_version_id(paper_id, title, sections, blocks)
         with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
             existing = connection.execute("SELECT created_at FROM papers WHERE paper_id = ?", (paper_id,)).fetchone()
@@ -129,6 +224,36 @@ class SQLiteRunRepository:
                     updated_at = excluded.updated_at
                 """,
                 (paper_id, title, created_at, timestamp),
+            )
+            connection.execute(
+                """
+                INSERT OR IGNORE INTO paper_versions(version_id, paper_id, title, source_type, created_at)
+                VALUES (?, ?, ?, 'markdown', ?)
+                """,
+                (resolved_version_id, paper_id, title, timestamp),
+            )
+            connection.executemany(
+                """
+                INSERT OR IGNORE INTO paper_version_sections(
+                    version_id, section_id, paper_id, ordinal, section_path, section_type, text
+                ) VALUES (:version_id, :section_id, :paper_id, :ordinal, :section_path, :section_type, :text)
+                """,
+                [{**section, "version_id": resolved_version_id} for section in sections],
+            )
+            connection.executemany(
+                """
+                INSERT OR IGNORE INTO paper_version_evidence_blocks(
+                    version_id, block_id, paper_id, ordinal, section_path, section_type, text, score
+                ) VALUES (:version_id, :block_id, :paper_id, :ordinal, :section_path, :section_type, :text, :score)
+                """,
+                [{**block, "version_id": resolved_version_id} for block in blocks],
+            )
+            connection.execute(
+                """
+                INSERT INTO paper_active_versions(paper_id, version_id) VALUES (?, ?)
+                ON CONFLICT(paper_id) DO UPDATE SET version_id = excluded.version_id
+                """,
+                (paper_id, resolved_version_id),
             )
             connection.execute("DELETE FROM paper_sections WHERE paper_id = ?", (paper_id,))
             connection.execute("DELETE FROM evidence_blocks WHERE paper_id = ?", (paper_id,))
@@ -152,7 +277,32 @@ class SQLiteRunRepository:
             row = connection.execute("SELECT * FROM papers WHERE paper_id = ?", (paper_id,)).fetchone()
         if row is None:
             raise KeyError(f"paper not found: {paper_id}")
+        paper = dict(row)
+        paper["active_version_id"] = self.get_active_paper_version(paper_id)["version_id"]
+        return paper
+
+    def get_active_paper_version(self, paper_id: str) -> dict[str, Any]:
+        with self._connection() as connection:
+            row = connection.execute(
+                """
+                SELECT paper_versions.* FROM paper_active_versions
+                JOIN paper_versions ON paper_versions.version_id = paper_active_versions.version_id
+                WHERE paper_active_versions.paper_id = ?
+                """,
+                (paper_id,),
+            ).fetchone()
+        if row is None:
+            raise KeyError(f"active paper version not found: {paper_id}")
         return dict(row)
+
+    def list_paper_versions(self, paper_id: str) -> list[dict[str, Any]]:
+        self.get_paper(paper_id)
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT * FROM paper_versions WHERE paper_id = ? ORDER BY created_at, version_id",
+                (paper_id,),
+            ).fetchall()
+        return [dict(row) for row in rows]
 
     def list_paper_sections(self, paper_id: str) -> list[dict[str, Any]]:
         with self._connection() as connection:
@@ -190,6 +340,55 @@ class SQLiteRunRepository:
         if missing:
             raise KeyError(f"evidence block not found for paper {paper_id}: {missing[0]}")
         return [by_id[block_id] for block_id in block_ids]
+
+    def list_version_evidence_blocks(self, paper_id: str, version_id: str) -> list[dict[str, Any]]:
+        self._get_paper_version(paper_id, version_id)
+        with self._connection() as connection:
+            rows = connection.execute(
+                """
+                SELECT * FROM paper_version_evidence_blocks
+                WHERE paper_id = ? AND version_id = ? ORDER BY ordinal, block_id
+                """,
+                (paper_id, version_id),
+            ).fetchall()
+        return [dict(row) for row in rows]
+
+    def list_version_evidence_block_ids(self, paper_id: str, version_id: str) -> list[str]:
+        return [str(item["block_id"]) for item in self.list_version_evidence_blocks(paper_id, version_id)]
+
+    def get_version_evidence_blocks_by_ids(
+        self,
+        paper_id: str,
+        version_id: str,
+        block_ids: list[str],
+    ) -> list[dict[str, Any]]:
+        self._get_paper_version(paper_id, version_id)
+        if not block_ids:
+            return []
+        placeholders = ", ".join("?" for _ in block_ids)
+        with self._connection() as connection:
+            rows = connection.execute(
+                f"""
+                SELECT * FROM paper_version_evidence_blocks
+                WHERE paper_id = ? AND version_id = ? AND block_id IN ({placeholders})
+                """,
+                (paper_id, version_id, *block_ids),
+            ).fetchall()
+        by_id = {str(row["block_id"]): dict(row) for row in rows}
+        missing = [block_id for block_id in block_ids if block_id not in by_id]
+        if missing:
+            raise KeyError(f"version evidence block not found for paper {paper_id}: {missing[0]}")
+        return [by_id[block_id] for block_id in block_ids]
+
+    def _get_paper_version(self, paper_id: str, version_id: str) -> dict[str, Any]:
+        with self._connection() as connection:
+            row = connection.execute(
+                "SELECT * FROM paper_versions WHERE paper_id = ? AND version_id = ?",
+                (paper_id, version_id),
+            ).fetchone()
+        if row is None:
+            raise KeyError(f"paper version not found: {paper_id}, {version_id}")
+        return dict(row)
 
     def create_report(
         self,
