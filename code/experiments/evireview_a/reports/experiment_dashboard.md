@@ -27,7 +27,7 @@ This dashboard aggregates the current A-version experiment state across dataset 
 | Auxiliary classifier | Local OpenReview/PRISM | metadata Macro-F1 | 0.68 | diagnostic | Classification remains auxiliary; metadata baseline is strongest. |
 | Rubric-agent generation | Local OpenReview/PRISM | Coverage recall @ 0.18 | 0.4805 | pipeline baseline | Deterministic reviewer validates Agent -> RAG interface. |
 | GLM-4.6V reviewer sample | Local OpenReview/PRISM | Coverage recall @ 0.18 | 0.5952 | ok | 27 generated; labels: {'Mentioned but Not Problem': 9, 'Partially Supported': 13, 'Unsupported': 3, 'Supported': 2} |
-| Paired reviewer comparison | GLM overlap papers | Coverage recall @ 0.18 | 0.5952 | diagnostic | GLM vs rubric: 0.5952 vs 0.3875 |
+| Paired reviewer comparison | GLM overlap papers | Coverage recall @ 0.18 | 0.5232 | diagnostic | GLM vs rubric: 0.5232 vs 0.4437 |
 | Hierarchical Paper-RAG | Generated weaknesses | GLM mean support | 0.5212 | diagnostic | GLM partial+ 0.6667; rubric support 0.1999 |
 | Human hierarchical retrieval | Local OpenReview/PRISM | Top-1 section alignment | 0.9993 | diagnostic | 1463 human weaknesses; top tools {'semantic_search': 807, 'keyword_search': 567, 'section_read': 89} |
 | Retrieval comparison queue | Human weaknesses | Selected annotation rows | 300 | ready | Top-1 disagreement 0.6138; Top-3 disagreement 0.9645 |

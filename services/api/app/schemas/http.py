@@ -38,6 +38,7 @@ class ReviewAuditInput(BaseModel):
     evidence_blocks: list[EvidenceBlockInput] = Field(default_factory=list)
     top_k: int = Field(default=5, gt=0)
     finding_top_k: int = Field(default=3, gt=0)
+    graph_profile: str = "full"
 
     def to_request(self) -> ReviewAuditRequest:
         return ReviewAuditRequest(
@@ -46,6 +47,7 @@ class ReviewAuditInput(BaseModel):
             evidence_blocks=[EvidenceBlock.from_dict(item.model_dump()) for item in self.evidence_blocks],
             top_k=self.top_k,
             finding_top_k=self.finding_top_k,
+            graph_profile=self.graph_profile,
         )
 
 
@@ -69,6 +71,7 @@ class PersistedPaperReviewAuditInput(BaseModel):
     weaknesses: list[WeaknessInput] = Field(default_factory=list)
     top_k: int = Field(default=5, gt=0)
     finding_top_k: int = Field(default=3, gt=0)
+    graph_profile: str = "full"
 
     def to_weaknesses(self) -> list[Weakness]:
         return [Weakness.from_dict(item.model_dump()) for item in self.weaknesses]
@@ -83,6 +86,7 @@ class ExperimentPaperAuditInput(PersistedPaperReviewAuditInput):
             weaknesses=self.to_weaknesses(),
             top_k=self.top_k,
             finding_top_k=self.finding_top_k,
+            graph_profile=self.graph_profile,
         )
 
 

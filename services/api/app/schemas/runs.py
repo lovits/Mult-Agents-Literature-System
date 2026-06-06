@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from evireview_core.domain.models import EvidenceBlock, Weakness
+from evireview_core.workflow.registry import DEFAULT_GRAPH_REGISTRY
 
 
 RUN_STATUSES = {"created", "queued", "running", "succeeded", "failed", "cancelled"}
@@ -17,6 +18,7 @@ class ReviewAuditRequest:
     evidence_blocks: list[EvidenceBlock]
     top_k: int = 5
     finding_top_k: int = 3
+    graph_profile: str = "full"
 
     def __post_init__(self) -> None:
         if not self.paper_id.strip():
@@ -25,6 +27,8 @@ class ReviewAuditRequest:
             raise ValueError("top_k must be positive")
         if self.finding_top_k <= 0:
             raise ValueError("finding_top_k must be positive")
+        if self.graph_profile not in DEFAULT_GRAPH_REGISTRY.names():
+            raise ValueError(f"unknown graph_profile: {self.graph_profile}")
         paper_ids = {item.paper_id for item in [*self.weaknesses, *self.evidence_blocks]}
         if paper_ids - {self.paper_id}:
             raise ValueError("weaknesses and evidence blocks must belong to the same paper")
@@ -36,6 +40,7 @@ class ReviewAuditRequest:
             "evidence_blocks": [item.to_dict() for item in self.evidence_blocks],
             "top_k": self.top_k,
             "finding_top_k": self.finding_top_k,
+            "graph_profile": self.graph_profile,
         }
 
 
@@ -45,6 +50,7 @@ class PersistedPaperReviewAuditRequest:
     weaknesses: list[Weakness]
     top_k: int = 5
     finding_top_k: int = 3
+    graph_profile: str = "full"
 
 
 @dataclass(frozen=True)

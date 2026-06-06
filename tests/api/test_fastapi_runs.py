@@ -82,6 +82,14 @@ class FastApiRunsTest(unittest.TestCase):
         self.assertNotIn("result_json", payload["run"])
         self.assertNotIn("attempt_token", payload["job"])
 
+    def test_create_run_rejects_unknown_graph_profile(self) -> None:
+        response = self.client.post(
+            "/api/runs/review-audit",
+            json={"paper_id": "p1", "weaknesses": [], "evidence_blocks": [], "graph_profile": "missing"},
+        )
+
+        self.assertEqual(response.status_code, 422)
+
     def test_run_job_then_read_run_findings_trace_and_job(self) -> None:
         created = self.client.post(
             "/api/runs/review-audit",

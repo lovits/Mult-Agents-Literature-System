@@ -75,3 +75,44 @@ Phase 2H-A 只建立稳定聚合基线；实验复跑和算法优化进入 Phase
 | MiniMax-M2.7 | 15 | 0.5232 | 0.4670 | 0.4667 |
 
 结果已通过独立 validator，并重新进入统一指标导出和论文实验表格。该结果仍是 5-paper diagnostic，不是最终 provider 排名。
+
+## Phase 2H-B 已完成任务 2：Graph Registry 与无人工标注消融
+
+后端 Agent-RAG graph 已提供 `full`、`no_verifier`、`no_ranker` 三个注册 profile，并贯通 API、持久化任务和 worker。未知 profile 返回 422，默认行为仍为 `full`。
+
+在同一 49 篇论文、194 个 rubric-agent candidates 上，使用 full graph verifier 作为共享 silver reference：
+
+| Profile | Selected | Mean reference support | Partial+ | Top-k overlap with full |
+| --- | ---: | ---: | ---: | ---: |
+| full | 141 | 0.3632 | 0.0355 | 1.0000 |
+| no_verifier | 141 | 0.3569 | 0.0071 | 0.9362 |
+| no_ranker | 141 | 0.3583 | 0.0142 | 0.9078 |
+
+结果支持保留 verifier 与 evidence-aware ranker，但仍属于 silver ablation。
+
+## Phase 2H-B 已完成任务 3：Dense / Hybrid Retrieval 与 Qdrant Adapter
+
+核心检索层新增：
+
+- injectable dense cosine retriever；
+- BM25 + dense 的 RRF hybrid retriever；
+- dependency-free Qdrant Query API adapter，使用 `prefetch + fusion=rrf`；
+- Qdrant transport injection 单元测试，不要求本地 Qdrant 服务。
+
+在 CLAIMCHECK 同一 ready-label mapped targets 上：
+
+| Method | Main Hit@1 | Main Hit@3 | Main Hit@5 | Main MRR |
+| --- | ---: | ---: | ---: | ---: |
+| BM25 sparse | 0.1806 | 0.3611 | 0.4167 | 0.3135 |
+| OpenRouter dense | 0.2222 | 0.5000 | 0.6944 | 0.4067 |
+| BM25 + dense RRF hybrid | 0.2361 | 0.4306 | 0.5556 | 0.3834 |
+
+Dense 在 Hit@3 上优于 BM25；未调参 RRF 提升 BM25 的 MRR，但没有超过 dense。后续优化应调节 fusion / rerank，而不是把 hybrid 固定为默认最佳方法。
+
+## Phase 2H-B Validator Gate
+
+- provider paired comparison validator：passed；
+- graph ablation validator：passed；
+- dense/hybrid retrieval validator：passed；
+- Phase 2H-B mission validator：检查以上结果均进入统一指标导出；
+- 当前 unified metric records：1736。

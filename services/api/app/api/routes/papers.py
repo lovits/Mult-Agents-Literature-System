@@ -92,6 +92,7 @@ def create_persisted_paper_review_audit(
             payload.to_weaknesses(),
             top_k=payload.top_k,
             finding_top_k=payload.finding_top_k,
+            graph_profile=payload.graph_profile,
         )
     except KeyError as exc:
         raise _not_found(exc) from exc

@@ -9,6 +9,7 @@ from evireview_core.io.jsonl import read_jsonl
 from evireview_core.providers.base import ProviderGeneration
 from evireview_core.workflow.deterministic import run_deterministic_review_audit
 from evireview_core.workflow.graph import ReviewAuditGraph
+from evireview_core.workflow.registry import DEFAULT_GRAPH_REGISTRY
 from evireview_core.workflow.state import ReviewAuditState, WeaknessGenerationResult
 
 
@@ -142,6 +143,30 @@ class DeterministicWorkflowTest(unittest.TestCase):
         result = run_deterministic_review_audit(weaknesses, blocks, top_k=1, finding_top_k=1)
 
         self.assertEqual(len(result["ranked_findings"]), 1)
+
+    def test_graph_registry_exposes_full_no_verifier_and_no_ranker_profiles(self) -> None:
+        self.assertEqual(DEFAULT_GRAPH_REGISTRY.names(), ("full", "no_ranker", "no_verifier"))
+        with self.assertRaisesRegex(KeyError, "graph profile"):
+            DEFAULT_GRAPH_REGISTRY.get("missing")
+
+    def test_no_verifier_and_no_ranker_profiles_remain_executable(self) -> None:
+        state = ReviewAuditState(
+            weaknesses=[
+                Weakness("w1", "p1", "The paper lacks ablation baselines.", "experiment", "major"),
+                Weakness("w2", "p1", "The motivation is unclear.", "clarity", "minor"),
+            ],
+            evidence_blocks=[EvidenceBlock("b1", "p1", "Experiments", "experiment", "The paper reports results.")],
+            finding_top_k=1,
+        )
+
+        no_verifier = ReviewAuditGraph(profile="no_verifier").run(state)
+        no_ranker = ReviewAuditGraph(profile="no_ranker").run(
+            ReviewAuditState(weaknesses=state.weaknesses, evidence_blocks=state.evidence_blocks, finding_top_k=1)
+        )
+
+        self.assertTrue(all(item.label == "Supported" for item in no_verifier.verification.values()))
+        self.assertEqual(no_ranker.ranked_findings[0].weakness_id, "w1")
+        self.assertEqual(no_ranker.agent_trace[-1]["node"], "preserve_candidate_order")
 
 
 if __name__ == "__main__":

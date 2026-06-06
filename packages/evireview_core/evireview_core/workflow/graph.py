@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any
 
-from evireview_core.workflow.nodes import generate_or_import_weaknesses, rank_findings, retrieve_evidence, verify_weaknesses
+from evireview_core.workflow.registry import DEFAULT_GRAPH_REGISTRY, GraphRegistry
 from evireview_core.workflow.state import ReviewAuditState
 
 
@@ -15,13 +15,9 @@ class AgentNodeError(RuntimeError):
 
 
 class ReviewAuditGraph:
-    def __init__(self) -> None:
-        self.nodes: tuple[tuple[str, Callable[[ReviewAuditState], dict[str, Any] | None]], ...] = (
-            ("generate_or_import_weaknesses", generate_or_import_weaknesses),
-            ("retrieve_evidence", retrieve_evidence),
-            ("verify_weaknesses", verify_weaknesses),
-            ("rank_findings", rank_findings),
-        )
+    def __init__(self, profile: str = "full", registry: GraphRegistry = DEFAULT_GRAPH_REGISTRY) -> None:
+        self.profile = profile
+        self.nodes: tuple[tuple[str, Callable[[ReviewAuditState], dict[str, Any] | None]], ...] = registry.get(profile).nodes
 
     def run(self, state: ReviewAuditState) -> ReviewAuditState:
         for node_name, node in self.nodes:

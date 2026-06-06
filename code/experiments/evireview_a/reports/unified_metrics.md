@@ -45,6 +45,75 @@
 | CLAIMCHECK | ranker | evidence_ranker | feature_verifier_probability | ndcg_at_5 | 0.8198 | diagnostic | claimcheck_evidence_ranker_metrics.json |
 | CLAIMCHECK | ranker | evidence_ranker | feature_verifier_probability | skipped_single_label_group_count | 30 | diagnostic | claimcheck_evidence_ranker_metrics.json |
 | CLAIMCHECK | ranker | evidence_ranker | feature_verifier_probability | top1_grounded_rate | 0.5833 | diagnostic | claimcheck_evidence_ranker_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | main.grounded_weakness_count | 108 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | main.hit_at_1 | 0.2361 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | main.hit_at_10 | 0.6806 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | main.hit_at_3 | 0.4306 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | main.hit_at_5 | 0.5556 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | main.mapped_target_count | 72 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | main.mrr | 0.3834 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | main.target_mapping_threshold | 0.7 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | main.unmapped_target_count | 36 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | pilot.grounded_weakness_count | 12 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | pilot.hit_at_1 | 0.5 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | pilot.hit_at_10 | 0.8333 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | pilot.hit_at_3 | 0.6667 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | pilot.hit_at_5 | 0.6667 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | pilot.mapped_target_count | 6 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | pilot.mrr | 0.578 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | pilot.target_mapping_threshold | 0.7 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_openrouter_rrf_hybrid | pilot.unmapped_target_count | 6 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | main.grounded_weakness_count | 108 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | main.hit_at_1 | 0.1806 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | main.hit_at_10 | 0.5833 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | main.hit_at_3 | 0.3611 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | main.hit_at_5 | 0.4167 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | main.mapped_target_count | 72 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | main.mrr | 0.3135 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | main.target_mapping_threshold | 0.7 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | main.unmapped_target_count | 36 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | pilot.grounded_weakness_count | 12 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | pilot.hit_at_1 | 0.5 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | pilot.hit_at_10 | 0.8333 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | pilot.hit_at_3 | 0.5 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | pilot.hit_at_5 | 0.5 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | pilot.mapped_target_count | 6 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | pilot.mrr | 0.5442 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | pilot.target_mapping_threshold | 0.7 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | bm25_sparse | pilot.unmapped_target_count | 6 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | main.grounded_weakness_count | 108 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | main.hit_at_1 | 0.2222 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | main.hit_at_10 | 0.7917 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | main.hit_at_3 | 0.5 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | main.hit_at_5 | 0.6944 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | main.mapped_target_count | 72 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | main.mrr | 0.4067 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | main.target_mapping_threshold | 0.7 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | main.unmapped_target_count | 36 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | pilot.grounded_weakness_count | 12 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | pilot.hit_at_1 | 0.3333 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | pilot.hit_at_10 | 0.6667 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | pilot.hit_at_3 | 0.6667 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | pilot.hit_at_5 | 0.6667 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | pilot.mapped_target_count | 6 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | pilot.mrr | 0.5184 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | pilot.target_mapping_threshold | 0.7 | gold | dense_hybrid_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | paper_rag | openrouter_dense | pilot.unmapped_target_count | 6 | gold | dense_hybrid_retrieval_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | full | mean_reference_support | 0.3632 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | full | reference_partial_or_better_rate | 0.0355 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | full | reference_unsupported_rate | 0.0 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | full | selected_count | 141 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | full | topk_overlap_with_full | 1.0 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | no_ranker | mean_reference_support | 0.3583 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | no_ranker | reference_partial_or_better_rate | 0.0142 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | no_ranker | reference_unsupported_rate | 0.0 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | no_ranker | selected_count | 141 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | no_ranker | topk_overlap_with_full | 0.9078 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | no_verifier | mean_reference_support | 0.3569 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | no_verifier | reference_partial_or_better_rate | 0.0071 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | no_verifier | reference_unsupported_rate | 0.0 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | no_verifier | selected_count | 141 | silver | graph_ablation_metrics.json |
+| Local OpenReview/PRISM | ablation | agent_rag_graph | no_verifier | topk_overlap_with_full | 0.9362 | silver | graph_ablation_metrics.json |
 | Local OpenReview/PRISM | classification | auxiliary_classifier | aggregate | 0.aggregate.accuracy | 0.5 | diagnostic | local_decision_classifier_metrics.json |
 | Local OpenReview/PRISM | classification | auxiliary_classifier | aggregate | 0.aggregate.confusion.Accept.Accept | 5 | diagnostic | local_decision_classifier_metrics.json |
 | Local OpenReview/PRISM | classification | auxiliary_classifier | aggregate | 0.aggregate.confusion.Accept.Reject | 20 | diagnostic | local_decision_classifier_metrics.json |

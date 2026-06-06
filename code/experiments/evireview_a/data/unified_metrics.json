@@ -430,6 +430,696 @@
     "source_artifact": "claimcheck_evidence_ranker_metrics.json"
   },
   {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "main.grounded_weakness_count",
+    "value": 108,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "main.hit_at_1",
+    "value": 0.2361,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "main.hit_at_10",
+    "value": 0.6806,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "main.hit_at_3",
+    "value": 0.4306,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "main.hit_at_5",
+    "value": 0.5556,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "main.mapped_target_count",
+    "value": 72,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "main.mrr",
+    "value": 0.3834,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "main.target_mapping_threshold",
+    "value": 0.7,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "main.unmapped_target_count",
+    "value": 36,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.grounded_weakness_count",
+    "value": 12,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.hit_at_1",
+    "value": 0.5,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.hit_at_10",
+    "value": 0.8333,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.hit_at_3",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.hit_at_5",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.mapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.mrr",
+    "value": 0.578,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.target_mapping_threshold",
+    "value": 0.7,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.unmapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "main.grounded_weakness_count",
+    "value": 108,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "main.hit_at_1",
+    "value": 0.1806,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "main.hit_at_10",
+    "value": 0.5833,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "main.hit_at_3",
+    "value": 0.3611,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "main.hit_at_5",
+    "value": 0.4167,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "main.mapped_target_count",
+    "value": 72,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "main.mrr",
+    "value": 0.3135,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "main.target_mapping_threshold",
+    "value": 0.7,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "main.unmapped_target_count",
+    "value": 36,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "pilot.grounded_weakness_count",
+    "value": 12,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "pilot.hit_at_1",
+    "value": 0.5,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "pilot.hit_at_10",
+    "value": 0.8333,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "pilot.hit_at_3",
+    "value": 0.5,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "pilot.hit_at_5",
+    "value": 0.5,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "pilot.mapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "pilot.mrr",
+    "value": 0.5442,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "pilot.target_mapping_threshold",
+    "value": 0.7,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "bm25_sparse",
+    "metric": "pilot.unmapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "main.grounded_weakness_count",
+    "value": 108,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "main.hit_at_1",
+    "value": 0.2222,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "main.hit_at_10",
+    "value": 0.7917,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "main.hit_at_3",
+    "value": 0.5,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "main.hit_at_5",
+    "value": 0.6944,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "main.mapped_target_count",
+    "value": 72,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "main.mrr",
+    "value": 0.4067,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "main.target_mapping_threshold",
+    "value": 0.7,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "main.unmapped_target_count",
+    "value": 36,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "pilot.grounded_weakness_count",
+    "value": 12,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "pilot.hit_at_1",
+    "value": 0.3333,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "pilot.hit_at_10",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "pilot.hit_at_3",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "pilot.hit_at_5",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "pilot.mapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "pilot.mrr",
+    "value": 0.5184,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "pilot.target_mapping_threshold",
+    "value": 0.7,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag",
+    "method": "openrouter_dense",
+    "metric": "pilot.unmapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "dense_hybrid_retrieval_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "full",
+    "metric": "mean_reference_support",
+    "value": 0.3632,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "full",
+    "metric": "reference_partial_or_better_rate",
+    "value": 0.0355,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "full",
+    "metric": "reference_unsupported_rate",
+    "value": 0.0,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "full",
+    "metric": "selected_count",
+    "value": 141,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "full",
+    "metric": "topk_overlap_with_full",
+    "value": 1.0,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_ranker",
+    "metric": "mean_reference_support",
+    "value": 0.3583,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_ranker",
+    "metric": "reference_partial_or_better_rate",
+    "value": 0.0142,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_ranker",
+    "metric": "reference_unsupported_rate",
+    "value": 0.0,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_ranker",
+    "metric": "selected_count",
+    "value": 141,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_ranker",
+    "metric": "topk_overlap_with_full",
+    "value": 0.9078,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_verifier",
+    "metric": "mean_reference_support",
+    "value": 0.3569,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_verifier",
+    "metric": "reference_partial_or_better_rate",
+    "value": 0.0071,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_verifier",
+    "metric": "reference_unsupported_rate",
+    "value": 0.0,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_verifier",
+    "metric": "selected_count",
+    "value": 141,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_verifier",
+    "metric": "topk_overlap_with_full",
+    "value": 0.9362,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
     "dataset": "Local OpenReview/PRISM",
     "task": "classification",
     "module": "auxiliary_classifier",

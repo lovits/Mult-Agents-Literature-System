@@ -41,6 +41,7 @@ class ReviewAuditService:
         weaknesses: list[Weakness],
         top_k: int = 5,
         finding_top_k: int = 3,
+        graph_profile: str = "full",
     ) -> dict:
         self._require_queue()
         version_id = str(self.repository.get_active_paper_version(paper_id)["version_id"])
@@ -55,6 +56,7 @@ class ReviewAuditService:
             evidence_blocks=blocks,
             top_k=top_k,
             finding_top_k=finding_top_k,
+            graph_profile=graph_profile,
         )
         payload = request.to_payload()
         payload.pop("evidence_blocks")

@@ -26,6 +26,7 @@ ARTIFACT_SPECS = (
     ArtifactSpec("substanreview_baseline_metrics.json", "SubstanReview", "substantiation", "verifier", "gold", ("baselines",)),
     ArtifactSpec("claimcheck_feature_verifier_metrics.json", "CLAIMCHECK", "groundedness", "verifier", "diagnostic", ("feature_verifier",), "feature_verifier"),
     ArtifactSpec("claimcheck_evidence_ranker_metrics.json", "CLAIMCHECK", "ranker", "evidence_ranker", "diagnostic", ("metrics",)),
+    ArtifactSpec("dense_hybrid_retrieval_metrics.json", "CLAIMCHECK", "retrieval", "paper_rag", "gold", ("methods",)),
     ArtifactSpec("local_decision_classifier_metrics.json", "Local OpenReview/PRISM", "classification", "auxiliary_classifier", "diagnostic", ("results",)),
     ArtifactSpec("generated_reviewer_comparison_metrics.json", "Local OpenReview/PRISM", "generation", "reviewer_comparison", "diagnostic", ("generators",)),
     ArtifactSpec("generated_hierarchical_retrieval_summary.json", "Local OpenReview/PRISM", "retrieval", "generated_weakness_rag", "diagnostic", ("sources",)),
@@ -36,6 +37,7 @@ ARTIFACT_SPECS = (
     ArtifactSpec("rubric_agent_verifier_summary.json", "Local OpenReview/PRISM", "verification", "rubric_agent", "silver"),
     ArtifactSpec("glm_reviewer_verifier_summary.json", "Local OpenReview/PRISM", "verification", "glm_reviewer", "silver"),
     ArtifactSpec("minimax_reviewer_verifier_summary.json", "Local OpenReview/PRISM", "verification", "minimax_reviewer", "silver"),
+    ArtifactSpec("graph_ablation_metrics.json", "Local OpenReview/PRISM", "ablation", "agent_rag_graph", "silver", ("profiles",)),
 )
 
 

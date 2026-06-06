@@ -44,6 +44,7 @@ def _execute_claimed_job(repository: SQLiteRunRepository, job: dict[str, Any] | 
             blocks,
             top_k=int(payload.get("top_k", 5)),
             finding_top_k=int(payload.get("finding_top_k", 3)),
+            graph_profile=str(payload.get("graph_profile", "full")),
         )
         repository.save_result(run_id, job_id, attempt_token, result)
         return {"run_id": run_id, "job_id": job_id, "status": "succeeded"}

@@ -12,8 +12,9 @@ def run_deterministic_review_audit(
     blocks: list[EvidenceBlock],
     top_k: int = 5,
     finding_top_k: int = 3,
+    graph_profile: str = "full",
 ) -> dict[str, Any]:
-    state = ReviewAuditGraph().run(
+    state = ReviewAuditGraph(graph_profile).run(
         ReviewAuditState(
             weaknesses=weaknesses,
             evidence_blocks=blocks,
@@ -36,6 +37,7 @@ def run_deterministic_review_audit(
     }
     return {
         "workflow": "deterministic_review_audit_v1",
+        "graph_profile": graph_profile,
         "weakness_count": len(weaknesses),
         "evidence_block_count": len(blocks),
         "retrieval": retrieval,

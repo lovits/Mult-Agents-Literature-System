@@ -55,6 +55,28 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
         self.assertEqual(result["status"], "failed")
         self.assertIn("weakness_id", self.repository.get_run("run-bad")["error"])
 
+    def test_worker_executes_requested_graph_profile(self) -> None:
+        self.repository.create_run_and_job(
+            "run-profile",
+            "job-profile",
+            {
+                "paper_id": "p1",
+                "weaknesses": [
+                    Weakness("w1", "p1", "The paper lacks ablation baselines.", "experiment", "major").to_dict()
+                ],
+                "evidence_blocks": [
+                    EvidenceBlock("b1", "p1", "Experiments", "experiment", "The paper reports results.").to_dict()
+                ],
+                "graph_profile": "no_verifier",
+            },
+        )
+
+        run_next_job(self.repository)
+        result = self.repository.get_run("run-profile")["result"]
+
+        self.assertEqual(result["graph_profile"], "no_verifier")
+        self.assertEqual(result["agent_trace"][2]["node"], "assume_supported")
+
     def test_worker_recovers_running_job_before_execution(self) -> None:
         created = self.service.create_review_audit(ReviewAuditRequest(paper_id="p1", weaknesses=[], evidence_blocks=[]))
         self.repository.claim_next_job(lease_seconds=-1)

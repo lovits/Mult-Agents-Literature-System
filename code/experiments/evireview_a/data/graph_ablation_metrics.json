@@ -1,0 +1,32 @@
+{
+  "status": "ok",
+  "dataset": "Local OpenReview/PRISM",
+  "task": "agent_rag_graph_ablation",
+  "metric_boundary": "silver",
+  "paper_count": 49,
+  "candidate_count": 194,
+  "profiles": {
+    "full": {
+      "selected_count": 141,
+      "mean_reference_support": 0.3632,
+      "reference_partial_or_better_rate": 0.0355,
+      "reference_unsupported_rate": 0.0,
+      "topk_overlap_with_full": 1.0
+    },
+    "no_verifier": {
+      "selected_count": 141,
+      "mean_reference_support": 0.3569,
+      "reference_partial_or_better_rate": 0.0071,
+      "reference_unsupported_rate": 0.0,
+      "topk_overlap_with_full": 0.9362
+    },
+    "no_ranker": {
+      "selected_count": 141,
+      "mean_reference_support": 0.3583,
+      "reference_partial_or_better_rate": 0.0142,
+      "reference_unsupported_rate": 0.0,
+      "topk_overlap_with_full": 0.9078
+    }
+  },
+  "note": "All selected findings are evaluated against the full graph heuristic verifier as a shared silver reference."
+}
