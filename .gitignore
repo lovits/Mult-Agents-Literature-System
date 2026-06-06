@@ -9,6 +9,7 @@ __pycache__/
 .ruff_cache/
 .venv/
 venv/
+storage/
 
 # Codex/OMX runtime and local orchestration state
 .omx/

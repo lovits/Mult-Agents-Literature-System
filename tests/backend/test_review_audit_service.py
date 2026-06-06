@@ -72,6 +72,22 @@ class ReviewAuditServiceTest(unittest.TestCase):
         self.assertEqual(self.service.get_findings(run_id), [{"weakness_id": "w1"}])
         self.assertEqual([event["event_type"] for event in self.service.get_trace(run_id)], ["queued", "running", "succeeded"])
 
+    def test_service_compensates_enqueue_failure(self) -> None:
+        class FailingQueue:
+            def enqueue(self, job_id: str) -> str:
+                raise ConnectionError("redis unavailable")
+
+        from app.schemas.runs import ReviewAuditRequest
+        from app.services.review_audit_service import QueueDeliveryError, ReviewAuditService
+
+        service = ReviewAuditService(self.repository, FailingQueue())
+
+        with self.assertRaises(QueueDeliveryError):
+            service.create_and_enqueue(ReviewAuditRequest(paper_id="p1", weaknesses=[], evidence_blocks=[]))
+
+        job = self.repository.get_job_for_run(self.repository.list_runs()[0]["run_id"])
+        self.assertEqual(job["status"], "failed")
+
 
 if __name__ == "__main__":
     unittest.main()

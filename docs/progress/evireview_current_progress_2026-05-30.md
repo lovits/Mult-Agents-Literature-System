@@ -572,3 +572,7 @@ The first implementation increment is intentionally scoped to `packages/evirevie
 2026-06-06 update: the no-frontend backend increment is implemented under `services/api` and `services/worker`. It adds validated review-audit requests, SQLite dev-mode persistence, run/job lifecycle tracking, ordered trace events, lease-based stale-running-job recovery, attempt-token protection against late-worker writes, and a local worker that calls `packages/evireview_core`.
 
 This increment intentionally does not add FastAPI, Pydantic, Uvicorn, Redis, RQ, SQLAlchemy, Qdrant, or provider calls. The current environment does not contain those dependencies, and the repository rule requires explicit approval before adding new dependencies. No user data, API key, or manual annotation is required for Phase 2A. Phase 2B should add FastAPI/RQ adapters only after dependency approval.
+
+### Backend Phase 2B: FastAPI and RQ adapters
+
+2026-06-06 update: after explicit dependency approval, FastAPI, Pydantic, Uvicorn, Redis/RQ, and TestClient dependencies were added through service-level requirements and a repository-local `.venv`. The API now exposes health, review-audit creation, run status, findings, trace, and job status routes. RQ receives only a persisted `job_id` and SQLite path; raw weakness/evidence inputs are not copied into Redis or returned by run endpoints. Frontend, PostgreSQL, Qdrant, provider execution, and SSE remain deferred.

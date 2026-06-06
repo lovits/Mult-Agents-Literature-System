@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from contextlib import contextmanager
+from collections.abc import Iterator
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -30,9 +32,18 @@ class SQLiteRunRepository:
         connection.execute("PRAGMA foreign_keys = ON")
         return connection
 
+    @contextmanager
+    def _connection(self) -> Iterator[sqlite3.Connection]:
+        connection = self._connect()
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
+
     def initialize(self) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.executescript(
                 """
                 CREATE TABLE IF NOT EXISTS runs (
@@ -75,7 +86,7 @@ class SQLiteRunRepository:
             "workflow": "deterministic_review_audit_v1",
             "metric_boundary": "silver diagnostic",
         }
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
             connection.execute(
                 "INSERT INTO runs VALUES (?, ?, 'queued', ?, ?, NULL, NULL, ?, ?)",
@@ -88,28 +99,33 @@ class SQLiteRunRepository:
             self._insert_event(connection, job_id, "queued", {"run_id": run_id})
 
     def get_run(self, run_id: str) -> dict[str, Any]:
-        with self._connect() as connection:
+        with self._connection() as connection:
             row = connection.execute("SELECT * FROM runs WHERE run_id = ?", (run_id,)).fetchone()
         if row is None:
             raise KeyError(f"run not found: {run_id}")
         return self._run_dict(row)
 
+    def list_runs(self) -> list[dict[str, Any]]:
+        with self._connection() as connection:
+            rows = connection.execute("SELECT * FROM runs ORDER BY created_at, run_id").fetchall()
+        return [self._run_dict(row) for row in rows]
+
     def get_job(self, job_id: str) -> dict[str, Any]:
-        with self._connect() as connection:
+        with self._connection() as connection:
             row = connection.execute("SELECT * FROM jobs WHERE job_id = ?", (job_id,)).fetchone()
         if row is None:
             raise KeyError(f"job not found: {job_id}")
         return dict(row)
 
     def get_job_for_run(self, run_id: str) -> dict[str, Any]:
-        with self._connect() as connection:
+        with self._connection() as connection:
             row = connection.execute("SELECT * FROM jobs WHERE run_id = ?", (run_id,)).fetchone()
         if row is None:
             raise KeyError(f"job not found for run: {run_id}")
         return dict(row)
 
     def list_events(self, job_id: str) -> list[dict[str, Any]]:
-        with self._connect() as connection:
+        with self._connection() as connection:
             rows = connection.execute(
                 "SELECT * FROM job_events WHERE job_id = ? ORDER BY event_id", (job_id,)
             ).fetchall()
@@ -122,21 +138,33 @@ class SQLiteRunRepository:
         ]
 
     def load_input(self, run_id: str) -> dict[str, Any]:
-        with self._connect() as connection:
+        with self._connection() as connection:
             row = connection.execute("SELECT input_json FROM runs WHERE run_id = ?", (run_id,)).fetchone()
         if row is None:
             raise KeyError(f"run not found: {run_id}")
         return _decode(row["input_json"])
 
     def claim_next_job(self, lease_seconds: int = 300) -> dict[str, Any] | None:
+        return self._claim_job(None, lease_seconds)
+
+    def claim_job(self, job_id: str, lease_seconds: int = 300) -> dict[str, Any] | None:
+        return self._claim_job(job_id, lease_seconds)
+
+    def _claim_job(self, job_id: str | None, lease_seconds: int) -> dict[str, Any] | None:
         timestamp = _now()
         lease_expires_at = (datetime.now(UTC) + timedelta(seconds=lease_seconds)).isoformat()
         attempt_token = uuid4().hex
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
-            row = connection.execute(
-                "SELECT * FROM jobs WHERE status = 'queued' ORDER BY created_at, job_id LIMIT 1"
-            ).fetchone()
+            if job_id is None:
+                row = connection.execute(
+                    "SELECT * FROM jobs WHERE status = 'queued' ORDER BY created_at, job_id LIMIT 1"
+                ).fetchone()
+            else:
+                row = connection.execute(
+                    "SELECT * FROM jobs WHERE job_id = ? AND status = 'queued'",
+                    (job_id,),
+                ).fetchone()
             if row is None:
                 return None
             connection.execute(
@@ -161,7 +189,7 @@ class SQLiteRunRepository:
 
     def save_result(self, run_id: str, job_id: str, attempt_token: str, result: dict[str, Any]) -> None:
         timestamp = _now()
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
             pair = connection.execute(
                 """
@@ -198,7 +226,7 @@ class SQLiteRunRepository:
 
     def mark_failed(self, run_id: str, job_id: str, attempt_token: str, error: str) -> bool:
         timestamp = _now()
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
             pair = connection.execute(
                 """
@@ -229,9 +257,34 @@ class SQLiteRunRepository:
             self._insert_event(connection, job_id, "failed", {"error": error})
             return True
 
+    def mark_delivery_failed(self, run_id: str, job_id: str, error: str) -> bool:
+        timestamp = _now()
+        with self._connection() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            pair = connection.execute(
+                """
+                SELECT runs.status AS run_status, jobs.status AS job_status
+                FROM runs JOIN jobs ON jobs.run_id = runs.run_id
+                WHERE runs.run_id = ? AND jobs.job_id = ?
+                """,
+                (run_id, job_id),
+            ).fetchone()
+            if pair is None or pair["run_status"] != "queued" or pair["job_status"] != "queued":
+                return False
+            connection.execute(
+                "UPDATE runs SET status = 'failed', error = ?, updated_at = ? WHERE run_id = ? AND status = 'queued'",
+                (error, timestamp, run_id),
+            )
+            connection.execute(
+                "UPDATE jobs SET status = 'failed', error = ?, updated_at = ? WHERE job_id = ? AND status = 'queued'",
+                (error, timestamp, job_id),
+            )
+            self._insert_event(connection, job_id, "delivery_failed", {"error": error})
+            return True
+
     def recover_running_jobs(self) -> int:
         timestamp = _now()
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
             rows = connection.execute(
                 """

@@ -19,6 +19,15 @@ Import the local worker with:
 from services.worker.tasks.review_audit import recover_and_run, run_next_job
 ```
 
-Phase 2B may wrap the same task function with RQ after Redis/RQ dependencies are explicitly approved.
+Phase 2B wraps the same task function with RQ while preserving SQLite as the lifecycle source of truth.
 
 The local worker currently uses a fixed five-minute lease and does not renew leases with a heartbeat. Increase or renew the lease before using it for workflows that can exceed five minutes.
+
+Run the RQ worker:
+
+```bash
+redis-server
+PYTHONPATH=packages/evireview_core:services/api:. .venv/bin/rq worker evireview --url redis://localhost:6379/0
+```
+
+RQ receives only the SQLite path and persisted `job_id`; raw weakness/evidence payloads are not copied into Redis.

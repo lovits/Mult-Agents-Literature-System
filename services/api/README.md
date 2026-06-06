@@ -1,19 +1,30 @@
 # EviReview API Application Layer
 
-This directory currently contains the dependency-free Phase 2A backend application layer. It is not an HTTP server yet.
+This directory contains the Phase 2A application layer and Phase 2B FastAPI adapter.
 
 Implemented boundaries:
 
 - `app.schemas.runs`: review-audit input and lifecycle contracts.
 - `app.repositories.sqlite_run_repository`: local SQLite dev-mode persistence for runs, jobs, results, and trace events.
 - `app.services.review_audit_service`: application use cases suitable for future FastAPI route handlers.
+- `app.main:create_app`: FastAPI application factory.
+- `app.queue.rq_queue`: Redis/RQ delivery adapter.
 
-The application layer never accepts or stores provider API keys. The current workflow executes only the deterministic `silver diagnostic` core pipeline.
+The API never accepts or stores provider API keys. Raw weakness/evidence inputs are persisted in SQLite for worker use and are not returned by run endpoints. The current workflow executes only the deterministic `silver diagnostic` core pipeline.
 
-Run backend tests from the repository root:
+Install and run from the repository root:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=packages/evireview_core:services/api:. python3 -m unittest discover -s tests/backend -v
+python3 -m venv .venv
+.venv/bin/python -m pip install -r services/api/requirements.txt
+PYTHONPATH=packages/evireview_core:services/api:. .venv/bin/uvicorn app.main:create_app --factory --reload
 ```
 
-Phase 2B will add FastAPI request/response adapters only after dependency approval. HTTP handlers must call the service layer rather than repository or core functions directly.
+Run API and backend tests:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=packages/evireview_core:services/api:. .venv/bin/python -m unittest discover -s tests/api -v
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=packages/evireview_core:services/api:. .venv/bin/python -m unittest discover -s tests/backend -v
+```
+
+HTTP handlers call the service layer rather than repository or core functions directly.

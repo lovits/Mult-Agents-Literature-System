@@ -8,7 +8,14 @@ from evireview_core.workflow.deterministic import run_deterministic_review_audit
 
 
 def run_next_job(repository: SQLiteRunRepository) -> dict[str, Any] | None:
-    job = repository.claim_next_job()
+    return _execute_claimed_job(repository, repository.claim_next_job())
+
+
+def run_job(repository: SQLiteRunRepository, job_id: str) -> dict[str, Any] | None:
+    return _execute_claimed_job(repository, repository.claim_job(job_id))
+
+
+def _execute_claimed_job(repository: SQLiteRunRepository, job: dict[str, Any] | None) -> dict[str, Any] | None:
     if job is None:
         return None
 
