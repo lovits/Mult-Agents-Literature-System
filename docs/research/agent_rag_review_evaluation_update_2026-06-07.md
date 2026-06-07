@@ -10,6 +10,9 @@
 - SciCompanion 使用图结构和多跳推理，并评价 retrieval accuracy、semantic overlap 与 multi-hop sensitivity。
 - CLAIMCHECK 将科学评审转化为 claim-grounded reviewing tasks。
 - SubstanReview 将 substantiation 定义为评审主张是否得到充分证据支持。
+- PRISM（2026）不再用单一文本相似度评价 reviewer，而是分别评价分析深度、新颖性判断、缺陷识别与优先级、建设性，并结合 argument mining、retrieval-augmented verification 和 consensus scoring。
+- Mind the Blind Spots 使用 `target × aspect` 的 focus-level 分布比较 LLM 与人工评审，说明总体分数会掩盖 reviewer 的结构性盲区。
+- LLM-as-a-Reviewer 与 Breaking the Reviewer 表明自动评审必须单独评价 prompt injection 和文本对抗鲁棒性。
 
 ## 更新后的创新点
 
@@ -17,6 +20,8 @@
 2. **Auditable Agent-RAG configuration**：Query Planner、Retriever、Verifier、Ranker 使用显式配置与 agent trace，可独立消融。
 3. **Boundary-aware evaluation**：统一区分 gold、silver、proxy、diagnostic。
 4. **Failure-preserving optimization**：实验未提升时保留负结果，用于决定默认组件和后续方向。
+5. **Focus-aware reviewer coverage**：按 `paper target × review aspect` 输出覆盖矩阵，避免把生成数量或总体相似度误当作全面评审。
+6. **Adversarially bounded paper processing**：将论文正文视为不可信数据，provider prompt 与 Paper-RAG 节点不得执行正文中的指令，并单独记录鲁棒性实验。
 
 ## 架构决策
 
@@ -24,6 +29,9 @@
 - Query Planner 与 Retriever 必须能够分别选择和追踪。
 - 默认 planner 只有在 ready-label 实验中优于 direct query 后才允许切换。
 - Verifier 继续作为独立节点，后续使用 CLAIMCHECK / SubstanReview 验证更强模型。
+- Provider 生成必须是显式可选组件，生成结果必须继续经过检索、verifier 与 ranker，不能绕过 evidence gate。
+- 后续 verifier 评估增加校准、少数类 F1 和 evaluator agreement；最终 reviewer 评估增加 focus coverage 与 adversarial robustness。
+- TreeReview 的动态问题树适合作为未来 planner 候选，但当前 category-expansion planner 在 CLAIMCHECK 上没有提升，因此不能直接替换默认 direct planner。
 
 ## 来源
 
@@ -31,3 +39,8 @@
 - SciCompanion, Findings of EMNLP 2025: https://aclanthology.org/2025.findings-emnlp.1315/
 - CLAIMCHECK, Findings of EMNLP 2025: https://aclanthology.org/2025.findings-emnlp.1185/
 - Automatic Analysis of Substantiation in Scientific Peer Reviews, Findings of EMNLP 2023: https://aclanthology.org/2023.findings-emnlp.684/
+- PRISM: A Multi-Dimensional Benchmark for Evaluating LLM Peer Reviewers, arXiv 2026: https://arxiv.org/abs/2605.26730
+- LLM-as-a-Reviewer: Benchmarking Their Ability, Divergence, and Prompt Injection Resistance as Paper Reviewers, arXiv 2026: https://arxiv.org/abs/2605.25415
+- Mind the Blind Spots: A Focus-Level Evaluation Framework for LLM Reviews, EMNLP 2025: https://aclanthology.org/2025.emnlp-main.1805/
+- TreeReview: A Dynamic Tree of Questions Framework for Deep and Efficient LLM-based Scientific Peer Review, EMNLP 2025: https://aclanthology.org/2025.emnlp-main.790/
+- Breaking the Reviewer: Assessing the Vulnerability of Large Language Models in Automated Peer Review Under Textual Adversarial Attacks, Findings of EMNLP 2025: https://aclanthology.org/2025.findings-emnlp.259/

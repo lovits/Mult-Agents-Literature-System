@@ -3,7 +3,7 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from evireview_core.domain.models import EvidenceBlock, Weakness
+from evireview_core.domain.models import EvidenceBlock, VerificationResult, Weakness
 from evireview_core.generation.structured_reviewer import StructuredReviewerGenerator
 from evireview_core.io.jsonl import read_jsonl
 from evireview_core.providers.base import ProviderGeneration
@@ -52,7 +52,16 @@ class DeterministicWorkflowTest(unittest.TestCase):
 
         self.assertEqual(result.weaknesses[0].source, "minimax_reviewer")
         self.assertEqual(result.generation_metadata["provider_name"], "minimax")
-        self.assertEqual(result.agent_trace[0], {"node": "generate_or_import_weaknesses", "status": "succeeded", "mode": "generated", "weakness_count": 1})
+        self.assertEqual(
+            result.agent_trace[0],
+            {
+                "node": "generate_or_import_weaknesses",
+                "status": "succeeded",
+                "mode": "generated",
+                "weakness_generator": "imported",
+                "weakness_count": 1,
+            },
+        )
 
     def test_structured_reviewer_connects_provider_generation_to_graph(self) -> None:
         class FakeProvider:
@@ -120,13 +129,56 @@ class DeterministicWorkflowTest(unittest.TestCase):
             ["generate_or_import_weaknesses", "plan_weakness_queries", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
         )
 
+    def test_workflow_returns_generated_weaknesses_and_metadata(self) -> None:
+        def generate(_state: ReviewAuditState) -> WeaknessGenerationResult:
+            return WeaknessGenerationResult(
+                weaknesses=[Weakness("generated-1", "p1", "Missing ablation.", "experiment", "major")],
+                metadata={"provider_name": "fake", "is_silver": True},
+            )
+
+        result = run_deterministic_review_audit(
+            [],
+            [EvidenceBlock("b1", "p1", "Experiments", "experiment", "No ablation is reported.")],
+            weakness_generator=generate,
+            weakness_generator_name="fake",
+        )
+
+        self.assertEqual(result["weakness_generator"], "fake")
+        self.assertEqual(result["weakness_count"], 1)
+        self.assertEqual(result["weaknesses"][0]["weakness_id"], "generated-1")
+        self.assertEqual(result["generation_metadata"]["provider_name"], "fake")
+        self.assertEqual(result["agent_trace"][0]["weakness_generator"], "fake")
+
     def test_component_registry_exposes_planners_and_retrievers(self) -> None:
         self.assertEqual(DEFAULT_COMPONENT_REGISTRY.query_planner_names(), ("category_expansion", "direct"))
         self.assertEqual(DEFAULT_COMPONENT_REGISTRY.retriever_names(), ("bm25", "hierarchical"))
+        self.assertEqual(DEFAULT_COMPONENT_REGISTRY.verifier_names(), ("heuristic", "minimax"))
         with self.assertRaisesRegex(KeyError, "query planner"):
             DEFAULT_COMPONENT_REGISTRY.query_planner("missing")
         with self.assertRaisesRegex(KeyError, "retriever"):
             DEFAULT_COMPONENT_REGISTRY.retriever("missing")
+
+    def test_workflow_executes_injected_provider_verifier(self) -> None:
+        def verifier(weakness, evidence):
+            return VerificationResult(
+                weakness_id=weakness.weakness_id,
+                label="Supported",
+                support_score=0.9,
+                evidence_block_ids=tuple(item.block_id for item in evidence[:1]),
+                rationale="Provider judgment.",
+                verifier="fake_provider_judge",
+            )
+
+        result = run_deterministic_review_audit(
+            [Weakness("w1", "p1", "Missing ablation.", "experiment", "major")],
+            [EvidenceBlock("b1", "p1", "Experiments", "experiment", "No ablation is reported.")],
+            verifier=verifier,
+            verifier_name="minimax",
+        )
+
+        self.assertEqual(result["verifier"], "minimax")
+        self.assertEqual(result["verification"]["w1"]["verifier"], "fake_provider_judge")
+        self.assertEqual(result["agent_trace"][3]["verifier"], "minimax")
 
     def test_graph_executes_selected_query_planner_and_retriever(self) -> None:
         state = ReviewAuditState(

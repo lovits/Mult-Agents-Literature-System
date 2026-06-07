@@ -91,12 +91,40 @@ class FastApiRunsTest(unittest.TestCase):
         self.assertEqual(response.status_code, 422)
 
     def test_create_run_rejects_unknown_component_names(self) -> None:
-        for field in ("query_planner", "retriever"):
+        for field in ("query_planner", "retriever", "weakness_generator", "verifier"):
             response = self.client.post(
                 "/api/runs/review-audit",
                 json={"paper_id": "p1", "weaknesses": [], "evidence_blocks": [], field: "missing"},
             )
             self.assertEqual(response.status_code, 422)
+
+    def test_create_run_persists_provider_generator_without_accepting_credentials(self) -> None:
+        response = self.client.post(
+            "/api/runs/review-audit",
+            json={
+                "paper_id": "p1",
+                "weaknesses": [],
+                "evidence_blocks": [
+                    {
+                        "block_id": "b1",
+                        "paper_id": "p1",
+                        "section_path": "Experiments",
+                        "section_type": "experiment",
+                        "text": "Only one baseline is evaluated.",
+                    }
+                ],
+                "weakness_generator": "minimax",
+            },
+        )
+        rejected = self.client.post(
+            "/api/runs/review-audit",
+            json={"paper_id": "p1", "weaknesses": [], "evidence_blocks": [], "weakness_generator": "minimax", "api_key": "secret"},
+        )
+
+        self.assertEqual(response.status_code, 202)
+        run_id = response.json()["run"]["run_id"]
+        self.assertEqual(self.app.state.repository.load_input(run_id)["weakness_generator"], "minimax")
+        self.assertEqual(rejected.status_code, 422)
 
     def test_run_job_then_read_run_findings_trace_and_job(self) -> None:
         created = self.client.post(

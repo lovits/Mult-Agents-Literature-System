@@ -22,6 +22,8 @@ class ReviewAuditRequest:
     graph_profile: str = "full"
     query_planner: str = "direct"
     retriever: str = "hierarchical"
+    weakness_generator: str = "imported"
+    verifier: str = "heuristic"
 
     def __post_init__(self) -> None:
         if not self.paper_id.strip():
@@ -36,6 +38,10 @@ class ReviewAuditRequest:
             raise ValueError(f"unknown query_planner: {self.query_planner}")
         if self.retriever not in DEFAULT_COMPONENT_REGISTRY.retriever_names():
             raise ValueError(f"unknown retriever: {self.retriever}")
+        if self.weakness_generator not in DEFAULT_COMPONENT_REGISTRY.weakness_generator_names():
+            raise ValueError(f"unknown weakness_generator: {self.weakness_generator}")
+        if self.verifier not in DEFAULT_COMPONENT_REGISTRY.verifier_names():
+            raise ValueError(f"unknown verifier: {self.verifier}")
         paper_ids = {item.paper_id for item in [*self.weaknesses, *self.evidence_blocks]}
         if paper_ids - {self.paper_id}:
             raise ValueError("weaknesses and evidence blocks must belong to the same paper")
@@ -50,6 +56,8 @@ class ReviewAuditRequest:
             "graph_profile": self.graph_profile,
             "query_planner": self.query_planner,
             "retriever": self.retriever,
+            "weakness_generator": self.weakness_generator,
+            "verifier": self.verifier,
         }
 
 
@@ -62,6 +70,8 @@ class PersistedPaperReviewAuditRequest:
     graph_profile: str = "full"
     query_planner: str = "direct"
     retriever: str = "hierarchical"
+    weakness_generator: str = "imported"
+    verifier: str = "heuristic"
 
 
 @dataclass(frozen=True)

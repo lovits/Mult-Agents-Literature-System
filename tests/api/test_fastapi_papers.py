@@ -113,6 +113,19 @@ class FastApiPapersTest(unittest.TestCase):
         self.assertEqual(response.status_code, 202)
         self.assertNotIn("evidence", response.text)
 
+    def test_create_provider_generated_audit_from_imported_paper(self) -> None:
+        self.client.post(
+            "/api/papers/import",
+            json={"paper_id": "paper-1", "title": "Agent RAG", "markdown": "# Experiments\nOnly one baseline is evaluated."},
+        )
+
+        response = self.client.post(
+            "/api/papers/paper-1/review-audit",
+            json={"weakness_generator": "minimax"},
+        )
+
+        self.assertEqual(response.status_code, 202)
+
     def test_persisted_paper_audit_validates_scope_and_missing_paper(self) -> None:
         self.client.post(
             "/api/papers/import",

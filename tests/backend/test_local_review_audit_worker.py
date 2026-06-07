@@ -7,7 +7,8 @@ from pathlib import Path
 from app.repositories.sqlite_run_repository import SQLiteRunRepository
 from app.schemas.runs import ReviewAuditRequest
 from app.services.review_audit_service import ReviewAuditService
-from evireview_core.domain.models import EvidenceBlock, Weakness
+from evireview_core.domain.models import EvidenceBlock, VerificationResult, Weakness
+from evireview_core.workflow.state import WeaknessGenerationResult
 from services.worker.tasks.review_audit import recover_and_run, run_next_job
 
 
@@ -98,6 +99,78 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
         self.assertEqual(result["query_planner"], "category_expansion")
         self.assertEqual(result["retriever"], "bm25")
         self.assertEqual(result["agent_trace"][2]["retriever"], "bm25")
+
+    def test_worker_executes_selected_minimax_weakness_generator(self) -> None:
+        self.repository.create_run_and_job(
+            "run-generated",
+            "job-generated",
+            {
+                "paper_id": "p1",
+                "weaknesses": [],
+                "evidence_blocks": [
+                    EvidenceBlock("b1", "p1", "Experiments", "experiment", "Only one baseline is evaluated.").to_dict()
+                ],
+                "weakness_generator": "minimax",
+            },
+        )
+
+        def generator_factory(name: str):
+            self.assertEqual(name, "minimax")
+
+            def generate(_state):
+                return WeaknessGenerationResult(
+                    weaknesses=[
+                        Weakness("generated-1", "p1", "The evaluation uses only one baseline.", "experiment", "major")
+                    ],
+                    metadata={"provider_name": "minimax", "model_name": "MiniMax-M2.7", "is_silver": True},
+                )
+
+            return generate
+
+        result = run_next_job(self.repository, generator_factory=generator_factory)
+        stored = self.repository.get_run("run-generated")["result"]
+
+        self.assertEqual(result["status"], "succeeded")
+        self.assertEqual(stored["weakness_generator"], "minimax")
+        self.assertEqual(stored["weakness_count"], 1)
+        self.assertEqual(stored["weaknesses"][0]["weakness_id"], "generated-1")
+        self.assertEqual(stored["generation_metadata"]["provider_name"], "minimax")
+
+    def test_worker_executes_selected_minimax_verifier(self) -> None:
+        self.repository.create_run_and_job(
+            "run-verified",
+            "job-verified",
+            {
+                "paper_id": "p1",
+                "weaknesses": [Weakness("w1", "p1", "Missing ablation.", "experiment", "major").to_dict()],
+                "evidence_blocks": [
+                    EvidenceBlock("b1", "p1", "Experiments", "experiment", "No ablation is reported.").to_dict()
+                ],
+                "verifier": "minimax",
+            },
+        )
+
+        def verifier_factory(name: str):
+            self.assertEqual(name, "minimax")
+
+            def verify(weakness, evidence):
+                return VerificationResult(
+                    weakness_id=weakness.weakness_id,
+                    label="Supported",
+                    support_score=0.9,
+                    evidence_block_ids=tuple(item.block_id for item in evidence),
+                    rationale="Provider judgment.",
+                    verifier="fake_minimax_judge",
+                )
+
+            return verify
+
+        result = run_next_job(self.repository, verifier_factory=verifier_factory)
+        stored = self.repository.get_run("run-verified")["result"]
+
+        self.assertEqual(result["status"], "succeeded")
+        self.assertEqual(stored["verifier"], "minimax")
+        self.assertEqual(stored["verification"]["w1"]["verifier"], "fake_minimax_judge")
 
     def test_worker_recovers_running_job_before_execution(self) -> None:
         created = self.service.create_review_audit(ReviewAuditRequest(paper_id="p1", weaknesses=[], evidence_blocks=[]))

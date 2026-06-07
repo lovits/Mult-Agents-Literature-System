@@ -2,18 +2,25 @@ from __future__ import annotations
 
 from evireview_core.domain.models import RankedFinding, VerificationResult
 from evireview_core.ranking.evidence_aware import rank_weaknesses
-from evireview_core.verification.heuristic import verify_with_heuristics
 from evireview_core.workflow.components import DEFAULT_COMPONENT_REGISTRY
 from evireview_core.workflow.state import ReviewAuditState
 
 
 def generate_or_import_weaknesses(state: ReviewAuditState) -> dict[str, object]:
     if state.weaknesses or state.weakness_generator is None:
-        return {"mode": "imported", "weakness_count": len(state.weaknesses)}
+        return {
+            "mode": "imported",
+            "weakness_generator": state.weakness_generator_name,
+            "weakness_count": len(state.weaknesses),
+        }
     result = state.weakness_generator(state)
     state.weaknesses = result.weaknesses
     state.generation_metadata = result.metadata
-    return {"mode": "generated", "weakness_count": len(state.weaknesses)}
+    return {
+        "mode": "generated",
+        "weakness_generator": state.weakness_generator_name,
+        "weakness_count": len(state.weaknesses),
+    }
 
 
 def plan_weakness_queries(state: ReviewAuditState) -> dict[str, object]:
@@ -36,11 +43,13 @@ def retrieve_evidence(state: ReviewAuditState) -> dict[str, object]:
     return {"retriever": state.retriever_name, "retrieval_count": len(state.retrieval)}
 
 
-def verify_weaknesses(state: ReviewAuditState) -> None:
+def verify_weaknesses(state: ReviewAuditState) -> dict[str, object]:
+    verifier = state.verifier or DEFAULT_COMPONENT_REGISTRY.verifier(state.verifier_name)
     state.verification = {
-        weakness.weakness_id: verify_with_heuristics(weakness, state.retrieval.get(weakness.weakness_id, []))
+        weakness.weakness_id: verifier(weakness, state.retrieval.get(weakness.weakness_id, []))
         for weakness in state.weaknesses
     }
+    return {"verifier": state.verifier_name, "verification_count": len(state.verification)}
 
 
 def assume_supported(state: ReviewAuditState) -> dict[str, object]:

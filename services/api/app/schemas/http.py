@@ -41,6 +41,8 @@ class ReviewAuditInput(BaseModel):
     graph_profile: str = "full"
     query_planner: str = "direct"
     retriever: str = "hierarchical"
+    weakness_generator: str = "imported"
+    verifier: str = "heuristic"
 
     def to_request(self) -> ReviewAuditRequest:
         return ReviewAuditRequest(
@@ -52,6 +54,8 @@ class ReviewAuditInput(BaseModel):
             graph_profile=self.graph_profile,
             query_planner=self.query_planner,
             retriever=self.retriever,
+            weakness_generator=self.weakness_generator,
+            verifier=self.verifier,
         )
 
 
@@ -78,6 +82,8 @@ class PersistedPaperReviewAuditInput(BaseModel):
     graph_profile: str = "full"
     query_planner: str = "direct"
     retriever: str = "hierarchical"
+    weakness_generator: str = "imported"
+    verifier: str = "heuristic"
 
     def to_weaknesses(self) -> list[Weakness]:
         return [Weakness.from_dict(item.model_dump()) for item in self.weaknesses]
@@ -95,6 +101,8 @@ class ExperimentPaperAuditInput(PersistedPaperReviewAuditInput):
             graph_profile=self.graph_profile,
             query_planner=self.query_planner,
             retriever=self.retriever,
+            weakness_generator=self.weakness_generator,
+            verifier=self.verifier,
         )
 
 

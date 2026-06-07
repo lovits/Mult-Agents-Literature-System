@@ -12,7 +12,7 @@ Implemented boundaries:
 - `app.main:create_app`: FastAPI application factory.
 - `app.queue.rq_queue`: Redis/RQ delivery adapter.
 
-The API never accepts or stores provider API keys. Raw weakness/evidence inputs are persisted in SQLite for worker use and are not returned by run endpoints. The current workflow executes only the deterministic `silver diagnostic` core pipeline.
+The API never accepts or stores provider API keys. Raw weakness/evidence inputs are persisted in SQLite for worker use and are not returned by run endpoints. Review-audit requests may explicitly select `weakness_generator=minimax` and `verifier=minimax`; provider credentials remain worker environment variables.
 
 Phase 2C routes:
 
@@ -45,7 +45,7 @@ The manifest-scoped paper-audit endpoint schedules 1 to 100 persisted-paper audi
 
 Phase 3 starts with a dependency-free Paper Workspace served at `/workspace/`. Its dedicated workspace read model exposes the selected run's public weakness/evidence/verification/ranking/trace/report chain while excluding persistence columns, artifact paths, queue tokens, and internal errors. This local research workspace intentionally has no authentication and must not be exposed as a public service.
 
-The backend review audit now executes through an explicit dependency-free Agent-RAG graph with `retrieve_evidence`, `verify_weaknesses`, and `rank_findings` nodes. The stable deterministic workflow entrypoint remains compatible with existing experiment callers, while `/api/runs/{run_id}/agent-trace` exposes only node name, status, and error type for backend observability.
+The backend review audit now executes through an explicit dependency-free Agent-RAG graph with `generate_or_import_weaknesses`, `plan_weakness_queries`, `retrieve_evidence`, `verify_weaknesses`, and `rank_findings` nodes. The stable deterministic workflow entrypoint remains compatible with existing experiment callers, while `/api/runs/{run_id}/agent-trace` exposes only node name, status, and error type for backend observability.
 
 Install and run from the repository root:
 

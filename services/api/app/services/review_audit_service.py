@@ -44,6 +44,8 @@ class ReviewAuditService:
         graph_profile: str = "full",
         query_planner: str = "direct",
         retriever: str = "hierarchical",
+        weakness_generator: str = "imported",
+        verifier: str = "heuristic",
     ) -> dict:
         self._require_queue()
         version_id = str(self.repository.get_active_paper_version(paper_id)["version_id"])
@@ -61,6 +63,8 @@ class ReviewAuditService:
             graph_profile=graph_profile,
             query_planner=query_planner,
             retriever=retriever,
+            weakness_generator=weakness_generator,
+            verifier=verifier,
         )
         payload = request.to_payload()
         payload.pop("evidence_blocks")
@@ -109,7 +113,8 @@ class ReviewAuditService:
                 "evidence_source": input_payload.get("evidence_source", "inline"),
             },
             "metric_boundary": result.get("metric_boundary", run["config"].get("metric_boundary", "silver diagnostic")),
-            "weaknesses": list(input_payload.get("weaknesses", [])),
+            "weaknesses": list(result.get("weaknesses", input_payload.get("weaknesses", []))),
+            "generation_metadata": dict(result.get("generation_metadata", {})),
             "evidence_blocks": [
                 {key: value for key, value in block.items() if key not in {"ordinal", "version_id"}}
                 for block in evidence_blocks

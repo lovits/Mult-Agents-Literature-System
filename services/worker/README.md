@@ -9,9 +9,11 @@ Current behavior:
 - Issues a unique attempt token for every claim so a late worker cannot overwrite a reclaimed job.
 - Rehydrates weaknesses and evidence blocks from SQLite.
 - Calls `evireview_core.workflow.run_deterministic_review_audit`.
+- Builds the MiniMax structured reviewer only when the persisted run explicitly selects `weakness_generator=minimax`.
+- Builds the MiniMax structured evidence judge only when the persisted run explicitly selects `verifier=minimax`.
 - Persists results or failure context and trace events.
 
-The worker does not call hosted providers and does not read or store API keys.
+The worker reads `MINIMAX_API_KEY` from its environment only when MiniMax generation or verification is selected. It never stores or returns the key.
 
 Import the local worker with:
 

@@ -63,6 +63,8 @@ class ExperimentManifestService:
                 graph_profile=item.graph_profile,
                 query_planner=item.query_planner,
                 retriever=item.retriever,
+                weakness_generator=item.weakness_generator,
+                verifier=item.verifier,
             )
         except KeyError:
             return self._failed_item(index, item.paper_id, "paper_not_found")
