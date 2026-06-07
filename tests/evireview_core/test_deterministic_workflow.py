@@ -167,7 +167,10 @@ class DeterministicWorkflowTest(unittest.TestCase):
 
     def test_component_registry_exposes_planners_and_retrievers(self) -> None:
         self.assertEqual(DEFAULT_COMPONENT_REGISTRY.query_planner_names(), ("category_expansion", "direct"))
-        self.assertEqual(DEFAULT_COMPONENT_REGISTRY.retriever_names(), ("bm25", "hierarchical"))
+        self.assertEqual(
+            DEFAULT_COMPONENT_REGISTRY.retriever_names(),
+            ("bm25", "hierarchical", "qdrant_hybrid", "qdrant_sparse"),
+        )
         self.assertEqual(DEFAULT_COMPONENT_REGISTRY.verifier_names(), ("heuristic", "minimax"))
         with self.assertRaisesRegex(KeyError, "query planner"):
             DEFAULT_COMPONENT_REGISTRY.query_planner("missing")

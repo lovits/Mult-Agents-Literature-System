@@ -15,6 +15,13 @@ Current behavior:
 
 The worker reads `MINIMAX_API_KEY` from its environment only when MiniMax generation or verification is selected. It never stores or returns the key.
 
+Qdrant retrieval is opt-in:
+
+- `retriever=qdrant_sparse` uses `QDRANT_URL` and requires no embedding credentials.
+- `retriever=qdrant_hybrid` additionally requires `EVIREVIEW_EMBEDDING_BASE_URL`, `EVIREVIEW_EMBEDDING_API_KEY`, and `EVIREVIEW_EMBEDDING_MODEL`.
+
+The API accepts only retriever names. Qdrant and embedding credentials remain in the worker environment and are never persisted in run input or results. The stable default remains `hierarchical`; the current CLAIMCHECK gold experiment does not support promoting the untuned hybrid retriever as the default.
+
 Import the local worker with:
 
 ```python

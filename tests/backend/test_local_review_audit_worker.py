@@ -107,6 +107,39 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
         self.assertEqual(result["retriever"], "bm25")
         self.assertEqual(result["agent_trace"][2]["retriever"], "bm25")
 
+    def test_worker_executes_injected_hosted_retriever(self) -> None:
+        self.repository.create_run_and_job(
+            "run-qdrant",
+            "job-qdrant",
+            {
+                "paper_id": "p1",
+                "weaknesses": [Weakness("w1", "p1", "Missing ablation.", "experiment", "major").to_dict()],
+                "evidence_blocks": [
+                    EvidenceBlock("b1", "p1", "Experiments", "experiment", "No ablation is reported.").to_dict()
+                ],
+                "retriever": "qdrant_sparse",
+            },
+        )
+
+        def retriever_factory(name, blocks):
+            self.assertEqual(name, "qdrant_sparse")
+            self.assertEqual(blocks[0].block_id, "b1")
+
+            def retrieve(_weakness, _query, docs, _top_k):
+                from evireview_core.retrieval.bm25 import RetrievedEvidence
+
+                doc = docs[0]
+                return [RetrievedEvidence(doc.block_id, doc.paper_id, doc.section_path, doc.section_type, doc.text, 1, 1.0, name)]
+
+            return retrieve
+
+        result = run_next_job(self.repository, retriever_factory=retriever_factory)
+        stored = self.repository.get_run("run-qdrant")["result"]
+
+        self.assertEqual(result["status"], "succeeded")
+        self.assertEqual(stored["retriever"], "qdrant_sparse")
+        self.assertEqual(stored["retrieval"]["w1"][0]["retriever"], "qdrant_sparse")
+
     def test_worker_executes_selected_minimax_weakness_generator(self) -> None:
         self.repository.create_run_and_job(
             "run-generated",

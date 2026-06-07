@@ -55,6 +55,7 @@ def bm25_retriever(
 class ComponentRegistry:
     query_planners: dict[str, QueryPlanner]
     retrievers: dict[str, Retriever]
+    hosted_retrievers: tuple[str, ...]
     weakness_generators: tuple[str, ...]
     verifiers: dict[str, Verifier]
     hosted_verifiers: tuple[str, ...]
@@ -73,7 +74,7 @@ class ComponentRegistry:
         return tuple(sorted(self.query_planners))
 
     def retriever_names(self) -> tuple[str, ...]:
-        return tuple(sorted(self.retrievers))
+        return tuple(sorted((*self.retrievers, *self.hosted_retrievers)))
 
     def weakness_generator_names(self) -> tuple[str, ...]:
         return tuple(sorted(self.weakness_generators))
@@ -96,6 +97,7 @@ DEFAULT_COMPONENT_REGISTRY = ComponentRegistry(
         "hierarchical": hierarchical_retriever,
         "bm25": bm25_retriever,
     },
+    hosted_retrievers=("qdrant_sparse", "qdrant_hybrid"),
     weakness_generators=("imported", "minimax"),
     verifiers={"heuristic": verify_with_heuristics},
     hosted_verifiers=("minimax",),

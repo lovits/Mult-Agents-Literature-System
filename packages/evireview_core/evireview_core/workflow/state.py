@@ -6,6 +6,7 @@ from typing import Any
 
 from evireview_core.domain.models import EvidenceBlock, RankedFinding, RetrievalCandidate, VerificationResult, Weakness
 from evireview_core.retrieval.bm25 import RetrievedEvidence
+from evireview_core.workflow.components import Retriever
 
 
 @dataclass(frozen=True)
@@ -32,6 +33,7 @@ class ReviewAuditState:
     ranked_findings: list[RankedFinding] = field(default_factory=list)
     weakness_generator: Callable[["ReviewAuditState"], WeaknessGenerationResult] | None = None
     verifier: Callable[[Weakness, list[RetrievedEvidence]], VerificationResult] | None = None
+    runtime_retriever: Retriever | None = None
     generation_metadata: dict[str, Any] = field(default_factory=dict)
     agent_trace: list[dict[str, Any]] = field(default_factory=list)
 

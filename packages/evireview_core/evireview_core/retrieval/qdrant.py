@@ -45,6 +45,18 @@ class QdrantQueryClient:
             },
         )
 
+    def recreate_sparse_collection(self, collection: str) -> None:
+        try:
+            self.transport("DELETE", f"{self.base_url}/collections/{collection}", {})
+        except urllib.error.HTTPError as exc:
+            if exc.code != 404:
+                raise
+        self.transport(
+            "PUT",
+            f"{self.base_url}/collections/{collection}",
+            {"sparse_vectors": {"sparse": {}}},
+        )
+
     def upsert_points(self, collection: str, points: list[dict[str, Any]]) -> None:
         if not points:
             return

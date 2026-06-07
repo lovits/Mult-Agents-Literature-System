@@ -6,6 +6,7 @@ from typing import Any
 from evireview_core.domain.models import EvidenceBlock, VerificationResult, Weakness
 from evireview_core.retrieval.bm25 import RetrievedEvidence
 from evireview_core.workflow.graph import ReviewAuditGraph
+from evireview_core.workflow.components import Retriever
 from evireview_core.workflow.state import ReviewAuditState, WeaknessGenerationResult
 
 
@@ -17,6 +18,7 @@ def run_deterministic_review_audit(
     graph_profile: str = "full",
     query_planner: str = "direct",
     retriever: str = "hierarchical",
+    runtime_retriever: Retriever | None = None,
     weakness_generator: Callable[[ReviewAuditState], WeaknessGenerationResult] | None = None,
     weakness_generator_name: str = "imported",
     verifier: Callable[[Weakness, list[RetrievedEvidence]], VerificationResult] | None = None,
@@ -30,6 +32,7 @@ def run_deterministic_review_audit(
             finding_top_k=finding_top_k,
             query_planner_name=query_planner,
             retriever_name=retriever,
+            runtime_retriever=runtime_retriever,
             weakness_generator=weakness_generator,
             weakness_generator_name=weakness_generator_name,
             verifier=verifier,

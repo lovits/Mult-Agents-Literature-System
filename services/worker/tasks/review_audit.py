@@ -1,22 +1,28 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+import os
 from typing import Any
 
 from app.repositories.sqlite_run_repository import SQLiteRunRepository
 from evireview_core.domain.models import EvidenceBlock, VerificationResult, Weakness
 from evireview_core.generation.structured_reviewer import StructuredReviewerGenerator
 from evireview_core.providers.minimax import MiniMaxProvider
+from evireview_core.providers.embedding import OpenAICompatibleEmbedder
 from evireview_core.retrieval.bm25 import RetrievedEvidence
+from evireview_core.retrieval.qdrant import QdrantQueryClient
+from evireview_core.workflow.components import Retriever
 from evireview_core.verification.structured_judge import StructuredEvidenceVerifier
 from evireview_core.workflow.deterministic import run_deterministic_review_audit
 from evireview_core.workflow.state import ReviewAuditState, WeaknessGenerationResult
+from services.worker.adapters.qdrant_retriever import QdrantRuntimeRetriever, runtime_collection_name
 
 
 WeaknessGenerator = Callable[[ReviewAuditState], WeaknessGenerationResult]
 GeneratorFactory = Callable[[str], WeaknessGenerator | None]
 EvidenceVerifier = Callable[[Weakness, list[RetrievedEvidence]], VerificationResult]
 VerifierFactory = Callable[[str], EvidenceVerifier | None]
+RetrieverFactory = Callable[[str, list[EvidenceBlock]], Retriever | None]
 
 
 def build_weakness_generator(name: str) -> WeaknessGenerator | None:
@@ -35,12 +41,30 @@ def build_verifier(name: str) -> EvidenceVerifier | None:
     raise KeyError(f"verifier not found: {name}")
 
 
+def build_retriever(name: str, blocks: list[EvidenceBlock]) -> Retriever | None:
+    if name in {"bm25", "hierarchical"}:
+        return None
+    if name == "qdrant_sparse":
+        client = QdrantQueryClient(os.getenv("QDRANT_URL", "http://127.0.0.1:6333"))
+        return QdrantRuntimeRetriever(client, runtime_collection_name(blocks), blocks)
+    if name == "qdrant_hybrid":
+        client = QdrantQueryClient(os.getenv("QDRANT_URL", "http://127.0.0.1:6333"))
+        return QdrantRuntimeRetriever(
+            client,
+            runtime_collection_name(blocks),
+            blocks,
+            embedder=OpenAICompatibleEmbedder.from_env(),
+        )
+    raise KeyError(f"retriever not found: {name}")
+
+
 def run_next_job(
     repository: SQLiteRunRepository,
     generator_factory: GeneratorFactory = build_weakness_generator,
     verifier_factory: VerifierFactory = build_verifier,
+    retriever_factory: RetrieverFactory = build_retriever,
 ) -> dict[str, Any] | None:
-    return _execute_claimed_job(repository, repository.claim_next_job(), generator_factory, verifier_factory)
+    return _execute_claimed_job(repository, repository.claim_next_job(), generator_factory, verifier_factory, retriever_factory)
 
 
 def run_job(
@@ -48,8 +72,9 @@ def run_job(
     job_id: str,
     generator_factory: GeneratorFactory = build_weakness_generator,
     verifier_factory: VerifierFactory = build_verifier,
+    retriever_factory: RetrieverFactory = build_retriever,
 ) -> dict[str, Any] | None:
-    return _execute_claimed_job(repository, repository.claim_job(job_id), generator_factory, verifier_factory)
+    return _execute_claimed_job(repository, repository.claim_job(job_id), generator_factory, verifier_factory, retriever_factory)
 
 
 def _execute_claimed_job(
@@ -57,6 +82,7 @@ def _execute_claimed_job(
     job: dict[str, Any] | None,
     generator_factory: GeneratorFactory,
     verifier_factory: VerifierFactory,
+    retriever_factory: RetrieverFactory,
 ) -> dict[str, Any] | None:
     if job is None:
         return None
@@ -83,6 +109,7 @@ def _execute_claimed_job(
         blocks = [EvidenceBlock.from_dict(item) for item in block_payloads]
         weakness_generator_name = str(payload.get("weakness_generator", "imported"))
         verifier_name = str(payload.get("verifier", "heuristic"))
+        retriever_name = str(payload.get("retriever", "hierarchical"))
         result = run_deterministic_review_audit(
             weaknesses,
             blocks,
@@ -90,7 +117,8 @@ def _execute_claimed_job(
             finding_top_k=int(payload.get("finding_top_k", 3)),
             graph_profile=str(payload.get("graph_profile", "full")),
             query_planner=str(payload.get("query_planner", "direct")),
-            retriever=str(payload.get("retriever", "hierarchical")),
+            retriever=retriever_name,
+            runtime_retriever=retriever_factory(retriever_name, blocks),
             weakness_generator=generator_factory(weakness_generator_name),
             weakness_generator_name=weakness_generator_name,
             verifier=verifier_factory(verifier_name),

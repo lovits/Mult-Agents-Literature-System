@@ -31,7 +31,7 @@ def plan_weakness_queries(state: ReviewAuditState) -> dict[str, object]:
 
 
 def retrieve_evidence(state: ReviewAuditState) -> dict[str, object]:
-    retriever = DEFAULT_COMPONENT_REGISTRY.retriever(state.retriever_name)
+    retriever = state.runtime_retriever or DEFAULT_COMPONENT_REGISTRY.retriever(state.retriever_name)
     state.retrieval = {
         weakness.weakness_id: retriever(
             weakness,

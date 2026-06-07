@@ -171,3 +171,18 @@ generate -> plan -> retrieve -> verify -> deduplicate -> rank
 | no_dedup | 194 | 194 | 0 | 0.0000 | 141 | 0.0355 | 0.8652 |
 
 去重减少 11.34% 的候选，shared silver reference 下的 Partial+ 基本保持。结果只支持“减少论文内模板重复并提高输出紧凑性”，不能解释为 human-gold review quality 提升。
+
+## Phase 2H-B 已完成任务 7：Qdrant / Hybrid Worker 正式接入
+
+API、持久化任务和 Worker 现已支持：
+
+- `qdrant_sparse`：真实 Qdrant BM25 sparse vectors，不需要 embedding key；
+- `qdrant_hybrid`：真实 Qdrant sparse + dense native RRF，embedding provider 只从 Worker 环境变量读取。
+
+严格验收已覆盖：
+
+1. 直接 Worker 到真实 Qdrant sparse；
+2. SQLite persisted job 经 Redis/RQ 到 Worker，再到真实 Qdrant sparse；
+3. 真实 Qdrant 与 OpenAI-compatible embedding adapter 的 hybrid Worker。
+
+Qdrant/Hybrid 现在是正式可选择后端组件，但默认仍保持 `hierarchical`，因为当前 CLAIMCHECK gold 结果中 dense Hit@3 高于未调参 hybrid。

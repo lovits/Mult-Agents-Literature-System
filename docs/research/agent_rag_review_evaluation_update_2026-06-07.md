@@ -37,6 +37,7 @@
 - TreeReview 的动态问题树适合作为未来 planner 候选，但当前 category-expansion planner 在 CLAIMCHECK 上没有提升，因此不能直接替换默认 direct planner。
 - 在 verifier 与 ranker 之间增加可审计 `deduplicate_weaknesses` 节点。Rubric-agent silver 消融将 194 条候选压缩为 172 条，减少 11.34%，而 partial-or-better rate 基本保持；该结果只证明减少模板重复，不证明提高 human-gold review quality。
 - 原有全局 redundancy proxy 会混入跨论文模板相似，因此后续只报告论文内重复率，并将 focus diversity 与 evidence groundedness 分开评价。
+- Qdrant/Hybrid 已从离线适配器升级为 Worker 可选择组件，但组件是否成为默认值仍由 ready-label 指标决定；当前 dense Hit@3 高于 native RRF hybrid，说明“采用向量库”与“检索质量提升”必须分开验收。
 
 ## 来源
 
