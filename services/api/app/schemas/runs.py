@@ -5,6 +5,7 @@ from typing import Any
 
 from evireview_core.domain.models import EvidenceBlock, Weakness
 from evireview_core.workflow.registry import DEFAULT_GRAPH_REGISTRY
+from evireview_core.workflow.components import DEFAULT_COMPONENT_REGISTRY
 
 
 RUN_STATUSES = {"created", "queued", "running", "succeeded", "failed", "cancelled"}
@@ -19,6 +20,8 @@ class ReviewAuditRequest:
     top_k: int = 5
     finding_top_k: int = 3
     graph_profile: str = "full"
+    query_planner: str = "direct"
+    retriever: str = "hierarchical"
 
     def __post_init__(self) -> None:
         if not self.paper_id.strip():
@@ -29,6 +32,10 @@ class ReviewAuditRequest:
             raise ValueError("finding_top_k must be positive")
         if self.graph_profile not in DEFAULT_GRAPH_REGISTRY.names():
             raise ValueError(f"unknown graph_profile: {self.graph_profile}")
+        if self.query_planner not in DEFAULT_COMPONENT_REGISTRY.query_planner_names():
+            raise ValueError(f"unknown query_planner: {self.query_planner}")
+        if self.retriever not in DEFAULT_COMPONENT_REGISTRY.retriever_names():
+            raise ValueError(f"unknown retriever: {self.retriever}")
         paper_ids = {item.paper_id for item in [*self.weaknesses, *self.evidence_blocks]}
         if paper_ids - {self.paper_id}:
             raise ValueError("weaknesses and evidence blocks must belong to the same paper")
@@ -41,6 +48,8 @@ class ReviewAuditRequest:
             "top_k": self.top_k,
             "finding_top_k": self.finding_top_k,
             "graph_profile": self.graph_profile,
+            "query_planner": self.query_planner,
+            "retriever": self.retriever,
         }
 
 
@@ -51,6 +60,8 @@ class PersistedPaperReviewAuditRequest:
     top_k: int = 5
     finding_top_k: int = 3
     graph_profile: str = "full"
+    query_planner: str = "direct"
+    retriever: str = "hierarchical"
 
 
 @dataclass(frozen=True)

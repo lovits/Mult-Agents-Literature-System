@@ -9,6 +9,7 @@ from evireview_core.io.jsonl import read_jsonl
 from evireview_core.providers.base import ProviderGeneration
 from evireview_core.workflow.deterministic import run_deterministic_review_audit
 from evireview_core.workflow.graph import ReviewAuditGraph
+from evireview_core.workflow.components import DEFAULT_COMPONENT_REGISTRY
 from evireview_core.workflow.registry import DEFAULT_GRAPH_REGISTRY
 from evireview_core.workflow.state import ReviewAuditState, WeaknessGenerationResult
 
@@ -28,7 +29,7 @@ class DeterministicWorkflowTest(unittest.TestCase):
 
         self.assertEqual(
             [item["node"] for item in result.agent_trace],
-            ["generate_or_import_weaknesses", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
+            ["generate_or_import_weaknesses", "plan_weakness_queries", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
         )
         self.assertTrue(all(item["status"] == "succeeded" for item in result.agent_trace))
         self.assertEqual(result.agent_trace[0]["mode"], "imported")
@@ -116,8 +117,33 @@ class DeterministicWorkflowTest(unittest.TestCase):
         self.assertGreaterEqual(len(result["ranked_findings"]), 1)
         self.assertEqual(
             [item["node"] for item in result["agent_trace"]],
-            ["generate_or_import_weaknesses", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
+            ["generate_or_import_weaknesses", "plan_weakness_queries", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
         )
+
+    def test_component_registry_exposes_planners_and_retrievers(self) -> None:
+        self.assertEqual(DEFAULT_COMPONENT_REGISTRY.query_planner_names(), ("category_expansion", "direct"))
+        self.assertEqual(DEFAULT_COMPONENT_REGISTRY.retriever_names(), ("bm25", "hierarchical"))
+        with self.assertRaisesRegex(KeyError, "query planner"):
+            DEFAULT_COMPONENT_REGISTRY.query_planner("missing")
+        with self.assertRaisesRegex(KeyError, "retriever"):
+            DEFAULT_COMPONENT_REGISTRY.retriever("missing")
+
+    def test_graph_executes_selected_query_planner_and_retriever(self) -> None:
+        state = ReviewAuditState(
+            weaknesses=[Weakness("w1", "p1", "The evaluation is incomplete.", "experiment", "major")],
+            evidence_blocks=[
+                EvidenceBlock("b1", "p1", "Experiments", "experiment", "Ablation baseline evaluation results.")
+            ],
+            query_planner_name="category_expansion",
+            retriever_name="bm25",
+        )
+
+        result = ReviewAuditGraph().run(state)
+
+        self.assertIn("ablation", result.query_plan["w1"])
+        self.assertEqual(result.retrieval["w1"][0].retriever, "bm25")
+        self.assertEqual(result.agent_trace[1]["query_planner"], "category_expansion")
+        self.assertEqual(result.agent_trace[2]["retriever"], "bm25")
 
     def test_workflow_runs_on_committed_jsonl_fixtures(self) -> None:
         fixture_dir = Path(__file__).resolve().parent / "fixtures"

@@ -13,6 +13,8 @@ def run_deterministic_review_audit(
     top_k: int = 5,
     finding_top_k: int = 3,
     graph_profile: str = "full",
+    query_planner: str = "direct",
+    retriever: str = "hierarchical",
 ) -> dict[str, Any]:
     state = ReviewAuditGraph(graph_profile).run(
         ReviewAuditState(
@@ -20,6 +22,8 @@ def run_deterministic_review_audit(
             evidence_blocks=blocks,
             top_k=top_k,
             finding_top_k=finding_top_k,
+            query_planner_name=query_planner,
+            retriever_name=retriever,
         )
     )
     retrieval = {
@@ -38,6 +42,9 @@ def run_deterministic_review_audit(
     return {
         "workflow": "deterministic_review_audit_v1",
         "graph_profile": graph_profile,
+        "query_planner": query_planner,
+        "retriever": retriever,
+        "query_plan": state.query_plan,
         "weakness_count": len(weaknesses),
         "evidence_block_count": len(blocks),
         "retrieval": retrieval,

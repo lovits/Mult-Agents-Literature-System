@@ -61,6 +61,8 @@ class ExperimentManifestService:
                 top_k=item.top_k,
                 finding_top_k=item.finding_top_k,
                 graph_profile=item.graph_profile,
+                query_planner=item.query_planner,
+                retriever=item.retriever,
             )
         except KeyError:
             return self._failed_item(index, item.paper_id, "paper_not_found")

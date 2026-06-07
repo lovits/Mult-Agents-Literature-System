@@ -28,6 +28,7 @@ ARTIFACT_SPECS = (
     ArtifactSpec("claimcheck_evidence_ranker_metrics.json", "CLAIMCHECK", "ranker", "evidence_ranker", "diagnostic", ("metrics",)),
     ArtifactSpec("dense_hybrid_retrieval_metrics.json", "CLAIMCHECK", "retrieval", "paper_rag", "gold", ("methods",)),
     ArtifactSpec("live_qdrant_retrieval_metrics.json", "CLAIMCHECK", "retrieval", "paper_rag_qdrant", "gold", ("methods",)),
+    ArtifactSpec("query_planner_ablation_metrics.json", "CLAIMCHECK", "retrieval", "query_planner", "gold", ("planners",)),
     ArtifactSpec("local_decision_classifier_metrics.json", "Local OpenReview/PRISM", "classification", "auxiliary_classifier", "diagnostic", ("results",)),
     ArtifactSpec("generated_reviewer_comparison_metrics.json", "Local OpenReview/PRISM", "generation", "reviewer_comparison", "diagnostic", ("generators",)),
     ArtifactSpec("generated_hierarchical_retrieval_summary.json", "Local OpenReview/PRISM", "retrieval", "generated_weakness_rag", "diagnostic", ("sources",)),

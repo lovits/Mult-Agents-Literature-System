@@ -22,6 +22,7 @@ def validate() -> dict[str, Any]:
     provider = load("generated_reviewer_comparison_metrics.json")
     graph = load("graph_ablation_metrics.json")
     retrieval = load("dense_hybrid_retrieval_metrics.json")
+    planner = load("query_planner_ablation_metrics.json")
     unified = load("unified_metrics.json")
 
     generators = provider.get("generators", {})
@@ -40,11 +41,14 @@ def validate() -> dict[str, Any]:
         raise ValueError("dense retrieval did not improve main Hit@3 over BM25")
     if methods["bm25_openrouter_rrf_hybrid"]["main"]["mrr"] <= methods["bm25_sparse"]["main"]["mrr"]:
         raise ValueError("hybrid retrieval did not improve main MRR over BM25")
+    if set(planner.get("planners", {})) != {"direct", "category_expansion"}:
+        raise ValueError("query planner ablation is incomplete")
     sources = {record.get("source_artifact") for record in unified}
     required_sources = {
         "generated_reviewer_comparison_metrics.json",
         "graph_ablation_metrics.json",
         "dense_hybrid_retrieval_metrics.json",
+        "query_planner_ablation_metrics.json",
     }
     if not required_sources <= sources:
         raise ValueError(f"unified metrics missing sources: {sorted(required_sources - sources)}")
@@ -53,6 +57,7 @@ def validate() -> dict[str, Any]:
         "graph_profiles": sorted(profiles),
         "dense_main_hit_at_3": methods["openrouter_dense"]["main"]["hit_at_3"],
         "hybrid_main_mrr": methods["bm25_openrouter_rrf_hybrid"]["main"]["mrr"],
+        "query_planner_main_hit_at_3_delta": planner["main_hit_at_3_delta"],
         "unified_metric_records": len(unified),
     }
 

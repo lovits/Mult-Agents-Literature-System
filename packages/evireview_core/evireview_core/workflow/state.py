@@ -19,6 +19,9 @@ class ReviewAuditState:
     evidence_blocks: list[EvidenceBlock]
     top_k: int = 5
     finding_top_k: int = 3
+    query_planner_name: str = "direct"
+    retriever_name: str = "hierarchical"
+    query_plan: dict[str, str] = field(default_factory=dict)
     retrieval: dict[str, list[RetrievalCandidate]] = field(default_factory=dict)
     verification: dict[str, VerificationResult] = field(default_factory=dict)
     ranked_findings: list[RankedFinding] = field(default_factory=list)

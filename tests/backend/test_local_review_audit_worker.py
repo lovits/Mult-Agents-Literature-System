@@ -40,7 +40,7 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
         stored_result = self.repository.get_run(created["run"]["run_id"])["result"]
         self.assertEqual(
             [item["node"] for item in stored_result["agent_trace"]],
-            ["generate_or_import_weaknesses", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
+            ["generate_or_import_weaknesses", "plan_weakness_queries", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
         )
 
     def test_worker_records_invalid_input_failure(self) -> None:
@@ -75,7 +75,29 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
         result = self.repository.get_run("run-profile")["result"]
 
         self.assertEqual(result["graph_profile"], "no_verifier")
-        self.assertEqual(result["agent_trace"][2]["node"], "assume_supported")
+        self.assertEqual(result["agent_trace"][3]["node"], "assume_supported")
+
+    def test_worker_executes_selected_query_planner_and_retriever(self) -> None:
+        self.repository.create_run_and_job(
+            "run-components",
+            "job-components",
+            {
+                "paper_id": "p1",
+                "weaknesses": [Weakness("w1", "p1", "Evaluation is incomplete.", "experiment", "major").to_dict()],
+                "evidence_blocks": [
+                    EvidenceBlock("b1", "p1", "Experiments", "experiment", "Ablation baseline evaluation.").to_dict()
+                ],
+                "query_planner": "category_expansion",
+                "retriever": "bm25",
+            },
+        )
+
+        run_next_job(self.repository)
+        result = self.repository.get_run("run-components")["result"]
+
+        self.assertEqual(result["query_planner"], "category_expansion")
+        self.assertEqual(result["retriever"], "bm25")
+        self.assertEqual(result["agent_trace"][2]["retriever"], "bm25")
 
     def test_worker_recovers_running_job_before_execution(self) -> None:
         created = self.service.create_review_audit(ReviewAuditRequest(paper_id="p1", weaknesses=[], evidence_blocks=[]))

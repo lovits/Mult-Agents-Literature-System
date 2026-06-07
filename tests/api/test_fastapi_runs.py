@@ -90,6 +90,14 @@ class FastApiRunsTest(unittest.TestCase):
 
         self.assertEqual(response.status_code, 422)
 
+    def test_create_run_rejects_unknown_component_names(self) -> None:
+        for field in ("query_planner", "retriever"):
+            response = self.client.post(
+                "/api/runs/review-audit",
+                json={"paper_id": "p1", "weaknesses": [], "evidence_blocks": [], field: "missing"},
+            )
+            self.assertEqual(response.status_code, 422)
+
     def test_run_job_then_read_run_findings_trace_and_job(self) -> None:
         created = self.client.post(
             "/api/runs/review-audit",
@@ -111,7 +119,7 @@ class FastApiRunsTest(unittest.TestCase):
         agent_trace = self.client.get(f"/api/runs/{run_id}/agent-trace").json()
         self.assertEqual(
             [event["node"] for event in agent_trace],
-            ["generate_or_import_weaknesses", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
+            ["generate_or_import_weaknesses", "plan_weakness_queries", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
         )
 
     def test_workspace_read_model_combines_weakness_evidence_results_and_trace(self) -> None:

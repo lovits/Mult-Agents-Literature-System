@@ -81,6 +81,8 @@ python3 code/experiments/evireview_a/src/evaluate_retrieval_comparison_gold.py
 python3 code/experiments/evireview_a/src/render_experiment_dashboard.py
 python3 code/experiments/evireview_a/src/evaluate_live_qdrant_retrieval.py
 python3 code/experiments/evireview_a/src/validate_live_qdrant_retrieval.py
+PYTHONPATH=packages/evireview_core python3 code/experiments/evireview_a/src/evaluate_query_planner_ablation.py
+PYTHONPATH=packages/evireview_core python3 code/experiments/evireview_a/src/validate_query_planner_ablation.py
 ```
 
 Live Qdrant retrieval requires a service at `QDRANT_URL` (default `http://127.0.0.1:6333`) and the

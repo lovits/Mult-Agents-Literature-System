@@ -165,6 +165,42 @@
 | CLAIMCHECK | retrieval | paper_rag_qdrant | qdrant_openrouter_dense | pilot.mapped_target_count | 6 | gold | live_qdrant_retrieval_metrics.json |
 | CLAIMCHECK | retrieval | paper_rag_qdrant | qdrant_openrouter_dense | pilot.mrr | 0.5184 | gold | live_qdrant_retrieval_metrics.json |
 | CLAIMCHECK | retrieval | paper_rag_qdrant | qdrant_openrouter_dense | pilot.unmapped_target_count | 6 | gold | live_qdrant_retrieval_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | main.grounded_weakness_count | 108 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | main.hit_at_1 | 0.1806 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | main.hit_at_10 | 0.5972 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | main.hit_at_3 | 0.3611 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | main.hit_at_5 | 0.4167 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | main.mapped_target_count | 72 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | main.mrr | 0.3144 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | main.target_mapping_threshold | 0.7 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | main.unmapped_target_count | 36 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | pilot.grounded_weakness_count | 12 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | pilot.hit_at_1 | 0.5 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | pilot.hit_at_10 | 0.8333 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | pilot.hit_at_3 | 0.5 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | pilot.hit_at_5 | 0.5 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | pilot.mapped_target_count | 6 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | pilot.mrr | 0.5442 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | pilot.target_mapping_threshold | 0.7 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | category_expansion | pilot.unmapped_target_count | 6 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | main.grounded_weakness_count | 108 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | main.hit_at_1 | 0.1806 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | main.hit_at_10 | 0.5833 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | main.hit_at_3 | 0.3611 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | main.hit_at_5 | 0.4167 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | main.mapped_target_count | 72 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | main.mrr | 0.3135 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | main.target_mapping_threshold | 0.7 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | main.unmapped_target_count | 36 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | pilot.grounded_weakness_count | 12 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | pilot.hit_at_1 | 0.5 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | pilot.hit_at_10 | 0.8333 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | pilot.hit_at_3 | 0.5 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | pilot.hit_at_5 | 0.5 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | pilot.mapped_target_count | 6 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | pilot.mrr | 0.5442 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | pilot.target_mapping_threshold | 0.7 | gold | query_planner_ablation_metrics.json |
+| CLAIMCHECK | retrieval | query_planner | direct | pilot.unmapped_target_count | 6 | gold | query_planner_ablation_metrics.json |
 | Local OpenReview/PRISM | ablation | agent_rag_graph | full | mean_reference_support | 0.3632 | silver | graph_ablation_metrics.json |
 | Local OpenReview/PRISM | ablation | agent_rag_graph | full | reference_partial_or_better_rate | 0.0355 | silver | graph_ablation_metrics.json |
 | Local OpenReview/PRISM | ablation | agent_rag_graph | full | reference_unsupported_rate | 0.0 | silver | graph_ablation_metrics.json |

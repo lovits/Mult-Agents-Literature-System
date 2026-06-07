@@ -8,6 +8,7 @@ from evireview_core.workflow.nodes import (
     assume_supported,
     generate_or_import_weaknesses,
     preserve_candidate_order,
+    plan_weakness_queries,
     rank_findings,
     retrieve_evidence,
     verify_weaknesses,
@@ -39,6 +40,7 @@ class GraphRegistry:
 
 BASE = (
     ("generate_or_import_weaknesses", generate_or_import_weaknesses),
+    ("plan_weakness_queries", plan_weakness_queries),
     ("retrieve_evidence", retrieve_evidence),
 )
 

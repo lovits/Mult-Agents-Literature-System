@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from evireview_core.domain.models import RankedFinding, VerificationResult
 from evireview_core.ranking.evidence_aware import rank_weaknesses
-from evireview_core.retrieval.hierarchical import hierarchical_search
 from evireview_core.verification.heuristic import verify_with_heuristics
+from evireview_core.workflow.components import DEFAULT_COMPONENT_REGISTRY
 from evireview_core.workflow.state import ReviewAuditState
 
 
@@ -16,11 +16,24 @@ def generate_or_import_weaknesses(state: ReviewAuditState) -> dict[str, object]:
     return {"mode": "generated", "weakness_count": len(state.weaknesses)}
 
 
-def retrieve_evidence(state: ReviewAuditState) -> None:
+def plan_weakness_queries(state: ReviewAuditState) -> dict[str, object]:
+    planner = DEFAULT_COMPONENT_REGISTRY.query_planner(state.query_planner_name)
+    state.query_plan = {weakness.weakness_id: planner(weakness) for weakness in state.weaknesses}
+    return {"query_planner": state.query_planner_name, "query_count": len(state.query_plan)}
+
+
+def retrieve_evidence(state: ReviewAuditState) -> dict[str, object]:
+    retriever = DEFAULT_COMPONENT_REGISTRY.retriever(state.retriever_name)
     state.retrieval = {
-        weakness.weakness_id: hierarchical_search(weakness, state.evidence_blocks, top_k=state.top_k)
+        weakness.weakness_id: retriever(
+            weakness,
+            state.query_plan.get(weakness.weakness_id, weakness.weakness_text),
+            state.evidence_blocks,
+            state.top_k,
+        )
         for weakness in state.weaknesses
     }
+    return {"retriever": state.retriever_name, "retrieval_count": len(state.retrieval)}
 
 
 def verify_weaknesses(state: ReviewAuditState) -> None:

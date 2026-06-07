@@ -42,6 +42,8 @@ class ReviewAuditService:
         top_k: int = 5,
         finding_top_k: int = 3,
         graph_profile: str = "full",
+        query_planner: str = "direct",
+        retriever: str = "hierarchical",
     ) -> dict:
         self._require_queue()
         version_id = str(self.repository.get_active_paper_version(paper_id)["version_id"])
@@ -57,6 +59,8 @@ class ReviewAuditService:
             top_k=top_k,
             finding_top_k=finding_top_k,
             graph_profile=graph_profile,
+            query_planner=query_planner,
+            retriever=retriever,
         )
         payload = request.to_payload()
         payload.pop("evidence_blocks")

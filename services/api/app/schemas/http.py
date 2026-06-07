@@ -39,6 +39,8 @@ class ReviewAuditInput(BaseModel):
     top_k: int = Field(default=5, gt=0)
     finding_top_k: int = Field(default=3, gt=0)
     graph_profile: str = "full"
+    query_planner: str = "direct"
+    retriever: str = "hierarchical"
 
     def to_request(self) -> ReviewAuditRequest:
         return ReviewAuditRequest(
@@ -48,6 +50,8 @@ class ReviewAuditInput(BaseModel):
             top_k=self.top_k,
             finding_top_k=self.finding_top_k,
             graph_profile=self.graph_profile,
+            query_planner=self.query_planner,
+            retriever=self.retriever,
         )
 
 
@@ -72,6 +76,8 @@ class PersistedPaperReviewAuditInput(BaseModel):
     top_k: int = Field(default=5, gt=0)
     finding_top_k: int = Field(default=3, gt=0)
     graph_profile: str = "full"
+    query_planner: str = "direct"
+    retriever: str = "hierarchical"
 
     def to_weaknesses(self) -> list[Weakness]:
         return [Weakness.from_dict(item.model_dump()) for item in self.weaknesses]
@@ -87,6 +93,8 @@ class ExperimentPaperAuditInput(PersistedPaperReviewAuditInput):
             top_k=self.top_k,
             finding_top_k=self.finding_top_k,
             graph_profile=self.graph_profile,
+            query_planner=self.query_planner,
+            retriever=self.retriever,
         )
 
 
