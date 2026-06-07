@@ -181,7 +181,8 @@ class SQLiteRunRepositoryTest(unittest.TestCase):
                     block_id TEXT PRIMARY KEY, paper_id TEXT NOT NULL, ordinal INTEGER NOT NULL,
                     section_path TEXT NOT NULL, section_type TEXT NOT NULL, text TEXT NOT NULL, score REAL NOT NULL
                 );
-                INSERT INTO papers VALUES ('legacy', 'Legacy Paper', 'markdown', '2026-01-01', '2026-01-01');
+                INSERT INTO papers(paper_id, title, source_type, created_at, updated_at)
+                VALUES ('legacy', 'Legacy Paper', 'markdown', '2026-01-01', '2026-01-01');
                 INSERT INTO paper_sections VALUES ('s1', 'legacy', 0, 'Abstract', 'abstract', 'Legacy section.');
                 INSERT INTO evidence_blocks VALUES ('b1', 'legacy', 0, 'Abstract', 'abstract', 'Legacy evidence.', 0.0);
                 """

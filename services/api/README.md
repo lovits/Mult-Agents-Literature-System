@@ -6,6 +6,7 @@ Implemented boundaries:
 
 - `app.schemas.runs`: review-audit input and lifecycle contracts.
 - `app.repositories.sqlite_run_repository`: local SQLite dev-mode persistence for runs, jobs, results, and trace events.
+- `POST /api/papers/import-mineru`: imports MinerU-parsed PDF Markdown without granting the API arbitrary filesystem access; paper and immutable-version provenance record `source_type` and `source_ref`.
 - `app.services.review_audit_service`: application use cases suitable for future FastAPI route handlers.
 - `app.services.paper_service`: Markdown paper parsing and persisted evidence-block construction.
 - `app.services.report_service`: persisted Markdown report generation for completed review audits.

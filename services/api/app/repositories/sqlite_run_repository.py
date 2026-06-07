@@ -163,7 +163,15 @@ class SQLiteRunRepository:
                 );
                 """
             )
+            self._ensure_column(connection, "papers", "source_ref", "TEXT NOT NULL DEFAULT ''")
+            self._ensure_column(connection, "paper_versions", "source_ref", "TEXT NOT NULL DEFAULT ''")
             self._backfill_paper_versions(connection)
+
+    @staticmethod
+    def _ensure_column(connection: sqlite3.Connection, table: str, column: str, definition: str) -> None:
+        columns = {str(row["name"]) for row in connection.execute(f"PRAGMA table_info({table})").fetchall()}
+        if column not in columns:
+            connection.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
     @staticmethod
     def _backfill_paper_versions(connection: sqlite3.Connection) -> None:
@@ -226,7 +234,11 @@ class SQLiteRunRepository:
         sections: list[dict[str, Any]],
         blocks: list[dict[str, Any]],
         version_id: str | None = None,
+        source_type: str = "markdown",
+        source_ref: str = "",
     ) -> None:
+        if source_type not in {"markdown", "mineru_markdown"}:
+            raise ValueError(f"unsupported paper source_type: {source_type}")
         timestamp = _now()
         resolved_version_id = version_id or _derived_version_id(paper_id, title, sections, blocks)
         with self._connection() as connection:
@@ -235,18 +247,18 @@ class SQLiteRunRepository:
             created_at = existing["created_at"] if existing else timestamp
             connection.execute(
                 """
-                INSERT INTO papers(paper_id, title, source_type, created_at, updated_at) VALUES (?, ?, 'markdown', ?, ?)
+                INSERT INTO papers(paper_id, title, source_type, source_ref, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)
                 ON CONFLICT(paper_id) DO UPDATE SET title = excluded.title, source_type = excluded.source_type,
-                    updated_at = excluded.updated_at
+                    source_ref = excluded.source_ref, updated_at = excluded.updated_at
                 """,
-                (paper_id, title, created_at, timestamp),
+                (paper_id, title, source_type, source_ref, created_at, timestamp),
             )
             connection.execute(
                 """
-                INSERT OR IGNORE INTO paper_versions(version_id, paper_id, title, source_type, created_at)
-                VALUES (?, ?, ?, 'markdown', ?)
+                INSERT OR IGNORE INTO paper_versions(version_id, paper_id, title, source_type, source_ref, created_at)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """,
-                (resolved_version_id, paper_id, title, timestamp),
+                (resolved_version_id, paper_id, title, source_type, source_ref, timestamp),
             )
             connection.executemany(
                 """

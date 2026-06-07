@@ -63,6 +63,21 @@ class PaperServiceTest(unittest.TestCase):
         self.assertIn("Original evidence.", original_blocks[0]["text"])
         self.assertIn("Changed evidence.", self.service.get_evidence_blocks("paper-1")[0]["text"])
 
+    def test_import_mineru_markdown_persists_source_type_and_usable_evidence(self) -> None:
+        imported = self.service.import_mineru_markdown(
+            "paper-mineru",
+            "MinerU Paper",
+            "---\nsource: MinerU\npdf: paper.pdf\n---\n\n# Experiments\n![](images/a.jpg)\nNo ablation is reported.",
+            source_document="paper.pdf",
+        )
+
+        self.assertEqual(imported["source_type"], "mineru_markdown")
+        self.assertEqual(imported["source_ref"], "paper.pdf")
+        self.assertEqual(self.service.list_versions("paper-mineru")[0]["source_type"], "mineru_markdown")
+        self.assertEqual(self.service.list_versions("paper-mineru")[0]["source_ref"], "paper.pdf")
+        self.assertNotIn("images/a.jpg", self.service.get_evidence_blocks("paper-mineru")[0]["text"])
+        self.assertIn("No ablation", self.service.get_evidence_blocks("paper-mineru")[0]["text"])
+
 
 if __name__ == "__main__":
     unittest.main()

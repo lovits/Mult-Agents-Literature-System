@@ -4,7 +4,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request, status
 
-from app.schemas.http import CreatedRunResponse, PaperImportInput, PersistedPaperReviewAuditInput
+from app.schemas.http import CreatedRunResponse, MinerUPaperImportInput, PaperImportInput, PersistedPaperReviewAuditInput
 from app.services.review_audit_service import QueueDeliveryError
 
 
@@ -19,6 +19,19 @@ def _not_found(exc: KeyError) -> HTTPException:
 def import_paper(payload: PaperImportInput, request: Request) -> dict[str, Any]:
     try:
         return request.app.state.paper_service.import_markdown(payload.paper_id, payload.title, payload.markdown)
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)) from exc
+
+
+@router.post("/papers/import-mineru", status_code=status.HTTP_201_CREATED)
+def import_mineru_paper(payload: MinerUPaperImportInput, request: Request) -> dict[str, Any]:
+    try:
+        return request.app.state.paper_service.import_mineru_markdown(
+            payload.paper_id,
+            payload.title,
+            payload.mineru_markdown,
+            payload.source_document,
+        )
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)) from exc
 

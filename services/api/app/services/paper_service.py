@@ -5,6 +5,7 @@ from typing import Any
 
 from app.repositories.sqlite_run_repository import SQLiteRunRepository
 from evireview_core.parsing.markdown_sections import chunk_text, iter_sections
+from evireview_core.parsing.mineru_markdown import normalize_mineru_markdown
 
 
 def _stable_id(prefix: str, *parts: object) -> str:
@@ -17,7 +18,33 @@ class PaperService:
         self.repository = repository
 
     def import_markdown(self, paper_id: str, title: str, markdown: str) -> dict[str, Any]:
-        version_id = _stable_id("version", paper_id, title, markdown)
+        return self._import_parsed_markdown(paper_id, title, markdown, source_type="markdown")
+
+    def import_mineru_markdown(
+        self,
+        paper_id: str,
+        title: str,
+        mineru_markdown: str,
+        source_document: str,
+    ) -> dict[str, Any]:
+        normalized = normalize_mineru_markdown(mineru_markdown)
+        return self._import_parsed_markdown(
+            paper_id,
+            title,
+            normalized,
+            source_type="mineru_markdown",
+            source_document=source_document,
+        )
+
+    def _import_parsed_markdown(
+        self,
+        paper_id: str,
+        title: str,
+        markdown: str,
+        source_type: str,
+        source_document: str = "",
+    ) -> dict[str, Any]:
+        version_id = _stable_id("version", paper_id, title, source_type, source_document, markdown)
         sections: list[dict[str, Any]] = []
         blocks: list[dict[str, Any]] = []
         for section_ordinal, section in enumerate(iter_sections(markdown)):
@@ -46,7 +73,15 @@ class PaperService:
                 )
         if not sections:
             raise ValueError("markdown must contain usable text")
-        self.repository.replace_paper_assets(paper_id, title, sections, blocks, version_id=version_id)
+        self.repository.replace_paper_assets(
+            paper_id,
+            title,
+            sections,
+            blocks,
+            version_id=version_id,
+            source_type=source_type,
+            source_ref=source_document,
+        )
         return {
             **self.get_paper(paper_id),
             "section_count": len(sections),

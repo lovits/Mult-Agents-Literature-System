@@ -793,6 +793,7 @@ code/
 - `direct` 与透明 `category_expansion` 已在 CLAIMCHECK ready-label targets 上完成消融；简单扩展无提升，因此默认保持 `direct`。
 - Qdrant 已完成真实建库、payload filter、dense/sparse/native-RRF 查询与延迟实验，并作为 `qdrant_sparse` / `qdrant_hybrid` 可选 retriever 接入论文审计 Worker；ready-label 实验不支持将未调参 hybrid 设为默认，因此默认仍为 `hierarchical`。
 - 完整 Agent-RAG graph 已在 verifier 与 ranker 之间加入 evidence-aware intra-paper deduplication；重复映射进入结果与 trace，并提供 `no_dedup` 消融 profile。
+- PDF ingestion 采用 MinerU parsed-Markdown adapter：后端保留 `source_type/source_ref` 与不可变版本，不在 API 内重复实现 OCR，也不允许 API 读取任意本地路径。
 
 ---
 

@@ -46,6 +46,32 @@ class FastApiPapersTest(unittest.TestCase):
         self.assertEqual(len(self.client.get("/api/papers/paper-1/sections").json()), 2)
         self.assertEqual(len(self.client.get("/api/papers/paper-1/evidence-blocks").json()), 2)
 
+    def test_import_mineru_parsed_pdf_without_accepting_filesystem_paths(self) -> None:
+        response = self.client.post(
+            "/api/papers/import-mineru",
+            json={
+                "paper_id": "paper-mineru",
+                "title": "MinerU Paper",
+                "source_document": "paper.pdf",
+                "mineru_markdown": "---\nsource: MinerU\n---\n\n# Experiments\nNo ablation is reported.",
+            },
+        )
+        rejected = self.client.post(
+            "/api/papers/import-mineru",
+            json={
+                "paper_id": "paper-mineru",
+                "title": "MinerU Paper",
+                "source_document": "paper.pdf",
+                "mineru_markdown": "# Experiments\nEvidence.",
+                "local_path": "/private/paper.md",
+            },
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()["source_type"], "mineru_markdown")
+        self.assertEqual(response.json()["source_ref"], "paper.pdf")
+        self.assertEqual(rejected.status_code, 422)
+
     def test_list_papers_and_paper_runs_for_workspace_navigation(self) -> None:
         self.client.post(
             "/api/papers/import",

@@ -186,3 +186,9 @@ API、持久化任务和 Worker 现已支持：
 3. 真实 Qdrant 与 OpenAI-compatible embedding adapter 的 hybrid Worker。
 
 Qdrant/Hybrid 现在是正式可选择后端组件，但默认仍保持 `hierarchical`，因为当前 CLAIMCHECK gold 结果中 dense Hit@3 高于未调参 hybrid。
+
+## 后端补齐：MinerU Parsed-PDF 导入
+
+后端新增 `POST /api/papers/import-mineru`，将 MinerU 已解析的 PDF Markdown 统一转换为 Paper Sections 与 Evidence Blocks，并在 paper 与 immutable version 保存 `source_type=mineru_markdown` 和 `source_ref`。
+
+使用仓库内真实 FactReview MinerU 文档完成 `21 sections -> 28 evidence blocks -> qdrant_sparse -> verifier -> dedup -> ranker` smoke，运行状态为 `succeeded`。原始 PDF OCR 仍由 MinerU 负责，API 不接受任意本地路径。
