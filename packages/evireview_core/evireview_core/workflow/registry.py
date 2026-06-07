@@ -6,11 +6,13 @@ from typing import Any
 
 from evireview_core.workflow.nodes import (
     assume_supported,
+    deduplicate_weaknesses,
     generate_or_import_weaknesses,
     preserve_candidate_order,
     plan_weakness_queries,
     rank_findings,
     retrieve_evidence,
+    skip_deduplication,
     verify_weaknesses,
 )
 from evireview_core.workflow.state import ReviewAuditState
@@ -46,8 +48,26 @@ BASE = (
 
 DEFAULT_GRAPH_REGISTRY = GraphRegistry(
     (
-        GraphProfile("full", (*BASE, ("verify_weaknesses", verify_weaknesses), ("rank_findings", rank_findings))),
-        GraphProfile("no_verifier", (*BASE, ("assume_supported", assume_supported), ("rank_findings", rank_findings))),
-        GraphProfile("no_ranker", (*BASE, ("verify_weaknesses", verify_weaknesses), ("preserve_candidate_order", preserve_candidate_order))),
+        GraphProfile(
+            "full",
+            (*BASE, ("verify_weaknesses", verify_weaknesses), ("deduplicate_weaknesses", deduplicate_weaknesses), ("rank_findings", rank_findings)),
+        ),
+        GraphProfile(
+            "no_dedup",
+            (*BASE, ("verify_weaknesses", verify_weaknesses), ("skip_deduplication", skip_deduplication), ("rank_findings", rank_findings)),
+        ),
+        GraphProfile(
+            "no_verifier",
+            (*BASE, ("assume_supported", assume_supported), ("deduplicate_weaknesses", deduplicate_weaknesses), ("rank_findings", rank_findings)),
+        ),
+        GraphProfile(
+            "no_ranker",
+            (
+                *BASE,
+                ("verify_weaknesses", verify_weaknesses),
+                ("deduplicate_weaknesses", deduplicate_weaknesses),
+                ("preserve_candidate_order", preserve_candidate_order),
+            ),
+        ),
     )
 )

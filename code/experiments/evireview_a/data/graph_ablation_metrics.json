@@ -7,25 +7,48 @@
   "candidate_count": 194,
   "profiles": {
     "full": {
+      "candidate_count": 194,
+      "deduplicated_count": 172,
+      "duplicate_count": 22,
+      "candidate_reduction_rate": 0.1134,
+      "selected_count": 139,
+      "mean_reference_support": 0.3609,
+      "reference_partial_or_better_rate": 0.036,
+      "reference_unsupported_rate": 0.0,
+      "topk_overlap_with_full": 1.0
+    },
+    "no_dedup": {
+      "candidate_count": 194,
+      "deduplicated_count": 194,
+      "duplicate_count": 0,
+      "candidate_reduction_rate": 0.0,
       "selected_count": 141,
       "mean_reference_support": 0.3632,
       "reference_partial_or_better_rate": 0.0355,
       "reference_unsupported_rate": 0.0,
-      "topk_overlap_with_full": 1.0
+      "topk_overlap_with_full": 0.8652
     },
     "no_verifier": {
-      "selected_count": 141,
+      "candidate_count": 194,
+      "deduplicated_count": 172,
+      "duplicate_count": 22,
+      "candidate_reduction_rate": 0.1134,
+      "selected_count": 139,
       "mean_reference_support": 0.3569,
-      "reference_partial_or_better_rate": 0.0071,
+      "reference_partial_or_better_rate": 0.0288,
       "reference_unsupported_rate": 0.0,
-      "topk_overlap_with_full": 0.9362
+      "topk_overlap_with_full": 0.9424
     },
     "no_ranker": {
-      "selected_count": 141,
+      "candidate_count": 194,
+      "deduplicated_count": 172,
+      "duplicate_count": 22,
+      "candidate_reduction_rate": 0.1134,
+      "selected_count": 139,
       "mean_reference_support": 0.3583,
-      "reference_partial_or_better_rate": 0.0142,
+      "reference_partial_or_better_rate": 0.0216,
       "reference_unsupported_rate": 0.0,
-      "topk_overlap_with_full": 0.9078
+      "topk_overlap_with_full": 0.9353
     }
   },
   "note": "All selected findings are evaluated against the full graph heuristic verifier as a shared silver reference."

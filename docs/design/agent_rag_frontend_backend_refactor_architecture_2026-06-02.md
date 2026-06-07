@@ -240,6 +240,7 @@ START
   -> plan_weakness_queries
   -> retrieve_evidence
   -> verify_support
+  -> deduplicate_weaknesses
   -> rank_findings
   -> compose_report
   -> END
@@ -791,6 +792,7 @@ code/
 - Query Planner 与 Retriever 已通过组件注册表分别配置，运行配置进入 API、worker、结果和 agent trace。
 - `direct` 与透明 `category_expansion` 已在 CLAIMCHECK ready-label targets 上完成消融；简单扩展无提升，因此默认保持 `direct`。
 - Qdrant 已完成真实建库、payload filter、dense/sparse/native-RRF 查询与延迟实验，但尚未作为论文审计 worker 的默认 retriever。
+- 完整 Agent-RAG graph 已在 verifier 与 ranker 之间加入 evidence-aware intra-paper deduplication；重复映射进入结果与 trace，并提供 `no_dedup` 消融 profile。
 
 ---
 

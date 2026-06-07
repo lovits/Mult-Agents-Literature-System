@@ -27,6 +27,8 @@ class ReviewAuditState:
     query_plan: dict[str, str] = field(default_factory=dict)
     retrieval: dict[str, list[RetrievalCandidate]] = field(default_factory=dict)
     verification: dict[str, VerificationResult] = field(default_factory=dict)
+    deduplicated_weaknesses: list[Weakness] = field(default_factory=list)
+    duplicate_of: dict[str, str] = field(default_factory=dict)
     ranked_findings: list[RankedFinding] = field(default_factory=list)
     weakness_generator: Callable[["ReviewAuditState"], WeaknessGenerationResult] | None = None
     verifier: Callable[[Weakness, list[RetrievedEvidence]], VerificationResult] | None = None

@@ -63,6 +63,12 @@ def run_deterministic_review_audit(
         "evidence_block_count": len(blocks),
         "retrieval": retrieval,
         "verification": {key: value.to_dict() for key, value in state.verification.items()},
+        "deduplication": {
+            "candidate_count": len(state.weaknesses),
+            "deduplicated_count": len(state.deduplicated_weaknesses or state.weaknesses),
+            "duplicate_count": len(state.duplicate_of),
+            "duplicate_of": state.duplicate_of,
+        },
         "ranked_findings": [item.to_dict() for item in state.ranked_findings],
         "agent_trace": state.agent_trace,
         "metric_boundary": "silver diagnostic",

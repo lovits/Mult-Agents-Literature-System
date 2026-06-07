@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from evireview_core.deduplication.lexical import deduplicate_weaknesses as apply_deduplication
 from evireview_core.domain.models import RankedFinding, VerificationResult
 from evireview_core.ranking.evidence_aware import rank_weaknesses
 from evireview_core.workflow.components import DEFAULT_COMPONENT_REGISTRY
@@ -67,8 +68,26 @@ def assume_supported(state: ReviewAuditState) -> dict[str, object]:
     return {"ablation": "no_verifier"}
 
 
+def deduplicate_weaknesses(state: ReviewAuditState) -> dict[str, object]:
+    result = apply_deduplication(state.weaknesses, state.verification)
+    state.deduplicated_weaknesses = result.weaknesses
+    state.duplicate_of = result.duplicate_of
+    return {
+        "candidate_count": len(state.weaknesses),
+        "deduplicated_count": len(state.deduplicated_weaknesses),
+        "duplicate_count": len(state.duplicate_of),
+    }
+
+
+def skip_deduplication(state: ReviewAuditState) -> dict[str, object]:
+    state.deduplicated_weaknesses = list(state.weaknesses)
+    state.duplicate_of = {}
+    return {"ablation": "no_dedup", "candidate_count": len(state.weaknesses)}
+
+
 def rank_findings(state: ReviewAuditState) -> None:
-    state.ranked_findings = rank_weaknesses(state.weaknesses, state.verification, top_k=state.finding_top_k)
+    weaknesses = state.deduplicated_weaknesses or state.weaknesses
+    state.ranked_findings = rank_weaknesses(weaknesses, state.verification, top_k=state.finding_top_k)
 
 
 def preserve_candidate_order(state: ReviewAuditState) -> dict[str, object]:
@@ -79,7 +98,7 @@ def preserve_candidate_order(state: ReviewAuditState) -> dict[str, object]:
             rank_score=0.0,
             label=state.verification[weakness.weakness_id].label,
         )
-        for rank, weakness in enumerate(state.weaknesses[: state.finding_top_k], start=1)
+        for rank, weakness in enumerate((state.deduplicated_weaknesses or state.weaknesses)[: state.finding_top_k], start=1)
         if weakness.weakness_id in state.verification
     ]
     return {"ablation": "no_ranker"}

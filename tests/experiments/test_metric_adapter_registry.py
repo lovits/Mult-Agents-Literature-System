@@ -11,9 +11,13 @@ sys.path.insert(0, str(SRC_DIR))
 
 from metric_adapter_registry import collect_historical_metrics
 from compare_generated_reviewers import common_paper_ids
+from evaluate_graph_ablation import PROFILES
 
 
 class MetricAdapterRegistryTest(unittest.TestCase):
+    def test_graph_ablation_includes_deduplication_control(self) -> None:
+        self.assertIn("no_dedup", PROFILES)
+
     def test_paired_reviewer_comparison_uses_only_common_papers(self) -> None:
         raw = {
             "rubric": {"generated": [{"paper_id": "p1"}, {"paper_id": "p2"}]},

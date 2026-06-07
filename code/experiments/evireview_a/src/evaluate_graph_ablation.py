@@ -15,7 +15,7 @@ from evireview_core.workflow.graph import ReviewAuditGraph
 from evireview_core.workflow.state import ReviewAuditState
 
 
-PROFILES = ("full", "no_verifier", "no_ranker")
+PROFILES = ("full", "no_dedup", "no_verifier", "no_ranker")
 
 
 def mean(values: list[float]) -> float:
@@ -40,6 +40,9 @@ def main() -> None:
         blocks_by_paper[row["paper_id"]].append(EvidenceBlock.from_dict(row))
 
     selected: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    profile_candidate_counts: dict[str, int] = defaultdict(int)
+    profile_deduplicated_counts: dict[str, int] = defaultdict(int)
+    profile_duplicate_counts: dict[str, int] = defaultdict(int)
     reference: dict[str, Any] = {}
     for paper_id, weaknesses in weaknesses_by_paper.items():
         full = ReviewAuditGraph("full").run(
@@ -47,11 +50,17 @@ def main() -> None:
         )
         reference.update(full.verification)
         selected["full"].extend((paper_id, item.weakness_id) for item in full.ranked_findings)
-        for profile in ("no_verifier", "no_ranker"):
+        profile_candidate_counts["full"] += len(full.weaknesses)
+        profile_deduplicated_counts["full"] += len(full.deduplicated_weaknesses)
+        profile_duplicate_counts["full"] += len(full.duplicate_of)
+        for profile in ("no_dedup", "no_verifier", "no_ranker"):
             state = ReviewAuditGraph(profile).run(
                 ReviewAuditState(weaknesses=list(weaknesses), evidence_blocks=blocks_by_paper[paper_id])
             )
             selected[profile].extend((paper_id, item.weakness_id) for item in state.ranked_findings)
+            profile_candidate_counts[profile] += len(state.weaknesses)
+            profile_deduplicated_counts[profile] += len(state.deduplicated_weaknesses)
+            profile_duplicate_counts[profile] += len(state.duplicate_of)
 
     full_set = set(selected["full"])
     profiles = {}
@@ -59,6 +68,12 @@ def main() -> None:
         rows = selected[profile]
         reference_results = [reference[weakness_id] for _, weakness_id in rows]
         profiles[profile] = {
+            "candidate_count": profile_candidate_counts[profile],
+            "deduplicated_count": profile_deduplicated_counts[profile],
+            "duplicate_count": profile_duplicate_counts[profile],
+            "candidate_reduction_rate": mean(
+                [profile_duplicate_counts[profile] / profile_candidate_counts[profile]]
+            ),
             "selected_count": len(rows),
             "mean_reference_support": mean([item.support_score for item in reference_results]),
             "reference_partial_or_better_rate": mean(
@@ -81,13 +96,14 @@ def main() -> None:
     lines = [
         "# Agent-RAG Graph Ablation",
         "",
-        "| Profile | Selected | Mean reference support | Reference partial+ | Reference unsupported | Top-K overlap with full |",
-        "| --- | ---: | ---: | ---: | ---: | ---: |",
+        "| Profile | Candidates | Deduplicated | Removed | Reduction | Selected | Mean reference support | Reference partial+ | Reference unsupported | Top-K overlap with full |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
     for profile in PROFILES:
         row = profiles[profile]
         lines.append(
-            f"| {profile} | {row['selected_count']} | {row['mean_reference_support']} | "
+            f"| {profile} | {row['candidate_count']} | {row['deduplicated_count']} | {row['duplicate_count']} | "
+            f"{row['candidate_reduction_rate']} | {row['selected_count']} | {row['mean_reference_support']} | "
             f"{row['reference_partial_or_better_rate']} | {row['reference_unsupported_rate']} | "
             f"{row['topk_overlap_with_full']} |"
         )

@@ -41,7 +41,14 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
         stored_result = self.repository.get_run(created["run"]["run_id"])["result"]
         self.assertEqual(
             [item["node"] for item in stored_result["agent_trace"]],
-            ["generate_or_import_weaknesses", "plan_weakness_queries", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
+            [
+                "generate_or_import_weaknesses",
+                "plan_weakness_queries",
+                "retrieve_evidence",
+                "verify_weaknesses",
+                "deduplicate_weaknesses",
+                "rank_findings",
+            ],
         )
 
     def test_worker_records_invalid_input_failure(self) -> None:

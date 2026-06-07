@@ -1994,8 +1994,48 @@
     "task": "ablation",
     "module": "agent_rag_graph",
     "method": "full",
+    "metric": "candidate_count",
+    "value": 194,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "full",
+    "metric": "candidate_reduction_rate",
+    "value": 0.1134,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "full",
+    "metric": "deduplicated_count",
+    "value": 172,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "full",
+    "metric": "duplicate_count",
+    "value": 22,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "full",
     "metric": "mean_reference_support",
-    "value": 0.3632,
+    "value": 0.3609,
     "metric_boundary": "silver",
     "source_artifact": "graph_ablation_metrics.json"
   },
@@ -2005,7 +2045,7 @@
     "module": "agent_rag_graph",
     "method": "full",
     "metric": "reference_partial_or_better_rate",
-    "value": 0.0355,
+    "value": 0.036,
     "metric_boundary": "silver",
     "source_artifact": "graph_ablation_metrics.json"
   },
@@ -2025,7 +2065,7 @@
     "module": "agent_rag_graph",
     "method": "full",
     "metric": "selected_count",
-    "value": 141,
+    "value": 139,
     "metric_boundary": "silver",
     "source_artifact": "graph_ablation_metrics.json"
   },
@@ -2036,6 +2076,136 @@
     "method": "full",
     "metric": "topk_overlap_with_full",
     "value": 1.0,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_dedup",
+    "metric": "candidate_count",
+    "value": 194,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_dedup",
+    "metric": "candidate_reduction_rate",
+    "value": 0.0,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_dedup",
+    "metric": "deduplicated_count",
+    "value": 194,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_dedup",
+    "metric": "duplicate_count",
+    "value": 0,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_dedup",
+    "metric": "mean_reference_support",
+    "value": 0.3632,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_dedup",
+    "metric": "reference_partial_or_better_rate",
+    "value": 0.0355,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_dedup",
+    "metric": "reference_unsupported_rate",
+    "value": 0.0,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_dedup",
+    "metric": "selected_count",
+    "value": 141,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_dedup",
+    "metric": "topk_overlap_with_full",
+    "value": 0.8652,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_ranker",
+    "metric": "candidate_count",
+    "value": 194,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_ranker",
+    "metric": "candidate_reduction_rate",
+    "value": 0.1134,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_ranker",
+    "metric": "deduplicated_count",
+    "value": 172,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_ranker",
+    "metric": "duplicate_count",
+    "value": 22,
     "metric_boundary": "silver",
     "source_artifact": "graph_ablation_metrics.json"
   },
@@ -2055,7 +2225,7 @@
     "module": "agent_rag_graph",
     "method": "no_ranker",
     "metric": "reference_partial_or_better_rate",
-    "value": 0.0142,
+    "value": 0.0216,
     "metric_boundary": "silver",
     "source_artifact": "graph_ablation_metrics.json"
   },
@@ -2075,7 +2245,7 @@
     "module": "agent_rag_graph",
     "method": "no_ranker",
     "metric": "selected_count",
-    "value": 141,
+    "value": 139,
     "metric_boundary": "silver",
     "source_artifact": "graph_ablation_metrics.json"
   },
@@ -2085,7 +2255,47 @@
     "module": "agent_rag_graph",
     "method": "no_ranker",
     "metric": "topk_overlap_with_full",
-    "value": 0.9078,
+    "value": 0.9353,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_verifier",
+    "metric": "candidate_count",
+    "value": 194,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_verifier",
+    "metric": "candidate_reduction_rate",
+    "value": 0.1134,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_verifier",
+    "metric": "deduplicated_count",
+    "value": 172,
+    "metric_boundary": "silver",
+    "source_artifact": "graph_ablation_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "ablation",
+    "module": "agent_rag_graph",
+    "method": "no_verifier",
+    "metric": "duplicate_count",
+    "value": 22,
     "metric_boundary": "silver",
     "source_artifact": "graph_ablation_metrics.json"
   },
@@ -2105,7 +2315,7 @@
     "module": "agent_rag_graph",
     "method": "no_verifier",
     "metric": "reference_partial_or_better_rate",
-    "value": 0.0071,
+    "value": 0.0288,
     "metric_boundary": "silver",
     "source_artifact": "graph_ablation_metrics.json"
   },
@@ -2125,7 +2335,7 @@
     "module": "agent_rag_graph",
     "method": "no_verifier",
     "metric": "selected_count",
-    "value": 141,
+    "value": 139,
     "metric_boundary": "silver",
     "source_artifact": "graph_ablation_metrics.json"
   },
@@ -2135,7 +2345,7 @@
     "module": "agent_rag_graph",
     "method": "no_verifier",
     "metric": "topk_overlap_with_full",
-    "value": 0.9362,
+    "value": 0.9424,
     "metric_boundary": "silver",
     "source_artifact": "graph_ablation_metrics.json"
   },

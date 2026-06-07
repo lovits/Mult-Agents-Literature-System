@@ -29,7 +29,14 @@ class DeterministicWorkflowTest(unittest.TestCase):
 
         self.assertEqual(
             [item["node"] for item in result.agent_trace],
-            ["generate_or_import_weaknesses", "plan_weakness_queries", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
+            [
+                "generate_or_import_weaknesses",
+                "plan_weakness_queries",
+                "retrieve_evidence",
+                "verify_weaknesses",
+                "deduplicate_weaknesses",
+                "rank_findings",
+            ],
         )
         self.assertTrue(all(item["status"] == "succeeded" for item in result.agent_trace))
         self.assertEqual(result.agent_trace[0]["mode"], "imported")
@@ -126,8 +133,17 @@ class DeterministicWorkflowTest(unittest.TestCase):
         self.assertGreaterEqual(len(result["ranked_findings"]), 1)
         self.assertEqual(
             [item["node"] for item in result["agent_trace"]],
-            ["generate_or_import_weaknesses", "plan_weakness_queries", "retrieve_evidence", "verify_weaknesses", "rank_findings"],
+            [
+                "generate_or_import_weaknesses",
+                "plan_weakness_queries",
+                "retrieve_evidence",
+                "verify_weaknesses",
+                "deduplicate_weaknesses",
+                "rank_findings",
+            ],
         )
+        self.assertEqual(result["deduplication"]["candidate_count"], 2)
+        self.assertEqual(result["deduplication"]["deduplicated_count"], 2)
 
     def test_workflow_returns_generated_weaknesses_and_metadata(self) -> None:
         def generate(_state: ReviewAuditState) -> WeaknessGenerationResult:
@@ -222,8 +238,8 @@ class DeterministicWorkflowTest(unittest.TestCase):
 
         self.assertEqual(len(result["ranked_findings"]), 1)
 
-    def test_graph_registry_exposes_full_no_verifier_and_no_ranker_profiles(self) -> None:
-        self.assertEqual(DEFAULT_GRAPH_REGISTRY.names(), ("full", "no_ranker", "no_verifier"))
+    def test_graph_registry_exposes_full_and_ablation_profiles(self) -> None:
+        self.assertEqual(DEFAULT_GRAPH_REGISTRY.names(), ("full", "no_dedup", "no_ranker", "no_verifier"))
         with self.assertRaisesRegex(KeyError, "graph profile"):
             DEFAULT_GRAPH_REGISTRY.get("missing")
 
@@ -245,6 +261,21 @@ class DeterministicWorkflowTest(unittest.TestCase):
         self.assertTrue(all(item.label == "Supported" for item in no_verifier.verification.values()))
         self.assertEqual(no_ranker.ranked_findings[0].weakness_id, "w1")
         self.assertEqual(no_ranker.agent_trace[-1]["node"], "preserve_candidate_order")
+
+    def test_no_dedup_profile_bypasses_duplicate_filter(self) -> None:
+        state = ReviewAuditState(
+            weaknesses=[
+                Weakness("w1", "p1", "The paper lacks an ablation study for the reranker.", "experiment", "major"),
+                Weakness("w2", "p1", "The paper lacks ablation studies for the reranker.", "experiment", "major"),
+            ],
+            evidence_blocks=[EvidenceBlock("b1", "p1", "Experiments", "experiment", "No reranker ablation is reported.")],
+            finding_top_k=2,
+        )
+
+        result = ReviewAuditGraph(profile="no_dedup").run(state)
+
+        self.assertEqual([item["node"] for item in result.agent_trace][-2:], ["skip_deduplication", "rank_findings"])
+        self.assertEqual(len(result.deduplicated_weaknesses), 2)
 
 
 if __name__ == "__main__":
