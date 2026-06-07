@@ -36,6 +36,7 @@ class DeterministicWorkflowTest(unittest.TestCase):
                 "verify_weaknesses",
                 "deduplicate_weaknesses",
                 "rank_findings",
+                "classify_auxiliary_decision",
             ],
         )
         self.assertTrue(all(item["status"] == "succeeded" for item in result.agent_trace))
@@ -140,10 +141,12 @@ class DeterministicWorkflowTest(unittest.TestCase):
                 "verify_weaknesses",
                 "deduplicate_weaknesses",
                 "rank_findings",
+                "classify_auxiliary_decision",
             ],
         )
         self.assertEqual(result["deduplication"]["candidate_count"], 2)
         self.assertEqual(result["deduplication"]["deduplicated_count"], 2)
+        self.assertEqual(result["auxiliary_decision"]["metric_boundary"], "auxiliary diagnostic")
 
     def test_workflow_returns_generated_weaknesses_and_metadata(self) -> None:
         def generate(_state: ReviewAuditState) -> WeaknessGenerationResult:
@@ -263,7 +266,8 @@ class DeterministicWorkflowTest(unittest.TestCase):
 
         self.assertTrue(all(item.label == "Supported" for item in no_verifier.verification.values()))
         self.assertEqual(no_ranker.ranked_findings[0].weakness_id, "w1")
-        self.assertEqual(no_ranker.agent_trace[-1]["node"], "preserve_candidate_order")
+        self.assertEqual(no_ranker.agent_trace[-2]["node"], "preserve_candidate_order")
+        self.assertEqual(no_ranker.agent_trace[-1]["node"], "classify_auxiliary_decision")
 
     def test_no_dedup_profile_bypasses_duplicate_filter(self) -> None:
         state = ReviewAuditState(
@@ -277,7 +281,10 @@ class DeterministicWorkflowTest(unittest.TestCase):
 
         result = ReviewAuditGraph(profile="no_dedup").run(state)
 
-        self.assertEqual([item["node"] for item in result.agent_trace][-2:], ["skip_deduplication", "rank_findings"])
+        self.assertEqual(
+            [item["node"] for item in result.agent_trace][-3:],
+            ["skip_deduplication", "rank_findings", "classify_auxiliary_decision"],
+        )
         self.assertEqual(len(result.deduplicated_weaknesses), 2)
 
 

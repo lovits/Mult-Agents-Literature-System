@@ -63,7 +63,8 @@ class QdrantWorkerIntegrationTest(unittest.TestCase):
         self.assertEqual(execution["status"], "succeeded")
         self.assertEqual(result["retrieval"]["w1"][0]["block_id"], "b1")
         self.assertEqual(result["retrieval"]["w1"][0]["retriever"], "qdrant_sparse")
-        self.assertEqual(result["agent_trace"][-2]["node"], "deduplicate_weaknesses")
+        self.assertEqual(result["agent_trace"][-3]["node"], "deduplicate_weaknesses")
+        self.assertTrue(result["auxiliary_decision"]["not_for_decision"])
 
     @unittest.skipUnless(os.getenv("EVIREVIEW_REDIS_INTEGRATION") == "1", "requires local Redis")
     def test_rq_worker_executes_persisted_qdrant_sparse_audit(self) -> None:

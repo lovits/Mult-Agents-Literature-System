@@ -31,6 +31,7 @@ class ReviewAuditState:
     deduplicated_weaknesses: list[Weakness] = field(default_factory=list)
     duplicate_of: dict[str, str] = field(default_factory=dict)
     ranked_findings: list[RankedFinding] = field(default_factory=list)
+    auxiliary_decision: dict[str, Any] = field(default_factory=dict)
     weakness_generator: Callable[["ReviewAuditState"], WeaknessGenerationResult] | None = None
     verifier: Callable[[Weakness, list[RetrievedEvidence]], VerificationResult] | None = None
     runtime_retriever: Retriever | None = None

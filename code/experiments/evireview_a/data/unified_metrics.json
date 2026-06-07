@@ -9381,6 +9381,366 @@
   },
   {
     "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "decision_counts.Accept",
+    "value": 15,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "decision_counts.Reject",
+    "value": 15,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.accuracy",
+    "value": 0.4333,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.confusion.Accept.Accept",
+    "value": 3,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.confusion.Accept.Reject",
+    "value": 12,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.confusion.Reject.Accept",
+    "value": 5,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.confusion.Reject.Reject",
+    "value": 10,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.count",
+    "value": 30,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.macro_f1",
+    "value": 0.4007,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.per_label.Accept.f1",
+    "value": 0.2609,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.per_label.Accept.precision",
+    "value": 0.375,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.per_label.Accept.recall",
+    "value": 0.2,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.per_label.Accept.support",
+    "value": 15,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.per_label.Reject.f1",
+    "value": 0.5405,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.per_label.Reject.precision",
+    "value": 0.4545,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.per_label.Reject.recall",
+    "value": 0.6667,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.per_label.Reject.support",
+    "value": 15,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "evidence_risk_signal.roc_auc",
+    "value": 0.3978,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "existing_metadata_baseline_macro_f1",
+    "value": 0.68,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.accuracy",
+    "value": 0.5,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.confusion.Accept.Accept",
+    "value": 15,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.confusion.Accept.Reject",
+    "value": 0,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.confusion.Reject.Accept",
+    "value": 15,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.confusion.Reject.Reject",
+    "value": 0,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.count",
+    "value": 30,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.macro_f1",
+    "value": 0.3333,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.per_label.Accept.f1",
+    "value": 0.6667,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.per_label.Accept.precision",
+    "value": 0.5,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.per_label.Accept.recall",
+    "value": 1.0,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.per_label.Accept.support",
+    "value": 15,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.per_label.Reject.f1",
+    "value": 0.0,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.per_label.Reject.precision",
+    "value": 0.0,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.per_label.Reject.recall",
+    "value": 0.0,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.per_label.Reject.support",
+    "value": 15,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "majority_baseline.roc_auc",
+    "value": 0.5,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
+    "task": "classification",
+    "module": "auxiliary_evidence_risk",
+    "method": "aggregate",
+    "metric": "paper_count",
+    "value": 30,
+    "metric_boundary": "diagnostic",
+    "source_artifact": "auxiliary_decision_signal_metrics.json"
+  },
+  {
+    "dataset": "Local OpenReview/PRISM",
     "task": "generation",
     "module": "glm_reviewer",
     "method": "aggregate",

@@ -154,6 +154,7 @@ class FastApiRunsTest(unittest.TestCase):
                 "verify_weaknesses",
                 "deduplicate_weaknesses",
                 "rank_findings",
+                "classify_auxiliary_decision",
             ],
         )
 
@@ -192,6 +193,7 @@ class FastApiRunsTest(unittest.TestCase):
         self.assertEqual(payload["weaknesses"][0]["weakness_text"], "The paper lacks an ablation.")
         self.assertIn("The paper reports only one baseline", payload["evidence_blocks"][0]["text"])
         self.assertEqual(payload["metric_boundary"], "silver diagnostic")
+        self.assertTrue(payload["auxiliary_decision"]["not_for_decision"])
         self.assertEqual([event["event_type"] for event in payload["trace"]], ["queued", "running", "succeeded"])
         self.assertNotIn("input_json", response.text)
         self.assertNotIn("artifact_path", response.text)

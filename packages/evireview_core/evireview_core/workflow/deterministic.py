@@ -73,6 +73,7 @@ def run_deterministic_review_audit(
             "duplicate_of": state.duplicate_of,
         },
         "ranked_findings": [item.to_dict() for item in state.ranked_findings],
+        "auxiliary_decision": state.auxiliary_decision,
         "agent_trace": state.agent_trace,
         "metric_boundary": "silver diagnostic",
     }

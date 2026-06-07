@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from evireview_core.deduplication.lexical import deduplicate_weaknesses as apply_deduplication
+from evireview_core.classification.auxiliary import classify_auxiliary_decision as classify_decision
 from evireview_core.domain.models import RankedFinding, VerificationResult
 from evireview_core.ranking.evidence_aware import rank_weaknesses
 from evireview_core.workflow.components import DEFAULT_COMPONENT_REGISTRY
@@ -102,3 +103,14 @@ def preserve_candidate_order(state: ReviewAuditState) -> dict[str, object]:
         if weakness.weakness_id in state.verification
     ]
     return {"ablation": "no_ranker"}
+
+
+def classify_auxiliary_decision(state: ReviewAuditState) -> dict[str, object]:
+    weaknesses = state.deduplicated_weaknesses or state.weaknesses
+    signal = classify_decision(weaknesses, state.verification)
+    state.auxiliary_decision = signal.to_dict()
+    return {
+        "metric_boundary": signal.metric_boundary,
+        "not_for_decision": signal.not_for_decision,
+        "label": signal.label,
+    }

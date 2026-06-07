@@ -1,0 +1,73 @@
+{
+  "status": "ok",
+  "dataset": "Local PRISM/OpenReview ICLR 2024 sample",
+  "task": "transparent evidence-risk auxiliary decision signal",
+  "metric_boundary": "diagnostic",
+  "warning": "This signal is not for automated paper decisions and does not affect the Agent-RAG audit pipeline.",
+  "paper_count": 30,
+  "decision_counts": {
+    "Accept": 15,
+    "Reject": 15
+  },
+  "evidence_risk_signal": {
+    "count": 30,
+    "accuracy": 0.4333,
+    "macro_f1": 0.4007,
+    "roc_auc": 0.3978,
+    "per_label": {
+      "Reject": {
+        "precision": 0.4545,
+        "recall": 0.6667,
+        "f1": 0.5405,
+        "support": 15
+      },
+      "Accept": {
+        "precision": 0.375,
+        "recall": 0.2,
+        "f1": 0.2609,
+        "support": 15
+      }
+    },
+    "confusion": {
+      "Reject": {
+        "Reject": 10,
+        "Accept": 5
+      },
+      "Accept": {
+        "Reject": 12,
+        "Accept": 3
+      }
+    }
+  },
+  "majority_baseline": {
+    "count": 30,
+    "accuracy": 0.5,
+    "macro_f1": 0.3333,
+    "roc_auc": 0.5,
+    "per_label": {
+      "Reject": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 15
+      },
+      "Accept": {
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6667,
+        "support": 15
+      }
+    },
+    "confusion": {
+      "Reject": {
+        "Reject": 0,
+        "Accept": 15
+      },
+      "Accept": {
+        "Reject": 0,
+        "Accept": 15
+      }
+    }
+  },
+  "existing_metadata_baseline_macro_f1": 0.68
+}

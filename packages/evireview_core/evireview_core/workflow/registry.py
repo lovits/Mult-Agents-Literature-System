@@ -6,6 +6,7 @@ from typing import Any
 
 from evireview_core.workflow.nodes import (
     assume_supported,
+    classify_auxiliary_decision,
     deduplicate_weaknesses,
     generate_or_import_weaknesses,
     preserve_candidate_order,
@@ -50,15 +51,33 @@ DEFAULT_GRAPH_REGISTRY = GraphRegistry(
     (
         GraphProfile(
             "full",
-            (*BASE, ("verify_weaknesses", verify_weaknesses), ("deduplicate_weaknesses", deduplicate_weaknesses), ("rank_findings", rank_findings)),
+            (
+                *BASE,
+                ("verify_weaknesses", verify_weaknesses),
+                ("deduplicate_weaknesses", deduplicate_weaknesses),
+                ("rank_findings", rank_findings),
+                ("classify_auxiliary_decision", classify_auxiliary_decision),
+            ),
         ),
         GraphProfile(
             "no_dedup",
-            (*BASE, ("verify_weaknesses", verify_weaknesses), ("skip_deduplication", skip_deduplication), ("rank_findings", rank_findings)),
+            (
+                *BASE,
+                ("verify_weaknesses", verify_weaknesses),
+                ("skip_deduplication", skip_deduplication),
+                ("rank_findings", rank_findings),
+                ("classify_auxiliary_decision", classify_auxiliary_decision),
+            ),
         ),
         GraphProfile(
             "no_verifier",
-            (*BASE, ("assume_supported", assume_supported), ("deduplicate_weaknesses", deduplicate_weaknesses), ("rank_findings", rank_findings)),
+            (
+                *BASE,
+                ("assume_supported", assume_supported),
+                ("deduplicate_weaknesses", deduplicate_weaknesses),
+                ("rank_findings", rank_findings),
+                ("classify_auxiliary_decision", classify_auxiliary_decision),
+            ),
         ),
         GraphProfile(
             "no_ranker",
@@ -67,6 +86,7 @@ DEFAULT_GRAPH_REGISTRY = GraphRegistry(
                 ("verify_weaknesses", verify_weaknesses),
                 ("deduplicate_weaknesses", deduplicate_weaknesses),
                 ("preserve_candidate_order", preserve_candidate_order),
+                ("classify_auxiliary_decision", classify_auxiliary_decision),
             ),
         ),
     )

@@ -7,6 +7,7 @@ def render_review_audit_markdown(run: dict[str, Any], trace: list[dict[str, Any]
     result = run.get("result") or {}
     findings = result.get("ranked_findings") or []
     verification = result.get("verification") or {}
+    auxiliary = result.get("auxiliary_decision") or {}
     trace_text = " -> ".join(str(event.get("event_type", "unknown")) for event in trace)
     lines = [
         f"# Review Audit Report: {run['paper_id']}",
@@ -36,6 +37,18 @@ def render_review_audit_markdown(run: dict[str, Any], trace: list[dict[str, Any]
                 f"- Support score: {verified.get('support_score', 0.0)}",
                 f"- Evidence blocks: {evidence_ids}",
                 f"- Rationale: {verified.get('rationale', 'unavailable')}",
+                "",
+            ]
+        )
+    if auxiliary:
+        lines.extend(
+            [
+                "## Auxiliary Decision Signal",
+                "",
+                f"- Tendency: `{auxiliary.get('label', 'unknown')}`",
+                f"- Reject score: {auxiliary.get('reject_score', 0.0)}",
+                f"- Metric boundary: `{auxiliary.get('metric_boundary', 'auxiliary diagnostic')}`",
+                f"- Warning: {auxiliary.get('warning', 'Not for automated decision making.')}",
                 "",
             ]
         )

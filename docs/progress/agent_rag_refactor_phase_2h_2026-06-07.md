@@ -192,3 +192,9 @@ Qdrant/Hybrid 现在是正式可选择后端组件，但默认仍保持 `hierarc
 后端新增 `POST /api/papers/import-mineru`，将 MinerU 已解析的 PDF Markdown 统一转换为 Paper Sections 与 Evidence Blocks，并在 paper 与 immutable version 保存 `source_type=mineru_markdown` 和 `source_ref`。
 
 使用仓库内真实 FactReview MinerU 文档完成 `21 sections -> 28 evidence blocks -> qdrant_sparse -> verifier -> dedup -> ranker` smoke，运行状态为 `succeeded`。原始 PDF OCR 仍由 MinerU 负责，API 不接受任意本地路径。
+
+## 后端补齐：辅助分类节点
+
+完整图在 ranker 后新增 `classify_auxiliary_decision`，输出透明 evidence-risk tendency、feature counts、`metric_boundary=auxiliary diagnostic`、`not_for_decision=true` 和强制 warning。
+
+在 30 篇具有 silver evidence 覆盖的平衡 OpenReview decision 样本上，Evidence-risk signal Macro-F1 为 `0.4007`、ROC-AUC 为 `0.3978`，明显低于已有 metadata baseline Macro-F1 `0.68`。该负结果确认分类只能用于诊断与案例分析，不能作为主贡献或自动决策能力。

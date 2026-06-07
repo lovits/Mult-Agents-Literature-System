@@ -48,6 +48,7 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
                 "verify_weaknesses",
                 "deduplicate_weaknesses",
                 "rank_findings",
+                "classify_auxiliary_decision",
             ],
         )
 

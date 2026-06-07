@@ -122,6 +122,7 @@ class ReviewAuditService:
             "retrieval": result.get("retrieval", {}),
             "verification": result.get("verification", {}),
             "ranked_findings": result.get("ranked_findings", []),
+            "auxiliary_decision": dict(result.get("auxiliary_decision", {})),
             "trace": self.get_trace(run_id),
             "reports": reports,
         }
