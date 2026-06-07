@@ -66,6 +66,56 @@ class DenseHybridQdrantTest(unittest.TestCase):
         self.assertEqual(len(payload["prefetch"]), 2)
         self.assertEqual(payload["filter"]["must"][0]["match"]["value"], "p1")
 
+    def test_qdrant_collection_lifecycle_maps_to_rest_api(self) -> None:
+        calls = []
+
+        def transport(method: str, url: str, payload: dict) -> dict:
+            calls.append((method, url, payload))
+            return {"result": {"operation_id": 1, "status": "completed"}}
+
+        client = QdrantQueryClient("http://qdrant:6333", transport=transport)
+        client.server_info()
+        client.recreate_collection("evidence", dense_size=3)
+        client.create_keyword_index("evidence", "paper_id")
+        client.upsert_points(
+            "evidence",
+            [
+                {
+                    "id": 1,
+                    "vector": {
+                        "dense": [0.1, 0.2, 0.3],
+                        "sparse": {"indices": [2], "values": [1.0]},
+                    },
+                    "payload": {"paper_id": "p1"},
+                }
+            ],
+        )
+
+        self.assertEqual(calls[0][:2], ("GET", "http://qdrant:6333/"))
+        self.assertEqual(calls[1][:2], ("DELETE", "http://qdrant:6333/collections/evidence"))
+        self.assertEqual(calls[2][:2], ("PUT", "http://qdrant:6333/collections/evidence"))
+        self.assertEqual(calls[2][2]["vectors"]["dense"]["size"], 3)
+        self.assertEqual(calls[2][2]["sparse_vectors"], {"sparse": {}})
+        self.assertEqual(calls[3][:2], ("PUT", "http://qdrant:6333/collections/evidence/index?wait=true"))
+        self.assertEqual(calls[3][2], {"field_name": "paper_id", "field_schema": "keyword"})
+        self.assertEqual(calls[4][:2], ("PUT", "http://qdrant:6333/collections/evidence/points?wait=true"))
+        self.assertEqual(calls[4][2]["points"][0]["id"], 1)
+
+    def test_qdrant_dense_and_sparse_queries_share_payload_filters(self) -> None:
+        calls = []
+
+        def transport(method: str, url: str, payload: dict) -> dict:
+            calls.append((method, url, payload))
+            return {"result": {"points": []}}
+
+        client = QdrantQueryClient("http://qdrant:6333", transport=transport)
+        client.dense_query("evidence", [0.1, 0.9], filters={"row_id": 7})
+        client.sparse_query("evidence", {3: 0.8}, filters={"row_id": 7})
+
+        self.assertEqual(calls[0][2]["using"], "dense")
+        self.assertEqual(calls[1][2]["using"], "sparse")
+        self.assertEqual(calls[0][2]["filter"], calls[1][2]["filter"])
+
 
 if __name__ == "__main__":
     unittest.main()

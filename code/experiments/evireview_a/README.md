@@ -79,6 +79,17 @@ python3 code/experiments/evireview_a/src/build_retrieval_comparison_annotation_q
 python3 code/experiments/evireview_a/src/import_retrieval_comparison_gold.py
 python3 code/experiments/evireview_a/src/evaluate_retrieval_comparison_gold.py
 python3 code/experiments/evireview_a/src/render_experiment_dashboard.py
+python3 code/experiments/evireview_a/src/evaluate_live_qdrant_retrieval.py
+python3 code/experiments/evireview_a/src/validate_live_qdrant_retrieval.py
+```
+
+Live Qdrant retrieval requires a service at `QDRANT_URL` (default `http://127.0.0.1:6333`) and the
+committed CLAIMCHECK OpenRouter embedding cache. The experiment recreates only the
+`claimcheck_live_retrieval` collection and exports accuracy plus local single-query latency metrics.
+
+```bash
+docker run -d --name evireview-qdrant -p 6333:6333 -p 6334:6334 \
+  -v evireview_qdrant_storage:/qdrant/storage qdrant/qdrant:v1.18.2
 ```
 
 OpenRouter embedding retrieval requires `OPENROUTER_API_KEY`. The default free embedding model is
@@ -137,6 +148,7 @@ CLAIMCHECK benchmark outputs:
 - `claimcheck_summary.json`
 - `claimcheck_baseline_metrics.json`
 - `claimcheck_retrieval_metrics.json`
+- `live_qdrant_retrieval_metrics.json`
 - `claimcheck_openrouter_embedding_metrics.json`
 - `claimcheck_openrouter_rerank_metrics.json`
 - `claimcheck_openrouter_verifier_metrics.json`

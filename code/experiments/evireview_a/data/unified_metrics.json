@@ -970,6 +970,666 @@
     "source_artifact": "dense_hybrid_retrieval_metrics.json"
   },
   {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.grounded_weakness_count",
+    "value": 108,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.hit_at_1",
+    "value": 0.2639,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.hit_at_10",
+    "value": 0.7222,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.hit_at_3",
+    "value": 0.4306,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.hit_at_5",
+    "value": 0.5972,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.latency_ms_mean",
+    "value": 3.647,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.latency_ms_p50",
+    "value": 3.606,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.latency_ms_p95",
+    "value": 4.086,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.mapped_target_count",
+    "value": 72,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.mrr",
+    "value": 0.4039,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "main.unmapped_target_count",
+    "value": 36,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.grounded_weakness_count",
+    "value": 12,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.hit_at_1",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.hit_at_10",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.hit_at_3",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.hit_at_5",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.latency_ms_mean",
+    "value": 3.572,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.latency_ms_p50",
+    "value": 3.542,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.latency_ms_p95",
+    "value": 3.692,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.mapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.mrr",
+    "value": 0.6841,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_openrouter_rrf_hybrid",
+    "metric": "pilot.unmapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.grounded_weakness_count",
+    "value": 108,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.hit_at_1",
+    "value": 0.1806,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.hit_at_10",
+    "value": 0.5833,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.hit_at_3",
+    "value": 0.3611,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.hit_at_5",
+    "value": 0.4167,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.latency_ms_mean",
+    "value": 4.232,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.latency_ms_p50",
+    "value": 4.033,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.latency_ms_p95",
+    "value": 5.999,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.mapped_target_count",
+    "value": 72,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.mrr",
+    "value": 0.313,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "main.unmapped_target_count",
+    "value": 36,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.grounded_weakness_count",
+    "value": 12,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.hit_at_1",
+    "value": 0.5,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.hit_at_10",
+    "value": 0.8333,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.hit_at_3",
+    "value": 0.5,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.hit_at_5",
+    "value": 0.5,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.latency_ms_mean",
+    "value": 7.297,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.latency_ms_p50",
+    "value": 5.206,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.latency_ms_p95",
+    "value": 18.958,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.mapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.mrr",
+    "value": 0.5442,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_bm25_sparse",
+    "metric": "pilot.unmapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.grounded_weakness_count",
+    "value": 108,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.hit_at_1",
+    "value": 0.2222,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.hit_at_10",
+    "value": 0.7917,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.hit_at_3",
+    "value": 0.5,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.hit_at_5",
+    "value": 0.6944,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.latency_ms_mean",
+    "value": 4.406,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.latency_ms_p50",
+    "value": 4.291,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.latency_ms_p95",
+    "value": 6.791,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.mapped_target_count",
+    "value": 72,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.mrr",
+    "value": 0.4067,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "main.unmapped_target_count",
+    "value": 36,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.grounded_weakness_count",
+    "value": 12,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.hit_at_1",
+    "value": 0.3333,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.hit_at_10",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.hit_at_3",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.hit_at_5",
+    "value": 0.6667,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.latency_ms_mean",
+    "value": 5.613,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.latency_ms_p50",
+    "value": 5.56,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.latency_ms_p95",
+    "value": 6.813,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.mapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.mrr",
+    "value": 0.5184,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
+    "dataset": "CLAIMCHECK",
+    "task": "retrieval",
+    "module": "paper_rag_qdrant",
+    "method": "qdrant_openrouter_dense",
+    "metric": "pilot.unmapped_target_count",
+    "value": 6,
+    "metric_boundary": "gold",
+    "source_artifact": "live_qdrant_retrieval_metrics.json"
+  },
+  {
     "dataset": "Local OpenReview/PRISM",
     "task": "ablation",
     "module": "agent_rag_graph",

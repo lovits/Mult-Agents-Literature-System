@@ -1,0 +1,103 @@
+{
+  "status": "ok",
+  "dataset": "CLAIMCHECK",
+  "task": "live Qdrant weakness-to-paper-claim retrieval",
+  "metric_boundary": "gold mapped targets",
+  "qdrant_url": "http://127.0.0.1:6333",
+  "qdrant_version": "1.18.2",
+  "collection": "claimcheck_live_retrieval",
+  "dense_representation": "nvidia/llama-nemotron-embed-vl-1b-v2:free cached embeddings",
+  "sparse_representation": "per-row BM25 sparse dot product",
+  "index": {
+    "point_count": 6606,
+    "vocabulary_size": 5346,
+    "elapsed_seconds": 7.636
+  },
+  "methods": {
+    "qdrant_bm25_sparse": {
+      "pilot": {
+        "grounded_weakness_count": 12,
+        "mapped_target_count": 6,
+        "unmapped_target_count": 6,
+        "hit_at_1": 0.5,
+        "hit_at_3": 0.5,
+        "hit_at_5": 0.5,
+        "hit_at_10": 0.8333,
+        "mrr": 0.5442,
+        "latency_ms_mean": 7.297,
+        "latency_ms_p50": 5.206,
+        "latency_ms_p95": 18.958
+      },
+      "main": {
+        "grounded_weakness_count": 108,
+        "mapped_target_count": 72,
+        "unmapped_target_count": 36,
+        "hit_at_1": 0.1806,
+        "hit_at_3": 0.3611,
+        "hit_at_5": 0.4167,
+        "hit_at_10": 0.5833,
+        "mrr": 0.313,
+        "latency_ms_mean": 4.232,
+        "latency_ms_p50": 4.033,
+        "latency_ms_p95": 5.999
+      }
+    },
+    "qdrant_openrouter_dense": {
+      "pilot": {
+        "grounded_weakness_count": 12,
+        "mapped_target_count": 6,
+        "unmapped_target_count": 6,
+        "hit_at_1": 0.3333,
+        "hit_at_3": 0.6667,
+        "hit_at_5": 0.6667,
+        "hit_at_10": 0.6667,
+        "mrr": 0.5184,
+        "latency_ms_mean": 5.613,
+        "latency_ms_p50": 5.56,
+        "latency_ms_p95": 6.813
+      },
+      "main": {
+        "grounded_weakness_count": 108,
+        "mapped_target_count": 72,
+        "unmapped_target_count": 36,
+        "hit_at_1": 0.2222,
+        "hit_at_3": 0.5,
+        "hit_at_5": 0.6944,
+        "hit_at_10": 0.7917,
+        "mrr": 0.4067,
+        "latency_ms_mean": 4.406,
+        "latency_ms_p50": 4.291,
+        "latency_ms_p95": 6.791
+      }
+    },
+    "qdrant_bm25_openrouter_rrf_hybrid": {
+      "pilot": {
+        "grounded_weakness_count": 12,
+        "mapped_target_count": 6,
+        "unmapped_target_count": 6,
+        "hit_at_1": 0.6667,
+        "hit_at_3": 0.6667,
+        "hit_at_5": 0.6667,
+        "hit_at_10": 0.6667,
+        "mrr": 0.6841,
+        "latency_ms_mean": 3.572,
+        "latency_ms_p50": 3.542,
+        "latency_ms_p95": 3.692
+      },
+      "main": {
+        "grounded_weakness_count": 108,
+        "mapped_target_count": 72,
+        "unmapped_target_count": 36,
+        "hit_at_1": 0.2639,
+        "hit_at_3": 0.4306,
+        "hit_at_5": 0.5972,
+        "hit_at_10": 0.7222,
+        "mrr": 0.4039,
+        "latency_ms_mean": 3.647,
+        "latency_ms_p50": 3.606,
+        "latency_ms_p95": 4.086
+      }
+    }
+  },
+  "best_main_hit_at_3": "qdrant_openrouter_dense"
+}
