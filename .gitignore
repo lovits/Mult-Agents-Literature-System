@@ -13,6 +13,7 @@ storage/
 
 # Codex/OMX runtime and local orchestration state
 .omx/
+.superpowers/
 
 # Literature PDFs are source artifacts; keep Markdown notes and indexes in git.
 参考论文/**/*.pdf
