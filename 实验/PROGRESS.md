@@ -76,10 +76,29 @@
 - Smoke 中 P0 BM25 Recall@5 为 0.2193，P4 Recall@5 为 0.1207；
 - P4 Evidence-Type Match@5 为 0.9485，但当前结构与类型先验损害召回，正式实验前必须重新校准。
 
+### E2 正式实验：固定 BGE 与高置信度先验门控
+
+- 建立隔离 Python 3.12 正式环境，固定 `sentence-transformers==5.5.1`；
+- 固定 embedding 为 `BAAI/bge-base-en-v1.5` revision `a5beb1e3...`；
+- 区分 query/document 编码，并跨样本批量缓存论文块 embedding；
+- 修复所有问题默认使用 Experiment 章节先验的 Planner 错误；
+- 保留门控前后两份正式结果，未选择性删除失败结果；
+- P2 与门控后 P4 Recall@5 均为 0.2863，P4 未超过最强 baseline；
+- P4 Evidence-Type Match@5 为 0.8838，低于 P2 的 0.9000；
+- E2 实验状态为 `failed_with_metrics`，已完成但未通过开题报告成功标准。
+
+### E4 基础：CLAIMCHECK 严格评价适配
+
+- 实现 CLAIMCHECK source text 适配器；
+- 验收 60 个 paper-review 对、168 条弱点和 120 条带 Target Claim 弱点；
+- 保留 groundedness、agreement、subjectivity 和多标签 weakness type；
+- 明确 CLAIMCHECK 没有逐条 `covered/refuted` Gold，禁止越界宣称；
+- 确定首轮 E4 为 Claim Association 与 Weakness Labeling Baseline。
+
 ## 当前验证
 
 ```text
-pytest:                         26 passed
+pytest:                         38 passed
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -90,6 +109,8 @@ Autoresearch dataset bootstrap: passed
 Autoresearch flat layout/task6: passed
 Autoresearch PeerQA E2 foundation: passed
 Autoresearch execution stage A/B:   passed
+Autoresearch formal E2:             passed (experiment verdict: failed_with_metrics)
+Autoresearch E4 CLAIMCHECK foundation: passed
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -99,12 +120,15 @@ pip check:                      no broken requirements
 1. NLPEERv2 完整数据尚未获得访问授权，当前使用 OpenReview seed 作为原始完整论文主数据；
 2. OpenReview seed 当前只有 10 篇，用于打通流程；E1/E6 正式实验前需要按固定协议扩大；
 3. arXiv 未见集只用于最终演示，不能用于调参或 Gold 评价；
-4. 当前环境为 Python 3.14，且未安装 `torch` 与 `sentence-transformers`；正式 E2 Dense/Hybrid 结果尚未运行。
+4. E2 正式实验已完成，但 PeerQA 上的 P4 未达到预设 Recall 与 Evidence-Type Match 增益；
+5. PeerQA 映射后的证据类型以 paragraph 为主，不足以单独证明 evidence-type prior 有效。
 
 ## 下一步
 
 按照关键路径继续：
 
-1. 使用 Python 3.11/3.12 环境安装并固定科学文本 embedding；
-2. 运行正式 E2 P0-P4 与消融实验；
-3. E2 稳定后进入双向证据审计 E4。
+1. 实现 CLAIMCHECK Claim Association 与 Weakness Labeling Baseline；
+2. 以 agreement/groundedness 作为裁决的严格评价标签；
+3. 使用 SubstanReview 作为证据充分性辅助评价；
+4. 再实现 Support、Refutation 与 Adjudicator；
+5. E2 失败结果保留在论文误差分析，不继续在 PeerQA 测试集调权重。

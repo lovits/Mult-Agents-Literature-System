@@ -55,6 +55,30 @@ def test_dense_retriever_uses_injected_embeddings():
     assert [result.evidence_id for result in results] == ["b1", "b2"]
 
 
+def test_dense_retriever_separates_batched_documents_from_query_embedding():
+    document_batches = []
+    queries = []
+
+    def embed_documents(texts):
+        document_batches.append(texts)
+        return [[1.0, 0.0], [0.8, 0.2], [0.0, 1.0]]
+
+    def embed_query(text):
+        queries.append(text)
+        return [1.0, 0.0]
+
+    results = DenseRetriever(
+        BLOCKS,
+        embed=lambda text: [0.0, 0.0],
+        embed_many=embed_documents,
+        query_embed=embed_query,
+    ).retrieve("method retrieval", top_k=2)
+
+    assert document_batches == [[block.text for block in BLOCKS]]
+    assert queries == ["method retrieval"]
+    assert [result.evidence_id for result in results] == ["b1", "b2"]
+
+
 def test_rrf_rewards_items_retrieved_by_both_methods():
     fused = reciprocal_rank_fusion([["b1", "b2"], ["b2", "b3"]], k=60)
 

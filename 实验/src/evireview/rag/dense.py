@@ -1,5 +1,5 @@
 import math
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 
 from evireview.models.evidence import EvidenceBlock, EvidenceItem
 
@@ -17,13 +17,21 @@ def cosine_similarity(left: Vector, right: Vector) -> float:
 
 
 class DenseRetriever:
-    def __init__(self, blocks: list[EvidenceBlock], embed: Callable[[str], Vector]):
+    def __init__(
+        self,
+        blocks: list[EvidenceBlock],
+        embed: Callable[[str], Vector],
+        *,
+        query_embed: Callable[[str], Vector] | None = None,
+        embed_many: Callable[[Sequence[str]], list[Vector]] | None = None,
+    ):
         self.blocks = blocks
-        self.embed = embed
-        self.vectors = [embed(block.text) for block in blocks]
+        self.query_embed = query_embed or embed
+        texts = [block.text for block in blocks]
+        self.vectors = embed_many(texts) if embed_many else [embed(text) for text in texts]
 
     def retrieve(self, query: str, top_k: int) -> list[EvidenceItem]:
-        query_vector = self.embed(query)
+        query_vector = self.query_embed(query)
         scored = [
             (block, cosine_similarity(query_vector, vector))
             for block, vector in zip(self.blocks, self.vectors, strict=True)

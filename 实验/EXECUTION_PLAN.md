@@ -95,6 +95,10 @@
 主指标：Recall@5、MRR、nDCG@5、Evidence-Type Match、延迟。
 通过标准：P4 相对最强 P0-P2 的 Recall@5 提高至少 5 个百分点，或记录为 `failed_with_metrics` 并进行错误分析。
 
+执行结果：已完成，状态为 `failed_with_metrics`。高置信度先验门控使 P4
+Recall@5 从 0.2532 恢复至 0.2863，但仅与最强 P2 持平；Evidence-Type
+Match@5 未达到增益要求。为避免测试集过拟合，不继续调权重，进入 E4。
+
 ### 阶段 C：E4 双向证据审计
 
 1. 使用 CLAIMCHECK 构造支持、反驳和已覆盖样本。
@@ -104,6 +108,11 @@
 
 主指标：Valid-Issue Precision、Covered/Refuted Recall、False-Keep Rate、Evidence Attribution Accuracy。
 辅助指标：Claim Evidence Coverage、Substantiated Claim Rate。
+
+数据边界更新：CLAIMCHECK 可严格评价 claim association、groundedness、
+agreement、subjectivity 和 weakness type，但公开文本标注没有逐条
+`covered/refuted` Gold。Covered/Refuted Recall 不得直接从 CLAIMCHECK 宣称，
+必须使用具有相应标签的数据源或明确标记为 proxy。
 
 ### 阶段 D：E3 Literature-RAG
 

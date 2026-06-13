@@ -1,7 +1,7 @@
 import hashlib
 import re
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 
 from evireview.dao.peerqa import PeerQADataset, PeerQAExample
 from evireview.evaluation.retrieval_metrics import evaluate_ranking
@@ -30,7 +30,10 @@ def run_e2(
     limit: int | None,
     top_k: int,
     embedding_name: str,
+    embedding_metadata: dict | None = None,
     embed: Callable[[str], list[float]] | None = None,
+    query_embed: Callable[[str], list[float]] | None = None,
+    embed_many: Callable[[Sequence[str]], list[list[float]]] | None = None,
 ) -> dict:
     if embed is None:
         if embedding_name != "hashing-smoke":
@@ -42,14 +45,18 @@ def run_e2(
     failures = []
     for example in examples:
         try:
-            sample_results.append(_run_example(dataset, example, top_k, embed))
+            sample_results.append(
+                _run_example(dataset, example, top_k, embed, query_embed, embed_many)
+            )
         except Exception as error:
             failures.append({"question_id": example.question_id, "error": str(error)})
     return {
         "protocol": {
             "embedding": embedding_name,
+            "embedding_metadata": embedding_metadata or {},
             "formal_result": embedding_name != "hashing-smoke",
             "gold_used_only_for_evaluation": True,
+            "latency_scope": "retrieval_after_query_embedding_warmup",
             "systems": list(SYSTEMS),
         },
         "samples": len(sample_results),
@@ -64,12 +71,16 @@ def _run_example(
     example: PeerQAExample,
     top_k: int,
     embed: Callable[[str], list[float]],
+    query_embed: Callable[[str], list[float]] | None,
+    embed_many: Callable[[Sequence[str]], list[list[float]]] | None,
 ) -> dict:
     blocks = dataset.blocks_by_paper[example.paper_id]
     plan = _plan_question(example)
     bm25 = BM25Retriever(blocks)
-    dense = DenseRetriever(blocks, embed)
-    rag = PaperRAG(blocks, embed)
+    dense = DenseRetriever(blocks, embed, query_embed=query_embed, embed_many=embed_many)
+    rag = PaperRAG(blocks, embed, query_embed=query_embed, embed_many=embed_many)
+    if query_embed is not None:
+        query_embed(example.question)
     retrievers = {
         "P0": lambda: bm25.retrieve(example.question, top_k),
         "P1": lambda: dense.retrieve(example.question, top_k),
@@ -95,14 +106,20 @@ def _run_example(
 
 def _plan_question(example: PeerQAExample) -> QueryPlan:
     question = example.question.lower()
-    expected_sections = ["Experiments", "Results", "Ablation", "Appendix"]
-    expected_types = ["paragraph"]
-    if re.search(r"\b(table|result|score|compare|ablation|experiment)\b", question):
+    expected_sections = []
+    expected_types = []
+    if re.search(
+        r"\b(result|score|compare|comparison|ablation|experiment|evaluation|benchmark|performance)\b",
+        question,
+    ):
+        expected_sections = ["Experiments", "Results", "Ablation", "Appendix"]
+    if re.search(r"\b(table|result|score)\b", question):
         expected_types.append("table_caption")
     if re.search(r"\b(figure|plot|graph)\b", question):
         expected_types.append("figure_caption")
     if re.search(r"\b(method|algorithm|procedure)\b", question):
         expected_sections = ["Method", "Methods", "Algorithm", "Appendix"]
+    if re.search(r"\b(algorithm|procedure|pseudocode)\b", question):
         expected_types.append("algorithm")
     return QueryPlan(
         candidate_id=example.question_id,

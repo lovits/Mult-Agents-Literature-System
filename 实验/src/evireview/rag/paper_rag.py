@@ -1,4 +1,4 @@
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from typing import Literal
 
 from pydantic import BaseModel
@@ -26,11 +26,23 @@ class PaperRAGResult(BaseModel):
 
 
 class PaperRAG:
-    def __init__(self, blocks: list[EvidenceBlock], embed: Callable[[str], list[float]]):
+    def __init__(
+        self,
+        blocks: list[EvidenceBlock],
+        embed: Callable[[str], list[float]],
+        *,
+        query_embed: Callable[[str], list[float]] | None = None,
+        embed_many: Callable[[Sequence[str]], list[list[float]]] | None = None,
+    ):
         self.blocks = blocks
         self.block_by_id = {block.block_id: block for block in blocks}
         self.bm25 = BM25Retriever(blocks)
-        self.dense = DenseRetriever(blocks, embed)
+        self.dense = DenseRetriever(
+            blocks,
+            embed,
+            query_embed=query_embed,
+            embed_many=embed_many,
+        )
 
     def retrieve(self, plan: QueryPlan, config: PaperRAGConfig) -> PaperRAGResult:
         keyword_query = " ".join(plan.keyword_queries)

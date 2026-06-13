@@ -16,6 +16,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.3,<9"]
+formal = ["sentence-transformers==5.5.1"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
