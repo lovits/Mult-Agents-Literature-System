@@ -10,7 +10,7 @@ REPO_ROOT = EXPERIMENT_ROOT.parent
 
 
 def validate() -> dict:
-    peerqa_root = EXPERIMENT_ROOT / "dataset/raw/peerqa/data"
+    peerqa_root = EXPERIMENT_ROOT / "dataset/raw/evaluation/peerqa"
     dataset = PeerQADataset.from_jsonl(
         peerqa_root / "papers.jsonl",
         peerqa_root / "qa.jsonl",

@@ -7,7 +7,8 @@
 ### 目录与设计基线收敛
 
 - 全部有效实验代码直接位于 `实验/`，不再使用 `新实验` 或 `evireview_lite` 包装目录；
-- 历史辅助数据统一放入 `dataset/legacy_sources/`，不参与当前实验验收；
+- 删除历史辅助数据、第三方仓库源码、重复压缩包与缓存；
+- 数据按 `primary/evaluation/literature/demo/restricted` 实验角色分层；
 - `设计方案/` 仅保留最新开题报告、设计方案和实验方案三份权威文档。
 
 ### Task 1：实验项目骨架
@@ -33,7 +34,7 @@
 - 下载 ReviewCritique：100 篇人类评审论文、20 篇 LLM 评审论文；
 - 挂载本地 Literature-RAG 固定语料：65 个 PDF/Markdown 文件；
 - 冻结 arXiv 未见集：5 篇最新 `cs.CL` PDF；
-- 下载 NLPeer loader，并明确完整 NLPEERv2 仍需申请；
+- 记录 NLPEERv2 受限状态，完整数据仍需申请；
 - 建立 E0 审计脚本与 Autoresearch 数据验收器。
 
 ### Task 4：论文结构解析
@@ -78,6 +79,7 @@ arXiv unseen valid PDFs:         5 / 5
 Autoresearch dataset bootstrap: passed
 Autoresearch flat layout/task6: passed
 Autoresearch PeerQA E2 foundation: passed
+Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
 

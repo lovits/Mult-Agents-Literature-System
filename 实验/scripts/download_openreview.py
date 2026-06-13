@@ -74,7 +74,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--venue", default="ICLR.cc/2025/Conference")
     parser.add_argument("--limit", type=int, default=10)
-    parser.add_argument("--output", type=Path, default=Path("dataset/raw/openreview/iclr2025_seed"))
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("dataset/raw/primary/openreview_iclr2025_seed"),
+    )
     parser.add_argument("--download-pdfs", action="store_true")
     args = parser.parse_args()
     print(json.dumps(download_snapshot(args.venue, args.limit, args.output, args.download_pdfs), indent=2))

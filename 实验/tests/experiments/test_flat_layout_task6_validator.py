@@ -9,3 +9,4 @@ def test_flat_layout_and_task6_are_complete():
     assert result["checks"]["flat_experiment_layout"]["passed"] is True
     assert result["checks"]["three_design_documents"]["passed"] is True
     assert result["checks"]["paper_rag_task6"]["passed"] is True
+    assert result["checks"]["clean_experiment_tree"]["passed"] is True

@@ -1,5 +1,21 @@
 # EviReview-Lite 数据方案与当前快照
 
+## 目录约束
+
+```text
+dataset/
+├── README.md
+├── processed/                  # 当前实验生成的可再生中间数据
+└── raw/
+    ├── primary/               # 完整论文与人类评审主数据
+    ├── evaluation/            # 带 Gold 标注的严格评价数据
+    ├── literature/            # Literature-RAG 固定语料
+    ├── demo/                  # 不参与调参的未见论文
+    └── restricted/            # 尚需申请、不得伪装为已下载的数据
+```
+
+数据目录不保存第三方仓库源码、嵌套 `.git`、重复压缩包或历史实验数据。
+
 ## 验收结论
 
 自动论文评审系统需要同时具备四层数据，任何单一数据集都不能独立证明系统有效：
@@ -17,11 +33,23 @@
 | --- | --- | --- |
 | OpenReview ICLR 2025 seed | 10 篇完整 PDF、投稿元数据、41 条 Official Review | 当前原始主数据 seed；后续按相同协议扩大 |
 | PeerQA | 579 条标注 QA、24,265 条论文段落记录、未标注问题 | E2 Paper-RAG 严格检索评价 |
-| CLAIMCHECK | 55 个 main source paper-review 对、43 个 related-work 对及图表证据 | E4 双向证据审计严格评价 |
+| CLAIMCHECK | 55 个 main source paper-review 对、43 个 related-work 对的文本标注 | E4 双向文本证据审计严格评价；当前不做多模态图表审计 |
 | ReviewCritique | 100 篇人类评审论文、20 篇 LLM 评审论文及专家 deficiency 标注 | E1/E5/E6 辅助严格评价；禁止用于训练 |
 | 本地外部文献库 | 65 个 PDF/Markdown 文件 | E3 受控 Literature-RAG |
 | arXiv unseen | 2026-06-13 冻结的 5 篇最新 `cs.CL` PDF | 只作最终未见论文演示，不作 Gold 指标 |
-| NLPeer | 官方 loader | 完整 NLPEERv2 需申请，当前不能计为已下载 |
+| NLPeer | 受限数据说明 | 完整 NLPEERv2 需申请，当前不能计为已下载 |
+
+## 可用性结论
+
+| 数据源 | 可用性 | 当前实验结论 |
+| --- | --- | --- |
+| OpenReview seed | 可用但规模不足 | 可打通完整论文处理和候选生成；正式端到端实验前必须扩大并冻结划分 |
+| PeerQA | 可直接使用 | 具有映射到论文段落的 Gold evidence，是 E2 Paper-RAG 主评价集 |
+| CLAIMCHECK | 可直接使用，限文本任务 | source 与 related-work 文本对适合 E4 支持/反驳证据审计；不能据此宣称多模态能力 |
+| ReviewCritique | 可直接使用，限评价 | 可评价评审缺陷和报告质量；按数据说明不得作为训练集 |
+| 本地文献库 | 可用 | 可作为固定 Literature-RAG 语料；不同来源许可需分别遵守 |
+| arXiv unseen | 可用，禁止调参 | 只证明系统能处理未见论文，不提供 Gold 质量结论 |
+| NLPEERv2 | 当前不可用 | 完成申请前只保留受限状态，不计入已下载数据 |
 
 ## 数据源核验
 

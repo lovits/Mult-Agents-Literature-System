@@ -3,6 +3,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+RAW_ROOT = ROOT / "dataset/raw"
 
 
 def jsonl_rows(path: Path) -> int:
@@ -14,26 +15,56 @@ def json_object_size(path: Path) -> int:
     return len(json.loads(path.read_text(encoding="utf-8")))
 
 
+def jsonl_rows_with_fields(path: Path, required_fields: set[str]) -> int:
+    count = 0
+    with path.open(encoding="utf-8") as handle:
+        for line in handle:
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            if not required_fields <= set(row):
+                raise ValueError(f"{path} is missing required fields")
+            count += 1
+    return count
+
+
+def valid_pdfs(path: Path) -> list[Path]:
+    return [
+        pdf
+        for pdf in path.glob("*.pdf")
+        if pdf.stat().st_size > 1_000 and pdf.read_bytes()[:5] == b"%PDF-"
+    ]
+
+
 def validate() -> dict:
     openreview_manifest = json.loads(
-        (ROOT / "dataset/raw/openreview/iclr2025_seed/manifest.json").read_text(encoding="utf-8")
+        (RAW_ROOT / "primary/openreview_iclr2025_seed/manifest.json").read_text(encoding="utf-8")
     )
     arxiv_manifest = json.loads(
-        (ROOT / "dataset/raw/arxiv_unseen/2026-06-13/manifest.json").read_text(encoding="utf-8")
+        (RAW_ROOT / "demo/arxiv_unseen_2026-06-13/manifest.json").read_text(encoding="utf-8")
     )
     literature_files = [
         path
-        for path in (ROOT / "dataset/raw/local_literature/source").rglob("*")
+        for path in (RAW_ROOT / "literature/local_corpus/source").rglob("*")
         if path.is_file() and path.suffix.lower() in {".md", ".pdf"}
     ]
+    peerqa_root = RAW_ROOT / "evaluation/peerqa"
+    claimcheck_root = RAW_ROOT / "evaluation/claimcheck/texts"
+    reviewcritique_root = RAW_ROOT / "evaluation/reviewcritique"
+    forbidden_candidates = [
+        ROOT / "dataset/legacy_sources",
+        *RAW_ROOT.rglob(".git"),
+        *RAW_ROOT.rglob("*.zip"),
+    ]
+    forbidden_paths = [path for path in forbidden_candidates if path.exists()]
 
     checks = {
         "raw_primary": {
             "passed": (
                 openreview_manifest["papers"] == 10
                 and openreview_manifest["official_reviews"] >= 40
-                and len(list((ROOT / "dataset/raw/openreview/iclr2025_seed/pdfs").glob("*.pdf"))) == 10
-                and (ROOT / "dataset/raw/nlpeer/loader").exists()
+                and len(valid_pdfs(RAW_ROOT / "primary/openreview_iclr2025_seed/pdfs")) == 10
+                and (RAW_ROOT / "restricted/nlpeer").exists()
             ),
             "openreview_papers": openreview_manifest["papers"],
             "openreview_reviews": openreview_manifest["official_reviews"],
@@ -41,27 +72,35 @@ def validate() -> dict:
         },
         "strict_evaluation": {
             "passed": (
-                jsonl_rows(ROOT / "dataset/raw/peerqa/data/qa.jsonl") == 579
-                and jsonl_rows(ROOT / "dataset/raw/peerqa/data/papers.jsonl") == 24_265
-                and json_object_size(
-                    ROOT / "dataset/raw/claimcheck/repository/data/texts/source/main.json"
+                jsonl_rows_with_fields(
+                    peerqa_root / "qa.jsonl",
+                    {"question_id", "paper_id", "answer_evidence_mapped"},
                 )
-                == 55
-                and jsonl_rows(
-                    ROOT / "dataset/raw/reviewcritique/repository/data/ReviewCritique.jsonl"
+                == 579
+                and jsonl_rows_with_fields(
+                    peerqa_root / "papers.jsonl",
+                    {"idx", "paper_id", "content"},
+                )
+                == 24_265
+                and json_object_size(claimcheck_root / "source/main.json") == 55
+                and json_object_size(claimcheck_root / "related_work/main.json") == 43
+                and jsonl_rows_with_fields(
+                    reviewcritique_root / "ReviewCritique.jsonl",
+                    {"body_text", "decision", "review#1"},
                 )
                 == 100
             ),
-            "peerqa_qa": jsonl_rows(ROOT / "dataset/raw/peerqa/data/qa.jsonl"),
-            "peerqa_paper_rows": jsonl_rows(ROOT / "dataset/raw/peerqa/data/papers.jsonl"),
-            "claimcheck_source_pairs": json_object_size(
-                ROOT / "dataset/raw/claimcheck/repository/data/texts/source/main.json"
+            "peerqa_qa": jsonl_rows(peerqa_root / "qa.jsonl"),
+            "peerqa_paper_rows": jsonl_rows(peerqa_root / "papers.jsonl"),
+            "claimcheck_source_pairs": json_object_size(claimcheck_root / "source/main.json"),
+            "claimcheck_related_work_pairs": json_object_size(
+                claimcheck_root / "related_work/main.json"
             ),
             "reviewcritique_human_papers": jsonl_rows(
-                ROOT / "dataset/raw/reviewcritique/repository/data/ReviewCritique.jsonl"
+                reviewcritique_root / "ReviewCritique.jsonl"
             ),
             "reviewcritique_llm_papers": jsonl_rows(
-                ROOT / "dataset/raw/reviewcritique/repository/data/ReviewCritique_LLM.jsonl"
+                reviewcritique_root / "ReviewCritique_LLM.jsonl"
             ),
         },
         "literature_corpus": {
@@ -71,9 +110,14 @@ def validate() -> dict:
         "unseen_demo": {
             "passed": (
                 arxiv_manifest["papers"] == 5
-                and len(list((ROOT / "dataset/raw/arxiv_unseen/2026-06-13/pdfs").glob("*.pdf"))) == 5
+                and len(valid_pdfs(RAW_ROOT / "demo/arxiv_unseen_2026-06-13/pdfs")) == 5
             ),
             "arxiv_papers": arxiv_manifest["papers"],
+        },
+        "clean_dataset_layout": {
+            "passed": not forbidden_paths,
+            "forbidden_paths": [str(path) for path in forbidden_paths],
+            "roles": ["primary", "evaluation", "literature", "demo", "restricted"],
         },
     }
     passed = all(check["passed"] for check in checks.values())

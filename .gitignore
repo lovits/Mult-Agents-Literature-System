@@ -22,7 +22,6 @@ storage/
 实验/outputs/
 实验/.cache/
 实验/dataset/raw/
-实验/dataset/legacy_sources/
 
 # Local archive binaries stay on disk; checksums and metadata remain versioned.
 归档/*.tar.gz

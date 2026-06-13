@@ -2,7 +2,7 @@ items:
   - name: nlpeer
     role: raw_primary
     source_url: https://tudatalib.ulb.tu-darmstadt.de/handle/tudatalib/4459
-    local_path: dataset/raw/nlpeer
+    local_path: dataset/raw/restricted/nlpeer
     access: restricted
     license: CC-BY-NC-4.0
     supervision: paper-review pairs and metadata
@@ -11,7 +11,7 @@ items:
   - name: openreview
     role: raw_primary
     source_url: https://api2.openreview.net
-    local_path: dataset/raw/openreview
+    local_path: dataset/raw/primary/openreview_iclr2025_seed
     access: public
     license: venue-dependent public content
     supervision: paper-review-rebuttal metadata
@@ -20,7 +20,7 @@ items:
   - name: peerqa
     role: strict_evaluation
     source_url: https://huggingface.co/datasets/UKPLab/PeerQA
-    local_path: dataset/raw/peerqa
+    local_path: dataset/raw/evaluation/peerqa
     access: public
     license: CC-BY-NC-SA-4.0
     supervision: author-annotated answer evidence and retrieval qrels
@@ -29,7 +29,7 @@ items:
   - name: claimcheck
     role: strict_evaluation
     source_url: https://github.com/JHU-CLSP/CLAIMCHECK
-    local_path: dataset/raw/claimcheck
+    local_path: dataset/raw/evaluation/claimcheck
     access: public
     license: repository terms
     supervision: expert weakness validity and claim alignment
@@ -38,7 +38,7 @@ items:
   - name: reviewcritique
     role: strict_evaluation
     source_url: https://github.com/jiangshdd/ReviewCritique
-    local_path: dataset/raw/reviewcritique
+    local_path: dataset/raw/evaluation/reviewcritique
     access: public
     license: research-only; evaluation and benchmarking only
     supervision: expert deficiency labels and explanations per review segment
@@ -47,7 +47,7 @@ items:
   - name: local_literature
     role: literature_corpus
     source_url: ../参考论文/整合去重_论文库/PDF_MD_成对论文库
-    local_path: dataset/raw/local_literature
+    local_path: dataset/raw/literature/local_corpus
     access: local
     license: source-document dependent
     supervision: fixed external literature corpus
@@ -56,7 +56,7 @@ items:
   - name: arxiv_unseen
     role: unseen_demo
     source_url: https://export.arxiv.org/api/query
-    local_path: dataset/raw/arxiv_unseen
+    local_path: dataset/raw/demo/arxiv_unseen_2026-06-13
     access: public
     license: paper-dependent arXiv license
     supervision: none; held-out demonstration only

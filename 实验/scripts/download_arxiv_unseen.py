@@ -51,7 +51,11 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--category", default="cs.CL")
     parser.add_argument("--limit", type=int, default=5)
-    parser.add_argument("--output", type=Path, default=Path("dataset/raw/arxiv_unseen/2026-06-13"))
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("dataset/raw/demo/arxiv_unseen_2026-06-13"),
+    )
     args = parser.parse_args()
     print(json.dumps(download_snapshot(args.category, args.limit, args.output), indent=2))
 

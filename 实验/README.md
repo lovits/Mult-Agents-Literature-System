@@ -4,6 +4,8 @@
 
 当前不包含前端，不复用旧实验指标。
 
+目录分层与边界见 `ARCHITECTURE.md`。
+
 ## 快速验证
 
 ```bash
@@ -14,4 +16,4 @@
 ../.venv/bin/python scripts/validate_peerqa_e2_foundation.py
 ```
 
-详细数据说明见 `dataset/DATASET_REPORT.md`，当前进度见 `PROGRESS.md`。
+详细数据说明见 `dataset/README.md`，当前进度见 `PROGRESS.md`。

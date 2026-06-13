@@ -59,6 +59,24 @@ def validate() -> dict:
         EXPERIMENT_ROOT / "新实验",
         EXPERIMENT_ROOT / "evireview_lite",
     ]
+    forbidden_tree_paths = [
+        EXPERIMENT_ROOT / "新实验",
+        EXPERIMENT_ROOT / "evireview_lite",
+        EXPERIMENT_ROOT / "dataset/legacy_sources",
+        EXPERIMENT_ROOT / "dataset/manifests",
+    ]
+    expected_source_layers = {"conf", "dao", "evaluation", "models", "rag", "service"}
+    source_layers = {
+        path.name
+        for path in (EXPERIMENT_ROOT / "src/evireview").iterdir()
+        if path.is_dir() and path.name != "__pycache__"
+    }
+    expected_dataset_roles = {"primary", "evaluation", "literature", "demo", "restricted"}
+    dataset_roles = {
+        path.name
+        for path in (EXPERIMENT_ROOT / "dataset/raw").iterdir()
+        if path.is_dir()
+    }
     checks = {
         "flat_experiment_layout": {
             "passed": all(not path.exists() for path in forbidden_layouts)
@@ -78,6 +96,16 @@ def validate() -> dict:
                 "neighbor_expansion",
                 "P2_P3_P4_ablation",
             ],
+        },
+        "clean_experiment_tree": {
+            "passed": (
+                all(not path.exists() for path in forbidden_tree_paths)
+                and source_layers == expected_source_layers
+                and dataset_roles == expected_dataset_roles
+            ),
+            "forbidden_paths": [str(path) for path in forbidden_tree_paths],
+            "source_layers": sorted(source_layers),
+            "dataset_roles": sorted(dataset_roles),
         },
     }
     passed = all(check["passed"] for check in checks.values())

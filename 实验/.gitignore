@@ -1,8 +1,5 @@
 .env
 dataset/raw/**
-!dataset/raw/README.md
-dataset/legacy_sources/**
-dataset/manifests/generated/
 outputs/
 *.egg-info/
 __pycache__/
