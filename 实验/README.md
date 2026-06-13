@@ -14,6 +14,8 @@
 ../.venv/bin/python scripts/validate_dataset_bootstrap.py
 ../.venv/bin/python scripts/validate_flat_layout_task6.py
 ../.venv/bin/python scripts/validate_peerqa_e2_foundation.py
+../.venv/bin/python scripts/run_e2.py --config conf/experiments/e2_paper_rag.yaml
+../.venv/bin/python scripts/validate_execution_stage_a_b.py
 ```
 
 详细数据说明见 `dataset/README.md`，当前进度见 `PROGRESS.md`。

@@ -10,6 +10,7 @@ def test_required_dataset_roles_and_sources_are_registered():
         "peerqa",
         "claimcheck",
         "reviewcritique",
+        "substanreview",
         "local_literature",
         "arxiv_unseen",
     } <= set(registry.names())

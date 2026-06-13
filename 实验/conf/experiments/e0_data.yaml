@@ -44,6 +44,15 @@ items:
     supervision: expert deficiency labels and explanations per review segment
     download_status: downloaded
     usage: [candidate_generation, meta_reviewer, report_quality]
+  - name: substanreview
+    role: strict_evaluation
+    source_url: https://github.com/YanzhuGuo/SubstanReview
+    local_path: dataset/raw/evaluation/substanreview
+    access: public
+    license: repository terms; research use
+    supervision: expert claim-evidence pair spans in scientific peer reviews
+    download_status: downloaded
+    usage: [bidirectional_audit, meta_reviewer, substantiation_evaluation]
   - name: local_literature
     role: literature_corpus
     source_url: ../参考论文/整合去重_论文库/PDF_MD_成对论文库

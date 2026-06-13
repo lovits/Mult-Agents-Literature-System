@@ -14,6 +14,12 @@ def evaluate_ranking(
         f"recall@{cutoff}": _recall_at_k(ranked_ids, relevant_ids, cutoff)
         for cutoff in cutoffs
     }
+    metrics.update(
+        {
+            f"precision@{cutoff}": _precision_at_k(ranked_ids, relevant_ids, cutoff)
+            for cutoff in cutoffs
+        }
+    )
     metrics["mrr"] = _reciprocal_rank(ranked_ids, relevant_ids)
     for cutoff in cutoffs:
         metrics[f"ndcg@{cutoff}"] = _ndcg_at_k(ranked_ids, relevant_ids, cutoff)
@@ -22,6 +28,13 @@ def evaluate_ranking(
 
 def _recall_at_k(ranked_ids: list[str], relevant_ids: set[str], cutoff: int) -> float:
     return len(set(ranked_ids[:cutoff]) & relevant_ids) / len(relevant_ids)
+
+
+def _precision_at_k(ranked_ids: list[str], relevant_ids: set[str], cutoff: int) -> float:
+    retrieved = ranked_ids[:cutoff]
+    if not retrieved:
+        return 0.0
+    return len(set(retrieved) & relevant_ids) / len(retrieved)
 
 
 def _reciprocal_rank(ranked_ids: list[str], relevant_ids: set[str]) -> float:

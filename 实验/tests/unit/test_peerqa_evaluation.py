@@ -63,5 +63,6 @@ def test_retrieval_metrics_match_hand_calculation():
     assert metrics["recall@1"] == 0.0
     assert metrics["recall@3"] == 0.5
     assert metrics["recall@5"] == 1.0
+    assert metrics["precision@3"] == 1 / 3
     assert metrics["mrr"] == 0.5
     assert round(metrics["ndcg@3"], 6) == 0.386853

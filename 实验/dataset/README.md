@@ -35,6 +35,7 @@ dataset/
 | PeerQA | 579 条标注 QA、24,265 条论文段落记录、未标注问题 | E2 Paper-RAG 严格检索评价 |
 | CLAIMCHECK | 55 个 main source paper-review 对、43 个 related-work 对的文本标注 | E4 双向文本证据审计严格评价；当前不做多模态图表审计 |
 | ReviewCritique | 100 篇人类评审论文、20 篇 LLM 评审论文及专家 deficiency 标注 | E1/E5/E6 辅助严格评价；禁止用于训练 |
+| SubstanReview | 550 条专家标注评审，包含 claim-evidence 配对 span | E4 证据充分性与 E5 排序辅助评价 |
 | 本地外部文献库 | 65 个 PDF/Markdown 文件 | E3 受控 Literature-RAG |
 | arXiv unseen | 2026-06-13 冻结的 5 篇最新 `cs.CL` PDF | 只作最终未见论文演示，不作 Gold 指标 |
 | NLPeer | 受限数据说明 | 完整 NLPEERv2 需申请，当前不能计为已下载 |
@@ -47,6 +48,7 @@ dataset/
 | PeerQA | 可直接使用 | 具有映射到论文段落的 Gold evidence，是 E2 Paper-RAG 主评价集 |
 | CLAIMCHECK | 可直接使用，限文本任务 | source 与 related-work 文本对适合 E4 支持/反驳证据审计；不能据此宣称多模态能力 |
 | ReviewCritique | 可直接使用，限评价 | 可评价评审缺陷和报告质量；按数据说明不得作为训练集 |
+| SubstanReview | 可直接使用，限辅助评价 | 可评价评审 claim 是否被 evidence substantiated；不能独立证明 weakness 正确 |
 | 本地文献库 | 可用 | 可作为固定 Literature-RAG 语料；不同来源许可需分别遵守 |
 | arXiv unseen | 可用，禁止调参 | 只证明系统能处理未见论文，不提供 Gold 质量结论 |
 | NLPEERv2 | 当前不可用 | 完成申请前只保留受限状态，不计入已下载数据 |
@@ -59,6 +61,8 @@ dataset/
 - PeerQA Hugging Face：<https://huggingface.co/datasets/UKPLab/PeerQA>
 - CLAIMCHECK 官方仓库：<https://github.com/JHU-CLSP/CLAIMCHECK>
 - ReviewCritique 官方仓库：<https://github.com/jiangshdd/ReviewCritique>
+- SubstanReview 官方仓库：<https://github.com/YanzhuGuo/SubstanReview>
+- SubstanReview 论文：<https://aclanthology.org/2023.findings-emnlp.684/>
 - arXiv API User Manual：<https://info.arxiv.org/help/api/user-manual.html>
 
 ## 实验使用纪律

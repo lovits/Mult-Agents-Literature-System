@@ -51,6 +51,15 @@ def validate() -> dict:
     peerqa_root = RAW_ROOT / "evaluation/peerqa"
     claimcheck_root = RAW_ROOT / "evaluation/claimcheck/texts"
     reviewcritique_root = RAW_ROOT / "evaluation/reviewcritique"
+    substanreview_root = RAW_ROOT / "evaluation/substanreview"
+    substanreview_train = jsonl_rows_with_fields(
+        substanreview_root / "train.jsonl",
+        {"id", "review", "label"},
+    )
+    substanreview_test = jsonl_rows_with_fields(
+        substanreview_root / "test.jsonl",
+        {"id", "review", "label"},
+    )
     forbidden_candidates = [
         ROOT / "dataset/legacy_sources",
         *RAW_ROOT.rglob(".git"),
@@ -89,6 +98,8 @@ def validate() -> dict:
                     {"body_text", "decision", "review#1"},
                 )
                 == 100
+                and substanreview_train == 440
+                and substanreview_test == 110
             ),
             "peerqa_qa": jsonl_rows(peerqa_root / "qa.jsonl"),
             "peerqa_paper_rows": jsonl_rows(peerqa_root / "papers.jsonl"),
@@ -102,6 +113,7 @@ def validate() -> dict:
             "reviewcritique_llm_papers": jsonl_rows(
                 reviewcritique_root / "ReviewCritique_LLM.jsonl"
             ),
+            "substanreview_reviews": substanreview_train + substanreview_test,
         },
         "literature_corpus": {
             "passed": len(literature_files) >= 60,

@@ -1,0 +1,13 @@
+dataset:
+  name: peerqa
+  path: dataset/raw/evaluation/peerqa
+
+embedding:
+  name: hashing-smoke
+
+run:
+  limit: 136
+  top_k: 5
+  random_seed: 42
+
+output: outputs/metrics/e2_paper_rag_smoke.json
