@@ -46,7 +46,7 @@ items:
     usage: [candidate_generation, meta_reviewer, report_quality]
   - name: local_literature
     role: literature_corpus
-    source_url: ../../../../参考论文/整合去重_论文库/PDF_MD_成对论文库
+    source_url: ../参考论文/整合去重_论文库/PDF_MD_成对论文库
     local_path: dataset/raw/local_literature
     access: local
     license: source-document dependent

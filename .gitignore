@@ -19,9 +19,10 @@ storage/
 参考论文/**/*.pdf
 
 # Experiment scratch/output caches
-实验/新实验/**/outputs/
-实验/新实验/**/.cache/
-实验/evireview_lite/data/
+实验/outputs/
+实验/.cache/
+实验/dataset/raw/
+实验/dataset/legacy_sources/
 
 # Local archive binaries stay on disk; checksums and metadata remain versioned.
 归档/*.tar.gz

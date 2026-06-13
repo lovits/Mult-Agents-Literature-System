@@ -1,0 +1,6 @@
+paper_rag:
+  retrieval_depth: 20
+  top_k: 5
+  section_weight: 0.1
+  evidence_type_weight: 0.1
+  neighbor_radius: 1

@@ -87,7 +87,7 @@ def validate() -> dict:
 
 def main() -> None:
     result = validate()
-    output = ROOT.parents[2] / ".omx/specs/autoresearch-evireview-dataset-bootstrap/result.json"
+    output = ROOT.parent / ".omx/specs/autoresearch-evireview-dataset-bootstrap/result.json"
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))

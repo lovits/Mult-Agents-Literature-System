@@ -45,9 +45,9 @@
 ## 验收命令
 
 ```bash
-cd 实验/新实验/evireview_lite
-../../../.venv/bin/python scripts/run_e0.py --config conf/experiments/e0_data.yaml
-../../../.venv/bin/python scripts/validate_dataset_bootstrap.py
+cd 实验
+../.venv/bin/python scripts/run_e0.py --config conf/experiments/e0_data.yaml
+../.venv/bin/python scripts/validate_dataset_bootstrap.py
 ```
 
 通过标准：四层数据检查均为 `passed`，同时 NLPeer 状态保持显式受限。

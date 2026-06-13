@@ -1,12 +1,18 @@
-# EviReview-Lite 新实验进度
+# EviReview-Lite 实验进度
 
 更新时间：2026-06-13
 
 ## 已完成
 
+### 目录与设计基线收敛
+
+- 全部有效实验代码直接位于 `实验/`，不再使用 `新实验` 或 `evireview_lite` 包装目录；
+- 历史辅助数据统一放入 `dataset/legacy_sources/`，不参与当前实验验收；
+- `设计方案/` 仅保留最新开题报告、设计方案和实验方案三份权威文档。
+
 ### Task 1：实验项目骨架
 
-- 创建独立的 `evireview_lite` Python 实验项目；
+- 创建独立的 Python 实验项目；
 - 建立环境变量配置，API Key 不进入代码和配置文件；
 - 安装最小运行与测试依赖；
 - 配置测试、数据、输出和源码目录边界。
@@ -45,10 +51,24 @@
 - 实现包含 paper、parser、embedding model 和 block hash 的索引缓存身份；
 - 使用统一 `EvidenceItem` 输出，供后续 P0-P4 公平比较。
 
+### Task 6：结构与证据类型感知 Paper-RAG
+
+- 实现 Section Prior 与 Evidence-Type Prior；
+- 实现不跨章节的 Neighbor Expansion；
+- 实现 P2、P3、P4 可控消融配置；
+- 建立目录收敛与 Task 6 Autoresearch 验收器。
+
+### E2 基础：PeerQA 适配与检索指标
+
+- 将 PeerQA 论文段落映射为统一 `EvidenceBlock`；
+- 将 `answer_evidence_mapped.idx` 映射为可评价的 Gold evidence ID；
+- 实现 Recall@K、MRR 和 nDCG@K；
+- 建立真实 PeerQA 数据映射 Autoresearch 验收器。
+
 ## 当前验证
 
 ```text
-pytest:                         17 passed
+pytest:                         23 passed
 E0 registered datasets:         7
 Downloaded datasets:            5
 Restricted datasets:            1 (NLPEERv2)
@@ -56,6 +76,8 @@ Local snapshots:                1
 OpenReview valid PDFs:          10 / 10
 arXiv unseen valid PDFs:         5 / 5
 Autoresearch dataset bootstrap: passed
+Autoresearch flat layout/task6: passed
+Autoresearch PeerQA E2 foundation: passed
 pip check:                      no broken requirements
 ```
 
@@ -64,12 +86,12 @@ pip check:                      no broken requirements
 1. NLPEERv2 完整数据尚未获得访问授权，当前使用 OpenReview seed 作为原始完整论文主数据；
 2. OpenReview seed 当前只有 10 篇，用于打通流程；E1/E6 正式实验前需要按固定协议扩大；
 3. arXiv 未见集只用于最终演示，不能用于调参或 Gold 评价；
-4. 当前尚未实现结构感知 P3/P4 Paper-RAG 与正式 PeerQA E2 运行器。
+4. 当前尚未实现正式 PeerQA E2 P0-P4 批量运行器；检索指标和 Gold 映射已经就绪。
 
 ## 下一步
 
 按照关键路径继续：
 
-1. Task 6：实现 Section Prior、Evidence-Type Prior、Neighbor Expansion；
-2. 在 PeerQA 上运行首个 E2 Paper-RAG 检索实验；
+1. 实现在 PeerQA 上批量运行的 E2 P0-P4 Paper-RAG 入口；
+2. 固定 embedding 模型后运行首个 E2 检索实验；
 3. E2 稳定后再进入双向证据审计 E4。
