@@ -1,0 +1,15 @@
+设计方案/EviReview-Lite_完整实验方案与系统架构流程设计.md
+设计方案/新版完整开题报告_EviReview-Lite_基于证据校验的学术论文自动评审系统.md
+设计方案/历史开题报告/
+设计方案/历史开题报告/近三年论文逐篇精读分类报告_面向EviReview系统.md
+设计方案/历史开题报告/开题报告与文献综述：基于证据验证的多智能体 RAG 学术论文自动评审与分类系统.md
+设计方案/历史开题报告/开题用_创新点与架构设计_简化定稿.md
+设计方案/架构设计/
+设计方案/架构设计/agent_rag_frontend_backend_refactor_architecture_2026-06-02.md
+设计方案/架构设计/evireview_lite_technical_design.md
+设计方案/架构设计/fullstack_agent_rag_architecture.md
+设计方案/研究设计/combined_opening_reports_agent_rag_design_architect_review_2026-06-12.md
+设计方案/研究设计/improved_complete_opening_report_architect_review_2026-06-12.md
+设计方案/研究设计/improved_complete_opening_report_evidence_multi_agent_rag_2026-06-12.md
+设计方案/研究设计/opening_report_multi_agent_rag_redesign_2026-06-12.md
+设计方案/研究设计/opening_report_multi_agent_rag_redesign_architect_review_2026-06-12.md

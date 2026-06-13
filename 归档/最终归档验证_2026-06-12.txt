@@ -1,0 +1,14 @@
+archive_date=2026-06-12
+old_experiment_archive=实验/归档/旧实验完整归档_2026-06-12.tar.gz
+old_experiment_archive_entries=670
+old_experiment_archive_size=433M
+old_omx_context_archive=实验/归档/旧OMX研究上下文_2026-06-12.tar.gz
+gzip_integrity=passed
+sha256_verification=passed
+full_restore_test=passed
+secret_scan_before_archive=passed
+secret_scan_visible_workspace=passed
+old_visible_experiment_directories_deleted=true
+old_omx_research_context_deleted=true
+visible_top_level_directories=实验,设计方案,参考论文
+new_experiment_workspace_empty=true

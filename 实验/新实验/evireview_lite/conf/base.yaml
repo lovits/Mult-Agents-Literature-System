@@ -1,0 +1,3 @@
+random_seed: 42
+output_root: outputs
+dataset_root: dataset

@@ -1,0 +1,64 @@
+items:
+  - name: nlpeer
+    role: raw_primary
+    source_url: https://tudatalib.ulb.tu-darmstadt.de/handle/tudatalib/4459
+    local_path: dataset/raw/nlpeer
+    access: restricted
+    license: CC-BY-NC-4.0
+    supervision: paper-review pairs and metadata
+    download_status: requires_application
+    usage: [paper_ingestion, candidate_generation, end_to_end]
+  - name: openreview
+    role: raw_primary
+    source_url: https://api2.openreview.net
+    local_path: dataset/raw/openreview
+    access: public
+    license: venue-dependent public content
+    supervision: paper-review-rebuttal metadata
+    download_status: downloaded
+    usage: [paper_ingestion, candidate_generation, end_to_end]
+  - name: peerqa
+    role: strict_evaluation
+    source_url: https://huggingface.co/datasets/UKPLab/PeerQA
+    local_path: dataset/raw/peerqa
+    access: public
+    license: CC-BY-NC-SA-4.0
+    supervision: author-annotated answer evidence and retrieval qrels
+    download_status: downloaded
+    usage: [paper_rag]
+  - name: claimcheck
+    role: strict_evaluation
+    source_url: https://github.com/JHU-CLSP/CLAIMCHECK
+    local_path: dataset/raw/claimcheck
+    access: public
+    license: repository terms
+    supervision: expert weakness validity and claim alignment
+    download_status: downloaded
+    usage: [paper_rag, bidirectional_audit]
+  - name: reviewcritique
+    role: strict_evaluation
+    source_url: https://github.com/jiangshdd/ReviewCritique
+    local_path: dataset/raw/reviewcritique
+    access: public
+    license: research-only; evaluation and benchmarking only
+    supervision: expert deficiency labels and explanations per review segment
+    download_status: downloaded
+    usage: [candidate_generation, meta_reviewer, report_quality]
+  - name: local_literature
+    role: literature_corpus
+    source_url: ../../../../参考论文/整合去重_论文库/PDF_MD_成对论文库
+    local_path: dataset/raw/local_literature
+    access: local
+    license: source-document dependent
+    supervision: fixed external literature corpus
+    download_status: local_snapshot
+    usage: [literature_rag]
+  - name: arxiv_unseen
+    role: unseen_demo
+    source_url: https://export.arxiv.org/api/query
+    local_path: dataset/raw/arxiv_unseen
+    access: public
+    license: paper-dependent arXiv license
+    supervision: none; held-out demonstration only
+    download_status: downloaded
+    usage: [unseen_end_to_end_demo]

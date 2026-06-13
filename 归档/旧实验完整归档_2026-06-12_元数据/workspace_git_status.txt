@@ -1,0 +1,52 @@
+ M code/experiments/evireview_a/data/unified_metrics.csv
+ M code/experiments/evireview_a/data/unified_metrics.json
+ M code/experiments/evireview_a/reports/unified_metrics.md
+ M code/experiments/evireview_a/src/render_thesis_experiment_tables.py
+ M code/experiments/evireview_a/src/validate_phase2h_optimization.py
+ M docs/progress/agent_rag_refactor_phase_2g_2026-06-06.md
+ M docs/progress/agent_rag_refactor_phase_2h_2026-06-07.md
+ M docs/progress/backend_agent_rag_graph_2026-06-06.md
+ M docs/progress/backend_provider_generation_2026-06-07.md
+ M docs/progress/backend_strict_acceptance_2026-06-07.md
+ M docs/research/agent_rag_review_evaluation_update_2026-06-07.md
+ M memory/RESEARCH_LOG.md
+ M packages/evireview_core/evireview_core/providers/base.py
+ M packages/evireview_core/evireview_core/providers/minimax.py
+ M packages/evireview_core/evireview_core/workflow/components.py
+ M services/api/README.md
+ M services/api/app/api/routes/experiments.py
+ M services/api/app/services/experiment_manifest_service.py
+ M services/worker/README.md
+ M services/worker/tasks/review_audit.py
+ M tests/api/test_fastapi_experiments.py
+ M tests/api/test_fastapi_runs.py
+ M tests/backend/test_experiment_manifest_service.py
+ M tests/backend/test_local_review_audit_worker.py
+ M tests/evireview_core/test_deterministic_workflow.py
+ M tests/experiments/test_metric_adapter_registry.py
+?? archive/
+?? code/experiments/evireview_a/ARCHIVED_2026-06-12.md
+?? code/experiments/evireview_a/src/check_backend_acceptance_readiness.py
+?? code/experiments/evireview_a/src/run_hosted_backend_acceptance.py
+?? code/experiments/evireview_a/src/validate_backend_strict_acceptance.py
+?? code/experiments/evireview_a/src/validate_opening_report_mainline.py
+?? code/experiments/evireview_a/src/validate_thesis_tables.py
+?? docs/progress/evireview_completion_audit_2026-06-08.md
+?? docs/progress/hosted_backend_acceptance_runbook_2026-06-08.md
+?? docs/research/combined_opening_reports_agent_rag_design_2026-06-12.md
+?? docs/research/combined_opening_reports_agent_rag_design_architect_review_2026-06-12.md
+?? docs/research/improved_complete_opening_report_architect_review_2026-06-12.md
+?? docs/research/improved_complete_opening_report_evidence_multi_agent_rag_2026-06-12.md
+?? docs/research/opening_report_multi_agent_rag_redesign_2026-06-12.md
+?? docs/research/opening_report_multi_agent_rag_redesign_architect_review_2026-06-12.md
+?? packages/evireview_core/evireview_core/providers/glm.py
+?? tests/evireview_core/test_glm_provider.py
+?? tests/experiments/test_backend_acceptance_readiness.py
+?? tests/experiments/test_render_thesis_experiment_tables.py
+?? tests/experiments/test_run_hosted_backend_acceptance.py
+?? tests/experiments/test_validate_backend_strict_acceptance.py
+?? tests/experiments/test_validate_opening_report_mainline.py
+?? tests/experiments/test_validate_phase2h_optimization.py
+?? tests/experiments/test_validate_thesis_tables.py
+?? tests/integration/test_glm_backend_acceptance.py
+?? "\345\256\236\351\252\214/"

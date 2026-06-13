@@ -1,0 +1,1455 @@
+diff --git a/code/experiments/evireview_a/data/unified_metrics.csv b/code/experiments/evireview_a/data/unified_metrics.csv
+index 5515032..3452a65 100644
+--- a/code/experiments/evireview_a/data/unified_metrics.csv
++++ b/code/experiments/evireview_a/data/unified_metrics.csv
+@@ -1324,7 +1324,11 @@ Local Version Drift Fixture,review_audit,agent_rag,manifest,succeeded_rate,1.0,s
+ Local Version Drift Fixture,review_audit,agent_rag,manifest,succeeded_run_count,1,silver,manifest:experiment-9f61e4b0fe4548f0b52692c67290a105
+ Local Version Drift Fixture,review_audit,generation,manifest,weakness_count,1,silver,manifest:experiment-9f61e4b0fe4548f0b52692c67290a105
+ Local Version Drift Fixture,review_audit,ranking,manifest,ranked_finding_count,1,silver,manifest:experiment-9f61e4b0fe4548f0b52692c67290a105
++Local Version Drift Fixture,review_audit,verification,manifest,generic_rate,0.0,silver,manifest:experiment-9f61e4b0fe4548f0b52692c67290a105
+ Local Version Drift Fixture,review_audit,verification,manifest,mean_support_score,0.3333,silver,manifest:experiment-9f61e4b0fe4548f0b52692c67290a105
++Local Version Drift Fixture,review_audit,verification,manifest,partial_or_better_rate,0.0,silver,manifest:experiment-9f61e4b0fe4548f0b52692c67290a105
++Local Version Drift Fixture,review_audit,verification,manifest,supported_rate,0.0,silver,manifest:experiment-9f61e4b0fe4548f0b52692c67290a105
++Local Version Drift Fixture,review_audit,verification,manifest,unsupported_rate,0.0,silver,manifest:experiment-9f61e4b0fe4548f0b52692c67290a105
+ PeerQA-XT,retrieval,paper_rag,bm25_question,answer_support_hit_at_1,0.24,proxy,peerqa_xt_retrieval_metrics.json
+ PeerQA-XT,retrieval,paper_rag,bm25_question,answer_support_hit_at_3,0.598,proxy,peerqa_xt_retrieval_metrics.json
+ PeerQA-XT,retrieval,paper_rag,bm25_question,answer_support_hit_at_5,0.794,proxy,peerqa_xt_retrieval_metrics.json
+diff --git a/code/experiments/evireview_a/data/unified_metrics.json b/code/experiments/evireview_a/data/unified_metrics.json
+index a7765f3..dc86d44 100644
+--- a/code/experiments/evireview_a/data/unified_metrics.json
++++ b/code/experiments/evireview_a/data/unified_metrics.json
+@@ -13249,6 +13249,16 @@
+     "metric_boundary": "silver",
+     "source_artifact": "manifest:experiment-9f61e4b0fe4548f0b52692c67290a105"
+   },
++  {
++    "dataset": "Local Version Drift Fixture",
++    "task": "review_audit",
++    "module": "verification",
++    "method": "manifest",
++    "metric": "generic_rate",
++    "value": 0.0,
++    "metric_boundary": "silver",
++    "source_artifact": "manifest:experiment-9f61e4b0fe4548f0b52692c67290a105"
++  },
+   {
+     "dataset": "Local Version Drift Fixture",
+     "task": "review_audit",
+@@ -13259,6 +13269,36 @@
+     "metric_boundary": "silver",
+     "source_artifact": "manifest:experiment-9f61e4b0fe4548f0b52692c67290a105"
+   },
++  {
++    "dataset": "Local Version Drift Fixture",
++    "task": "review_audit",
++    "module": "verification",
++    "method": "manifest",
++    "metric": "partial_or_better_rate",
++    "value": 0.0,
++    "metric_boundary": "silver",
++    "source_artifact": "manifest:experiment-9f61e4b0fe4548f0b52692c67290a105"
++  },
++  {
++    "dataset": "Local Version Drift Fixture",
++    "task": "review_audit",
++    "module": "verification",
++    "method": "manifest",
++    "metric": "supported_rate",
++    "value": 0.0,
++    "metric_boundary": "silver",
++    "source_artifact": "manifest:experiment-9f61e4b0fe4548f0b52692c67290a105"
++  },
++  {
++    "dataset": "Local Version Drift Fixture",
++    "task": "review_audit",
++    "module": "verification",
++    "method": "manifest",
++    "metric": "unsupported_rate",
++    "value": 0.0,
++    "metric_boundary": "silver",
++    "source_artifact": "manifest:experiment-9f61e4b0fe4548f0b52692c67290a105"
++  },
+   {
+     "dataset": "PeerQA-XT",
+     "task": "retrieval",
+diff --git a/code/experiments/evireview_a/reports/unified_metrics.md b/code/experiments/evireview_a/reports/unified_metrics.md
+index d6da9f8..9a70af6 100644
+--- a/code/experiments/evireview_a/reports/unified_metrics.md
++++ b/code/experiments/evireview_a/reports/unified_metrics.md
+@@ -1327,7 +1327,11 @@
+ | Local Version Drift Fixture | review_audit | agent_rag | manifest | succeeded_run_count | 1 | silver | manifest:experiment-9f61e4b0fe4548f0b52692c67290a105 |
+ | Local Version Drift Fixture | review_audit | generation | manifest | weakness_count | 1 | silver | manifest:experiment-9f61e4b0fe4548f0b52692c67290a105 |
+ | Local Version Drift Fixture | review_audit | ranking | manifest | ranked_finding_count | 1 | silver | manifest:experiment-9f61e4b0fe4548f0b52692c67290a105 |
++| Local Version Drift Fixture | review_audit | verification | manifest | generic_rate | 0.0 | silver | manifest:experiment-9f61e4b0fe4548f0b52692c67290a105 |
+ | Local Version Drift Fixture | review_audit | verification | manifest | mean_support_score | 0.3333 | silver | manifest:experiment-9f61e4b0fe4548f0b52692c67290a105 |
++| Local Version Drift Fixture | review_audit | verification | manifest | partial_or_better_rate | 0.0 | silver | manifest:experiment-9f61e4b0fe4548f0b52692c67290a105 |
++| Local Version Drift Fixture | review_audit | verification | manifest | supported_rate | 0.0 | silver | manifest:experiment-9f61e4b0fe4548f0b52692c67290a105 |
++| Local Version Drift Fixture | review_audit | verification | manifest | unsupported_rate | 0.0 | silver | manifest:experiment-9f61e4b0fe4548f0b52692c67290a105 |
+ | PeerQA-XT | retrieval | paper_rag | bm25_question | answer_support_hit_at_1 | 0.24 | proxy | peerqa_xt_retrieval_metrics.json |
+ | PeerQA-XT | retrieval | paper_rag | bm25_question | answer_support_hit_at_3 | 0.598 | proxy | peerqa_xt_retrieval_metrics.json |
+ | PeerQA-XT | retrieval | paper_rag | bm25_question | answer_support_hit_at_5 | 0.794 | proxy | peerqa_xt_retrieval_metrics.json |
+diff --git a/code/experiments/evireview_a/src/render_thesis_experiment_tables.py b/code/experiments/evireview_a/src/render_thesis_experiment_tables.py
+index a5ee852..fc814ca 100644
+--- a/code/experiments/evireview_a/src/render_thesis_experiment_tables.py
++++ b/code/experiments/evireview_a/src/render_thesis_experiment_tables.py
+@@ -38,6 +38,49 @@ def method_row(name: str, row: dict[str, Any]) -> str:
+     )
+ 
+ 
++def manifest_metric_rows(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
++    allowed_metrics = {
++        "run_count",
++        "succeeded_rate",
++        "weakness_count",
++        "ranked_finding_count",
++        "mean_support_score",
++        "supported_rate",
++        "partial_or_better_rate",
++        "unsupported_rate",
++        "generic_rate",
++        "duplicate_count",
++        "deduplication_reduction_rate",
++    }
++    return [
++        record
++        for record in records
++        if str(record.get("source_artifact", "")).startswith("manifest:")
++        and record.get("method") != "manifest"
++        and record.get("metric") in allowed_metrics
++    ]
++
++
++def append_manifest_readiness_table(lines: list[str], records: list[dict[str, Any]]) -> None:
++    rows = manifest_metric_rows(records)
++    if not rows:
++        return
++    lines.extend(
++        [
++            "",
++            "## Table 8. Backend Manifest / Hosted Provider Readiness",
++            "",
++            "| Dataset | Method | Metric | Value | Boundary | 写作口径 |",
++            "| --- | --- | --- | ---: | --- | --- |",
++        ]
++    )
++    for row in sorted(rows, key=lambda item: (item.get("dataset", ""), item.get("method", ""), item.get("metric", ""))):
++        lines.append(
++            f"| {row.get('dataset', '-')} | {row.get('method', '-')} | {row.get('metric', '-')} | "
++            f"{fmt(row.get('value'))} | {row.get('metric_boundary', '-')} | backend manifest diagnostic |"
++        )
++
++
+ def table_lines() -> list[str]:
+     source = load_json("source_reliability_report.json", {})
+     human = load_json("human_weaknesses_summary.json", {})
+@@ -60,6 +103,7 @@ def table_lines() -> list[str]:
+     minimax_generation = load_json("minimax_reviewer_weaknesses_summary.json", {})
+     minimax_coverage = load_json("minimax_reviewer_coverage_metrics.json", {})
+     local_classifier = load_json("local_decision_classifier_metrics.json", {})
++    unified_metrics = load_json("unified_metrics.json", [])
+     claimcheck_main = claimcheck.get("splits", {}).get("main", {})
+ 
+     substan_nb = substan.get("baselines", {}).get("multinomial_naive_bayes_v0", {}).get("test", {})
+@@ -282,6 +326,11 @@ def table_lines() -> list[str]:
+                 f"| Auxiliary accept/reject classifier | Local OpenReview/PRISM | {local_classifier.get('best_method', '-')} | "
+                 f"Macro-F1 {fmt(best_classifier.get('aggregate', {}).get('macro_f1'))} | 只作为辅助案例分析 |"
+             ),
++        ]
++    )
++    append_manifest_readiness_table(lines, unified_metrics)
++    lines.extend(
++        [
+             "",
+             "## 实验章节写作口径",
+             "",
+diff --git a/code/experiments/evireview_a/src/validate_phase2h_optimization.py b/code/experiments/evireview_a/src/validate_phase2h_optimization.py
+index a3c2e35..faf8eda 100644
+--- a/code/experiments/evireview_a/src/validate_phase2h_optimization.py
++++ b/code/experiments/evireview_a/src/validate_phase2h_optimization.py
+@@ -29,11 +29,13 @@ def validate() -> dict[str, Any]:
+     if not {"rubric_agent", "glm_reviewer", "minimax_reviewer"} <= set(generators):
+         raise ValueError("provider paired comparison is incomplete")
+     profiles = graph.get("profiles", {})
+-    if set(profiles) != {"full", "no_verifier", "no_ranker"}:
++    if set(profiles) != {"full", "no_dedup", "no_verifier", "no_ranker"}:
+         raise ValueError("graph ablation profiles are incomplete")
+     full_support = profiles["full"]["mean_reference_support"]
+     if full_support < max(profiles["no_verifier"]["mean_reference_support"], profiles["no_ranker"]["mean_reference_support"]):
+         raise ValueError("full graph does not preserve the strongest mean reference support")
++    if profiles["full"].get("candidate_reduction_rate", 0) <= profiles["no_dedup"].get("candidate_reduction_rate", 0):
++        raise ValueError("deduplication ablation does not show candidate reduction")
+     methods = retrieval.get("methods", {})
+     if set(methods) != {"bm25_sparse", "openrouter_dense", "bm25_openrouter_rrf_hybrid"}:
+         raise ValueError("dense/hybrid methods are incomplete")
+diff --git a/docs/progress/agent_rag_refactor_phase_2g_2026-06-06.md b/docs/progress/agent_rag_refactor_phase_2g_2026-06-06.md
+index 826d4c0..93d8947 100644
+--- a/docs/progress/agent_rag_refactor_phase_2g_2026-06-06.md
++++ b/docs/progress/agent_rag_refactor_phase_2g_2026-06-06.md
+@@ -41,6 +41,8 @@
+ - 当前仍为 `silver diagnostic`，不替代人工金标评估。
+ - 未实现前端、鉴权、多租户和对象存储。
+ 
++后续状态注记（2026-06-08）：实验级指标聚合、CSV/Markdown 表格导出、PeerQA-XT、PeerReview Bench、GLM/MiniMax/rubric-agent provider diagnostic 已在 Phase 2H 与 strict gate 中导入统一指标；本节保留为 2026-06-06 当日限制记录。
++
+ ## 验证结果
+ 
+ - TDD RED：新增批量 API 测试最初因端点不存在返回 404。
+diff --git a/docs/progress/agent_rag_refactor_phase_2h_2026-06-07.md b/docs/progress/agent_rag_refactor_phase_2h_2026-06-07.md
+index 0fe0f5a..62112bf 100644
+--- a/docs/progress/agent_rag_refactor_phase_2h_2026-06-07.md
++++ b/docs/progress/agent_rag_refactor_phase_2h_2026-06-07.md
+@@ -112,7 +112,7 @@ Dense 在 Hit@3 上优于 BM25；未调参 RRF 提升 BM25 的 MRR，但没有
+ ## Phase 2H-B Validator Gate
+ 
+ - provider paired comparison validator：passed；
+-- graph ablation validator：passed；
++- graph ablation validator：passed，当前要求 `full`、`no_dedup`、`no_verifier`、`no_ranker` 四个 profile，并检查 dedup profile 确实产生候选压缩；
+ - dense/hybrid retrieval validator：passed；
+ - Phase 2H-B mission validator：检查以上结果均进入统一指标导出；
+ - 当前 unified metric records：1736。
+@@ -198,3 +198,84 @@ Qdrant/Hybrid 现在是正式可选择后端组件，但默认仍保持 `hierarc
+ 完整图在 ranker 后新增 `classify_auxiliary_decision`，输出透明 evidence-risk tendency、feature counts、`metric_boundary=auxiliary diagnostic`、`not_for_decision=true` 和强制 warning。
+ 
+ 在 30 篇具有 silver evidence 覆盖的平衡 OpenReview decision 样本上，Evidence-risk signal Macro-F1 为 `0.4007`、ROC-AUC 为 `0.3978`，明显低于已有 metadata baseline Macro-F1 `0.68`。该负结果确认分类只能用于诊断与案例分析，不能作为主贡献或自动决策能力。
++
++## 后端补齐：Manifest Metrics Export API
++
++为支撑“不做前端，先完成实验和后端 Agent-RAG 系统”的当前方向，后端在既有 manifest metrics 聚合基础上补齐导出端点：
++
++```text
++GET /api/experiments/{manifest_id}/metrics/export?format=markdown
++GET /api/experiments/{manifest_id}/metrics/export?format=csv
++GET /api/experiments/metrics/comparison/export?manifest_ids={id1},{id2}&format=markdown
++GET /api/experiments/metrics/comparison/export?manifest_ids={id1},{id2}&format=csv
++```
++
++该端点复用 `evireview_core.evaluation.export` 的 Markdown/CSV 渲染器，返回论文表格可直接使用的统一指标文本。返回内容只包含 dataset、task、module、method、metric、value、metric boundary 和 source artifact，不暴露 run input、weakness 原文、evidence 原文、内部 artifact path 或 provider 错误。
++
++导出的 `method` 字段会从 manifest config 的白名单键生成配置摘要，例如：
++
++```text
++graph:no_ranker/planner:direct/retriever:qdrant_sparse/generator:minimax/verifier:heuristic
++```
++
++白名单只包含 `graph_profile`、`query_planner`、`retriever`、`weakness_generator`、`verifier`，不会把任意 config 内容带入指标表。
++
++当前用途：
++
++- 将 graph ablation、retriever/query-planner、provider comparison 等后端实验 manifest 转为论文实验表；
++- 与历史 `export_unified_metrics.py` 输出保持同一字段契约；
++- 将同一数据集下多个 manifest 渲染为 `metric × method` 横向消融表；
++- 在 hosted-provider 复跑中直接导出 groundedness 和 deduplication 诊断，包括 `supported_rate`、`partial_or_better_rate`、`unsupported_rate`、`generic_rate`、`duplicate_count`、`deduplication_reduction_rate`；
++- `export_unified_metrics.py` 已能从 `EVIREVIEW_SQLITE_PATH` 指向的 SQLite 后端库收集 experiment manifest 指标，并与历史 JSON 指标合并输出 `unified_metrics.json/csv/md`；
++- `render_thesis_experiment_tables.py` 会从 `unified_metrics.json` 读取后端 manifest 指标生成 Backend Manifest readiness 表；只展示带明确组件配置的 manifest method，过滤 `method=manifest` 的内部 smoke/fixture 运行；
++- 让后续 Phase 2H-B/2I 的复跑结果可以通过 API 直接进入实验章节，而无需依赖前端页面。
++
++## 后端补齐：Thesis Tables Validator Gate
++
++为避免实验结果“能生成但不可验收”，新增独立 validator：
++
++```text
++python code/experiments/evireview_a/src/validate_thesis_tables.py
++```
++
++该 gate 检查：
++
++- `unified_metrics.json/csv/md` 与 `thesis_experiment_tables.md` 均存在；
++- 论文实验表包含 Table 1-7 的必需章节；
++- `reports/thesis_experiment_tables.md` 与 `docs/progress/evireview_thesis_experiment_tables_2026-06-02.md` 完全同步；
++- 公开表格不泄漏 `weakness_text`、`evidence_blocks`、`input_json`、`duplicate_of`、API key 或已知 key 片段；
++- 只有当 unified metrics 中存在带明确组件配置的 manifest method 时，才要求生成 Table 8；
++- Table 8 禁止出现 `manifest:experiment-*`、`Local Version Drift Fixture`、`live-verification` 等内部 smoke/fixture 标识。
++
++当前 gate 已通过，并写入 `.omx/specs/autoresearch-phase2h-thesis-tables/result.json`：
++
++| Evidence | Value |
++| --- | ---: |
++| Unified metric records | 1899 |
++| Required thesis tables | 7 |
++| Docs copy synced | true |
++| Configured manifest metrics in current export | false |
++
++因此当前 thesis 表保持 Table 1-7；后续真实 hosted-provider / Qdrant / verifier manifest 复跑落入 SQLite 且带明确组件配置后，Table 8 会由同一渲染链路自动进入论文实验表。
++
++剩余工作：
++
++- 对真实 hosted provider 路径完成最终复跑后，将导出结果纳入开题报告实验章节表格。
++
++## 当前严格验收环境缺口
++
++后端系统已经能够在无前端情况下完成 manifest 创建、批量审计调度、Agent-RAG graph 执行、报告持久化、单 manifest 指标导出和跨 manifest 横向对比导出。
++
++仍需用户侧环境变量/服务来完成最终 hosted-provider 严格复跑：
++
++```text
++MINIMAX_API_KEY 或等价 hosted reviewer/verifier key
++EVIREVIEW_MINIMAX_INTEGRATION=1
++EVIREVIEW_QDRANT_INTEGRATION=1
++EVIREVIEW_REDIS_INTEGRATION=1
++EVIREVIEW_REDIS_URL=redis://127.0.0.1:6379/15
++本地 Redis/RQ worker
++本地 Docker Qdrant
++```
++
++用户曾在聊天中发送过 GLM key，但该 key 不应写入仓库或作为长期验收凭据；最终验收前建议轮换，并只通过 shell 环境变量注入。
+diff --git a/docs/progress/backend_agent_rag_graph_2026-06-06.md b/docs/progress/backend_agent_rag_graph_2026-06-06.md
+index 62c8c35..b1c7368 100644
+--- a/docs/progress/backend_agent_rag_graph_2026-06-06.md
++++ b/docs/progress/backend_agent_rag_graph_2026-06-06.md
+@@ -52,10 +52,10 @@
+ ## 当前限制
+ 
+ - 当前图是显式固定状态图，尚未加入条件分支、节点重试和动态路由。
+-- weakness generation 已进入图，并已通过 MiniMax M2.7 真实调用验证；worker 配置注册表尚未开放 provider 选择。
+-- 当前只接入 deterministic hierarchical + heuristic 路径。
+-- 已接入统一 structured provider contract 与 MiniMax adapter；GLM/OpenRouter 尚待迁移。
+-- 尚未接入 Dense/Qdrant；现有 BM25/hierarchical baseline 保持不变。
++- weakness generation 已进入图，worker 配置注册表已支持 `imported`、`glm`、`minimax` provider 选择。
++- 当前默认仍是 deterministic hierarchical + heuristic 路径；GLM/MiniMax verifier 作为 hosted diagnostic 组件显式选择，不自动提升为默认。
++- 已接入统一 structured provider contract 与 MiniMax/GLM adapter；OpenRouter 尚待迁移。
++- Qdrant sparse/hybrid Worker 已接入，但默认 retriever 是否切换仍由 ready-label 指标决定；现有 BM25/hierarchical baseline 保持不变。
+ 
+ ## 真实后端链路验证
+ 
+@@ -70,7 +70,7 @@
+ 
+ ## 下一步后端顺序
+ 
+-1. 增加图配置注册表，使 provider/retriever/verifier/ranker 可按实验清单切换。
+-2. 迁移 GLM 调用到统一 provider contract。
+-3. 增加实验指标聚合与节点消融导出。
+-4. 最后接入 Dense/Qdrant hybrid retrieval。
++1. 在真实 Redis/Qdrant/provider 环境下复跑 hosted strict acceptance。
++2. 使用 ready-label 数据继续验证 provider-backed Evidence Judge，不把 hosted verifier 诊断直接写成 gold。
++3. 增加更细的 node-level trace 指标导出，包括 provider、retriever、verifier、dedup、ranker 的失败类型和耗时。
++4. 若继续扩 provider，优先迁移 OpenAI-compatible/OpenRouter adapter，并保持 API 不接收 key 的边界。
+diff --git a/docs/progress/backend_provider_generation_2026-06-07.md b/docs/progress/backend_provider_generation_2026-06-07.md
+index 9eda5c6..e09aaef 100644
+--- a/docs/progress/backend_provider_generation_2026-06-07.md
++++ b/docs/progress/backend_provider_generation_2026-06-07.md
+@@ -4,27 +4,28 @@
+ 
+ ## 本轮目标
+ 
+-将已经存在于 core 和实验脚本中的 MiniMax structured reviewer 接入实际 API、持久化任务和 Worker，使开题报告 Stage 1 候选弱点生成能够进入同一条 Agent-RAG 后端主链路。
++将已经存在于 core 和实验脚本中的 hosted structured reviewer 接入实际 API、持久化任务和 Worker，使开题报告 Stage 1 候选弱点生成能够进入同一条 Agent-RAG 后端主链路。
+ 
+ ## 已实现
+ 
+-1. API review-audit 请求新增显式 `weakness_generator` 配置，当前支持 `imported` 和 `minimax`。
++1. API review-audit 请求新增显式 `weakness_generator` 配置，当前支持 `imported`、`glm` 和 `minimax`。
+ 2. API 只接收组件名称，不接收 provider key；未知 generator 返回 422。
+-3. Worker 在任务显式选择 `minimax` 时从环境变量构造 `MiniMaxProvider` 和 `StructuredReviewerGenerator`。
++3. Worker 在任务显式选择 `glm` 或 `minimax` 时，从环境变量构造对应 provider 和 `StructuredReviewerGenerator`。
+ 4. 生成后的 weaknesses 继续进入 Query Planner、Paper-RAG、Verifier 和 Ranker。
+ 5. 运行结果持久化实际生成 weaknesses、生成模式和脱敏 generation metadata。
+ 6. Workspace read model 能读取生成后的 weaknesses，而不是只显示空的输入列表。
+ 7. 实验批量调度请求保留 `weakness_generator` 配置。
++8. GLM 后端 adapter 已迁移到统一 provider contract，可作为 `weakness_generator=glm` 和 `verifier=glm` 的 hosted diagnostic 组件；key 只允许通过 `GLM_API_KEY`、`ZHIPU_API_KEY`、`ZHIPUAI_API_KEY`、`BIGMODEL_API_KEY` 或 `ZAI_API_KEY` 注入。
+ 
+ ## 验证边界
+ 
+ - Core、Backend 和 API 自动化测试已覆盖 provider generator 的配置校验、Worker 注入执行和生成结果持久化。
+-- 当前 shell 未提供 `MINIMAX_API_KEY`，因此本轮没有重新运行真实 hosted-provider 后端调用。
++- 当前 shell 未提供真实 hosted provider key，也未启动 Redis/Qdrant，因此本轮没有重新运行真实 hosted-provider 后端调用。
+ - 之前 MiniMax provider adapter 的真实调用与 reviewer diagnostic 结果保持有效，但不能替代本轮 Worker 路径的真实密钥验收。
++- 之前 GLM reviewer clean 10-paper diagnostic 结果保持为实验诊断；本轮新增的是后端统一 provider/worker 接入，不把 GLM 诊断升级为 human-gold 结论。
+ - Provider 结果仍属于 silver diagnostic，必须经过 evidence gate，不能作为人工 gold 结论。
+ 
+ ## 下一步
+ 
+-1. 增加可选择 verifier 注册表，并接入 provider-backed Evidence Judge。
+-2. 使用 CLAIMCHECK / SubstanReview ready-label 数据验证 verifier，而不是使用当前 heuristic silver labels 选择默认配置。
+-3. 在提供 `MINIMAX_API_KEY` 后执行一次真实 API -> Redis/RQ -> Worker -> MiniMax -> Retrieval -> Verifier -> Ranker 全链路验收。
++1. 使用 CLAIMCHECK / SubstanReview ready-label 数据验证 provider-backed Evidence Judge，而不是使用当前 heuristic silver labels 选择默认配置。
++2. 在提供真实 provider key、Redis 和 Qdrant 后执行一次真实 API -> Redis/RQ -> Worker -> hosted provider -> Retrieval -> Verifier -> Ranker 全链路验收。
+diff --git a/docs/progress/backend_strict_acceptance_2026-06-07.md b/docs/progress/backend_strict_acceptance_2026-06-07.md
+index 7e28e6a..2837bd3 100644
+--- a/docs/progress/backend_strict_acceptance_2026-06-07.md
++++ b/docs/progress/backend_strict_acceptance_2026-06-07.md
+@@ -1,6 +1,6 @@
+ # 后端严格验收状态
+ 
+-日期：2026-06-07
++日期：2026-06-07（2026-06-12 更新）
+ 
+ 范围：只验收后端与实验，不包含前端、鉴权、多租户和生产部署。
+ 
+@@ -9,10 +9,10 @@
+ | 主链路能力 | 工程证据 | 实验证据 | 状态 |
+ | --- | --- | --- | --- |
+ | MinerU parsed-PDF ingestion | `POST /api/papers/import-mineru`、不可变版本、`source_type/source_ref` | 真实 FactReview MinerU 文档：21 sections / 28 blocks / audit succeeded | 完成 |
+-| Candidate weakness generation | imported + MiniMax structured reviewer | Rubric / GLM / MiniMax paired diagnostic | 工程完成；真实 hosted Worker 待最终复跑 |
++| Candidate weakness generation | imported + GLM/MiniMax structured reviewer | Rubric / GLM / MiniMax paired diagnostic | 工程完成；真实 hosted Worker 待最终复跑 |
+ | Query planning | `direct`、`category_expansion`、trace | CLAIMCHECK ready-label 消融，简单扩展无提升 | 完成 |
+ | Paper-RAG retrieval | BM25、hierarchical、Qdrant sparse/hybrid Worker | CLAIMCHECK ready-label + 真实 Qdrant | 完成 |
+-| Evidence verification | heuristic + MiniMax structured judge | SubstanReview / CLAIMCHECK / PeerReview Bench | 工程完成；真实 hosted Worker 待最终复跑 |
++| Evidence verification | heuristic + GLM/MiniMax structured judge | SubstanReview / CLAIMCHECK / PeerReview Bench | 工程完成；真实 hosted Worker 待最终复跑 |
+ | Intra-paper deduplication | verifier 后独立节点 + `duplicate_of` | 194 -> 172，减少 11.34%，silver Partial+ 基本保持 | 完成 |
+ | Evidence-aware ranking | 独立 ranker + graph ablation | full 优于 no-verifier/no-ranker shared-silver reference | 完成 |
+ | Auxiliary classification | `not_for_decision=true` 诊断节点 | Macro-F1 0.4007，低于 metadata baseline 0.68 | 完成，明确否决为主贡献 |
+@@ -37,30 +37,34 @@ MinerU parsed paper
+ 
+ ## 唯一未闭环的严格验收项
+ 
+-当前 shell 未设置 `MINIMAX_API_KEY`。因此以下真实 hosted 路径尚未完成最终复跑：
++当前 shell 未设置 hosted provider 集成环境，并且当前执行环境无法访问 Redis/Qdrant socket。因此以下真实 hosted 路径尚未完成最终复跑：
+ 
+ ```text
+ API/persisted paper
+   -> Redis/RQ
+-  -> MiniMax-M2.7 weakness generation
++  -> selected hosted provider weakness generation
+   -> Qdrant sparse retrieval
+-  -> MiniMax-M2.7 evidence judge
++  -> selected hosted provider evidence judge
+   -> deduplication
+   -> ranker
+   -> auxiliary diagnostic
+   -> report
+ ```
+ 
++GLM-4.6V 已迁移到统一后端 provider contract，可作为 `weakness_generator=glm` / `verifier=glm` 的 hosted diagnostic 组件。最终 strict acceptance runner 已支持根据 `EVIREVIEW_HOSTED_PROVIDER=minimax|glm` 选择同级完整 Redis/RQ + Qdrant + hosted provider 门禁；provider key 只允许通过环境变量注入。
++
+ 仓库已提供 gated test：
+ 
+ ```text
+ tests/integration/test_minimax_backend_acceptance.py
++tests/integration/test_glm_backend_acceptance.py
+ ```
+ 
+ 需要环境：
+ 
+ ```text
+ export MINIMAX_API_KEY
++EVIREVIEW_HOSTED_PROVIDER=minimax
+ EVIREVIEW_MINIMAX_INTEGRATION=1
+ EVIREVIEW_QDRANT_INTEGRATION=1
+ EVIREVIEW_REDIS_INTEGRATION=1
+@@ -68,3 +72,104 @@ EVIREVIEW_REDIS_URL=redis://127.0.0.1:6379/15
+ ```
+ 
+ 之前在聊天中明文发送的 Key 应先轮换，不应作为最终验收凭据。
++
++## 2026-06-08 readiness 复查
++
++新增本地 readiness 脚本：
++
++```bash
++PYTHONPATH=packages/evireview_core:services/api:code/experiments/evireview_a/src:. \
++  .venv/bin/python code/experiments/evireview_a/src/check_backend_acceptance_readiness.py --markdown
++```
++
++本轮当前环境检查结果：
++
++| Check | Ready | 结论 |
++| --- | --- | --- |
++| SQLite backend DB | true | `storage/evireview.sqlite3` 存在，可用于 manifest 指标导出 |
++| Redis integration flag | false | 未设置 `EVIREVIEW_REDIS_INTEGRATION=1` |
++| Redis socket | false | `127.0.0.1:6379` 当前不可访问 |
++| Qdrant integration flag | false | 未设置 `EVIREVIEW_QDRANT_INTEGRATION=1` |
++| Qdrant socket | false | `127.0.0.1:6333` 当前未启动 |
++| Hosted provider flag | false | 未设置 `EVIREVIEW_MINIMAX_INTEGRATION=1` |
++| Hosted provider key | false | 当前 shell 未设置 `MINIMAX_API_KEY` |
++
++因此当前可以继续完成离线实验、后端 API/worker 单元验收、manifest/unified metrics/thesis table 产物验收；真实 Redis/RQ + Qdrant + hosted provider 全链路仍等待本地服务和轮换后的 provider key。
++
++## 2026-06-08 离线 strict gate 汇总
++
++新增可复跑 validator：
++
++```bash
++PYTHONDONTWRITEBYTECODE=1 \
++PYTHONPATH=packages/evireview_core:services/api:code/experiments/evireview_a/src:. \
++  .venv/bin/python code/experiments/evireview_a/src/validate_backend_strict_acceptance.py
++```
++
++该 gate 不把 hosted-provider 验收误判为完成；它只证明当前环境可验证的离线后端与实验产物已经对齐，并把外部环境缺口写入 `.omx/specs/autoresearch-backend-strict-acceptance/result.json`。
++
++当前结果：
++
++| Evidence | Value |
++| --- | --- |
++| Local backend / experiment gate | passed |
++| Phase 2H optimization validator | passed |
++| Thesis table validator | passed |
++| Unified metric records | 1899 |
++| Unified mainline coverage | retrieval / verification / generation / graph ablation / Qdrant retrieval / ranking / auxiliary classification / backend manifest |
++| Frontend dirty files | 0 |
++| Hosted environment ready | false |
++| Missing environment | Redis flag/socket, Qdrant flag/socket, hosted flag/key |
++
++结论：本地离线 strict gate 已能自动复查；它不仅检查 unified metrics 非空，还要求指标覆盖开题主链路的检索、验证、生成、图消融、Qdrant、排序、辅助分类和后端 manifest。最终严格验收仍需所选 provider 对应的 integration acceptance 在 Redis/RQ + Qdrant + hosted provider 环境下通过。
++
++## 2026-06-08 开题主链路审计
++
++新增可复跑 validator：
++
++```bash
++PYTHONDONTWRITEBYTECODE=1 \
++PYTHONPATH=packages/evireview_core:services/api:code/experiments/evireview_a/src:. \
++  .venv/bin/python code/experiments/evireview_a/src/validate_opening_report_mainline.py
++```
++
++该 gate 将开题报告五个研究问题转成矩阵检查：数据集审计、Agent 生成、Paper-RAG 检索、ready-label verifier、query planner 消融、Qdrant 检索、图消融/去重/排序、证据感知排序、辅助分类边界、统一指标主链路覆盖。
++
++当前结果写入 `.omx/specs/autoresearch-opening-report-mainline/result.json`：
++
++| Evidence | Value |
++| --- | --- |
++| Local mainline passed | true |
++| Local papers | 50 |
++| Human weaknesses | 1463 |
++| Evidence blocks | 2597 |
++| PeerQA-XT rows | 500 |
++| Unified metric records | 1899 |
++| Provider generators | GLM / MiniMax / rubric-agent |
++| Graph profiles | full / no_dedup / no_ranker / no_verifier |
++| Qdrant best main Hit@3 | 0.5 |
++| Query planner default | direct |
++| Auxiliary macro-F1 | 0.4007，低于 metadata baseline，不作为主贡献 |
++| Hosted strict acceptance | pending environment |
++
++该结果已被 `validate_backend_strict_acceptance.py` 引用；总验收不再只依赖散落文档，而是依赖开题主链路审计 artifact。
++
++## 2026-06-12 全量复验
++
++本轮修正了开题主链路完成判定：`readiness.ready=true` 只表示可以执行 hosted test，不能再被当作 hosted acceptance 已通过。最终状态必须读取 `.omx/specs/autoresearch-hosted-backend-acceptance/result.json` 的 `passed=true`。
++
++| 验证项 | 结果 |
++| --- | --- |
++| `tests/evireview_core` | 60 passed |
++| `tests/api` | 35 passed |
++| `tests/backend` | 53 passed |
++| `tests/experiments` | 35 passed |
++| MiniMax / GLM hosted integration modules | 2 skipped，缺少真实环境，不计作通过 |
++| Phase 2H validator | passed |
++| Thesis table validator | passed |
++| Opening-report local mainline | passed；final pending environment |
++| Backend local strict gate | passed；hosted pending environment |
++| `compileall` / `pip check` / `git diff --check` | passed |
++| Frontend freeze / secret scan | passed |
++
++当前机器可发现 `redis-server` 与 Docker CLI，但本次受限执行环境无法访问 Redis socket，Docker daemon 也不可用。因此最终需要在用户可控 shell 中启动 Redis/Qdrant 并注入轮换后的 provider key，再运行 provider-aware runner。
+diff --git a/memory/RESEARCH_LOG.md b/memory/RESEARCH_LOG.md
+index 5de5b3b..13b8350 100644
+--- a/memory/RESEARCH_LOG.md
++++ b/memory/RESEARCH_LOG.md
+@@ -127,3 +127,33 @@
+ - **Authors**: UKP Lab and collaborators
+ - **Link**: https://arxiv.org/abs/2502.13668
+ - **Summary**: Builds scientific document-level QA from peer-review questions and author-provided answers, with full-paper context. Relevance: best next ready-label dataset for Paper-RAG retrieval QA because questions come from peer-review contexts and answers must be grounded in the final manuscript.
++
++### [2026-06-12] MARG: Multi-Agent Review Generation for Scientific Papers
++- **Authors**: Mike D'Arcy, Tom Hope, Larry Birnbaum, Doug Downey
++- **Link**: https://arxiv.org/abs/2401.04259
++- **Summary**: Uses leader, worker, and specialist agents to generate review comments over long papers. MARG-S improves recall and specificity but is expensive, produces many comments, and still retains invalid feedback. Relevance: functional multi-agent generation baseline and evidence for adding independent verification.
++
++### [2026-06-12] TreeReview: A Dynamic Tree of Questions Framework for Deep and Efficient LLM-based Scientific Peer Review
++- **Authors**: Yuan Chang, Ziyue Li, Hengyuan Zhang, Yuanbo Kong, Yanru Wu, Hayden Kwok-Hay So, Zhijiang Guo, Liya Zhu, Ngai Wong
++- **Link**: https://aclanthology.org/2025.emnlp-main.790/
++- **Summary**: Uses a dynamic question tree to guide deep and efficient scientific review and releases code plus a benchmark. Relevance: reproducible planning baseline for comparing fixed and adaptive reviewer orchestration.
++
++### [2026-06-12] ReviewGrounder: Improving Review Substantiveness with Rubric-Guided, Tool-Integrated Agents
++- **Authors**: Zhuofeng Li, Yi Lu, Dongfu Jiang, Haoxiang Zhang, Yuyang Bai, Chuan Li, Yu Wang, Shuiwang Ji, Jianwen Xie, Yu Zhang
++- **Link**: https://arxiv.org/abs/2604.14261
++- **Summary**: Decomposes review generation into drafting, literature search, method insight mining, result analysis, and aggregation, evaluated through paper-specific rubrics. Relevance: closest grounding-oriented multi-agent reference, but full reproduction requires substantial training and inference resources.
++
++### [2026-06-12] DeepReview: Improving LLM-based Paper Review with Human-like Deep Thinking Process
++- **Authors**: Minjun Zhu and collaborators
++- **Link**: https://aclanthology.org/2025.acl-long.1420/
++- **Summary**: Introduces a structured multi-stage review process with novelty verification, multidimensional review, reliability verification, and test-time scaling. Relevance: structured reviewer and robustness baseline; full training reproduction is outside the first-stage budget.
++
++### [2026-06-12] CLAIMCHECK: How Grounded are LLM Critiques of Scientific Papers?
++- **Authors**: Jiefu Ou, William Gantt Walden, Kate Sanders, Zhengping Jiang, Kaiser Sun, Jeffrey Cheng, William Jurayj, Miriam Wanner, Shaobo Liang, Candice Morgan, Seunghoon Han, Weiqi Wang, Chandler May, Hannah Recknor, Daniel Khashabi, Benjamin Van Durme
++- **Link**: https://aclanthology.org/2025.findings-emnlp.1185/
++- **Summary**: Provides expert-annotated scientific claims, claim-related weaknesses, and grounded review tasks. Relevance: primary ready-label evidence for evaluating critique-to-claim retrieval, fine-grained weakness labels, and grounded verification without requiring new manual annotation.
++
++### [2026-06-12] ReviewEval: An Evaluation Framework for AI-Generated Reviews
++- **Authors**: Madhav Krishan Garg, Tejash Prasad, Tanmay Singhal, Chhavi Kirtani, Murari Mandal, Dhruv Kumar
++- **Link**: https://aclanthology.org/2025.findings-emnlp.1120/
++- **Summary**: Separates review evaluation into human alignment, factual accuracy, analytical depth, constructiveness, and guideline adherence. Relevance: supports keeping report-level quality as a multidimensional auxiliary evaluation rather than a single text-similarity score.
+diff --git a/packages/evireview_core/evireview_core/providers/base.py b/packages/evireview_core/evireview_core/providers/base.py
+index 79328d1..cdd4cb3 100644
+--- a/packages/evireview_core/evireview_core/providers/base.py
++++ b/packages/evireview_core/evireview_core/providers/base.py
+@@ -1,5 +1,7 @@
+ from __future__ import annotations
+ 
++import json
++import re
+ from dataclasses import dataclass
+ from typing import Any
+ 
+@@ -13,3 +15,23 @@ class ProviderGeneration:
+ class ProviderCallError(RuntimeError):
+     """Public provider error that intentionally excludes private response details."""
+ 
++
++def parse_json_content(content: str) -> dict[str, Any]:
++    normalized = content.strip()
++    normalized = re.sub(r"<think>.*?</think>", "", normalized, flags=re.IGNORECASE | re.DOTALL).strip()
++    normalized = re.sub(r"^```(?:json)?", "", normalized, flags=re.IGNORECASE).strip()
++    normalized = re.sub(r"```$", "", normalized).strip()
++    if normalized.startswith('"') and normalized.endswith('"'):
++        decoded = json.loads(normalized)
++        if isinstance(decoded, str):
++            normalized = decoded.strip()
++    try:
++        result = json.loads(normalized)
++    except json.JSONDecodeError:
++        start, end = normalized.find("{"), normalized.rfind("}")
++        if start < 0 or end <= start:
++            raise
++        result = json.loads(normalized[start : end + 1])
++    if not isinstance(result, dict):
++        raise ValueError("provider response must be a JSON object")
++    return result
+diff --git a/packages/evireview_core/evireview_core/providers/minimax.py b/packages/evireview_core/evireview_core/providers/minimax.py
+index a606fff..b39ac0b 100644
+--- a/packages/evireview_core/evireview_core/providers/minimax.py
++++ b/packages/evireview_core/evireview_core/providers/minimax.py
+@@ -2,13 +2,11 @@ from __future__ import annotations
+ 
+ import json
+ import os
+-import re
+ import time
+ import urllib.request
+ from collections.abc import Callable
+-from typing import Any
+ 
+-from evireview_core.providers.base import ProviderCallError, ProviderGeneration
++from evireview_core.providers.base import ProviderCallError, ProviderGeneration, parse_json_content
+ 
+ 
+ DEFAULT_ENDPOINT = "https://api.minimaxi.com/v1/chat/completions"
+@@ -27,27 +25,6 @@ def _default_transport(endpoint: str, payload: dict[str, object], headers: dict[
+         return json.loads(response.read().decode("utf-8"))
+ 
+ 
+-def _parse_json_content(content: str) -> dict[str, Any]:
+-    normalized = content.strip()
+-    normalized = re.sub(r"<think>.*?</think>", "", normalized, flags=re.IGNORECASE | re.DOTALL).strip()
+-    normalized = re.sub(r"^```(?:json)?", "", normalized, flags=re.IGNORECASE).strip()
+-    normalized = re.sub(r"```$", "", normalized).strip()
+-    if normalized.startswith('"') and normalized.endswith('"'):
+-        decoded = json.loads(normalized)
+-        if isinstance(decoded, str):
+-            normalized = decoded.strip()
+-    try:
+-        result = json.loads(normalized)
+-    except json.JSONDecodeError:
+-        start, end = normalized.find("{"), normalized.rfind("}")
+-        if start < 0 or end <= start:
+-            raise
+-        result = json.loads(normalized[start : end + 1])
+-    if not isinstance(result, dict):
+-        raise ValueError("provider response must be a JSON object")
+-    return result
+-
+-
+ class MiniMaxProvider:
+     def __init__(
+         self,
+@@ -94,7 +71,7 @@ class MiniMaxProvider:
+             try:
+                 body = self.transport(self.endpoint, request_payload, headers, self.timeout)
+                 content = body["choices"][0]["message"]["content"]  # type: ignore[index]
+-                payload = _parse_json_content(str(content))
++                payload = parse_json_content(str(content))
+                 return ProviderGeneration(
+                     payload=payload,
+                     metadata={
+diff --git a/packages/evireview_core/evireview_core/workflow/components.py b/packages/evireview_core/evireview_core/workflow/components.py
+index 45d8c3a..fab6011 100644
+--- a/packages/evireview_core/evireview_core/workflow/components.py
++++ b/packages/evireview_core/evireview_core/workflow/components.py
+@@ -98,7 +98,7 @@ DEFAULT_COMPONENT_REGISTRY = ComponentRegistry(
+         "bm25": bm25_retriever,
+     },
+     hosted_retrievers=("qdrant_sparse", "qdrant_hybrid"),
+-    weakness_generators=("imported", "minimax"),
++    weakness_generators=("imported", "glm", "minimax"),
+     verifiers={"heuristic": verify_with_heuristics},
+-    hosted_verifiers=("minimax",),
++    hosted_verifiers=("glm", "minimax"),
+ )
+diff --git a/services/api/README.md b/services/api/README.md
+index 64fce7d..936c70f 100644
+--- a/services/api/README.md
++++ b/services/api/README.md
+@@ -13,7 +13,7 @@ Implemented boundaries:
+ - `app.main:create_app`: FastAPI application factory.
+ - `app.queue.rq_queue`: Redis/RQ delivery adapter.
+ 
+-The API never accepts or stores provider API keys. Raw weakness/evidence inputs are persisted in SQLite for worker use and are not returned by run endpoints. Review-audit requests may explicitly select `weakness_generator=minimax` and `verifier=minimax`; provider credentials remain worker environment variables.
++The API never accepts or stores provider API keys. Raw weakness/evidence inputs are persisted in SQLite for worker use and are not returned by run endpoints. Review-audit requests may explicitly select `weakness_generator=glm|minimax` and `verifier=glm|minimax`; provider credentials remain worker environment variables.
+ 
+ Phase 2C routes:
+ 
+diff --git a/services/api/app/api/routes/experiments.py b/services/api/app/api/routes/experiments.py
+index 54143b0..b48d963 100644
+--- a/services/api/app/api/routes/experiments.py
++++ b/services/api/app/api/routes/experiments.py
+@@ -29,6 +29,24 @@ def list_experiments(request: Request) -> list[dict[str, Any]]:
+     return request.app.state.experiment_service.list()
+ 
+ 
++@router.get("/experiments/metrics/comparison/export")
++def export_experiment_metrics_comparison(manifest_ids: str, format: str, request: Request) -> dict[str, Any]:
++    content_types = {"markdown": "text/markdown", "csv": "text/csv"}
++    if format not in content_types:
++        raise HTTPException(status_code=422, detail="unsupported metrics export format")
++    ids = [item.strip() for item in manifest_ids.split(",") if item.strip()]
++    if len(ids) < 2:
++        raise HTTPException(status_code=422, detail="metrics comparison requires at least two manifests")
++    try:
++        return {
++            "format": format,
++            "content_type": content_types[format],
++            "content": request.app.state.experiment_service.metrics_comparison_export(ids, format),
++        }
++    except KeyError as exc:
++        raise _not_found(exc) from exc
++
++
+ @router.get("/experiments/{manifest_id}")
+ def get_experiment(manifest_id: str, request: Request) -> dict[str, Any]:
+     try:
+@@ -45,6 +63,21 @@ def get_experiment_metrics(manifest_id: str, request: Request) -> list[dict[str,
+         raise _not_found(exc) from exc
+ 
+ 
++@router.get("/experiments/{manifest_id}/metrics/export")
++def export_experiment_metrics(manifest_id: str, format: str, request: Request) -> dict[str, Any]:
++    content_types = {"markdown": "text/markdown", "csv": "text/csv"}
++    if format not in content_types:
++        raise HTTPException(status_code=422, detail="unsupported metrics export format")
++    try:
++        return {
++            "format": format,
++            "content_type": content_types[format],
++            "content": request.app.state.experiment_service.metrics_export(manifest_id, format),
++        }
++    except KeyError as exc:
++        raise _not_found(exc) from exc
++
++
+ @router.post("/experiments/{manifest_id}/runs/{run_id}")
+ def attach_experiment_run(manifest_id: str, run_id: str, request: Request) -> dict[str, Any]:
+     try:
+diff --git a/services/api/app/services/experiment_manifest_service.py b/services/api/app/services/experiment_manifest_service.py
+index 2ef5a4e..82cf2cb 100644
+--- a/services/api/app/services/experiment_manifest_service.py
++++ b/services/api/app/services/experiment_manifest_service.py
+@@ -1,11 +1,14 @@
+ from __future__ import annotations
+ 
++import csv
++import io
+ from typing import Any
+ from uuid import uuid4
+ 
+ from app.repositories.sqlite_run_repository import SQLiteRunRepository
+ from app.schemas.runs import PersistedPaperReviewAuditRequest
+ from app.services.review_audit_service import QueueDeliveryError, ReviewAuditService
++from evireview_core.evaluation.export import render_metrics_csv, render_metrics_markdown
+ from evireview_core.evaluation.metrics import MetricRecord, sort_metric_records
+ 
+ 
+@@ -107,18 +110,75 @@ class ExperimentManifestService:
+         return public
+ 
+     def metrics(self, manifest_id: str) -> list[dict[str, Any]]:
++        return [item.to_dict() for item in self._metric_records(manifest_id)]
++
++    def metrics_export(self, manifest_id: str, export_format: str) -> str:
++        records = self._metric_records(manifest_id)
++        if export_format == "markdown":
++            return render_metrics_markdown(records)
++        if export_format == "csv":
++            return render_metrics_csv(records)
++        raise ValueError(f"unsupported metrics export format: {export_format}")
++
++    def metrics_comparison_export(self, manifest_ids: list[str], export_format: str) -> str:
++        if len(manifest_ids) < 2:
++            raise ValueError("metrics comparison requires at least two manifests")
++        rows = self._comparison_rows(manifest_ids)
++        if export_format == "markdown":
++            return self._render_comparison_markdown(rows)
++        if export_format == "csv":
++            return self._render_comparison_csv(rows)
++        raise ValueError(f"unsupported metrics export format: {export_format}")
++
++    def _comparison_rows(self, manifest_ids: list[str]) -> list[dict[str, Any]]:
++        records = [record for manifest_id in manifest_ids for record in self._metric_records(manifest_id)]
++        methods = tuple(sorted({record.method for record in records}))
++        metrics = tuple(sorted({record.metric for record in records}))
++        values = {(record.metric, record.method): record.value for record in records}
++        return [
++            {
++                "metric": metric,
++                **{method: values.get((metric, method), "") for method in methods},
++            }
++            for metric in metrics
++        ]
++
++    @staticmethod
++    def _render_comparison_markdown(rows: list[dict[str, Any]]) -> str:
++        methods = tuple(key for key in rows[0] if key != "metric") if rows else ()
++        lines = [
++            "# Experiment Metrics Comparison",
++            "",
++            f"| Metric | {' | '.join(methods)} |",
++            f"| --- | {' | '.join('---:' for _ in methods)} |",
++        ]
++        for row in rows:
++            lines.append(f"| {row['metric']} | {' | '.join(str(row[method]) for method in methods)} |")
++        return "\n".join(lines) + "\n"
++
++    @staticmethod
++    def _render_comparison_csv(rows: list[dict[str, Any]]) -> str:
++        methods = tuple(key for key in rows[0] if key != "metric") if rows else ()
++        output = io.StringIO()
++        writer = csv.DictWriter(output, fieldnames=("metric", *methods), lineterminator="\n")
++        writer.writeheader()
++        writer.writerows(rows)
++        return output.getvalue()
++
++    def _metric_records(self, manifest_id: str) -> list[MetricRecord]:
+         manifest = self.repository.get_experiment_manifest(manifest_id)
+         runs = [self.repository.get_run(run_id) for run_id in self.repository.list_experiment_run_ids(manifest_id)]
+         source = f"manifest:{manifest_id}"
++        method = self._manifest_method(manifest.get("config", {}))
+         values: list[MetricRecord] = [
+-            MetricRecord(manifest["dataset_name"], "review_audit", "agent_rag", "manifest", "run_count", len(runs), "silver", source)
++            MetricRecord(manifest["dataset_name"], "review_audit", "agent_rag", method, "run_count", len(runs), "silver", source)
+         ]
+         for status in ("queued", "running", "succeeded", "failed", "cancelled"):
+             count = sum(run["status"] == status for run in runs)
+             if count:
+                 values.append(
+                     MetricRecord(
+-                        manifest["dataset_name"], "review_audit", "agent_rag", "manifest", f"{status}_run_count", count, "silver", source
++                        manifest["dataset_name"], "review_audit", "agent_rag", method, f"{status}_run_count", count, "silver", source
+                     )
+                 )
+         succeeded = [run for run in runs if run["status"] == "succeeded"]
+@@ -127,7 +187,7 @@ class ExperimentManifestService:
+                 manifest["dataset_name"],
+                 "review_audit",
+                 "agent_rag",
+-                "manifest",
++                method,
+                 "succeeded_rate",
+                 round(len(succeeded) / len(runs), 4) if runs else 0.0,
+                 "silver",
+@@ -141,26 +201,97 @@ class ExperimentManifestService:
+             for item in result.get("verification", {}).values()
+             if isinstance(item, dict) and isinstance(item.get("support_score"), (int, float))
+         ]
++        verification_items = [
++            item
++            for result in results
++            for item in result.get("verification", {}).values()
++            if isinstance(item, dict)
++        ]
+         if support_scores:
+             values.append(
+                 MetricRecord(
+                     manifest["dataset_name"],
+                     "review_audit",
+                     "verification",
+-                    "manifest",
++                    method,
+                     "mean_support_score",
+                     round(sum(support_scores) / len(support_scores), 4),
+                     "silver",
+                     source,
+                 )
+             )
++        if verification_items:
++            label_counts = self._verification_label_counts(verification_items)
++            total = len(verification_items)
++            for metric, count in (
++                ("supported_rate", label_counts["supported"]),
++                ("partial_or_better_rate", label_counts["supported"] + label_counts["partial"]),
++                ("unsupported_rate", label_counts["unsupported"]),
++                ("generic_rate", label_counts["generic"]),
++            ):
++                values.append(
++                    MetricRecord(
++                        manifest["dataset_name"],
++                        "review_audit",
++                        "verification",
++                        method,
++                        metric,
++                        round(count / total, 4),
++                        "silver",
++                        source,
++                    )
++                )
++        dedup_candidates = 0
++        deduplicated_count = 0
++        duplicate_count = 0
++        for result in results:
++            deduplication = result.get("deduplication")
++            if isinstance(deduplication, dict):
++                dedup_candidates += int(deduplication.get("candidate_count", 0) or 0)
++                deduplicated_count += int(deduplication.get("deduplicated_count", 0) or 0)
++                duplicate_count += int(deduplication.get("duplicate_count", 0) or 0)
++        if dedup_candidates:
++            values.extend(
++                [
++                    MetricRecord(
++                        manifest["dataset_name"],
++                        "review_audit",
++                        "deduplication",
++                        method,
++                        "deduplicated_weakness_count",
++                        deduplicated_count,
++                        "silver",
++                        source,
++                    ),
++                    MetricRecord(
++                        manifest["dataset_name"],
++                        "review_audit",
++                        "deduplication",
++                        method,
++                        "duplicate_count",
++                        duplicate_count,
++                        "silver",
++                        source,
++                    ),
++                    MetricRecord(
++                        manifest["dataset_name"],
++                        "review_audit",
++                        "deduplication",
++                        method,
++                        "deduplication_reduction_rate",
++                        round(duplicate_count / dedup_candidates, 4),
++                        "silver",
++                        source,
++                    ),
++                ]
++            )
+         values.extend(
+             [
+                 MetricRecord(
+                     manifest["dataset_name"],
+                     "review_audit",
+                     "generation",
+-                    "manifest",
++                    method,
+                     "weakness_count",
+                     sum(int(result.get("weakness_count", 0)) for result in results),
+                     "silver",
+@@ -170,7 +301,7 @@ class ExperimentManifestService:
+                     manifest["dataset_name"],
+                     "review_audit",
+                     "ranking",
+-                    "manifest",
++                    method,
+                     "ranked_finding_count",
+                     sum(len(result.get("ranked_findings", [])) for result in results),
+                     "silver",
+@@ -178,7 +309,38 @@ class ExperimentManifestService:
+                 ),
+             ]
+         )
+-        return [item.to_dict() for item in sort_metric_records(values)]
++        return sort_metric_records(values)
++
++    @staticmethod
++    def _verification_label_counts(items: list[dict[str, Any]]) -> dict[str, int]:
++        counts = {"supported": 0, "partial": 0, "unsupported": 0, "generic": 0}
++        for item in items:
++            label = str(item.get("label", "")).strip().lower().replace("_", " ")
++            if label == "supported":
++                counts["supported"] += 1
++            elif label in {"partially supported", "partial"}:
++                counts["partial"] += 1
++            elif label == "unsupported":
++                counts["unsupported"] += 1
++            elif label == "generic":
++                counts["generic"] += 1
++        return counts
++
++    @staticmethod
++    def _manifest_method(config: dict[str, Any]) -> str:
++        parts = []
++        labels = (
++            ("graph_profile", "graph"),
++            ("query_planner", "planner"),
++            ("retriever", "retriever"),
++            ("weakness_generator", "generator"),
++            ("verifier", "verifier"),
++        )
++        for key, label in labels:
++            value = config.get(key)
++            if isinstance(value, str) and value:
++                parts.append(f"{label}:{value}")
++        return "/".join(parts) if parts else "manifest"
+ 
+     def _run_snapshot(self, run_id: str) -> dict[str, Any]:
+         run = self.repository.get_run(run_id)
+diff --git a/services/worker/README.md b/services/worker/README.md
+index 08da0bf..d691533 100644
+--- a/services/worker/README.md
++++ b/services/worker/README.md
+@@ -9,11 +9,11 @@ Current behavior:
+ - Issues a unique attempt token for every claim so a late worker cannot overwrite a reclaimed job.
+ - Rehydrates weaknesses and evidence blocks from SQLite.
+ - Calls `evireview_core.workflow.run_deterministic_review_audit`.
+-- Builds the MiniMax structured reviewer only when the persisted run explicitly selects `weakness_generator=minimax`.
+-- Builds the MiniMax structured evidence judge only when the persisted run explicitly selects `verifier=minimax`.
++- Builds the GLM or MiniMax structured reviewer only when the persisted run explicitly selects `weakness_generator=glm|minimax`.
++- Builds the GLM or MiniMax structured evidence judge only when the persisted run explicitly selects `verifier=glm|minimax`.
+ - Persists results or failure context and trace events.
+ 
+-The worker reads `MINIMAX_API_KEY` from its environment only when MiniMax generation or verification is selected. It never stores or returns the key.
++The worker reads provider keys from its environment only when the matching hosted generation or verification component is selected. MiniMax uses `MINIMAX_API_KEY`; GLM uses the first available value from `GLM_API_KEY`, `ZHIPU_API_KEY`, `ZHIPUAI_API_KEY`, `BIGMODEL_API_KEY`, or `ZAI_API_KEY`. It never stores or returns provider keys.
+ 
+ Qdrant retrieval is opt-in:
+ 
+diff --git a/services/worker/tasks/review_audit.py b/services/worker/tasks/review_audit.py
+index fbda6f9..b13a1e9 100644
+--- a/services/worker/tasks/review_audit.py
++++ b/services/worker/tasks/review_audit.py
+@@ -7,6 +7,7 @@ from typing import Any
+ from app.repositories.sqlite_run_repository import SQLiteRunRepository
+ from evireview_core.domain.models import EvidenceBlock, VerificationResult, Weakness
+ from evireview_core.generation.structured_reviewer import StructuredReviewerGenerator
++from evireview_core.providers.glm import GLMProvider
+ from evireview_core.providers.minimax import MiniMaxProvider
+ from evireview_core.providers.embedding import OpenAICompatibleEmbedder
+ from evireview_core.retrieval.bm25 import RetrievedEvidence
+@@ -28,6 +29,8 @@ RetrieverFactory = Callable[[str, list[EvidenceBlock]], Retriever | None]
+ def build_weakness_generator(name: str) -> WeaknessGenerator | None:
+     if name == "imported":
+         return None
++    if name == "glm":
++        return StructuredReviewerGenerator(GLMProvider(), source="glm_reviewer")
+     if name == "minimax":
+         return StructuredReviewerGenerator(MiniMaxProvider(), source="minimax_reviewer")
+     raise KeyError(f"weakness generator not found: {name}")
+@@ -36,6 +39,8 @@ def build_weakness_generator(name: str) -> WeaknessGenerator | None:
+ def build_verifier(name: str) -> EvidenceVerifier | None:
+     if name == "heuristic":
+         return None
++    if name == "glm":
++        return StructuredEvidenceVerifier(GLMProvider(), source="glm_evidence_judge")
+     if name == "minimax":
+         return StructuredEvidenceVerifier(MiniMaxProvider(), source="minimax_evidence_judge")
+     raise KeyError(f"verifier not found: {name}")
+diff --git a/tests/api/test_fastapi_experiments.py b/tests/api/test_fastapi_experiments.py
+index 79117bd..581de5b 100644
+--- a/tests/api/test_fastapi_experiments.py
++++ b/tests/api/test_fastapi_experiments.py
+@@ -183,6 +183,47 @@ class FastApiExperimentsTest(unittest.TestCase):
+         self.assertEqual(response.json()[0]["metric_boundary"], "silver")
+         self.assertNotIn("input_json", response.text)
+ 
++    def test_manifest_metrics_export_endpoint_returns_public_markdown_or_csv(self) -> None:
++        manifest = self._create_manifest()
++
++        markdown = self.client.get(f"/api/experiments/{manifest['manifest_id']}/metrics/export?format=markdown")
++        csv_text = self.client.get(f"/api/experiments/{manifest['manifest_id']}/metrics/export?format=csv")
++        invalid = self.client.get(f"/api/experiments/{manifest['manifest_id']}/metrics/export?format=html")
++
++        self.assertEqual(markdown.status_code, 200)
++        self.assertEqual(markdown.json()["format"], "markdown")
++        self.assertIn("# Unified Experiment Metrics", markdown.json()["content"])
++        self.assertEqual(csv_text.status_code, 200)
++        self.assertEqual(csv_text.json()["content_type"], "text/csv")
++        self.assertIn("dataset,task,module,method,metric,value,metric_boundary,source_artifact", csv_text.json()["content"])
++        self.assertEqual(invalid.status_code, 422)
++        self.assertNotIn("input_json", markdown.text + csv_text.text)
++
++    def test_manifest_metrics_comparison_export_endpoint(self) -> None:
++        full = self.client.post(
++            "/api/experiments",
++            json={"name": "Full", "dataset_name": "PeerReview Bench", "dataset_version": "v1", "config": {"graph_profile": "full"}},
++        ).json()
++        no_ranker = self.client.post(
++            "/api/experiments",
++            json={"name": "No Ranker", "dataset_name": "PeerReview Bench", "dataset_version": "v1", "config": {"graph_profile": "no_ranker"}},
++        ).json()
++
++        response = self.client.get(
++            "/api/experiments/metrics/comparison/export",
++            params={"manifest_ids": f"{full['manifest_id']},{no_ranker['manifest_id']}", "format": "markdown"},
++        )
++        invalid = self.client.get(
++            "/api/experiments/metrics/comparison/export",
++            params={"manifest_ids": full["manifest_id"], "format": "markdown"},
++        )
++
++        self.assertEqual(response.status_code, 200)
++        self.assertEqual(response.json()["format"], "markdown")
++        self.assertIn("| Metric | graph:full | graph:no_ranker |", response.json()["content"])
++        self.assertEqual(invalid.status_code, 422)
++        self.assertNotIn("input_json", response.text)
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/tests/api/test_fastapi_runs.py b/tests/api/test_fastapi_runs.py
+index 88620bd..5512058 100644
+--- a/tests/api/test_fastapi_runs.py
++++ b/tests/api/test_fastapi_runs.py
+@@ -113,17 +113,20 @@ class FastApiRunsTest(unittest.TestCase):
+                         "text": "Only one baseline is evaluated.",
+                     }
+                 ],
+-                "weakness_generator": "minimax",
++                "weakness_generator": "glm",
++                "verifier": "glm",
+             },
+         )
+         rejected = self.client.post(
+             "/api/runs/review-audit",
+-            json={"paper_id": "p1", "weaknesses": [], "evidence_blocks": [], "weakness_generator": "minimax", "api_key": "secret"},
++            json={"paper_id": "p1", "weaknesses": [], "evidence_blocks": [], "weakness_generator": "glm", "api_key": "secret"},
+         )
+ 
+         self.assertEqual(response.status_code, 202)
+         run_id = response.json()["run"]["run_id"]
+-        self.assertEqual(self.app.state.repository.load_input(run_id)["weakness_generator"], "minimax")
++        stored_input = self.app.state.repository.load_input(run_id)
++        self.assertEqual(stored_input["weakness_generator"], "glm")
++        self.assertEqual(stored_input["verifier"], "glm")
+         self.assertEqual(rejected.status_code, 422)
+ 
+     def test_run_job_then_read_run_findings_trace_and_job(self) -> None:
+diff --git a/tests/backend/test_experiment_manifest_service.py b/tests/backend/test_experiment_manifest_service.py
+index e22646c..bb48a5c 100644
+--- a/tests/backend/test_experiment_manifest_service.py
++++ b/tests/backend/test_experiment_manifest_service.py
+@@ -21,6 +21,29 @@ class ExperimentManifestServiceTest(unittest.TestCase):
+     def tearDown(self) -> None:
+         self.temp_dir.cleanup()
+ 
++    def _save_succeeded_run(self, run_id: str, support_score: float, weakness_count: int = 1) -> None:
++        job_id = f"job-{run_id}"
++        self.repository.create_run_and_job(
++            run_id,
++            job_id,
++            {
++                "paper_id": "p1",
++                "weaknesses": [{"weakness_text": f"private weakness {run_id}"}],
++                "evidence_blocks": [{"text": f"private evidence {run_id}"}],
++            },
++        )
++        claimed = self.repository.claim_job(job_id)
++        self.repository.save_result(
++            run_id,
++            job_id,
++            claimed["attempt_token"],
++            {
++                "weakness_count": weakness_count,
++                "verification": {"w1": {"support_score": support_score, "evidence_block_ids": ["b1"]}},
++                "ranked_findings": [{"weakness_id": "w1"}],
++            },
++        )
++
+     def test_snapshot_connects_dataset_paper_version_run_config_and_report_without_raw_input(self) -> None:
+         self.repository.create_run_and_job(
+             "run-1",
+@@ -105,6 +128,130 @@ class ExperimentManifestServiceTest(unittest.TestCase):
+         self.assertNotIn("weakness_text", str(metrics))
+         self.assertNotIn("evidence_block_ids", str(metrics))
+ 
++    def test_metrics_aggregate_groundedness_and_deduplication_diagnostics(self) -> None:
++        self.repository.create_run_and_job("run-diagnostics", "job-diagnostics", {"paper_id": "p1", "weaknesses": [], "evidence_blocks": []})
++        claimed = self.repository.claim_job("job-diagnostics")
++        self.repository.save_result(
++            "run-diagnostics",
++            "job-diagnostics",
++            claimed["attempt_token"],
++            {
++                "weakness_count": 4,
++                "verification": {
++                    "w1": {"label": "Supported", "support_score": 0.9},
++                    "w2": {"label": "Partially Supported", "support_score": 0.5},
++                    "w3": {"label": "Unsupported", "support_score": 0.1},
++                    "w4": {"label": "Generic", "support_score": 0.0},
++                },
++                "deduplication": {
++                    "candidate_count": 4,
++                    "deduplicated_count": 3,
++                    "duplicate_count": 1,
++                    "duplicate_of": {"w4": "w2"},
++                },
++                "ranked_findings": [{"weakness_id": "w1"}, {"weakness_id": "w2"}],
++            },
++        )
++        manifest = self.service.create("Audit", "PeerReview Bench", "v1", {"graph_profile": "full"})
++        self.service.attach_run(manifest["manifest_id"], "run-diagnostics")
++
++        metrics = {item["metric"]: item for item in self.service.metrics(manifest["manifest_id"])}
++
++        self.assertEqual(metrics["supported_rate"]["value"], 0.25)
++        self.assertEqual(metrics["partial_or_better_rate"]["value"], 0.5)
++        self.assertEqual(metrics["unsupported_rate"]["value"], 0.25)
++        self.assertEqual(metrics["generic_rate"]["value"], 0.25)
++        self.assertEqual(metrics["deduplicated_weakness_count"]["value"], 3)
++        self.assertEqual(metrics["duplicate_count"]["value"], 1)
++        self.assertEqual(metrics["deduplication_reduction_rate"]["value"], 0.25)
++        self.assertTrue(all(item["metric_boundary"] == "silver" for item in metrics.values()))
++        self.assertNotIn("duplicate_of", str(metrics))
++
++    def test_metrics_export_renders_markdown_and_csv_without_raw_review_text(self) -> None:
++        self.repository.create_run_and_job(
++            "run-export",
++            "job-export",
++            {
++                "paper_id": "p1",
++                "weaknesses": [{"weakness_text": "private generated review text"}],
++                "evidence_blocks": [{"text": "private paper evidence"}],
++            },
++        )
++        claimed = self.repository.claim_job("job-export")
++        self.repository.save_result(
++            "run-export",
++            "job-export",
++            claimed["attempt_token"],
++            {
++                "weakness_count": 1,
++                "verification": {"w1": {"support_score": 0.75, "evidence_block_ids": ["b1"]}},
++                "ranked_findings": [{"weakness_id": "w1"}],
++            },
++        )
++        manifest = self.service.create("Graph Ablation", "PeerReview Bench", "v1", {"graph_profile": "full"})
++        self.service.attach_run(manifest["manifest_id"], "run-export")
++
++        markdown = self.service.metrics_export(manifest["manifest_id"], "markdown")
++        csv_text = self.service.metrics_export(manifest["manifest_id"], "csv")
++
++        self.assertIn("# Unified Experiment Metrics", markdown)
++        self.assertIn("| PeerReview Bench | review_audit | agent_rag | graph:full | run_count | 1 | silver |", markdown)
++        self.assertIn("dataset,task,module,method,metric,value,metric_boundary,source_artifact", csv_text.splitlines()[0])
++        self.assertNotIn("private generated review text", markdown + csv_text)
++        self.assertNotIn("private paper evidence", markdown + csv_text)
++        self.assertNotIn("evidence_block_ids", markdown + csv_text)
++
++    def test_metrics_method_summarizes_experiment_config(self) -> None:
++        manifest = self.service.create(
++            "Qdrant Ablation",
++            "CLAIMCHECK",
++            "v1",
++            {
++                "graph_profile": "no_ranker",
++                "query_planner": "direct",
++                "retriever": "qdrant_sparse",
++                "weakness_generator": "minimax",
++                "verifier": "heuristic",
++            },
++        )
++
++        metrics = self.service.metrics(manifest["manifest_id"])
++
++        self.assertEqual(
++            {item["method"] for item in metrics},
++            {"graph:no_ranker/planner:direct/retriever:qdrant_sparse/generator:minimax/verifier:heuristic"},
++        )
++
++    def test_metrics_export_rejects_unknown_format(self) -> None:
++        manifest = self.service.create("Audit", "Local OpenReview/PRISM", "v1", {})
++
++        with self.assertRaisesRegex(ValueError, "unsupported metrics export format"):
++            self.service.metrics_export(manifest["manifest_id"], "html")
++
++    def test_metrics_comparison_export_renders_methods_as_columns_without_raw_text(self) -> None:
++        self._save_succeeded_run("run-full", 0.8, weakness_count=2)
++        self._save_succeeded_run("run-no-ranker", 0.5, weakness_count=1)
++        full = self.service.create("Full Graph", "PeerReview Bench", "v1", {"graph_profile": "full"})
++        no_ranker = self.service.create("No Ranker", "PeerReview Bench", "v1", {"graph_profile": "no_ranker"})
++        self.service.attach_run(full["manifest_id"], "run-full")
++        self.service.attach_run(no_ranker["manifest_id"], "run-no-ranker")
++
++        markdown = self.service.metrics_comparison_export([no_ranker["manifest_id"], full["manifest_id"]], "markdown")
++        csv_text = self.service.metrics_comparison_export([full["manifest_id"], no_ranker["manifest_id"]], "csv")
++
++        self.assertIn("| Metric | graph:full | graph:no_ranker |", markdown)
++        self.assertIn("| mean_support_score | 0.8 | 0.5 |", markdown)
++        self.assertIn("metric,graph:full,graph:no_ranker", csv_text.splitlines()[0])
++        self.assertNotIn("private weakness", markdown + csv_text)
++        self.assertNotIn("private evidence", markdown + csv_text)
++        self.assertNotIn("evidence_block_ids", markdown + csv_text)
++
++    def test_metrics_comparison_requires_at_least_two_manifests(self) -> None:
++        manifest = self.service.create("Audit", "Local OpenReview/PRISM", "v1", {})
++
++        with self.assertRaisesRegex(ValueError, "at least two manifests"):
++            self.service.metrics_comparison_export([manifest["manifest_id"]], "markdown")
++
+ 
+ if __name__ == "__main__":
+     unittest.main()
+diff --git a/tests/backend/test_local_review_audit_worker.py b/tests/backend/test_local_review_audit_worker.py
+index e2fabdf..8ae17d6 100644
+--- a/tests/backend/test_local_review_audit_worker.py
++++ b/tests/backend/test_local_review_audit_worker.py
+@@ -177,6 +177,41 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
+         self.assertEqual(stored["weaknesses"][0]["weakness_id"], "generated-1")
+         self.assertEqual(stored["generation_metadata"]["provider_name"], "minimax")
+ 
++    def test_worker_executes_selected_glm_weakness_generator(self) -> None:
++        self.repository.create_run_and_job(
++            "run-glm-generated",
++            "job-glm-generated",
++            {
++                "paper_id": "p1",
++                "weaknesses": [],
++                "evidence_blocks": [
++                    EvidenceBlock("b1", "p1", "Experiments", "experiment", "Only one baseline is evaluated.").to_dict()
++                ],
++                "weakness_generator": "glm",
++            },
++        )
++
++        def generator_factory(name: str):
++            self.assertEqual(name, "glm")
++
++            def generate(_state):
++                return WeaknessGenerationResult(
++                    weaknesses=[
++                        Weakness("glm-generated-1", "p1", "The evaluation uses only one baseline.", "experiment", "major")
++                    ],
++                    metadata={"provider_name": "glm", "model_name": "glm-4.6v", "is_silver": True},
++                )
++
++            return generate
++
++        result = run_next_job(self.repository, generator_factory=generator_factory)
++        stored = self.repository.get_run("run-glm-generated")["result"]
++
++        self.assertEqual(result["status"], "succeeded")
++        self.assertEqual(stored["weakness_generator"], "glm")
++        self.assertEqual(stored["weaknesses"][0]["source"], "human_review")
++        self.assertEqual(stored["generation_metadata"]["provider_name"], "glm")
++
+     def test_worker_executes_selected_minimax_verifier(self) -> None:
+         self.repository.create_run_and_job(
+             "run-verified",
+@@ -213,6 +248,42 @@ class LocalReviewAuditWorkerTest(unittest.TestCase):
+         self.assertEqual(stored["verifier"], "minimax")
+         self.assertEqual(stored["verification"]["w1"]["verifier"], "fake_minimax_judge")
+ 
++    def test_worker_executes_selected_glm_verifier(self) -> None:
++        self.repository.create_run_and_job(
++            "run-glm-verified",
++            "job-glm-verified",
++            {
++                "paper_id": "p1",
++                "weaknesses": [Weakness("w1", "p1", "Missing ablation.", "experiment", "major").to_dict()],
++                "evidence_blocks": [
++                    EvidenceBlock("b1", "p1", "Experiments", "experiment", "No ablation is reported.").to_dict()
++                ],
++                "verifier": "glm",
++            },
++        )
++
++        def verifier_factory(name: str):
++            self.assertEqual(name, "glm")
++
++            def verify(weakness, evidence):
++                return VerificationResult(
++                    weakness_id=weakness.weakness_id,
++                    label="Supported",
++                    support_score=0.9,
++                    evidence_block_ids=tuple(item.block_id for item in evidence),
++                    rationale="Provider judgment.",
++                    verifier="fake_glm_judge",
++                )
++
++            return verify
++
++        result = run_next_job(self.repository, verifier_factory=verifier_factory)
++        stored = self.repository.get_run("run-glm-verified")["result"]
++
++        self.assertEqual(result["status"], "succeeded")
++        self.assertEqual(stored["verifier"], "glm")
++        self.assertEqual(stored["verification"]["w1"]["verifier"], "fake_glm_judge")
++
+     def test_worker_recovers_running_job_before_execution(self) -> None:
+         created = self.service.create_review_audit(ReviewAuditRequest(paper_id="p1", weaknesses=[], evidence_blocks=[]))
+         self.repository.claim_next_job(lease_seconds=-1)
+diff --git a/tests/evireview_core/test_deterministic_workflow.py b/tests/evireview_core/test_deterministic_workflow.py
+index 4bf8ea9..031f1ce 100644
+--- a/tests/evireview_core/test_deterministic_workflow.py
++++ b/tests/evireview_core/test_deterministic_workflow.py
+@@ -174,7 +174,8 @@ class DeterministicWorkflowTest(unittest.TestCase):
+             DEFAULT_COMPONENT_REGISTRY.retriever_names(),
+             ("bm25", "hierarchical", "qdrant_hybrid", "qdrant_sparse"),
+         )
+-        self.assertEqual(DEFAULT_COMPONENT_REGISTRY.verifier_names(), ("heuristic", "minimax"))
++        self.assertEqual(DEFAULT_COMPONENT_REGISTRY.weakness_generator_names(), ("glm", "imported", "minimax"))
++        self.assertEqual(DEFAULT_COMPONENT_REGISTRY.verifier_names(), ("glm", "heuristic", "minimax"))
+         with self.assertRaisesRegex(KeyError, "query planner"):
+             DEFAULT_COMPONENT_REGISTRY.query_planner("missing")
+         with self.assertRaisesRegex(KeyError, "retriever"):
+diff --git a/tests/experiments/test_metric_adapter_registry.py b/tests/experiments/test_metric_adapter_registry.py
+index e408cb6..c0750eb 100644
+--- a/tests/experiments/test_metric_adapter_registry.py
++++ b/tests/experiments/test_metric_adapter_registry.py
+@@ -10,8 +10,10 @@ SRC_DIR = Path(__file__).resolve().parents[2] / "code" / "experiments" / "evirev
+ sys.path.insert(0, str(SRC_DIR))
+ 
+ from metric_adapter_registry import collect_historical_metrics
++from export_unified_metrics import collect_manifest_metrics
+ from compare_generated_reviewers import common_paper_ids
+ from evaluate_graph_ablation import PROFILES
++from app.repositories.sqlite_run_repository import SQLiteRunRepository
+ 
+ 
+ class MetricAdapterRegistryTest(unittest.TestCase):
+@@ -66,6 +68,46 @@ class MetricAdapterRegistryTest(unittest.TestCase):
+         self.assertNotIn("threshold", metrics)
+         self.assertTrue(all(item.metric_boundary == "diagnostic" for item in records))
+ 
++    def test_collects_sqlite_manifest_metrics_for_unified_export(self) -> None:
++        with tempfile.TemporaryDirectory() as tmp:
++            sqlite_path = Path(tmp) / "runs.sqlite3"
++            repository = SQLiteRunRepository(sqlite_path)
++            repository.initialize()
++            repository.create_run_and_job("run-1", "job-1", {"paper_id": "p1", "weaknesses": [], "evidence_blocks": []})
++            claimed = repository.claim_job("job-1")
++            repository.save_result(
++                "run-1",
++                "job-1",
++                claimed["attempt_token"],
++                {
++                    "weakness_count": 2,
++                    "verification": {
++                        "w1": {"label": "Supported", "support_score": 0.9},
++                        "w2": {"label": "Generic", "support_score": 0.0},
++                    },
++                    "deduplication": {"candidate_count": 2, "deduplicated_count": 1, "duplicate_count": 1},
++                    "ranked_findings": [{"weakness_id": "w1"}],
++                },
++            )
++            repository.create_experiment_manifest(
++                "manifest-1",
++                "Hosted Provider Smoke",
++                "PeerReview Bench",
++                "v1",
++                {"graph_profile": "full", "retriever": "qdrant_sparse", "verifier": "minimax"},
++            )
++            repository.attach_run_to_experiment("manifest-1", "run-1")
++
++            records = collect_manifest_metrics(sqlite_path)
++
++        metrics = {item.metric: item for item in records}
++        self.assertEqual(metrics["generic_rate"].value, 0.5)
++        self.assertEqual(metrics["deduplication_reduction_rate"].value, 0.5)
++        self.assertEqual(metrics["ranked_finding_count"].value, 1)
++        self.assertEqual(metrics["run_count"].method, "graph:full/retriever:qdrant_sparse/verifier:minimax")
++        self.assertTrue(all(item.source_artifact == "manifest:manifest-1" for item in records))
++        self.assertNotIn("evidence_blocks", str(records))
++
+ 
+ if __name__ == "__main__":
+     unittest.main()

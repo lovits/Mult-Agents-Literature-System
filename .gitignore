@@ -14,20 +14,13 @@ storage/
 # Codex/OMX runtime and local orchestration state
 .omx/
 
-# Large raw PDFs are reproducible from OpenReview URLs in the manifest.
-code/dataset/prism_iclr2024_sample/pdf/
-
 # Literature PDFs are source artifacts; keep Markdown notes and indexes in git.
-paper/**/*.pdf
+参考论文/**/*.pdf
 
 # Experiment scratch/output caches
-code/experiments/**/outputs/
-code/experiments/**/.cache/
+实验/新实验/**/outputs/
+实验/新实验/**/.cache/
+实验/evireview_lite/data/
 
-# CLAIMCHECK has public data but no repository license detected.
-# Keep raw and row-level text local; commit only scripts and aggregate metrics.
-code/experiments/evireview_a/data/claimcheck_raw/
-code/experiments/evireview_a/data/claimcheck_*weaknesses.jsonl
-code/experiments/evireview_a/data/claimcheck_*predictions.jsonl
-code/experiments/evireview_a/data/claimcheck_openrouter_*cache*.json
-code/experiments/evireview_a/data/claimcheck_openrouter_rerank_cache.json
+# Local archive binaries stay on disk; checksums and metadata remain versioned.
+归档/*.tar.gz

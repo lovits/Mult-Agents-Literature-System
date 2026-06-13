@@ -1,0 +1,66 @@
+<h2>研究原型的三种架构选择</h2>
+<p class="subtitle">目标：单机可复现、组件可消融、完整审计轨迹、避免过度工程。点击你认可的方案。</p>
+
+<div class="cards">
+  <div class="card" data-choice="a-mvc" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:20px">
+      <div class="mock-nav">Controller / API</div>
+      <div class="placeholder" style="margin-top:10px">Model：论文、评审、实验数据</div>
+      <div class="placeholder" style="margin-top:10px">View：报告与界面</div>
+    </div>
+    <div class="card-body">
+      <h3>A. MVC 单体</h3>
+      <p>适合普通 CRUD，但 Agent 流程、检索实验和消融边界会混入 Controller/Model，不适合作为核心架构。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b-layered" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:20px">
+      <div class="mock-nav">API / CLI</div>
+      <div class="placeholder" style="margin-top:8px">Application Services</div>
+      <div class="placeholder" style="margin-top:8px">Domain Logic</div>
+      <div class="placeholder" style="margin-top:8px">Repositories / Providers</div>
+    </div>
+    <div class="card-body">
+      <h3>B. 传统分层模块化单体</h3>
+      <p>简单易懂，但实验变体容易通过条件分支侵入业务服务，长期会降低消融清晰度。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c-hexagonal" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:20px">
+      <div class="mock-nav">Entrypoints：CLI / API / Experiment Runner</div>
+      <div class="placeholder" style="margin-top:8px">Use Cases：审计评审 / 检索 / 分类</div>
+      <div class="placeholder" style="margin-top:8px">Domain：Comment / Evidence / Verdict / Trace</div>
+      <div class="placeholder" style="margin-top:8px">Ports：LLM / Retriever / Store / Evaluator</div>
+      <div class="placeholder" style="margin-top:8px">Adapters：GLM / Qdrant / BM25 / Dataset</div>
+    </div>
+    <div class="card-body">
+      <h3>C. 研究型六边形模块化单体（推荐）</h3>
+      <p>核心协议稳定，模型、检索器和数据集通过适配器替换；天然支持 baseline、消融与离线复现。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="pros-cons">
+    <div class="pros">
+      <h4>推荐 C 的原因</h4>
+      <ul>
+        <li>每个 Agent 节点可单测、替换和消融</li>
+        <li>实验 Runner 与 API 共用同一核心逻辑</li>
+        <li>本地 BM25 与 Qdrant、Mock LLM 与真实模型可互换</li>
+        <li>审计轨迹作为一等数据对象</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>明确不做</h4>
+      <ul>
+        <li>不拆微服务</li>
+        <li>不引入 Kubernetes</li>
+        <li>不让 MVC 控制核心 Agent 流程</li>
+        <li>不使用自由协商式 Agent 群聊</li>
+      </ul>
+    </div>
+  </div>
+</div>

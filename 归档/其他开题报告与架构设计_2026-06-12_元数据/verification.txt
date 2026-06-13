@@ -1,0 +1,8 @@
+archive_date=2026-06-12
+archive_entries=15
+archive_size=112K
+gzip_integrity=passed
+sha256_verification=passed
+restore_test=passed
+latest_opening_report_excluded=true
+archived_sources_removed=true

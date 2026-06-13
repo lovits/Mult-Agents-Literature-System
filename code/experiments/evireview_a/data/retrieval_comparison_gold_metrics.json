@@ -1,4 +1,0 @@
-{
-  "status": "blocked",
-  "reason": "No retrieval comparison gold rows found. Fill retrieval_comparison_annotation_queue.csv first."
-}
