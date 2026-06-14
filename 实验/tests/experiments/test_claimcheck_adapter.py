@@ -29,7 +29,11 @@ def test_claimcheck_adapter_preserves_ordinal_and_multilabel_annotations(tmp_pat
                     }
                 ]
             },
-            "meta": {"title": "Paper", "claims": ["Claim1: The method is superior."]},
+            "meta": {
+                "title": "Paper",
+                "claims": ["Claim1: The method is superior."],
+                "text": ["Introduction.", "The method is superior."],
+            },
         }
     }
     (source / "main.json").write_text(json.dumps(payload), encoding="utf-8")
@@ -44,6 +48,8 @@ def test_claimcheck_adapter_preserves_ordinal_and_multilabel_annotations(tmp_pat
     assert example.subjectivity == 2
     assert example.weakness_types == {"insufficient", "contradictory"}
     assert example.target_claims == ["Claim1: The method is superior."]
+    assert example.relevant_text_ids == {"paper-review-1:1"}
+    assert example.exclusion_reason is None
 
 
 def test_claimcheck_real_data_exposes_supported_tasks_and_missing_gold_boundary():
@@ -60,3 +66,5 @@ def test_claimcheck_real_data_exposes_supported_tasks_and_missing_gold_boundary(
     assert summary["supports"]["claim_association"] is True
     assert summary["supports"]["weakness_labeling"] is True
     assert summary["supports"]["covered_refuted_gold"] is False
+    assert summary["main_mapped_weaknesses"] == 91
+    assert summary["pilot_mapped_weaknesses"] == 8

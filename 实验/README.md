@@ -28,4 +28,12 @@ HF_HUB_OFFLINE=1 .venv-formal/bin/python scripts/run_e2.py \
 ../.venv/bin/python scripts/validate_e2_formal.py
 ```
 
+正式 E4 CLAIMCHECK 基线：
+
+```bash
+HF_HUB_OFFLINE=1 .venv-formal/bin/python scripts/run_e4_baselines.py \
+  --config conf/experiments/e4_claimcheck_baselines.yaml
+../.venv/bin/python scripts/validate_e4_baselines.py
+```
+
 详细数据说明见 `dataset/README.md`，当前进度见 `PROGRESS.md`。

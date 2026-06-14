@@ -114,6 +114,13 @@ agreement、subjectivity 和 weakness type，但公开文本标注没有逐条
 `covered/refuted` Gold。Covered/Refuted Recall 不得直接从 CLAIMCHECK 宣称，
 必须使用具有相应标签的数据源或明确标记为 proxy。
 
+E4 基线执行结果：已完成。严格评价 91 条可映射 weakness，并保留 64 条排除
+样本及原因。C1 BM25 Recall@5 为 0.7656，优于 C2 Dense 的 0.5458 和 C3
+Hybrid RRF 的 0.6520，因此 A1-A4 首轮证据检索使用 BM25，后续优化必须通过
+独立消融证明。W0 Pilot Prior 的 Weakness Type Macro-F1 为 0.1216，表明标签
+预测需要实质模型能力。以上结果仅是证据审计前的 C/W 基线，不等同于完整
+双向证据审计系统。
+
 ### 阶段 D：E3 Literature-RAG
 
 1. 固定本地文献快照与时间过滤规则。
@@ -140,10 +147,10 @@ agreement、subjectivity 和 weakness type，但公开文本标注没有逐条
 
 ## 5. 当前立即执行项
 
-1. 下载并验收 SubstanReview。
-2. 实现 E2 正式批量运行器的最小可运行版本。
-3. 使用确定性本地 embedding 先完成 smoke 与数据链路验收。
-4. 配置正式 embedding 后运行可写入论文的 P0-P4 实验。
+1. 以 C1 BM25 检索结果实现 E4 A1 Direct Judge。
+2. 实现 A2 Support-only 与 A3 Support+Refutation。
+3. 实现 A4 Adjudicator，并用 groundedness/agreement 做严格评价。
+4. 使用 SubstanReview 评价 claim-evidence 充分性，不越界宣称 weakness 正确。
 
 ## 6. 正式实验环境要求
 

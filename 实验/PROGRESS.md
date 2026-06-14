@@ -1,6 +1,6 @@
 # EviReview-Lite 实验进度
 
-更新时间：2026-06-13
+更新时间：2026-06-14
 
 ## 已完成
 
@@ -95,10 +95,21 @@
 - 明确 CLAIMCHECK 没有逐条 `covered/refuted` Gold，禁止越界宣称；
 - 确定首轮 E4 为 Claim Association 与 Weakness Labeling Baseline。
 
+### E4 基线：Claim Association 与 Weakness Labeling
+
+- 冻结 `pilot` 仅用于开发、`main` 仅用于评价的无泄漏协议；
+- 将 CLAIMCHECK Target Claim 映射到原论文段落，严格评价 91 条 weakness；
+- 保留 64 条不可评价样本及排除原因；
+- 比较 C0 Position、C1 BM25、C2 Dense 和 C3 Hybrid RRF；
+- C1 BM25 Recall@5 为 0.7656，是最强检索基线；
+- C3 Hybrid Recall@5 为 0.6520，未超过 BM25，保留为诊断性负结果；
+- W0 Pilot Prior 的 Weakness Type Macro-F1 为 0.1216；
+- 保存逐样本 Gold ID 与完整排名，建立 E4 Baseline Autoresearch 验收器。
+
 ## 当前验证
 
 ```text
-pytest:                         38 passed
+pytest:                         45 passed
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -111,6 +122,7 @@ Autoresearch PeerQA E2 foundation: passed
 Autoresearch execution stage A/B:   passed
 Autoresearch formal E2:             passed (experiment verdict: failed_with_metrics)
 Autoresearch E4 CLAIMCHECK foundation: passed
+Autoresearch E4 baselines:         passed
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -127,8 +139,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 实现 CLAIMCHECK Claim Association 与 Weakness Labeling Baseline；
-2. 以 agreement/groundedness 作为裁决的严格评价标签；
-3. 使用 SubstanReview 作为证据充分性辅助评价；
-4. 再实现 Support、Refutation 与 Adjudicator；
-5. E2 失败结果保留在论文误差分析，不继续在 PeerQA 测试集调权重。
+1. 以 C1 BM25 作为证据检索起点，实现 A1 Direct Judge；
+2. 实现 A2 Support-only、A3 Support+Refutation 与 A4 Adjudicator；
+3. 以 agreement/groundedness 作为严格评价标签，不伪造 covered/refuted Gold；
+4. 使用 SubstanReview 作为证据充分性辅助评价；
+5. E2 与 E4 基线失败项保留在论文误差分析，不在 main 测试集调权重。

@@ -1,0 +1,17 @@
+dataset:
+  name: claimcheck
+  path: dataset/raw/evaluation/claimcheck/texts/source
+
+embedding:
+  name: BAAI/bge-base-en-v1.5
+  revision: a5beb1e3e68b9ab74eb54cfd186867f64f240e1a
+  device: cpu
+  local_files_only: true
+  query_instruction: "Represent this sentence for searching relevant passages: "
+
+protocol:
+  development_split: pilot
+  evaluation_split: main
+  random_seed: 42
+
+output: outputs/metrics/e4_claimcheck_baselines.json

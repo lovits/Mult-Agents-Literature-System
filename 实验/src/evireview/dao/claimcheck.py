@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 from typing import Literal
 
@@ -12,6 +13,9 @@ class ClaimCheckWeakness(BaseModel):
     weakness: str
     groundedness_confidence: int = Field(ge=1, le=5)
     target_claims: list[str]
+    paper_texts: list[str]
+    relevant_text_ids: set[str]
+    exclusion_reason: str | None = None
     subjectivity: int = Field(ge=1, le=5)
     agreement: int = Field(ge=1, le=5)
     weakness_types: set[str]
@@ -30,9 +34,16 @@ class ClaimCheckDataset(BaseModel):
             payload = json.loads((root / f"{split}.json").read_text(encoding="utf-8"))
             paper_review_pairs += len(payload)
             for paper_review_id, item in payload.items():
+                paper_texts = item["meta"]["text"]
                 weaknesses = item["response"]["Weakness associated with claims"]
                 for index, weakness in enumerate(weaknesses):
                     annotation = weakness["Weakness Annotation"]
+                    target_claims = weakness["Target claims"]
+                    relevant_text_ids = _map_target_claims(
+                        paper_review_id,
+                        paper_texts,
+                        target_claims,
+                    )
                     examples.append(
                         ClaimCheckWeakness(
                             example_id=f"{split}:{paper_review_id}:{index}",
@@ -42,7 +53,18 @@ class ClaimCheckDataset(BaseModel):
                             groundedness_confidence=int(
                                 weakness["Weakness confidence score"]
                             ),
-                            target_claims=weakness["Target claims"],
+                            target_claims=target_claims,
+                            paper_texts=paper_texts,
+                            relevant_text_ids=relevant_text_ids,
+                            exclusion_reason=(
+                                None
+                                if relevant_text_ids
+                                else (
+                                    "no_target_claim"
+                                    if not target_claims
+                                    else "target_claim_not_mapped"
+                                )
+                            ),
                             subjectivity=int(annotation["subjectivity"]),
                             agreement=int(annotation["agreement"]),
                             weakness_types={
@@ -64,6 +86,14 @@ class ClaimCheckDataset(BaseModel):
             "pilot_weaknesses": sum(
                 example.split == "pilot" for example in self.examples
             ),
+            "main_mapped_weaknesses": sum(
+                example.split == "main" and bool(example.relevant_text_ids)
+                for example in self.examples
+            ),
+            "pilot_mapped_weaknesses": sum(
+                example.split == "pilot" and bool(example.relevant_text_ids)
+                for example in self.examples
+            ),
             "target_claim_grounded_weaknesses": sum(
                 bool(example.target_claims) for example in self.examples
             ),
@@ -74,3 +104,22 @@ class ClaimCheckDataset(BaseModel):
                 "covered_refuted_gold": False,
             },
         }
+
+
+def _map_target_claims(
+    paper_review_id: str,
+    paper_texts: list[str],
+    target_claims: list[str],
+) -> set[str]:
+    normalized_texts = [_normalize(text) for text in paper_texts]
+    return {
+        f"{paper_review_id}:{index}"
+        for target in target_claims
+        for index, text in enumerate(normalized_texts)
+        if _normalize(target) in text
+    }
+
+
+def _normalize(text: str) -> str:
+    without_claim_prefix = re.sub(r"^\s*claim\s*\d+\s*:\s*", "", text, flags=re.I)
+    return re.sub(r"\s+", " ", without_claim_prefix).strip().lower()
