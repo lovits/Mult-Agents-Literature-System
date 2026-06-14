@@ -45,4 +45,15 @@ E4 固定双向证据审计协议 smoke：
 
 该 smoke 仅验证协议、轨迹和证据引用约束，不是正式 provider-backed A0-A4。
 
+MiniMax-M2.7 provider 校准：
+
+```bash
+export MINIMAX_API_KEY=...
+../.venv/bin/python scripts/run_e4_provider.py \
+  --config conf/experiments/e4_minimax_calibration.yaml
+../.venv/bin/python scripts/validate_e4_minimax_calibration.py
+```
+
+当前 Token Plan 返回 HTTP 429 / MiniMax 2056，校准状态为 `pending_quota`。
+
 详细数据说明见 `dataset/README.md`，当前进度见 `PROGRESS.md`。

@@ -118,10 +118,20 @@
 - 启发式 A4 Macro-F1 为 0.1164，低于 A3 的 0.2674，确认简单 Refutation
   启发式会过度触发，不能作为正式主结果。
 
+### E4 Provider：MiniMax-M2.7 A0-A4 校准接入
+
+- 核实官方模型 ID 为 `MiniMax-M2.7`；
+- 确认当前 Token Plan Key 属于中国区，使用 `https://api.minimaxi.com/v1`；
+- 实现 OpenAI-compatible JSON Provider 与 M2.x reasoning 输出兼容；
+- 实现 provider-backed A0-A4 runner；
+- 记录逐系统调用数、tokens、延迟、失败原因、证据越界和逐样本轨迹；
+- 首条校准样本的 6 次 provider 调用均返回 HTTP 429 / MiniMax 2056；
+- 当前状态为 `pending_quota`，没有产生正式 MiniMax 模型指标。
+
 ## 当前验证
 
 ```text
-pytest:                         52 passed
+pytest:                         55 passed
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -136,6 +146,7 @@ Autoresearch formal E2:             passed (experiment verdict: failed_with_metr
 Autoresearch E4 CLAIMCHECK foundation: passed
 Autoresearch E4 baselines:         passed
 Autoresearch E4 audit protocol:    passed (heuristic smoke, not formal A0-A4)
+Autoresearch E4 MiniMax calibration: pending_quota
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -152,8 +163,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 接入正式 LLM provider，实现 A1 LLM-only Judge 与 A2 Single Judge + Paper-RAG；
-2. 将 Support、Refutation 与 Adjudicator 升级为 provider-backed A3/A4；
-3. 使用 agreement validity proxy 运行正式 A0-A4，不伪造 covered/refuted Gold；
+1. MiniMax Token Plan 额度恢复后复跑 5 条 A0-A4 校准；
+2. 校准零失败后扩大 provider-backed A0-A4；
+3. 使用 agreement validity proxy 评价，不伪造 covered/refuted Gold；
 4. 使用 SubstanReview 作为证据充分性辅助评价；
-5. 保留启发式 A4 过度触发的负结果，不在 main 测试集调阈值。
+5. 保留启发式 A4 过度触发与 provider quota blocker，不选择性删除失败。

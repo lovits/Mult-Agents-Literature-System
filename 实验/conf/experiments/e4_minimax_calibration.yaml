@@ -1,0 +1,20 @@
+dataset:
+  name: claimcheck
+  path: dataset/raw/evaluation/claimcheck/texts/source
+
+provider:
+  name: minimax
+  base_url: https://api.minimaxi.com/v1
+  model: MiniMax-M2.7
+  timeout_seconds: 180
+  max_completion_tokens: 1024
+
+retrieval:
+  system: C1_bm25
+  top_k: 5
+
+experiment:
+  stage: calibration
+  limit: 5
+
+output: outputs/metrics/e4_minimax_calibration.json
