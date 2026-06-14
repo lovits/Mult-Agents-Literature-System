@@ -106,10 +106,22 @@
 - W0 Pilot Prior 的 Weakness Type Macro-F1 为 0.1216；
 - 保存逐样本 Gold ID 与完整排名，建立 E4 Baseline Autoresearch 验收器。
 
+### E4 协议：固定双向证据审计 Smoke
+
+- 实现 Support Agent、Refutation Agent 与 Evidence Adjudicator；
+- 每条候选固定运行双向审计，不使用争议触发升级；
+- 强制 Audit Case 只能引用 EvidenceBundle 内证据；
+- 固定自动裁决为 `keep/rewrite/reject/uncertain`，不加入 human-check；
+- 使用版本化 agreement validity proxy，不伪造 covered/refuted Gold；
+- 在全部 155 条 CLAIMCHECK main weakness 上生成完整审计轨迹；
+- 越界证据引用、缺失双向案例、空案例强度违规均为 0；
+- 启发式 A4 Macro-F1 为 0.1164，低于 A3 的 0.2674，确认简单 Refutation
+  启发式会过度触发，不能作为正式主结果。
+
 ## 当前验证
 
 ```text
-pytest:                         45 passed
+pytest:                         52 passed
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -123,6 +135,7 @@ Autoresearch execution stage A/B:   passed
 Autoresearch formal E2:             passed (experiment verdict: failed_with_metrics)
 Autoresearch E4 CLAIMCHECK foundation: passed
 Autoresearch E4 baselines:         passed
+Autoresearch E4 audit protocol:    passed (heuristic smoke, not formal A0-A4)
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -139,8 +152,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 以 C1 BM25 作为证据检索起点，实现 A1 Direct Judge；
-2. 实现 A2 Support-only、A3 Support+Refutation 与 A4 Adjudicator；
-3. 以 agreement/groundedness 作为严格评价标签，不伪造 covered/refuted Gold；
+1. 接入正式 LLM provider，实现 A1 LLM-only Judge 与 A2 Single Judge + Paper-RAG；
+2. 将 Support、Refutation 与 Adjudicator 升级为 provider-backed A3/A4；
+3. 使用 agreement validity proxy 运行正式 A0-A4，不伪造 covered/refuted Gold；
 4. 使用 SubstanReview 作为证据充分性辅助评价；
-5. E2 与 E4 基线失败项保留在论文误差分析，不在 main 测试集调权重。
+5. 保留启发式 A4 过度触发的负结果，不在 main 测试集调阈值。

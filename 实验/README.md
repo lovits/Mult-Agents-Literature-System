@@ -36,4 +36,13 @@ HF_HUB_OFFLINE=1 .venv-formal/bin/python scripts/run_e4_baselines.py \
 ../.venv/bin/python scripts/validate_e4_baselines.py
 ```
 
+E4 固定双向证据审计协议 smoke：
+
+```bash
+../.venv/bin/python scripts/run_e4_audit_protocol_smoke.py
+../.venv/bin/python scripts/validate_e4_audit_protocol.py
+```
+
+该 smoke 仅验证协议、轨迹和证据引用约束，不是正式 provider-backed A0-A4。
+
 详细数据说明见 `dataset/README.md`，当前进度见 `PROGRESS.md`。

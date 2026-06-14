@@ -65,7 +65,15 @@ def validate() -> dict:
         EXPERIMENT_ROOT / "dataset/legacy_sources",
         EXPERIMENT_ROOT / "dataset/manifests",
     ]
-    expected_source_layers = {"conf", "dao", "evaluation", "models", "rag", "service"}
+    expected_source_layers = {
+        "agent",
+        "conf",
+        "dao",
+        "evaluation",
+        "models",
+        "rag",
+        "service",
+    }
     source_layers = {
         path.name
         for path in (EXPERIMENT_ROOT / "src/evireview").iterdir()

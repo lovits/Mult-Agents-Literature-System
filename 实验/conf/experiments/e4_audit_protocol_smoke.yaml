@@ -1,0 +1,14 @@
+dataset:
+  name: claimcheck
+  path: dataset/raw/evaluation/claimcheck/texts/source
+
+retrieval:
+  system: C1_bm25
+  top_k: 5
+
+protocol:
+  formal_a0_a4_result: false
+  provider_backed: false
+  label_mapping: claimcheck-agreement-proxy-v1
+
+output: outputs/metrics/e4_audit_protocol_smoke.json
