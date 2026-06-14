@@ -8,6 +8,9 @@ provider:
   model: MiniMax-M2.7
   timeout_seconds: 180
   max_completion_tokens: 1024
+  max_tokens_field: max_completion_tokens
+  request_options:
+    reasoning_split: true
 
 retrieval:
   system: C1_bm25

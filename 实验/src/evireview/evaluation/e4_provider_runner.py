@@ -25,10 +25,10 @@ def run_e4_provider_experiment(
     *,
     limit: int | None = None,
     top_k: int = 5,
+    selection: str = "head",
 ) -> dict:
     examples = [example for example in dataset.examples if example.split == "main"]
-    if limit is not None:
-        examples = examples[:limit]
+    examples = _select_examples(examples, limit=limit, selection=selection)
     rows = {name: [] for name in SYSTEMS}
     costs = {name: Counter() for name in SYSTEMS}
     traces = []
@@ -40,8 +40,8 @@ def run_e4_provider_experiment(
         evidence = [item.model_dump() for item in bundle.paper_evidence]
         allowed = {item["evidence_id"] for item in evidence}
         base = {"candidate": candidate.model_dump()}
-        trace = {"example_id": example.example_id}
         gold = claimcheck_agreement_to_decision(example.agreement)
+        trace = {"example_id": example.example_id, "gold_agreement_proxy": gold}
         a0 = _decision(candidate.candidate_id, {"decision": "keep", "confidence": 0.0})
         rows["A0"].append((a0, gold))
         trace["A0"] = a0.model_dump()
@@ -111,6 +111,7 @@ def run_e4_provider_experiment(
             "covered_refuted_gold": False,
             "top_k": top_k,
             "limit": limit,
+            "selection": selection,
         },
         "evaluated": len(examples),
         "systems": {
@@ -118,6 +119,13 @@ def run_e4_provider_experiment(
         },
         "integrity": {
             "invalid_citations": integrity["invalid_citations"],
+            "cited_evidence_ids": integrity["cited_evidence_ids"],
+            "evidence_attribution_accuracy": (
+                1
+                - integrity["invalid_citations"] / integrity["cited_evidence_ids"]
+                if integrity["cited_evidence_ids"]
+                else 1.0
+            ),
             "failures": integrity["failures"],
             "failure_reasons": {
                 key.removeprefix("failure_reason:"): value
@@ -129,11 +137,36 @@ def run_e4_provider_experiment(
     }
 
 
+def _select_examples(examples, *, limit: int | None, selection: str):
+    if limit is None:
+        return examples
+    if selection == "head":
+        return examples[:limit]
+    if selection != "stratified_proxy":
+        raise ValueError(f"unknown selection strategy: {selection}")
+    groups = {
+        label: [
+            example
+            for example in examples
+            if claimcheck_agreement_to_decision(example.agreement) == label
+        ]
+        for label in DECISION_LABELS
+    }
+    selected = []
+    while len(selected) < limit and any(groups.values()):
+        for label in DECISION_LABELS:
+            if groups[label] and len(selected) < limit:
+                selected.append(groups[label].pop(0))
+    return selected
+
+
 def _provider_case(provider, role, payload, candidate_id, stance, allowed, integrity):
     try:
         result = provider.complete_json(role, payload)
-        cited = [item for item in result.data.get("evidence_ids", []) if item in allowed]
-        integrity["invalid_citations"] += len(result.data.get("evidence_ids", [])) - len(cited)
+        raw_citations = result.data.get("evidence_ids", [])
+        cited = [item for item in raw_citations if item in allowed]
+        integrity["cited_evidence_ids"] += len(raw_citations)
+        integrity["invalid_citations"] += len(raw_citations) - len(cited)
         case = AuditCase(
             candidate_id=candidate_id,
             stance=stance,
@@ -159,8 +192,10 @@ def _provider_case(provider, role, payload, candidate_id, stance, allowed, integ
 def _provider_decision(provider, role, payload, candidate_id, allowed, integrity):
     try:
         result = provider.complete_json(role, payload)
-        cited = [item for item in result.data.get("evidence_ids", []) if item in allowed]
-        integrity["invalid_citations"] += len(result.data.get("evidence_ids", [])) - len(cited)
+        raw_citations = result.data.get("evidence_ids", [])
+        cited = [item for item in raw_citations if item in allowed]
+        integrity["cited_evidence_ids"] += len(raw_citations)
+        integrity["invalid_citations"] += len(raw_citations) - len(cited)
         return _decision(candidate_id, {**result.data, "evidence_ids": cited}), result
     except Exception as error:
         _record_failure(integrity, error)

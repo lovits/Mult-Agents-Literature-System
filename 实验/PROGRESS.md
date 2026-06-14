@@ -128,10 +128,22 @@
 - 首条校准样本的 6 次 provider 调用均返回 HTTP 429 / MiniMax 2056；
 - 当前状态为 `pending_quota`，没有产生正式 MiniMax 模型指标。
 
+### E4 Provider：Agnes-2.0-Flash 分层 Pilot20
+
+- 确认 Agnes OpenAI-compatible API 与 `agnes-2.0-flash` 可用；
+- 将 Provider 请求参数按供应商配置，避免携带 MiniMax 专属字段；
+- 使用 agreement validity proxy 固定分层抽样 20 条；
+- 加入只针对瞬时网络错误的最多两次有限重试；
+- 复跑后 Evidence Attribution Accuracy 为 1.0000，网络失败为 0；
+- 剩余 1 次 Refutation JSON 解析失败，按协议回退为空案例；
+- A1 Macro-F1 为 0.3439，A2 为 0.2635，A3 为 0.2480，A4 为 0.1739；
+- A4 相对 A2/A3 均未提升，且 token 成本为 A2 的 3.1516 倍；
+- Pilot20 verdict 为 `failed_with_metrics`，暂不扩大到 155 条。
+
 ## 当前验证
 
 ```text
-pytest:                         55 passed
+pytest:                         59 passed
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -147,6 +159,8 @@ Autoresearch E4 CLAIMCHECK foundation: passed
 Autoresearch E4 baselines:         passed
 Autoresearch E4 audit protocol:    passed (heuristic smoke, not formal A0-A4)
 Autoresearch E4 MiniMax calibration: pending_quota
+Autoresearch E4 Agnes calibration: passed
+Autoresearch E4 Agnes pilot20:    passed (experiment verdict: failed_with_metrics)
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -163,8 +177,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. MiniMax Token Plan 额度恢复后复跑 5 条 A0-A4 校准；
-2. 校准零失败后扩大 provider-backed A0-A4；
-3. 使用 agreement validity proxy 评价，不伪造 covered/refuted Gold；
+1. 对 Agnes A4 做一次有界 Prompt/输入压缩优化；
+2. 在同一分层 Pilot20 上复跑，要求 A4 指标改善且成本比下降；
+3. 若仍不优于 A2/A3，则保留负结果并停止扩大；
 4. 使用 SubstanReview 作为证据充分性辅助评价；
-5. 保留启发式 A4 过度触发与 provider quota blocker，不选择性删除失败。
+5. 不伪造 covered/refuted Gold，不在 155 条 main 全集反复调参。

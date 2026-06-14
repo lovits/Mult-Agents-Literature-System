@@ -29,6 +29,12 @@ def main() -> None:
         api_key=api_key,
         timeout=config["provider"]["timeout_seconds"],
         max_completion_tokens=config["provider"]["max_completion_tokens"],
+        max_tokens_field=config["provider"].get(
+            "max_tokens_field", "max_completion_tokens"
+        ),
+        request_options=config["provider"].get("request_options", {}),
+        retry_attempts=config["provider"].get("retry_attempts", 0),
+        retry_backoff_seconds=config["provider"].get("retry_backoff_seconds", 1),
     )
     dataset = ClaimCheckDataset.from_source_dir(ROOT / config["dataset"]["path"])
     result = run_e4_provider_experiment(
@@ -36,6 +42,7 @@ def main() -> None:
         provider,
         limit=args.limit if args.limit is not None else config["experiment"]["limit"],
         top_k=config["retrieval"]["top_k"],
+        selection=config["experiment"].get("selection", "head"),
     )
     output = ROOT / config["output"]
     output.parent.mkdir(parents=True, exist_ok=True)

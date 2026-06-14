@@ -63,43 +63,48 @@ class OpenAICompatibleProvider:
         api_key: str,
         timeout: float = 120.0,
         max_completion_tokens: int = 1024,
+        max_tokens_field: str = "max_completion_tokens",
+        request_options: dict[str, Any] | None = None,
+        retry_attempts: int = 0,
+        retry_backoff_seconds: float = 1.0,
         transport: httpx.BaseTransport | None = None,
     ):
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.api_key = api_key
         self.max_completion_tokens = max_completion_tokens
+        self.max_tokens_field = max_tokens_field
+        self.request_options = request_options or {}
+        self.retry_attempts = retry_attempts
+        self.retry_backoff_seconds = retry_backoff_seconds
         self.client = httpx.Client(timeout=timeout, transport=transport)
 
     def complete_json(self, role: str, payload: dict[str, Any]) -> ProviderResult:
         if role not in ROLE_INSTRUCTIONS:
             raise ValueError(f"unknown provider role: {role}")
         started = time.perf_counter()
-        response = self.client.post(
-            f"{self.base_url}/chat/completions",
-            headers={"Authorization": f"Bearer {self.api_key}"},
-            json={
-                "model": self.model,
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": (
-                            "You are an evidence-audit component for scientific peer "
-                            "review. Be conservative and output one JSON object only. "
-                            + ROLE_INSTRUCTIONS[role]
-                        ),
-                    },
-                    {
-                        "role": "user",
-                        "content": json.dumps(payload, ensure_ascii=False),
-                    },
-                ],
-                "temperature": 0,
-                "max_completion_tokens": self.max_completion_tokens,
-                "reasoning_split": True,
-                "stream": False,
-            },
-        )
+        request_body = {
+            "model": self.model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an evidence-audit component for scientific peer "
+                        "review. Be conservative and output one JSON object only. "
+                        + ROLE_INSTRUCTIONS[role]
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": json.dumps(payload, ensure_ascii=False),
+                },
+            ],
+            "temperature": 0,
+            "stream": False,
+            self.max_tokens_field: self.max_completion_tokens,
+            **self.request_options,
+        }
+        response = self._post_with_retry(request_body)
         latency_ms = (time.perf_counter() - started) * 1000
         if response.is_error:
             try:
@@ -119,6 +124,23 @@ class OpenAICompatibleProvider:
             latency_ms=latency_ms,
             raw_content=content,
         )
+
+    def _post_with_retry(self, request_body: dict[str, Any]) -> httpx.Response:
+        for attempt in range(self.retry_attempts + 1):
+            try:
+                response = self.client.post(
+                    f"{self.base_url}/chat/completions",
+                    headers={"Authorization": f"Bearer {self.api_key}"},
+                    json=request_body,
+                )
+                if response.status_code not in {408, 500, 502, 503, 504}:
+                    return response
+            except (httpx.ConnectError, httpx.RemoteProtocolError):
+                if attempt >= self.retry_attempts:
+                    raise
+            if attempt < self.retry_attempts:
+                time.sleep(self.retry_backoff_seconds * (attempt + 1))
+        return response
 
 
 def _extract_json(content: str) -> dict[str, Any]:

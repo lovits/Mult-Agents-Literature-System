@@ -56,4 +56,18 @@ export MINIMAX_API_KEY=...
 
 当前 Token Plan 返回 HTTP 429 / MiniMax 2056，校准状态为 `pending_quota`。
 
+Agnes-2.0-Flash 分层 Pilot20：
+
+```bash
+export EVIREVIEW_LLM_API_KEY=...
+../.venv/bin/python scripts/run_e4_provider.py \
+  --config conf/experiments/e4_agnes_calibration.yaml
+../.venv/bin/python scripts/validate_e4_agnes_calibration.py
+../.venv/bin/python scripts/run_e4_provider.py \
+  --config conf/experiments/e4_agnes_pilot20.yaml
+../.venv/bin/python scripts/validate_e4_agnes_pilot20.py
+```
+
+当前 Pilot20 已完成，实验 verdict 为 `failed_with_metrics`，暂不扩大。
+
 详细数据说明见 `dataset/README.md`，当前进度见 `PROGRESS.md`。

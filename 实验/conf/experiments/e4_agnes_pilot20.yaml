@@ -1,0 +1,24 @@
+dataset:
+  name: claimcheck
+  path: dataset/raw/evaluation/claimcheck/texts/source
+
+provider:
+  name: agnes
+  base_url: https://apihub.agnes-ai.com/v1
+  model: agnes-2.0-flash
+  timeout_seconds: 180
+  max_completion_tokens: 1024
+  max_tokens_field: max_tokens
+  retry_attempts: 2
+  retry_backoff_seconds: 1
+
+retrieval:
+  system: C1_bm25
+  top_k: 5
+
+experiment:
+  stage: pilot20
+  limit: 20
+  selection: stratified_proxy
+
+output: outputs/metrics/e4_agnes_pilot20.json

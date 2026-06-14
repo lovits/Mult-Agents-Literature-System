@@ -60,4 +60,29 @@ def test_provider_runner_contains_a0_a4_costs_and_traces():
     assert len(result["traces"]) == 1
     assert result["systems"]["A4"]["tokens_per_candidate"] > 0
     assert result["integrity"]["invalid_citations"] == 0
+    assert result["integrity"]["evidence_attribution_accuracy"] == 1.0
     assert result["integrity"]["failures"] == 0
+
+
+def test_provider_runner_can_use_deterministic_proxy_stratified_sample():
+    examples = []
+    for agreement in [5, 5, 5, 1, 1, 1, 3, 3, 3]:
+        example = _example().model_copy(
+            update={
+                "example_id": f"main:{agreement}:{len(examples)}",
+                "agreement": agreement,
+            }
+        )
+        examples.append(example)
+
+    result = run_e4_provider_experiment(
+        ClaimCheckDataset(examples=examples, paper_review_pairs=1),
+        FakeProvider(),
+        limit=6,
+        selection="stratified_proxy",
+    )
+
+    gold = [trace["gold_agreement_proxy"] for trace in result["traces"]]
+    assert gold.count("keep") == 2
+    assert gold.count("reject") == 2
+    assert gold.count("uncertain") == 2

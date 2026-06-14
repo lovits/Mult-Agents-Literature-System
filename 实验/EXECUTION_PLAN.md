@@ -134,6 +134,13 @@ MiniMax-M2.7 provider 接入结果：已完成 A0-A4 runner、结构化输出解
 状态为 `pending_quota`，当前 uncertain 回退不得作为正式模型结果。额度恢复后
 先复跑 5 条校准，校准零失败后再扩大样本规模。
 
+Agnes-2.0-Flash provider 结果：已完成 5 条校准与 20 条 agreement-proxy
+分层 Pilot。有限网络重试消除了瞬时连接失败，Evidence Attribution Accuracy
+达到 1.0000，但 A4 Macro-F1 为 0.1739，低于 A2 的 0.2635 与 A3 的
+0.2480；A4 token 成本为 A2 的 3.1516 倍，也超过 2.5 倍目标。因此 Pilot
+verdict 为 `failed_with_metrics`，不直接扩大至 155 条。下一轮只进行一次
+Prompt 证据角色约束与 Adjudicator 输入压缩优化，再在同一分层 Pilot 复跑。
+
 ### 阶段 D：E3 Literature-RAG
 
 1. 固定本地文献快照与时间过滤规则。
@@ -160,10 +167,10 @@ MiniMax-M2.7 provider 接入结果：已完成 A0-A4 runner、结构化输出解
 
 ## 5. 当前立即执行项
 
-1. 恢复 MiniMax Token Plan 可用额度。
-2. 复跑 5 条 MiniMax-M2.7 A0-A4 校准并要求 provider failure 为 0。
-3. 扩大 provider-backed A0-A4，并报告成本、延迟和错误类型。
-4. 使用 agreement validity proxy 与 SubstanReview 辅助指标评价正式结果。
+1. 强化 Support/Refutation 的证据角色约束，避免相关性替代有效性判断。
+2. 压缩 Adjudicator 输入，减少重复 evidence token。
+3. 在固定 Agnes 分层 Pilot20 上复跑一次。
+4. 仅当 A4 相对 A2/A3 改善且成本比接近目标时再扩大。
 
 ## 6. 正式实验环境要求
 
