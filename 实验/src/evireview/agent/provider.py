@@ -27,15 +27,37 @@ ROLE_INSTRUCTIONS = {
         "Return JSON with claim, evidence_ids selected only from supplied IDs, "
         "strength 0-1, and rationale."
     ),
+    "support_strict": (
+        "Build an evidence case only when the supplied evidence demonstrates that "
+        "the weakness is actually present; mere relatedness is insufficient. If no "
+        "supplied evidence explicitly supports the weakness, evidence_ids must be "
+        "empty and strength must be at most 0.3. Return JSON with claim, evidence_ids "
+        "selected only from supplied IDs, strength 0-1, and rationale."
+    ),
     "refutation": (
         "Build the strongest evidence case that the paper already addresses, refutes, "
         "or makes the weakness invalid. Return JSON with claim, evidence_ids selected "
         "only from supplied IDs, strength 0-1, and rationale."
     ),
+    "refutation_strict": (
+        "Build an evidence case only when the supplied evidence explicitly shows that "
+        "the paper resolves, addresses, or refutes the weakness; mere relatedness is "
+        "insufficient. If no supplied evidence explicitly resolves the weakness, "
+        "evidence_ids must be empty and strength must be at most 0.3. Return JSON with "
+        "claim, evidence_ids selected only from supplied IDs, strength 0-1, and "
+        "rationale."
+    ),
     "adjudicate": (
         "Compare the supplied support and refutation cases. Return JSON with decision "
         "keep/rewrite/reject/uncertain, confidence 0-1, evidence_ids selected only "
         "from supplied IDs, and reason. Do not request human review."
+    ),
+    "adjudicate_compact": (
+        "Conservatively compare the supplied structured support and refutation cases "
+        "using only their cited evidence. Relatedness alone is not decisive. Do not "
+        "default to keep when support is weak or evidence is inconclusive. Return JSON "
+        "with decision keep/rewrite/reject/uncertain, confidence 0-1, evidence_ids "
+        "selected only from supplied IDs, and reason. Do not request human review."
     ),
 }
 

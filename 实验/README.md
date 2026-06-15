@@ -70,4 +70,17 @@ export EVIREVIEW_LLM_API_KEY=...
 
 当前 Pilot20 已完成，实验 verdict 为 `failed_with_metrics`，暂不扩大。
 
+Agnes 一次有界优化：
+
+```bash
+export EVIREVIEW_LLM_API_KEY=...
+../.venv/bin/python scripts/run_e4_provider.py \
+  --config conf/experiments/e4_agnes_pilot20_optimized.yaml
+../.venv/bin/python scripts/validate_e4_agnes_bounded_optimization.py
+```
+
+有界优化使 A4 Macro-F1 提升至 `0.2910`，A4/A2 token 比降至 `2.4829`，
+但仍有 2 次 Provider/解析失败。按冻结协议停止扩大，下一步转入 SubstanReview
+证据充分性辅助实验。
+
 详细数据说明见 `dataset/README.md`，当前进度见 `PROGRESS.md`。

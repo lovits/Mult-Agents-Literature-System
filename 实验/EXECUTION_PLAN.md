@@ -141,6 +141,12 @@ Agnes-2.0-Flash provider 结果：已完成 5 条校准与 20 条 agreement-prox
 verdict 为 `failed_with_metrics`，不直接扩大至 155 条。下一轮只进行一次
 Prompt 证据角色约束与 Adjudicator 输入压缩优化，再在同一分层 Pilot 复跑。
 
+Agnes 一次有界优化结果：已在相同分层 Pilot20 上完成。严格证据角色约束与
+紧凑 Adjudicator 输入使 A4 Macro-F1 从 0.1739 提升到 0.2910，超过本轮 A2
+和 A3；A4/A2 token 比从 3.1516 降到 2.4829。但运行仍出现 2 次 Provider/
+解析失败，Evidence Attribution Accuracy 为 0.8750。零失败门槛未通过，
+因此状态为 `failed_with_metrics`，按冻结协议停止扩大，不进行第二轮调参。
+
 ### 阶段 D：E3 Literature-RAG
 
 1. 固定本地文献快照与时间过滤规则。
@@ -167,10 +173,10 @@ Prompt 证据角色约束与 Adjudicator 输入压缩优化，再在同一分层
 
 ## 5. 当前立即执行项
 
-1. 强化 Support/Refutation 的证据角色约束，避免相关性替代有效性判断。
-2. 压缩 Adjudicator 输入，减少重复 evidence token。
-3. 在固定 Agnes 分层 Pilot20 上复跑一次。
-4. 仅当 A4 相对 A2/A3 改善且成本比接近目标时再扩大。
+1. 建立 SubstanReview claim-evidence pair 数据适配器。
+2. 实现 Claim Evidence Coverage 与 Substantiated Claim Rate baseline。
+3. 生成 SubstanReview Autoresearch 验收结果。
+4. 将辅助评价结果与 CLAIMCHECK agreement-proxy 结果分开报告。
 
 ## 6. 正式实验环境要求
 

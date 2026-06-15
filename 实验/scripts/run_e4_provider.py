@@ -43,6 +43,7 @@ def main() -> None:
         limit=args.limit if args.limit is not None else config["experiment"]["limit"],
         top_k=config["retrieval"]["top_k"],
         selection=config["experiment"].get("selection", "head"),
+        audit_profile=config["experiment"].get("audit_profile", "standard_v1"),
     )
     output = ROOT / config["output"]
     output.parent.mkdir(parents=True, exist_ok=True)

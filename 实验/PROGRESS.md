@@ -1,6 +1,6 @@
 # EviReview-Lite 实验进度
 
-更新时间：2026-06-14
+更新时间：2026-06-15
 
 ## 已完成
 
@@ -140,10 +140,23 @@
 - A4 相对 A2/A3 均未提升，且 token 成本为 A2 的 3.1516 倍；
 - Pilot20 verdict 为 `failed_with_metrics`，暂不扩大到 155 条。
 
+### E4 Provider：Agnes 一次有界优化
+
+- 冻结相同 20 条分层样本、BM25 Top-5、agreement validity proxy 和 A1/A2；
+- 为 A3/A4 增加严格 Support/Refutation 角色约束；
+- Adjudicator 只接收 case 已引用证据，不再重复接收全部 Top-5 evidence；
+- A4 Macro-F1 从 0.1739 提升到 0.2910，超过本轮 A2 的 0.2333 与 A3 的
+  0.1889；
+- A4/A2 token 比从 3.1516 降到 2.4829，A4 token 降低 21.16%；
+- Evidence Attribution Accuracy 为 0.8750，但仍有 13 次越界引用；
+- 出现 1 次 A3 结构化解析失败和 1 次 A4 Refutation 连接失败；
+- 零失败成功标准未通过，verdict 为 `failed_with_metrics`；
+- 按冻结协议停止扩大至 155 条，不进行第二轮 Prompt 调参。
+
 ## 当前验证
 
 ```text
-pytest:                         59 passed
+pytest:                         65 passed, 1 design-document gate blocked by user-side files
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -161,6 +174,7 @@ Autoresearch E4 audit protocol:    passed (heuristic smoke, not formal A0-A4)
 Autoresearch E4 MiniMax calibration: pending_quota
 Autoresearch E4 Agnes calibration: passed
 Autoresearch E4 Agnes pilot20:    passed (experiment verdict: failed_with_metrics)
+Autoresearch E4 bounded optimization: passed (experiment verdict: failed_with_metrics)
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -177,8 +191,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 对 Agnes A4 做一次有界 Prompt/输入压缩优化；
-2. 在同一分层 Pilot20 上复跑，要求 A4 指标改善且成本比下降；
-3. 若仍不优于 A2/A3，则保留负结果并停止扩大；
-4. 使用 SubstanReview 作为证据充分性辅助评价；
-5. 不伪造 covered/refuted Gold，不在 155 条 main 全集反复调参。
+1. 使用 SubstanReview 作为证据充分性辅助评价；
+2. 实现 Claim Evidence Coverage 与 Substantiated Claim Rate baseline；
+3. 将 E4 负结果与 SubstanReview 辅助结果分开报告；
+4. 进入 E3 Literature-RAG，不在 CLAIMCHECK main 全集反复调参；
+5. 不伪造 covered/refuted Gold。

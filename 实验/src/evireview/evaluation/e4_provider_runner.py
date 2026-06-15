@@ -17,6 +17,20 @@ from evireview.models.audit import AdjudicationResult, AuditCase
 
 
 SYSTEMS = ["A0", "A1", "A2", "A3", "A4"]
+AUDIT_PROFILES = {
+    "standard_v1": {
+        "support_role": "support",
+        "refutation_role": "refutation",
+        "adjudicator_role": "adjudicate",
+        "compact_adjudicator_evidence": False,
+    },
+    "bounded_v2": {
+        "support_role": "support_strict",
+        "refutation_role": "refutation_strict",
+        "adjudicator_role": "adjudicate_compact",
+        "compact_adjudicator_evidence": True,
+    },
+}
 
 
 def run_e4_provider_experiment(
@@ -26,7 +40,11 @@ def run_e4_provider_experiment(
     limit: int | None = None,
     top_k: int = 5,
     selection: str = "head",
+    audit_profile: str = "standard_v1",
 ) -> dict:
+    if audit_profile not in AUDIT_PROFILES:
+        raise ValueError(f"unknown audit profile: {audit_profile}")
+    profile = AUDIT_PROFILES[audit_profile]
     examples = [example for example in dataset.examples if example.split == "main"]
     examples = _select_examples(examples, limit=limit, selection=selection)
     rows = {name: [] for name in SYSTEMS}
@@ -58,15 +76,30 @@ def run_e4_provider_experiment(
             trace[name] = decision.model_dump()
 
         support, support_result = _provider_case(
-            provider, "support", {**base, "evidence": evidence}, candidate.candidate_id,
-            "support", allowed, integrity
+            provider,
+            profile["support_role"],
+            {**base, "evidence": evidence},
+            candidate.candidate_id,
+            "support",
+            allowed,
+            integrity,
+        )
+        a3_evidence = _adjudicator_evidence(
+            evidence,
+            cases=[support],
+            compact=profile["compact_adjudicator_evidence"],
         )
         a3, a3_result = _provider_decision(
             provider,
-            "adjudicate",
-            {**base, "evidence": evidence, "support": support.model_dump(), "refutation": None},
+            profile["adjudicator_role"],
+            {
+                **base,
+                "evidence": a3_evidence,
+                "support": support.model_dump(),
+                "refutation": None,
+            },
             candidate.candidate_id,
-            allowed,
+            {item["evidence_id"] for item in a3_evidence},
             integrity,
         )
         _add_cost(costs["A3"], support_result)
@@ -75,20 +108,30 @@ def run_e4_provider_experiment(
         trace["A3"] = {"support": support.model_dump(), "decision": a3.model_dump()}
 
         refutation, refutation_result = _provider_case(
-            provider, "refutation", {**base, "evidence": evidence},
-            candidate.candidate_id, "refutation", allowed, integrity
+            provider,
+            profile["refutation_role"],
+            {**base, "evidence": evidence},
+            candidate.candidate_id,
+            "refutation",
+            allowed,
+            integrity,
+        )
+        a4_evidence = _adjudicator_evidence(
+            evidence,
+            cases=[support, refutation],
+            compact=profile["compact_adjudicator_evidence"],
         )
         a4, a4_result = _provider_decision(
             provider,
-            "adjudicate",
+            profile["adjudicator_role"],
             {
                 **base,
-                "evidence": evidence,
+                "evidence": a4_evidence,
                 "support": support.model_dump(),
                 "refutation": refutation.model_dump(),
             },
             candidate.candidate_id,
-            allowed,
+            {item["evidence_id"] for item in a4_evidence},
             integrity,
         )
         for result in [support_result, refutation_result, a4_result]:
@@ -112,6 +155,7 @@ def run_e4_provider_experiment(
             "top_k": top_k,
             "limit": limit,
             "selection": selection,
+            "audit_profile": audit_profile,
         },
         "evaluated": len(examples),
         "systems": {
@@ -135,6 +179,13 @@ def run_e4_provider_experiment(
         },
         "traces": traces,
     }
+
+
+def _adjudicator_evidence(evidence, *, cases, compact: bool):
+    if not compact:
+        return evidence
+    cited = {evidence_id for case in cases for evidence_id in case.evidence_ids}
+    return [item for item in evidence if item["evidence_id"] in cited]
 
 
 def _select_examples(examples, *, limit: int | None, selection: str):
