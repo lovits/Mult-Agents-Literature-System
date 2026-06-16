@@ -1,0 +1,48 @@
+dataset:
+  path: dataset/raw/literature/local_corpus/source
+top_k: 10
+output: outputs/metrics/e3_literature_rag.json
+report: reports/e3_literature_rag.md
+queries:
+  - query_id: q_multi_agent_review_generation
+    query: multi agent review generation scientific papers
+    aspect: review_generation
+    as_of_year: 2024
+    gold_title_keywords:
+      - MARG
+  - query_id: q_evidence_grounded_review
+    query: evidence grounded reviews with literature retrieval factreview
+    aspect: literature_grounding
+    as_of_year: 2026
+    gold_title_keywords:
+      - FactReview
+  - query_id: q_deepreview_feedback
+    query: deepreview improving llm based paper review with human feedback
+    aspect: reviewer_feedback
+    as_of_year: 2025
+    gold_title_keywords:
+      - DeepReview
+  - query_id: q_reviewagents_cot
+    query: reviewagents review chain of thought human ai paper review
+    aspect: multi_agent_review
+    as_of_year: 2025
+    gold_title_keywords:
+      - ReviewAgents
+  - query_id: q_substanreview
+    query: automatic analysis of substantiation peer review comments evidence
+    aspect: evidence_substantiation
+    as_of_year: 2023
+    gold_title_keywords:
+      - SubstanReview
+  - query_id: q_ragchecker
+    query: ragchecker fine grained framework diagnosing retrieval augmented generation
+    aspect: rag_evaluation
+    as_of_year: 2024
+    gold_title_keywords:
+      - RAGChecker
+  - query_id: q_novelty_assessment
+    query: verifiable scholarly novelty assessment paper claims related work
+    aspect: novelty_assessment
+    as_of_year: 2026
+    gold_title_keywords:
+      - OpenNovelty

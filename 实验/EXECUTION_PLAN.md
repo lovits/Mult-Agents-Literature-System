@@ -163,6 +163,14 @@ weakness validity，也不提供 covered/refuted Gold。
 
 主指标：Recall@10、Literature Relevance@10、Citation Validity Rate。
 
+执行结果：已完成。冻结本地文献库包含 33 篇 Markdown，32 篇具备完整 citation
+metadata。L0 无外部文献 Recall@10 为 0.0000；L1 Keyword、L2 Hybrid 和 L3
+Hybrid+metadata filter 的 Recall@10 均为 1.0000。L3 MRR 为 0.9048，高于
+L2 的 0.8929；Citation Validity Rate 为 1.0000；Future Leakage Count 从
+L2 的 20 降至 0。结论是：受控 Literature-RAG 在不调用在线检索的前提下能够
+为 novelty、related work 和 missing-baseline 类意见提供可复现外部证据，并
+通过 as-of-year 过滤避免未来文献泄漏。该阶段 Autoresearch 验收通过。
+
 ### 阶段 E：E5 Meta-Reviewer
 
 1. 实现证据感知去重和排序。
@@ -180,10 +188,11 @@ weakness validity，也不提供 covered/refuted Gold。
 
 ## 5. 当前立即执行项
 
-1. 建立 E3 Literature-RAG 本地文献 manifest 与 metadata 校验。
-2. 实现 Literature-RAG 的 Keyword、Hybrid 和 Metadata Filter baseline。
-3. 输出 Citation Validity、Recall@10 与未来文献泄漏日志。
-4. 将 E3 作为后续 E5/E6 外部比较意见的受控证据来源。
+1. 建立 E5 Meta-Reviewer 的可复现输入 manifest。
+2. 从 E4 adjudication、SubstanReview substantiation 与 E3 literature evidence
+   中抽取排序特征。
+3. 实现 severity-only、semantic-dedup 与 evidence-aware ranker 三个 baseline。
+4. 输出 Top-K Precision、Major Weakness Coverage、Redundancy Rate 与置信度分层。
 
 ## 6. 正式实验环境要求
 

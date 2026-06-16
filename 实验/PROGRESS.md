@@ -1,6 +1,6 @@
 # EviReview-Lite 实验进度
 
-更新时间：2026-06-15
+更新时间：2026-06-16
 
 ## 已完成
 
@@ -168,10 +168,26 @@
 - 该结果只作为 E4/E6 辅助 substantiation 证据，不作为 weakness validity 或
   covered/refuted Gold。
 
+### E3：Controlled Literature-RAG 基线
+
+- 将 `实验/dataset/raw/literature/local_corpus/source` 作为冻结本地文献快照；
+- 实现 Literature-RAG 文献 DAO，解析 Markdown 正文、标题、年份和来源路径；
+- 对缺失显式年份的本地冻结文献加入少量题名级年份补全规则，用于 citation metadata
+  有效性检查；
+- 固定 7 条与开题报告一致的查询：多智能体评审、证据化评审、DeepReview、
+  ReviewAgents、SubstanReview、RAGChecker 和 novelty assessment；
+- 比较 L0 无外部文献、L1 Keyword、L2 Hybrid 和 L3 Hybrid+metadata filter；
+- L0 Recall@10 为 0.0000，L1/L2/L3 Recall@10 均为 1.0000；
+- L3 MRR 为 0.9048，高于 L2 的 0.8929；
+- L3 Citation Validity Rate 为 1.0000；
+- L3 Future Leakage Count 为 0，低于 L2 的 20；
+- E3 Autoresearch 验收通过，后续 Literature-RAG 只用于 novelty、related work
+  和 missing-baseline 类型候选意见，不扩展为开放网络检索。
+
 ## 当前验证
 
 ```text
-pytest:                         72 passed, 1 design-document gate blocked by user-side files
+pytest:                         pending full rerun after E3
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -191,6 +207,7 @@ Autoresearch E4 Agnes calibration: passed
 Autoresearch E4 Agnes pilot20:    passed (experiment verdict: failed_with_metrics)
 Autoresearch E4 bounded optimization: passed (experiment verdict: failed_with_metrics)
 Autoresearch SubstanReview baselines: passed
+Autoresearch E3 Literature-RAG:       passed
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -207,8 +224,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 进入 E3 Controlled Literature-RAG；
-2. 固定本地文献快照与元数据字段；
-3. 实现 Keyword、Dense/lexical fallback、Hybrid 和 Metadata Filter baseline；
-4. 报告 Literature Recall@10、Citation Validity 和未来文献泄漏；
-5. 不在 CLAIMCHECK main 全集反复调参，不伪造 covered/refuted Gold。
+1. 进入 E5 Meta-Reviewer；
+2. 使用 E4 审计结果、SubstanReview substantiation 指标和 E3 外部文献证据作为排序特征；
+3. 比较 severity-only、semantic-dedup 和 evidence-aware Top-K ranker；
+4. 报告 Top-K Precision、Major Weakness Coverage、Redundancy Rate 和 Confidence 分层；
+5. 不新增人工复核节点，不把分类实验表述为自动录用/拒稿能力。
