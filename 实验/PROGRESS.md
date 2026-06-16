@@ -28,7 +28,7 @@
 ### Task 3 / E0：四层数据启动
 
 - 建立 `raw_primary`、`strict_evaluation`、`literature_corpus`、`unseen_demo` 四层数据注册表；
-- 下载 OpenReview ICLR 2025 seed：10 篇完整 PDF、41 条 Official Review；
+- 下载并扩展 OpenReview ICLR 2025 seed：30 篇完整 PDF、122 条 Official Review；
 - 下载 PeerQA：579 条标注 QA、24,265 条论文段落记录；
 - 下载 CLAIMCHECK：55 个 main source paper-review 对及相关工作数据；
 - 下载 ReviewCritique：100 篇人类评审论文、20 篇 LLM 评审论文；
@@ -202,7 +202,7 @@
 ### E6：端到端结构化评审报告组装
 
 - 实现 E6 结构化报告组装器，串联已冻结的 E2、E3、E4、E5 输出状态；
-- 使用 OpenReview ICLR 2025 seed 的 10 篇论文和 41 条 Official Review 作为报告组装输入；
+- 使用 OpenReview ICLR 2025 seed 的 30 篇论文和 122 条 Official Review 作为报告组装输入；
 - 保留 B1 review-derived Top-K 结构化报告作为可追踪报告上界；
 - 新增 B2 system-generated deterministic baseline，只读取论文标题、摘要、关键词和领域元数据；
 - B2 每条 Top-K 弱点保留 `candidate_id`、aspect、suggestion 和 paper content evidence id；
@@ -210,26 +210,26 @@
   从 0.0000 提升到 1.0000；
 - B2 Top-K Compliance 为 1.0000，Paper Report Coverage 为 1.0000；
 - B2 Review Leakage Free 为 true，没有读取 Official Review 生成候选弱点；
-- B2 Official Weakness Proxy Overlap@K 为 0.0531，说明本地启发式候选生成质量仍弱；
+- B2 Official Weakness Proxy Overlap@K 为 0.0504，说明本地启发式候选生成质量仍弱；
 - 新增 B3 cue-aware deterministic baseline，根据 title/abstract/keywords 中的任务线索选择候选模板；
 - B3 Trace Coverage、Top-K Compliance、Paper Report Coverage 均为 1.0000；
 - B3 Review Leakage Free 为 true，没有读取 Official Review 生成候选弱点；
-- B3 Official Weakness Proxy Overlap@K 为 0.0610，相对 B2 提升 0.0079；
+- B3 Official Weakness Proxy Overlap@K 为 0.0549，相对 B2 提升 0.0044；
 - B3 Aspect Diversity@K 为 1.0000，Redundancy Rate@K 为 0.0000；
 - Accept/Reject Decision 数量为 0，保持辅助评审定位；
 - arXiv unseen 5 篇论文仅生成 demo manifest，不报告 Gold 指标；
 - E6 Autoresearch 验收通过。该阶段证明端到端报告组装、系统候选生成入口、cue-aware 小幅优化、
-  追踪和边界控制成立，但不宣称候选弱点已经达到高质量自动评审水平。
+  追踪和边界控制在 30 篇扩展 seed 上仍成立，但不宣称候选弱点已经达到高质量自动评审水平。
 
 ## 当前验证
 
 ```text
-pytest:                         90 passed after E6-B3
+pytest:                         92 passed after OpenReview-30 expansion
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
 Local snapshots:                1
-OpenReview valid PDFs:          10 / 10
+OpenReview valid PDFs:          30 / 30
 arXiv unseen valid PDFs:         5 / 5
 Autoresearch dataset bootstrap: passed
 Autoresearch flat layout/task6: passed
@@ -254,7 +254,7 @@ pip check:                      no broken requirements
 ## 当前限制
 
 1. NLPEERv2 完整数据尚未获得访问授权，当前使用 OpenReview seed 作为原始完整论文主数据；
-2. OpenReview seed 当前只有 10 篇，用于打通流程；E1/E6 正式实验前需要按固定协议扩大；
+2. OpenReview seed 已从 10 篇扩大到 30 篇，仍属于 seed 级实验；E1/E6 正式实验前可继续按固定协议扩大；
 3. arXiv 未见集只用于最终演示，不能用于调参或 Gold 评价；
 4. E2 正式实验已完成，但 PeerQA 上的 P4 未达到预设 Recall 与 Evidence-Type Match 增益；
 5. PeerQA 映射后的证据类型以 paragraph 为主，不足以单独证明 evidence-type prior 有效。
@@ -263,8 +263,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 扩大 OpenReview seed，降低当前 10 篇样本规模限制；
-2. 将 B3 cue-aware deterministic candidates 与 provider-generated candidates 做同协议对照；
+1. 将 B3 cue-aware deterministic candidates 与 provider-generated candidates 做同协议对照；
+2. 继续扩大 OpenReview seed，但保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略；
 3. 单独报告候选生成的 proxy overlap、aspect 分布、重复率和失败样本；
 4. 保留 E6 的报告追踪、Top-K、zero accept/reject 和 unseen demo 验收边界；
 5. MiniMax 额度恢复后可复跑 provider-backed A0-A4，否则继续使用 Agnes/本地启发式做工程验证。

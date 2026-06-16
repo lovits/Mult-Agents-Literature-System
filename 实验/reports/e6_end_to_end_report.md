@@ -8,8 +8,8 @@
 
 ## Dataset
 
-- OpenReview papers: 10
-- OpenReview official reviews: 41
+- OpenReview papers: 30
+- OpenReview official reviews: 122
 - arXiv unseen demo papers: 5
 
 ## System Metrics
@@ -18,8 +18,8 @@
 |---|---:|---:|---:|---:|---:|---:|
 | B0_unstructured_review_dump | 1.0000 | 0.0000 | 0.0000 | 0 | n/a | 0.0000 |
 | B1_structured_evidence_report | 1.0000 | 1.0000 | 1.0000 | 0 | n/a | 0.0000 |
-| B2_system_generated_structured_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0531 |
-| B3_cue_aware_structured_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0610 |
+| B2_system_generated_structured_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0504 |
+| B3_cue_aware_structured_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0549 |
 
 ## Sample OpenReview Reports
 

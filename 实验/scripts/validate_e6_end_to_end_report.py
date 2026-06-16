@@ -32,8 +32,8 @@ def validate(metrics_path: Path | None = None) -> dict:
         },
         "dataset": {
             "passed": (
-                dataset["openreview_papers"] == 10
-                and dataset["openreview_reviews"] >= 40
+                dataset["openreview_papers"] >= 30
+                and dataset["openreview_reviews"] >= 120
                 and dataset["arxiv_unseen_papers"] == 5
             ),
             "openreview_papers": dataset["openreview_papers"],

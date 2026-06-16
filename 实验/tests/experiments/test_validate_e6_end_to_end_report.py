@@ -14,8 +14,8 @@ def test_validate_e6_end_to_end_report_accepts_traceable_report_result(tmp_path)
             "uses_component_outputs": ["E2", "E3", "E4", "E5"],
         },
         "dataset": {
-            "openreview_papers": 10,
-            "openreview_reviews": 41,
+            "openreview_papers": 30,
+            "openreview_reviews": 122,
             "arxiv_unseen_papers": 5,
         },
         "systems": {

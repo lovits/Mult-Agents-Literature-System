@@ -70,13 +70,17 @@ def validate() -> dict:
     checks = {
         "raw_primary": {
             "passed": (
-                openreview_manifest["papers"] == 10
-                and openreview_manifest["official_reviews"] >= 40
-                and len(valid_pdfs(RAW_ROOT / "primary/openreview_iclr2025_seed/pdfs")) == 10
+                openreview_manifest["papers"] >= 30
+                and openreview_manifest["official_reviews"] >= 120
+                and len(valid_pdfs(RAW_ROOT / "primary/openreview_iclr2025_seed/pdfs"))
+                >= openreview_manifest["papers"]
                 and (RAW_ROOT / "restricted/nlpeer").exists()
             ),
             "openreview_papers": openreview_manifest["papers"],
             "openreview_reviews": openreview_manifest["official_reviews"],
+            "openreview_valid_pdfs": len(
+                valid_pdfs(RAW_ROOT / "primary/openreview_iclr2025_seed/pdfs")
+            ),
             "nlpeer_status": "requires_application",
         },
         "strict_evaluation": {

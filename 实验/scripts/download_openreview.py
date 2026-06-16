@@ -22,6 +22,10 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def valid_pdf(path: Path) -> bool:
+    return path.exists() and path.stat().st_size > 1_000 and path.read_bytes()[:5] == b"%PDF-"
+
+
 def download_snapshot(venue: str, limit: int, output: Path, download_pdfs: bool) -> dict:
     client = httpx.Client(timeout=90, follow_redirects=True, headers={"User-Agent": "EviReview-Lite/0.1"})
     response = client.get(f"{API_BASE}/notes", params={"content.venueid": venue, "limit": limit})
@@ -48,12 +52,21 @@ def download_snapshot(venue: str, limit: int, output: Path, download_pdfs: bool)
         if download_pdfs:
             pdf_path = record["content"].get("pdf")
             if pdf_path:
-                pdf_response = client.get(f"{API_BASE}{pdf_path}")
-                pdf_response.raise_for_status()
                 local_pdf = output / "pdfs" / f"{note['id']}.pdf"
                 local_pdf.parent.mkdir(parents=True, exist_ok=True)
-                local_pdf.write_bytes(pdf_response.content)
-                record["local_pdf"] = str(local_pdf)
+                if valid_pdf(local_pdf):
+                    record["local_pdf"] = str(local_pdf)
+                    record["pdf_status"] = "cached"
+                else:
+                    try:
+                        pdf_response = client.get(f"{API_BASE}{pdf_path}")
+                        pdf_response.raise_for_status()
+                        local_pdf.write_bytes(pdf_response.content)
+                        record["local_pdf"] = str(local_pdf)
+                        record["pdf_status"] = "downloaded"
+                    except httpx.HTTPError as exc:
+                        record["pdf_status"] = "failed"
+                        record["pdf_error"] = str(exc)
         records.append(record)
     snapshot_path = output / "submissions_with_reviews.json"
     write_json(snapshot_path, records)
@@ -64,6 +77,10 @@ def download_snapshot(venue: str, limit: int, output: Path, download_pdfs: bool)
         "requested_limit": limit,
         "papers": len(records),
         "official_reviews": sum(len(record["reviews"]) for record in records),
+        "valid_pdfs": sum(
+            valid_pdf(output / "pdfs" / f"{record['paper_id']}.pdf") for record in records
+        ),
+        "pdf_failures": sum(record.get("pdf_status") == "failed" for record in records),
         "snapshot_sha256": sha256(snapshot_path),
     }
     write_json(output / "manifest.json", manifest)
