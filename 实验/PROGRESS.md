@@ -184,10 +184,25 @@
 - E3 Autoresearch 验收通过，后续 Literature-RAG 只用于 novelty、related work
   和 missing-baseline 类型候选意见，不扩展为开放网络检索。
 
+### E5：Meta-Reviewer Ranker 基线
+
+- 实现 Meta-Reviewer Top-K 排序实验，输入为 CLAIMCHECK main 的 155 条候选弱点；
+- 严格避免读取 E4 smoke trace 中由 gold agreement 派生的 severity 字段；
+- 使用非标注文本特征、E4 audit trace、SubstanReview substantiation prior 和 E3
+  Literature-RAG 边界作为排序信号；
+- 比较 R0 Input Order、R1 Text Severity、R2 Text Dedup 和 R3 Evidence-aware；
+- Top-K Agreement Precision：R0/R1/R2/R3 均为 0.6543，R3 未带来排序精度提升；
+- Keep Coverage@K：四个系统均为 0.8298；
+- Redundancy Rate：四个系统均为 0.0000，当前 CLAIMCHECK main 同论文候选重复度较低；
+- Confidence Brier：R0 为 0.6003，R3 为 0.2515，说明证据感知特征改善了置信度分层，
+  但略弱于 R1/R2 的 0.2400；
+- E5 Autoresearch 验收通过，结论是 ranker 工程链路和边界成立，但 evidence-aware
+  排序暂未证明优于文本启发式排序。
+
 ## 当前验证
 
 ```text
-pytest:                         pending full rerun after E3
+pytest:                         pending full rerun after E5
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -208,6 +223,7 @@ Autoresearch E4 Agnes pilot20:    passed (experiment verdict: failed_with_metric
 Autoresearch E4 bounded optimization: passed (experiment verdict: failed_with_metrics)
 Autoresearch SubstanReview baselines: passed
 Autoresearch E3 Literature-RAG:       passed
+Autoresearch E5 Meta-Reviewer:       passed
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -224,8 +240,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 进入 E5 Meta-Reviewer；
-2. 使用 E4 审计结果、SubstanReview substantiation 指标和 E3 外部文献证据作为排序特征；
-3. 比较 severity-only、semantic-dedup 和 evidence-aware Top-K ranker；
-4. 报告 Top-K Precision、Major Weakness Coverage、Redundancy Rate 和 Confidence 分层；
-5. 不新增人工复核节点，不把分类实验表述为自动录用/拒稿能力。
+1. 进入 E6 端到端结构化评审报告；
+2. 串联 E2 Paper-RAG、E3 Literature-RAG、E4 双向审计和 E5 Meta-Reviewer；
+3. 在 OpenReview seed 上生成可追溯 Top-K 自动评审报告；
+4. 在 arXiv unseen 上做未见论文演示，只报告运行完整性和证据追踪，不报告 Gold 指标；
+5. 保持“辅助评审系统”定位，不新增自动接收/拒稿决策。
