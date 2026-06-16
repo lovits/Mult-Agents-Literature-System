@@ -83,4 +83,17 @@ export EVIREVIEW_LLM_API_KEY=...
 但仍有 2 次 Provider/解析失败。按冻结协议停止扩大，下一步转入 SubstanReview
 证据充分性辅助实验。
 
+SubstanReview 辅助评价：
+
+```bash
+../.venv/bin/python scripts/run_substanreview_baselines.py \
+  --config conf/experiments/substanreview_baselines.yaml
+../.venv/bin/python scripts/validate_substanreview_baselines.py
+```
+
+当前官方 test split 上 Claim Evidence Coverage 为 `0.4155`，最强 baseline 为
+`S0_proximity`，Supported F1 为 `0.5925`，Evidence Hit@1 为 `0.6680`。该结果
+只作为 review claim-evidence substantiation 辅助评价，不作为 weakness validity
+或 covered/refuted Gold。
+
 详细数据说明见 `dataset/README.md`，当前进度见 `PROGRESS.md`。

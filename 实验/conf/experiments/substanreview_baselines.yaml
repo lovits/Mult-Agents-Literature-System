@@ -1,0 +1,11 @@
+dataset:
+  name: substanreview
+  path: dataset/raw/evaluation/substanreview
+
+protocol:
+  development_split: train
+  evaluation_split: test
+  gold_claim_spans: true
+  auxiliary_only: true
+
+output: outputs/metrics/substanreview_baselines.json

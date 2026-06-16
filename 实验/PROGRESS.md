@@ -153,10 +153,25 @@
 - 零失败成功标准未通过，verdict 为 `failed_with_metrics`；
 - 按冻结协议停止扩大至 155 条，不进行第二轮 Prompt 调参。
 
+### SubstanReview：证据充分性辅助评价
+
+- 实现 SubstanReview JSONL 适配器，保留官方 `train=440/test=110` 切分；
+- 将 `Eval_*` 映射为 review claim，将对应 `Jus_*` 映射为 evidence span；
+- 明确 `Major_claim` 无直接 evidence relation；
+- 建立 S0 Proximity、S1 Lexical 和 S2 Hybrid 三个 evidence-linkage baseline；
+- 仅在 train split 上选择 threshold，在 test split 上报告指标；
+- Test split 含 580 个 claim、241 个 supported claim 和 106 条 claim-bearing
+  review；
+- Claim Evidence Coverage 为 0.4155，Substantiated Claim Rate 为 0.4251；
+- 最强系统为 S0 Proximity，Supported F1 为 0.5925，Evidence Hit@1 为
+  0.6680，Evidence Token-F1 为 0.5030；
+- 该结果只作为 E4/E6 辅助 substantiation 证据，不作为 weakness validity 或
+  covered/refuted Gold。
+
 ## 当前验证
 
 ```text
-pytest:                         65 passed, 1 design-document gate blocked by user-side files
+pytest:                         72 passed, 1 design-document gate blocked by user-side files
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -175,6 +190,7 @@ Autoresearch E4 MiniMax calibration: pending_quota
 Autoresearch E4 Agnes calibration: passed
 Autoresearch E4 Agnes pilot20:    passed (experiment verdict: failed_with_metrics)
 Autoresearch E4 bounded optimization: passed (experiment verdict: failed_with_metrics)
+Autoresearch SubstanReview baselines: passed
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -191,8 +207,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 使用 SubstanReview 作为证据充分性辅助评价；
-2. 实现 Claim Evidence Coverage 与 Substantiated Claim Rate baseline；
-3. 将 E4 负结果与 SubstanReview 辅助结果分开报告；
-4. 进入 E3 Literature-RAG，不在 CLAIMCHECK main 全集反复调参；
-5. 不伪造 covered/refuted Gold。
+1. 进入 E3 Controlled Literature-RAG；
+2. 固定本地文献快照与元数据字段；
+3. 实现 Keyword、Dense/lexical fallback、Hybrid 和 Metadata Filter baseline；
+4. 报告 Literature Recall@10、Citation Validity 和未来文献泄漏；
+5. 不在 CLAIMCHECK main 全集反复调参，不伪造 covered/refuted Gold。
