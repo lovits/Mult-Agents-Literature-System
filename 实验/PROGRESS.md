@@ -211,15 +211,20 @@
 - B2 Top-K Compliance 为 1.0000，Paper Report Coverage 为 1.0000；
 - B2 Review Leakage Free 为 true，没有读取 Official Review 生成候选弱点；
 - B2 Official Weakness Proxy Overlap@K 为 0.0531，说明本地启发式候选生成质量仍弱；
+- 新增 B3 cue-aware deterministic baseline，根据 title/abstract/keywords 中的任务线索选择候选模板；
+- B3 Trace Coverage、Top-K Compliance、Paper Report Coverage 均为 1.0000；
+- B3 Review Leakage Free 为 true，没有读取 Official Review 生成候选弱点；
+- B3 Official Weakness Proxy Overlap@K 为 0.0610，相对 B2 提升 0.0079；
+- B3 Aspect Diversity@K 为 1.0000，Redundancy Rate@K 为 0.0000；
 - Accept/Reject Decision 数量为 0，保持辅助评审定位；
 - arXiv unseen 5 篇论文仅生成 demo manifest，不报告 Gold 指标；
-- E6 Autoresearch 验收通过。该阶段证明端到端报告组装、系统候选生成入口、追踪和边界控制成立，
-  但不宣称候选弱点已经达到高质量自动评审水平。
+- E6 Autoresearch 验收通过。该阶段证明端到端报告组装、系统候选生成入口、cue-aware 小幅优化、
+  追踪和边界控制成立，但不宣称候选弱点已经达到高质量自动评审水平。
 
 ## 当前验证
 
 ```text
-pytest:                         89 passed after E6-B2
+pytest:                         90 passed after E6-B3
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -241,7 +246,7 @@ Autoresearch E4 bounded optimization: passed (experiment verdict: failed_with_me
 Autoresearch SubstanReview baselines: passed
 Autoresearch E3 Literature-RAG:       passed
 Autoresearch E5 Meta-Reviewer:       passed
-Autoresearch E6 End-to-End Report:   passed (B2 system-generated baseline)
+Autoresearch E6 End-to-End Report:   passed (B3 cue-aware baseline)
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -259,7 +264,7 @@ pip check:                      no broken requirements
 按照关键路径继续：
 
 1. 扩大 OpenReview seed，降低当前 10 篇样本规模限制；
-2. 将 B2 deterministic candidates 与 provider-generated candidates 做同协议对照；
+2. 将 B3 cue-aware deterministic candidates 与 provider-generated candidates 做同协议对照；
 3. 单独报告候选生成的 proxy overlap、aspect 分布、重复率和失败样本；
 4. 保留 E6 的报告追踪、Top-K、zero accept/reject 和 unseen demo 验收边界；
 5. MiniMax 额度恢复后可复跑 provider-backed A0-A4，否则继续使用 Agnes/本地启发式做工程验证。

@@ -1,7 +1,9 @@
 import re
 
 from evireview.agent.candidate_generator import (
+    CUE_AWARE_GENERATOR_NAME,
     GENERATOR_NAME,
+    generate_cue_aware_candidate_weaknesses,
     generate_candidate_weaknesses,
 )
 
@@ -15,9 +17,11 @@ def run_end_to_end_report_baseline(
 ) -> dict:
     reports = [_review_derived_report(submission, top_k) for submission in submissions]
     generated_reports = [_system_generated_report(submission, top_k) for submission in submissions]
+    cue_aware_reports = [_cue_aware_report(submission, top_k) for submission in submissions]
     baseline = _baseline_metrics(submissions)
     structured = _structured_metrics(reports, top_k)
     generated = _system_generated_metrics(generated_reports, submissions, top_k)
+    cue_aware = _cue_aware_metrics(cue_aware_reports, submissions, generated, top_k)
     return {
         "protocol": {
             "name": "e6-end-to-end-structured-report-v1",
@@ -25,6 +29,7 @@ def run_end_to_end_report_baseline(
             "accept_reject_decision": False,
             "arxiv_unseen_gold_metrics": False,
             "system_candidate_generation": GENERATOR_NAME,
+            "cue_aware_candidate_generation": CUE_AWARE_GENERATOR_NAME,
             "uses_component_outputs": ["E2", "E3", "E4", "E5"],
             "component_status": {
                 name.upper(): metrics.get("status", "available")
@@ -40,9 +45,11 @@ def run_end_to_end_report_baseline(
             "B0_unstructured_review_dump": baseline,
             "B1_structured_evidence_report": structured,
             "B2_system_generated_structured_report": generated,
+            "B3_cue_aware_structured_report": cue_aware,
         },
         "openreview_reports": reports,
         "system_generated_reports": generated_reports,
+        "cue_aware_reports": cue_aware_reports,
         "unseen_demo": {
             "papers": len(arxiv_papers),
             "gold_metrics_reported": False,
@@ -91,6 +98,24 @@ def _system_generated_report(submission: dict, top_k: int) -> dict:
         "decision": "not_applicable",
         "trace_policy": "paper_content_to_system_generated_topk",
         "candidate_source": GENERATOR_NAME,
+        "top_weaknesses": top,
+        "candidate_count": len(candidates),
+        "review_count": len(submission.get("reviews", [])),
+    }
+
+
+def _cue_aware_report(submission: dict, top_k: int) -> dict:
+    paper_id = submission["paper_id"]
+    content = submission.get("content", {})
+    candidates = generate_cue_aware_candidate_weaknesses(submission)
+    top = candidates[:top_k]
+    return {
+        "paper_id": paper_id,
+        "title": content.get("title", paper_id),
+        "summary": _summary(content),
+        "decision": "not_applicable",
+        "trace_policy": "paper_content_to_cue_aware_system_generated_topk",
+        "candidate_source": CUE_AWARE_GENERATOR_NAME,
         "top_weaknesses": top,
         "candidate_count": len(candidates),
         "review_count": len(submission.get("reviews", [])),
@@ -220,6 +245,22 @@ def _system_generated_metrics(
         reports,
         submissions,
     )
+    metrics["aspect_diversity@k"] = _aspect_diversity(reports)
+    metrics["redundancy_rate@k"] = _redundancy_rate(reports)
+    return metrics
+
+
+def _cue_aware_metrics(
+    reports: list[dict],
+    submissions: list[dict],
+    baseline_metrics: dict,
+    top_k: int,
+) -> dict:
+    metrics = _system_generated_metrics(reports, submissions, top_k)
+    metrics["official_weakness_proxy_overlap_delta_vs_b2"] = (
+        metrics["official_weakness_proxy_overlap@k"]
+        - baseline_metrics["official_weakness_proxy_overlap@k"]
+    )
     return metrics
 
 
@@ -256,6 +297,29 @@ def _official_weakness_texts(submission: dict) -> list[str]:
         content = review.get("content", {})
         texts.extend(_split_weaknesses(content.get("weaknesses", "")))
     return texts
+
+
+def _aspect_diversity(reports: list[dict]) -> float:
+    diversities = []
+    for report in reports:
+        items = report["top_weaknesses"]
+        if not items:
+            continue
+        diversities.append(len({item.get("aspect") for item in items}) / len(items))
+    return sum(diversities) / len(diversities) if diversities else 0.0
+
+
+def _redundancy_rate(reports: list[dict]) -> float:
+    pairs = 0
+    redundant = 0
+    for report in reports:
+        items = report["top_weaknesses"]
+        for index, left in enumerate(items):
+            for right in items[index + 1 :]:
+                pairs += 1
+                if _max_token_overlap(left["weakness"], [right["weakness"]]) >= 0.5:
+                    redundant += 1
+    return redundant / pairs if pairs else 0.0
 
 
 def _max_token_overlap(candidate: str, references: list[str]) -> float:

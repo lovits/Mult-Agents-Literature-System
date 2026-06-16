@@ -134,3 +134,48 @@ def test_e6_system_generated_candidates_are_leakage_free_and_traceable():
     assert report["candidate_source"] == "system_deterministic_baseline_v1"
     assert all(item["source_review_id"] is None for item in report["top_weaknesses"])
     assert all(item["evidence_ids"] for item in report["top_weaknesses"])
+
+
+def test_e6_cue_aware_candidates_improve_proxy_overlap_without_review_leakage():
+    submissions = [
+        {
+            "paper_id": "paper-1",
+            "content": {
+                "title": "A Benchmark for LLM Judge Evaluation",
+                "abstract": (
+                    "We introduce a benchmark for evaluating large language models with automatic judges. "
+                    "The benchmark includes prompts, model comparisons, and annotations."
+                ),
+                "keywords": ["benchmark", "LLM judge", "annotation"],
+                "primary_area": "natural language processing",
+            },
+            "reviews": [
+                {
+                    "id": "review-1",
+                    "content": {
+                        "weaknesses": (
+                            "The benchmark needs stronger human annotation details. "
+                            "The LLM-as-a-judge evaluation should be validated against human judgment."
+                        )
+                    },
+                }
+            ],
+        }
+    ]
+
+    result = run_end_to_end_report_baseline(
+        submissions,
+        [],
+        {"e2": {}, "e3": {}, "e4": {}, "e5": {}},
+        top_k=3,
+    )
+
+    b2 = result["systems"]["B2_system_generated_structured_report"]
+    b3 = result["systems"]["B3_cue_aware_structured_report"]
+    report = result["cue_aware_reports"][0]
+    assert b3["trace_coverage"] == 1.0
+    assert b3["review_leakage_free"] is True
+    assert b3["official_weakness_proxy_overlap@k"] > b2["official_weakness_proxy_overlap@k"]
+    assert report["candidate_source"] == "system_cue_aware_baseline_v2"
+    assert any("human annotation" in item["weakness"].lower() for item in report["top_weaknesses"])
+    assert all(item["source_review_id"] is None for item in report["top_weaknesses"])

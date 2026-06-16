@@ -19,6 +19,7 @@
 | B0_unstructured_review_dump | 1.0000 | 0.0000 | 0.0000 | 0 | n/a | 0.0000 |
 | B1_structured_evidence_report | 1.0000 | 1.0000 | 1.0000 | 0 | n/a | 0.0000 |
 | B2_system_generated_structured_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0531 |
+| B3_cue_aware_structured_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0610 |
 
 ## Sample OpenReview Reports
 
@@ -66,6 +67,33 @@
 - `odjMSBSWRt:system:0` aspect=experiment, score=0.4500, evidence=odjMSBSWRt:content:title, odjMSBSWRt:content:abstract, odjMSBSWRt:content:keywords, odjMSBSWRt:content:primary_area: The empirical evaluation may need stronger ablation analysis to isolate which component drives the reported gains.
 - `odjMSBSWRt:system:1` aspect=missing_baseline, score=0.4500, evidence=odjMSBSWRt:content:title, odjMSBSWRt:content:abstract, odjMSBSWRt:content:keywords, odjMSBSWRt:content:primary_area: The baseline comparison may be incomplete or insufficiently justified for the claimed contribution.
 - `odjMSBSWRt:system:2` aspect=reproducibility, score=0.4500, evidence=odjMSBSWRt:content:title, odjMSBSWRt:content:abstract, odjMSBSWRt:content:keywords, odjMSBSWRt:content:primary_area: The implementation and reproduction details may not be specific enough for independent verification.
+
+
+## Sample Cue-Aware System Reports
+
+### PwxYoMvmvy: Beyond Random Masking: When Dropout meets Graph Convolutional Networks
+
+- Candidate source: `system_cue_aware_baseline_v2`
+
+- `PwxYoMvmvy:cue:5` aspect=novelty, score=0.9000, evidence=PwxYoMvmvy:content:title, PwxYoMvmvy:content:abstract, PwxYoMvmvy:content:keywords, PwxYoMvmvy:content:primary_area: The novelty claim may need clearer positioning against existing work in the same problem setting.
+- `PwxYoMvmvy:cue:0` aspect=experiment, score=0.7700, evidence=PwxYoMvmvy:content:title, PwxYoMvmvy:content:abstract, PwxYoMvmvy:content:keywords, PwxYoMvmvy:content:primary_area: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
+- `PwxYoMvmvy:cue:1` aspect=missing_baseline, score=0.7700, evidence=PwxYoMvmvy:content:title, PwxYoMvmvy:content:abstract, PwxYoMvmvy:content:keywords, PwxYoMvmvy:content:primary_area: The baseline comparison may be incomplete, especially against closely related recent or task-specific methods.
+
+### ONfWFluZBI: Self-supervised contrastive learning performs non-linear system identification
+
+- Candidate source: `system_cue_aware_baseline_v2`
+
+- `ONfWFluZBI:cue:21` aspect=method, score=1.2300, evidence=ONfWFluZBI:content:title, ONfWFluZBI:content:abstract, ONfWFluZBI:content:keywords, ONfWFluZBI:content:primary_area: The method may depend on strong observability, control-input, or system-identification assumptions.
+- `ONfWFluZBI:cue:4` aspect=related_work, score=0.6200, evidence=ONfWFluZBI:content:title, ONfWFluZBI:content:abstract, ONfWFluZBI:content:keywords, ONfWFluZBI:content:primary_area: The related work comparison may need a sharper discussion of overlapping prior approaches.
+- `ONfWFluZBI:cue:5` aspect=novelty, score=0.4600, evidence=ONfWFluZBI:content:title, ONfWFluZBI:content:abstract, ONfWFluZBI:content:keywords, ONfWFluZBI:content:primary_area: The novelty claim may need clearer positioning against existing work in the same problem setting.
+
+### odjMSBSWRt: DarkBench: Benchmarking Dark Patterns in Large Language Models
+
+- Candidate source: `system_cue_aware_baseline_v2`
+
+- `odjMSBSWRt:cue:0` aspect=experiment, score=0.6100, evidence=odjMSBSWRt:content:title, odjMSBSWRt:content:abstract, odjMSBSWRt:content:keywords, odjMSBSWRt:content:primary_area: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
+- `odjMSBSWRt:cue:1` aspect=missing_baseline, score=0.6100, evidence=odjMSBSWRt:content:title, odjMSBSWRt:content:abstract, odjMSBSWRt:content:keywords, odjMSBSWRt:content:primary_area: The baseline comparison may be incomplete, especially against closely related recent or task-specific methods.
+- `odjMSBSWRt:cue:5` aspect=novelty, score=0.5000, evidence=odjMSBSWRt:content:title, odjMSBSWRt:content:abstract, odjMSBSWRt:content:keywords, odjMSBSWRt:content:primary_area: The novelty claim may need clearer positioning against existing work in the same problem setting.
 
 ## arXiv Unseen Demo Boundary
 

@@ -94,6 +94,18 @@ def _render_report(result: dict) -> str:
                 f"evidence={', '.join(item['evidence_ids'])}: {item['weakness']}"
             )
         lines.append("")
+    lines.extend(["", "## Sample Cue-Aware System Reports", ""])
+    for report in result["cue_aware_reports"][:3]:
+        lines.append(f"### {report['paper_id']}: {report['title']}")
+        lines.append("")
+        lines.append(f"- Candidate source: `{report['candidate_source']}`")
+        lines.append("")
+        for item in report["top_weaknesses"]:
+            lines.append(
+                f"- `{item['candidate_id']}` aspect={item['aspect']}, score={item['rank_score']:.4f}, "
+                f"evidence={', '.join(item['evidence_ids'])}: {item['weakness']}"
+            )
+        lines.append("")
     lines.extend(
         [
             "## arXiv Unseen Demo Boundary",
@@ -115,7 +127,7 @@ def main() -> None:
     compact = {
         key: value
         for key, value in result.items()
-        if key not in {"openreview_reports", "system_generated_reports"}
+        if key not in {"openreview_reports", "system_generated_reports", "cue_aware_reports"}
     }
     print(json.dumps(compact, ensure_ascii=False, indent=2))
 
