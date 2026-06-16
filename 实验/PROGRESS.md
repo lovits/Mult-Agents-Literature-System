@@ -203,20 +203,23 @@
 
 - 实现 E6 结构化报告组装器，串联已冻结的 E2、E3、E4、E5 输出状态；
 - 使用 OpenReview ICLR 2025 seed 的 10 篇论文和 41 条 Official Review 作为报告组装输入；
-- 从官方评审 weakness 字段抽取候选弱点，按非标注文本特征生成 Top-K 结构化报告；
-- 每条 Top-K 弱点保留 `candidate_id`、`source_review_id` 和 evidence id；
-- 与 B0 Unstructured Review Dump 对比，B1 Structured Evidence Report 的 Trace Coverage
+- 保留 B1 review-derived Top-K 结构化报告作为可追踪报告上界；
+- 新增 B2 system-generated deterministic baseline，只读取论文标题、摘要、关键词和领域元数据；
+- B2 每条 Top-K 弱点保留 `candidate_id`、aspect、suggestion 和 paper content evidence id；
+- 与 B0 Unstructured Review Dump 对比，B2 System-Generated Structured Report 的 Trace Coverage
   从 0.0000 提升到 1.0000；
-- B1 Top-K Compliance 为 1.0000，Paper Report Coverage 为 1.0000；
+- B2 Top-K Compliance 为 1.0000，Paper Report Coverage 为 1.0000；
+- B2 Review Leakage Free 为 true，没有读取 Official Review 生成候选弱点；
+- B2 Official Weakness Proxy Overlap@K 为 0.0531，说明本地启发式候选生成质量仍弱；
 - Accept/Reject Decision 数量为 0，保持辅助评审定位；
 - arXiv unseen 5 篇论文仅生成 demo manifest，不报告 Gold 指标；
-- E6 Autoresearch 验收通过。该阶段证明端到端报告组装、追踪和边界控制成立，但候选弱点仍来自
-  Official Review，不宣称模型候选生成质量。
+- E6 Autoresearch 验收通过。该阶段证明端到端报告组装、系统候选生成入口、追踪和边界控制成立，
+  但不宣称候选弱点已经达到高质量自动评审水平。
 
 ## 当前验证
 
 ```text
-pytest:                         88 passed after E6
+pytest:                         89 passed after E6-B2
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -238,7 +241,7 @@ Autoresearch E4 bounded optimization: passed (experiment verdict: failed_with_me
 Autoresearch SubstanReview baselines: passed
 Autoresearch E3 Literature-RAG:       passed
 Autoresearch E5 Meta-Reviewer:       passed
-Autoresearch E6 End-to-End Report:   passed
+Autoresearch E6 End-to-End Report:   passed (B2 system-generated baseline)
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -255,8 +258,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 扩大 OpenReview seed 或接入稳定 provider 生成候选弱点；
-2. 将 E6 当前 review-derived candidates 替换为 system-generated candidates；
-3. 保留 E6 的报告追踪、Top-K 和 unseen demo 验收边界；
-4. 对候选生成质量单独设置 baseline，不用官方评审弱点冒充模型生成结果；
+1. 扩大 OpenReview seed，降低当前 10 篇样本规模限制；
+2. 将 B2 deterministic candidates 与 provider-generated candidates 做同协议对照；
+3. 单独报告候选生成的 proxy overlap、aspect 分布、重复率和失败样本；
+4. 保留 E6 的报告追踪、Top-K、zero accept/reject 和 unseen demo 验收边界；
 5. MiniMax 额度恢复后可复跑 provider-backed A0-A4，否则继续使用 Agnes/本地启发式做工程验证。

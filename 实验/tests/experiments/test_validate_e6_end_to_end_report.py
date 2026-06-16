@@ -9,6 +9,7 @@ def test_validate_e6_end_to_end_report_accepts_traceable_report_result(tmp_path)
             "name": "e6-end-to-end-structured-report-v1",
             "accept_reject_decision": False,
             "arxiv_unseen_gold_metrics": False,
+            "system_candidate_generation": "system_deterministic_baseline_v1",
             "uses_component_outputs": ["E2", "E3", "E4", "E5"],
         },
         "dataset": {
@@ -29,6 +30,14 @@ def test_validate_e6_end_to_end_report_accepts_traceable_report_result(tmp_path)
                 "top_k_compliance": 1.0,
                 "accept_reject_decisions": 0,
             },
+            "B2_system_generated_structured_report": {
+                "paper_report_coverage": 1.0,
+                "trace_coverage": 1.0,
+                "top_k_compliance": 1.0,
+                "accept_reject_decisions": 0,
+                "review_leakage_free": True,
+                "official_weakness_proxy_overlap@k": 0.25,
+            },
         },
         "unseen_demo": {"papers": 5, "gold_metrics_reported": False},
     }
@@ -39,4 +48,5 @@ def test_validate_e6_end_to_end_report_accepts_traceable_report_result(tmp_path)
 
     assert result["status"] == "passed"
     assert result["checks"]["traceability_improvement"]["passed"] is True
+    assert result["checks"]["system_generated_candidates"]["passed"] is True
     assert result["checks"]["unseen_boundary"]["passed"] is True

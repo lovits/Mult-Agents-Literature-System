@@ -1,5 +1,9 @@
 import re
-from collections import defaultdict
+
+from evireview.agent.candidate_generator import (
+    GENERATOR_NAME,
+    generate_candidate_weaknesses,
+)
 
 
 def run_end_to_end_report_baseline(
@@ -9,15 +13,18 @@ def run_end_to_end_report_baseline(
     *,
     top_k: int = 3,
 ) -> dict:
-    reports = [_structured_report(submission, top_k) for submission in submissions]
+    reports = [_review_derived_report(submission, top_k) for submission in submissions]
+    generated_reports = [_system_generated_report(submission, top_k) for submission in submissions]
     baseline = _baseline_metrics(submissions)
     structured = _structured_metrics(reports, top_k)
+    generated = _system_generated_metrics(generated_reports, submissions, top_k)
     return {
         "protocol": {
             "name": "e6-end-to-end-structured-report-v1",
             "top_k": top_k,
             "accept_reject_decision": False,
             "arxiv_unseen_gold_metrics": False,
+            "system_candidate_generation": GENERATOR_NAME,
             "uses_component_outputs": ["E2", "E3", "E4", "E5"],
             "component_status": {
                 name.upper(): metrics.get("status", "available")
@@ -32,8 +39,10 @@ def run_end_to_end_report_baseline(
         "systems": {
             "B0_unstructured_review_dump": baseline,
             "B1_structured_evidence_report": structured,
+            "B2_system_generated_structured_report": generated,
         },
         "openreview_reports": reports,
+        "system_generated_reports": generated_reports,
         "unseen_demo": {
             "papers": len(arxiv_papers),
             "gold_metrics_reported": False,
@@ -51,10 +60,10 @@ def run_end_to_end_report_baseline(
     }
 
 
-def _structured_report(submission: dict, top_k: int) -> dict:
+def _review_derived_report(submission: dict, top_k: int) -> dict:
     paper_id = submission["paper_id"]
     content = submission.get("content", {})
-    candidates = _candidate_weaknesses(submission)
+    candidates = _review_candidate_weaknesses(submission)
     ranked = sorted(candidates, key=lambda item: (-item["rank_score"], item["candidate_id"]))
     top = ranked[:top_k]
     return {
@@ -63,13 +72,32 @@ def _structured_report(submission: dict, top_k: int) -> dict:
         "summary": _summary(content),
         "decision": "not_applicable",
         "trace_policy": "review_weakness_to_structured_topk_with_source_review_ids",
+        "candidate_source": "official_review_weakness_upper_bound",
         "top_weaknesses": top,
         "candidate_count": len(candidates),
         "review_count": len(submission.get("reviews", [])),
     }
 
 
-def _candidate_weaknesses(submission: dict) -> list[dict]:
+def _system_generated_report(submission: dict, top_k: int) -> dict:
+    paper_id = submission["paper_id"]
+    content = submission.get("content", {})
+    candidates = generate_candidate_weaknesses(submission)
+    top = candidates[:top_k]
+    return {
+        "paper_id": paper_id,
+        "title": content.get("title", paper_id),
+        "summary": _summary(content),
+        "decision": "not_applicable",
+        "trace_policy": "paper_content_to_system_generated_topk",
+        "candidate_source": GENERATOR_NAME,
+        "top_weaknesses": top,
+        "candidate_count": len(candidates),
+        "review_count": len(submission.get("reviews", [])),
+    }
+
+
+def _review_candidate_weaknesses(submission: dict) -> list[dict]:
     paper_id = submission["paper_id"]
     candidates = []
     for review_index, review in enumerate(submission.get("reviews", [])):
@@ -181,10 +209,91 @@ def _structured_metrics(reports: list[dict], top_k: int) -> dict:
     }
 
 
+def _system_generated_metrics(
+    reports: list[dict],
+    submissions: list[dict],
+    top_k: int,
+) -> dict:
+    metrics = _structured_metrics(reports, top_k)
+    metrics["review_leakage_free"] = _review_leakage_free(reports)
+    metrics["official_weakness_proxy_overlap@k"] = _official_weakness_proxy_overlap(
+        reports,
+        submissions,
+    )
+    return metrics
+
+
 def _trace_coverage(reports: list[dict]) -> float:
     items = [item for report in reports for item in report["top_weaknesses"]]
     return sum(bool(item.get("evidence_ids")) for item in items) / len(items) if items else 0.0
 
 
+def _review_leakage_free(reports: list[dict]) -> bool:
+    for report in reports:
+        for item in report["top_weaknesses"]:
+            if item.get("source_review_id") is not None:
+                return False
+            if "review" in " ".join(item.get("evidence_ids", [])).lower():
+                return False
+    return True
+
+
+def _official_weakness_proxy_overlap(reports: list[dict], submissions: list[dict]) -> float:
+    gold_by_paper = {
+        submission["paper_id"]: _official_weakness_texts(submission) for submission in submissions
+    }
+    scored = []
+    for report in reports:
+        gold_texts = gold_by_paper.get(report["paper_id"], [])
+        for item in report["top_weaknesses"]:
+            scored.append(_max_token_overlap(item["weakness"], gold_texts))
+    return sum(scored) / len(scored) if scored else 0.0
+
+
+def _official_weakness_texts(submission: dict) -> list[str]:
+    texts = []
+    for review in submission.get("reviews", []):
+        content = review.get("content", {})
+        texts.extend(_split_weaknesses(content.get("weaknesses", "")))
+    return texts
+
+
+def _max_token_overlap(candidate: str, references: list[str]) -> float:
+    candidate_tokens = set(_tokens(candidate)) - _STOPWORDS
+    if not candidate_tokens:
+        return 0.0
+    best = 0.0
+    for reference in references:
+        reference_tokens = set(_tokens(reference)) - _STOPWORDS
+        if not reference_tokens:
+            continue
+        best = max(best, len(candidate_tokens & reference_tokens) / len(candidate_tokens | reference_tokens))
+    return best
+
+
 def _tokens(text: str) -> list[str]:
     return re.findall(r"[a-z0-9]+", text.lower())
+
+
+_STOPWORDS = {
+    "a",
+    "an",
+    "and",
+    "are",
+    "as",
+    "be",
+    "by",
+    "for",
+    "from",
+    "in",
+    "is",
+    "it",
+    "may",
+    "of",
+    "or",
+    "that",
+    "the",
+    "this",
+    "to",
+    "with",
+}

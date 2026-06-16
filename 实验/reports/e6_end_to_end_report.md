@@ -14,10 +14,11 @@
 
 ## System Metrics
 
-| System | Paper Report Coverage | Trace Coverage | Top-K Compliance | Accept/Reject Decisions |
-|---|---:|---:|---:|---:|
-| B0_unstructured_review_dump | 1.0000 | 0.0000 | 0.0000 | 0 |
-| B1_structured_evidence_report | 1.0000 | 1.0000 | 1.0000 | 0 |
+| System | Paper Report Coverage | Trace Coverage | Top-K Compliance | Accept/Reject Decisions | Review Leakage Free | Official Weakness Proxy Overlap@K |
+|---|---:|---:|---:|---:|---:|---:|
+| B0_unstructured_review_dump | 1.0000 | 0.0000 | 0.0000 | 0 | n/a | 0.0000 |
+| B1_structured_evidence_report | 1.0000 | 1.0000 | 1.0000 | 0 | n/a | 0.0000 |
+| B2_system_generated_structured_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0531 |
 
 ## Sample OpenReview Reports
 
@@ -38,6 +39,33 @@
 - `odjMSBSWRt:MtBx6vnXOc:8` score=1.3000, evidence=odjMSBSWRt:MtBx6vnXOc:weaknesses: This is largely analogous to W2. I don't expect the authors to validate that LLM-as-a-judge aligns perfectly with human judgment, but only brief description such as "poor inter-rater agreement" is not sufficient to me that the LLM judges are performing well enough to trust this benchmark. It is also unclear to me how the different model judges (e.g., Claude versus Llama) were compared and aggregated, which is particularly concerning in a paper that (a) is focused on inevitably subjective distinctions between qualitative model output and (b) has a main empirical finding (or at least secondary) of differences between model brands/families. For example, it is well-known that Claude is heavily tuned to be "friendly" in various ways, such as modifying its behavior when nudged at all by the user. Some people like this. Some prefer ChatGPT as straightforward with less of that noise. But my point is that the benchmark may be merely picking up on tendencies like that, which would not only lack novelty as a finding but also be of little relevance to dark patterns.
 - `odjMSBSWRt:WHyOKuCKRF:2` score=0.7800, evidence=odjMSBSWRt:WHyOKuCKRF:weaknesses: There is no evidence of stability for the benchmark findings across variations in prompt designs. You could test for consistency by paraphrasing prompts in Table 1 and replicate the experiments.
 - `odjMSBSWRt:WHyOKuCKRF:1` score=0.7520, evidence=odjMSBSWRt:WHyOKuCKRF:weaknesses: The paper lacks detailed information on human annotations, particularly regarding the annotators' demographics or level of expertise. For instance, it would be helpful to clarify whether LimeSurvey annotators were laypeople or experts and whether they reflect a diverse demographic range (age, gender, etc.) similar to typical LLM users.
+
+
+## Sample System-Generated Reports
+
+### PwxYoMvmvy: Beyond Random Masking: When Dropout meets Graph Convolutional Networks
+
+- Candidate source: `system_deterministic_baseline_v1`
+
+- `PwxYoMvmvy:system:0` aspect=experiment, score=0.4500, evidence=PwxYoMvmvy:content:title, PwxYoMvmvy:content:abstract, PwxYoMvmvy:content:keywords, PwxYoMvmvy:content:primary_area: The empirical evaluation may need stronger ablation analysis to isolate which component drives the reported gains.
+- `PwxYoMvmvy:system:1` aspect=missing_baseline, score=0.4500, evidence=PwxYoMvmvy:content:title, PwxYoMvmvy:content:abstract, PwxYoMvmvy:content:keywords, PwxYoMvmvy:content:primary_area: The baseline comparison may be incomplete or insufficiently justified for the claimed contribution.
+- `PwxYoMvmvy:system:2` aspect=reproducibility, score=0.4500, evidence=PwxYoMvmvy:content:title, PwxYoMvmvy:content:abstract, PwxYoMvmvy:content:keywords, PwxYoMvmvy:content:primary_area: The implementation and reproduction details may not be specific enough for independent verification.
+
+### ONfWFluZBI: Self-supervised contrastive learning performs non-linear system identification
+
+- Candidate source: `system_deterministic_baseline_v1`
+
+- `ONfWFluZBI:system:0` aspect=experiment, score=0.4500, evidence=ONfWFluZBI:content:title, ONfWFluZBI:content:abstract, ONfWFluZBI:content:keywords, ONfWFluZBI:content:primary_area: The empirical evaluation may need stronger ablation analysis to isolate which component drives the reported gains.
+- `ONfWFluZBI:system:1` aspect=missing_baseline, score=0.4500, evidence=ONfWFluZBI:content:title, ONfWFluZBI:content:abstract, ONfWFluZBI:content:keywords, ONfWFluZBI:content:primary_area: The baseline comparison may be incomplete or insufficiently justified for the claimed contribution.
+- `ONfWFluZBI:system:2` aspect=reproducibility, score=0.4500, evidence=ONfWFluZBI:content:title, ONfWFluZBI:content:abstract, ONfWFluZBI:content:keywords, ONfWFluZBI:content:primary_area: The implementation and reproduction details may not be specific enough for independent verification.
+
+### odjMSBSWRt: DarkBench: Benchmarking Dark Patterns in Large Language Models
+
+- Candidate source: `system_deterministic_baseline_v1`
+
+- `odjMSBSWRt:system:0` aspect=experiment, score=0.4500, evidence=odjMSBSWRt:content:title, odjMSBSWRt:content:abstract, odjMSBSWRt:content:keywords, odjMSBSWRt:content:primary_area: The empirical evaluation may need stronger ablation analysis to isolate which component drives the reported gains.
+- `odjMSBSWRt:system:1` aspect=missing_baseline, score=0.4500, evidence=odjMSBSWRt:content:title, odjMSBSWRt:content:abstract, odjMSBSWRt:content:keywords, odjMSBSWRt:content:primary_area: The baseline comparison may be incomplete or insufficiently justified for the claimed contribution.
+- `odjMSBSWRt:system:2` aspect=reproducibility, score=0.4500, evidence=odjMSBSWRt:content:title, odjMSBSWRt:content:abstract, odjMSBSWRt:content:keywords, odjMSBSWRt:content:primary_area: The implementation and reproduction details may not be specific enough for independent verification.
 
 ## arXiv Unseen Demo Boundary
 

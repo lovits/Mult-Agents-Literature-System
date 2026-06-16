@@ -57,17 +57,19 @@ def _render_report(result: dict) -> str:
         "",
         "## System Metrics",
         "",
-        "| System | Paper Report Coverage | Trace Coverage | Top-K Compliance | Accept/Reject Decisions |",
-        "|---|---:|---:|---:|---:|",
+        "| System | Paper Report Coverage | Trace Coverage | Top-K Compliance | Accept/Reject Decisions | Review Leakage Free | Official Weakness Proxy Overlap@K |",
+        "|---|---:|---:|---:|---:|---:|---:|",
     ]
     for name, metrics in result["systems"].items():
         lines.append(
-            "| {name} | {coverage:.4f} | {trace:.4f} | {topk:.4f} | {decisions} |".format(
+            "| {name} | {coverage:.4f} | {trace:.4f} | {topk:.4f} | {decisions} | {leakage} | {overlap:.4f} |".format(
                 name=name,
                 coverage=metrics["paper_report_coverage"],
                 trace=metrics["trace_coverage"],
                 topk=metrics["top_k_compliance"],
                 decisions=metrics["accept_reject_decisions"],
+                leakage=str(metrics.get("review_leakage_free", "n/a")),
+                overlap=metrics.get("official_weakness_proxy_overlap@k", 0.0),
             )
         )
     lines.extend(["", "## Sample OpenReview Reports", ""])
@@ -77,6 +79,18 @@ def _render_report(result: dict) -> str:
         for item in report["top_weaknesses"]:
             lines.append(
                 f"- `{item['candidate_id']}` score={item['rank_score']:.4f}, "
+                f"evidence={', '.join(item['evidence_ids'])}: {item['weakness']}"
+            )
+        lines.append("")
+    lines.extend(["", "## Sample System-Generated Reports", ""])
+    for report in result["system_generated_reports"][:3]:
+        lines.append(f"### {report['paper_id']}: {report['title']}")
+        lines.append("")
+        lines.append(f"- Candidate source: `{report['candidate_source']}`")
+        lines.append("")
+        for item in report["top_weaknesses"]:
+            lines.append(
+                f"- `{item['candidate_id']}` aspect={item['aspect']}, score={item['rank_score']:.4f}, "
                 f"evidence={', '.join(item['evidence_ids'])}: {item['weakness']}"
             )
         lines.append("")
@@ -98,7 +112,12 @@ def main() -> None:
     parser.add_argument("--config", default="conf/experiments/e6_end_to_end_report.yaml")
     args = parser.parse_args()
     result = run(ROOT / args.config)
-    print(json.dumps({key: value for key, value in result.items() if key != "openreview_reports"}, ensure_ascii=False, indent=2))
+    compact = {
+        key: value
+        for key, value in result.items()
+        if key not in {"openreview_reports", "system_generated_reports"}
+    }
+    print(json.dumps(compact, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

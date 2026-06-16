@@ -89,3 +89,48 @@ def test_e6_structured_report_improves_traceability_over_unstructured_baseline()
     structured = result["systems"]["B1_structured_evidence_report"]
     assert structured["trace_coverage"] > baseline["trace_coverage"]
     assert structured["top_k_compliance"] == 1.0
+
+
+def test_e6_system_generated_candidates_are_leakage_free_and_traceable():
+    submissions = [
+        {
+            "paper_id": "paper-1",
+            "content": {
+                "title": "Paper",
+                "abstract": (
+                    "We propose a retrieval augmented review system for scientific papers. "
+                    "The method compares against baselines and includes an ablation study."
+                ),
+                "keywords": ["retrieval", "review", "agent"],
+                "primary_area": "natural language processing",
+            },
+            "reviews": [
+                {
+                    "id": "review-1",
+                    "content": {
+                        "weaknesses": (
+                            "The ablation study is limited. "
+                            "The baseline comparison should be clearer."
+                        )
+                    },
+                }
+            ],
+        }
+    ]
+
+    result = run_end_to_end_report_baseline(
+        submissions,
+        [],
+        {"e2": {}, "e3": {}, "e4": {}, "e5": {}},
+        top_k=3,
+    )
+
+    generated = result["systems"]["B2_system_generated_structured_report"]
+    report = result["system_generated_reports"][0]
+    assert generated["trace_coverage"] == 1.0
+    assert generated["review_leakage_free"] is True
+    assert generated["official_weakness_proxy_overlap@k"] > 0.0
+    assert report["trace_policy"] == "paper_content_to_system_generated_topk"
+    assert report["candidate_source"] == "system_deterministic_baseline_v1"
+    assert all(item["source_review_id"] is None for item in report["top_weaknesses"])
+    assert all(item["evidence_ids"] for item in report["top_weaknesses"])
