@@ -1,0 +1,10 @@
+openreview_path: dataset/raw/primary/openreview_iclr2025_seed
+unseen_path: dataset/raw/demo/arxiv_unseen_2026-06-13
+component_metrics:
+  e2: outputs/metrics/e2_paper_rag_formal.json
+  e3: outputs/metrics/e3_literature_rag.json
+  e4: outputs/metrics/e4_audit_protocol_smoke.json
+  e5: outputs/metrics/e5_meta_reviewer.json
+top_k: 3
+output: outputs/metrics/e6_end_to_end_report.json
+report: reports/e6_end_to_end_report.md
