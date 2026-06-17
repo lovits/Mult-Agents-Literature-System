@@ -23,7 +23,8 @@
 │   ├── evaluation/         # 实验指标
 │   ├── models/             # 领域协议
 │   ├── rag/                # Paper-RAG 与后续 Literature-RAG
-│   └── service/            # 用例编排与论文处理服务
+│   ├── service/            # 论文解析、数据处理等服务
+│   └── system/             # Agent-RAG 自动评审系统编排层
 └── tests/
     ├── unit/               # 组件行为测试
     ├── experiments/        # 数据与实验验收
@@ -43,3 +44,20 @@
 ## 当前边界
 
 当前阶段只实现后端实验，不包含前端、部署脚本、第三方模型训练代码或其他旧实验实现。
+
+## 后端 Agent-RAG 系统层
+
+`src/evireview/system/` 是当前实验代码的系统入口，不直接承载指标优化。它把已有
+组件编排为一条可复现后端链路：
+
+1. `paper_adapter.py`：将 OpenReview/arXiv-like 输入转换为 `PaperDocument` 和
+   `EvidenceBlock`；
+2. `planner.py`：为每条候选弱点生成 section-aware、evidence-type-aware 的
+   `QueryPlan`；
+3. `review_pipeline.py`：串联 candidate generation、Paper-RAG、support/refutation
+   双向审计、adjudication 和 report assembly；
+4. `ranker.py`：实现 evidence-aware Meta-Reviewer Top-K 去重、排序与置信度标注；
+5. `schemas.py` / `config.py`：定义系统级请求、结果、trace 和配置。
+
+该层不输出论文接收/拒稿决策，不包含 human-check 路由，也不包含前端代码。它用于
+后续 E6 端到端实验和 provider 模型接入前的稳定系统框架。

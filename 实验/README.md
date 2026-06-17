@@ -16,7 +16,18 @@
 ../.venv/bin/python scripts/validate_peerqa_e2_foundation.py
 ../.venv/bin/python scripts/run_e2.py --config conf/experiments/e2_paper_rag.yaml
 ../.venv/bin/python scripts/validate_execution_stage_a_b.py
+../.venv/bin/python scripts/validate_agent_rag_system_framework.py
 ```
+
+Agent-RAG 后端系统框架验收：
+
+```bash
+../.venv/bin/python scripts/validate_agent_rag_system_framework.py
+```
+
+该验收只检查候选弱点生成、Query Planner、Paper-RAG、双向审计、自动裁决、
+Meta-Reviewer Top-K 排序和报告组装链路是否完整；不做指标优化，也不宣称相对
+baseline 已经提升。
 
 正式 E2 使用独立 Python 3.12 环境：
 
@@ -127,5 +138,15 @@ export EVIREVIEW_LLM_MODEL=deepseek-v4-flash-free
 provider output coverage 为 `0.0000`，provider_failures 为 `8`，P1 相对 B3/B2
 failure slice 均未提升。该结果说明当前 provider 配置不能替代 B3，需要先处理限流、
 JSON 输出稳定性或更换更稳定模型。
+
+后端 Agent-RAG 系统框架：
+
+```bash
+../.venv/bin/python scripts/validate_agent_rag_system_framework.py
+```
+
+当前框架验收通过：单篇论文输入可自动完成论文分块、候选弱点生成、结构与证据类型
+感知 Paper-RAG、support/refutation 双向证据审计、adjudication、Meta-Reviewer
+Top-K 排序和结构化报告组装。该阶段是框架搭建，不报告新的 baseline 提升。
 
 详细数据说明见 `dataset/README.md`，当前进度见 `PROGRESS.md`。

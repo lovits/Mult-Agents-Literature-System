@@ -249,10 +249,24 @@
 - 结论：当前 DeepSeek provider 配置不能替代 B3 cue-aware deterministic candidates，后续应先修复
   provider 稳定性、限流和 JSON 输出格式，再重新做小样本对照。
 
+### Agent-RAG 后端系统框架
+
+- 新增 `src/evireview/system/` 系统编排层，把已有候选生成、Paper-RAG、双向证据审计、
+  Adjudicator 与 Meta-Reviewer Ranker 组合成单篇论文自动评审链路；
+- 新增 Query Planner，按 weakness aspect 固定声明 expected sections 与 expected evidence types；
+- 新增 Paper Adapter，将 OpenReview/arXiv-like 输入转换为 `PaperDocument` 与 `EvidenceBlock`；
+- 新增 Evidence-aware Meta-Reviewer 系统层 ranker，输出 Top-K 弱点、证据 ID、rank score 与
+  confidence；
+- 新增 `scripts/validate_agent_rag_system_framework.py`，输出
+  `.omx/specs/autoresearch-agent-rag-system-framework/result.json`；
+- 验收样例完成 9 个阶段、6 条候选审计轨迹和 3 条 Top-K 弱点；
+- 系统 trace 显示 `paper_decision_produced=false`、`human_check_route=false`、`frontend_included=false`；
+- 本阶段不进行实验指标优化，不宣称相对 B2/B3 或 provider baseline 有提升。
+
 ## 当前验证
 
 ```text
-pytest:                         100 passed after E6-P
+pytest:                         103 passed after Agent-RAG framework
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -277,6 +291,7 @@ Autoresearch E5 Meta-Reviewer:       passed
 Autoresearch E6 End-to-End Report:   passed (B3 cue-aware baseline)
 Autoresearch E6 Candidate Diagnostics: passed
 Autoresearch E6 Provider Candidates: passed (experiment verdict: failed_with_metrics)
+Autoresearch Agent-RAG system framework: passed
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -293,8 +308,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 暂停扩大当前 DeepSeek provider 方案，先修复 provider 输出稳定性或更换更稳定的 OpenAI-compatible 模型；
-2. 继续扩大 OpenReview seed，但保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略；
-3. 单独报告候选生成的 proxy overlap、aspect 分布、重复率和失败样本；
-4. 保留 E6 的报告追踪、Top-K、zero accept/reject 和 unseen demo 验收边界；
-5. MiniMax 额度恢复后可复跑 provider-backed A0-A4，否则继续使用 Agnes/本地启发式做工程验证。
+1. 先把 E6 runner 改为复用 `evireview.system.AgentRAGReviewPipeline`，减少脚本级重复编排；
+2. 暂停扩大当前 DeepSeek provider 方案，先修复 provider 输出稳定性或更换更稳定的 OpenAI-compatible 模型；
+3. 继续扩大 OpenReview seed，但保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略；
+4. 单独报告候选生成的 proxy overlap、aspect 分布、重复率和失败样本；
+5. 保留 E6 的报告追踪、Top-K、zero paper-level decision 和 unseen demo 验收边界。

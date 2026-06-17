@@ -73,6 +73,7 @@ def validate() -> dict:
         "models",
         "rag",
         "service",
+        "system",
     }
     source_layers = {
         path.name

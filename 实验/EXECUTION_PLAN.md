@@ -231,10 +231,14 @@ Provider 输出覆盖率为 0.0000，provider_failures 为 8，P1 Proxy Overlap@
 
 ## 5. 当前立即执行项
 
-1. 暂停扩大当前 DeepSeek provider 方案；先做 provider 输出稳定性修复或更换更稳定的 OpenAI-compatible 模型。
-2. 继续扩大 OpenReview seed，但必须保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略。
-3. 为候选生成继续报告 Official Weakness Proxy Overlap@K、aspect 分布、重复率和失败样本。
-4. 保持 E6 validator 要求 trace coverage、Top-K compliance、zero accept/reject 和 unseen no-Gold。
+1. 先完成并稳定 `src/evireview/system/` Agent-RAG 后端系统框架，确保单篇论文可自动完成
+   candidate generation、Query Planner、Paper-RAG、support/refutation 双向审计、
+   adjudication、Meta-Reviewer Top-K 排序和 report assembly。
+2. 将 E6 runner 逐步改为复用系统层 pipeline，而不是在每个实验脚本里重复编排。
+3. 暂停扩大当前 DeepSeek provider 方案；先做 provider 输出稳定性修复或更换更稳定的 OpenAI-compatible 模型。
+4. 继续扩大 OpenReview seed，但必须保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略。
+5. 为候选生成继续报告 Official Weakness Proxy Overlap@K、aspect 分布、重复率和失败样本。
+6. 保持 E6 validator 要求 trace coverage、Top-K compliance、zero paper-level decision 和 unseen no-Gold。
 
 ## 6. 正式实验环境要求
 
