@@ -216,10 +216,17 @@
 - B3 Review Leakage Free 为 true，没有读取 Official Review 生成候选弱点；
 - B3 Official Weakness Proxy Overlap@K 为 0.0549，相对 B2 提升 0.0044；
 - B3 Aspect Diversity@K 为 1.0000，Redundancy Rate@K 为 0.0000；
+- 新增 B4 Agent-RAG Pipeline Report，复用 `evireview.system.AgentRAGReviewPipeline` 完成候选生成、
+  Query Planner、Paper-RAG、support/refutation 双向审计、Adjudication 和 Meta-Reviewer Top-K；
+- B4 Paper Report Coverage、Trace Coverage、Top-K Compliance、Pipeline Stage Coverage 和
+  Support/Refutation Trace Coverage 均为 1.0000；
+- B4 Official Weakness Proxy Overlap@K 为 0.0559，相对 B3 提升 0.0010；
+- B4 Aspect Diversity@K 为 0.9111，低于 B3 的 1.0000，说明完整审计排序会牺牲少量 aspect 多样性；
 - Accept/Reject Decision 数量为 0，保持辅助评审定位；
 - arXiv unseen 5 篇论文仅生成 demo manifest，不报告 Gold 指标；
 - E6 Autoresearch 验收通过。该阶段证明端到端报告组装、系统候选生成入口、cue-aware 小幅优化、
-  追踪和边界控制在 30 篇扩展 seed 上仍成立，但不宣称候选弱点已经达到高质量自动评审水平。
+  Agent-RAG 系统编排、追踪和边界控制在 30 篇扩展 seed 上成立；B4 相对 B3 只有极小 proxy
+  提升，不能宣称候选弱点已经达到高质量自动评审水平。
 
 ### E6-D：候选生成诊断与失败样本切片
 
@@ -261,12 +268,13 @@
   `.omx/specs/autoresearch-agent-rag-system-framework/result.json`；
 - 验收样例完成 9 个阶段、6 条候选审计轨迹和 3 条 Top-K 弱点；
 - 系统 trace 显示 `paper_decision_produced=false`、`human_check_route=false`、`frontend_included=false`；
-- 本阶段不进行实验指标优化，不宣称相对 B2/B3 或 provider baseline 有提升。
+- 该系统层已接入 E6 作为 B4，在 OpenReview 30 篇 seed 上完成完整 Agent-RAG 链路验收；
+- B4 相对 B3 的 proxy overlap delta 为 `+0.0010`，属于很小的结构性提升，主要价值是链路闭合。
 
 ## 当前验证
 
 ```text
-pytest:                         103 passed after Agent-RAG framework
+pytest:                         104 passed after E6 Agent-RAG pipeline integration
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -288,7 +296,7 @@ Autoresearch E4 bounded optimization: passed (experiment verdict: failed_with_me
 Autoresearch SubstanReview baselines: passed
 Autoresearch E3 Literature-RAG:       passed
 Autoresearch E5 Meta-Reviewer:       passed
-Autoresearch E6 End-to-End Report:   passed (B3 cue-aware baseline)
+Autoresearch E6 End-to-End Report:   passed (B4 Agent-RAG pipeline; +0.0010 vs B3 proxy)
 Autoresearch E6 Candidate Diagnostics: passed
 Autoresearch E6 Provider Candidates: passed (experiment verdict: failed_with_metrics)
 Autoresearch Agent-RAG system framework: passed
@@ -308,8 +316,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 先把 E6 runner 改为复用 `evireview.system.AgentRAGReviewPipeline`，减少脚本级重复编排；
+1. 基于 B4 的失败/低分样本做 bounded optimizer，只允许改候选过滤或 ranker 权重，不继续扩大 provider 调参；
 2. 暂停扩大当前 DeepSeek provider 方案，先修复 provider 输出稳定性或更换更稳定的 OpenAI-compatible 模型；
 3. 继续扩大 OpenReview seed，但保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略；
-4. 单独报告候选生成的 proxy overlap、aspect 分布、重复率和失败样本；
+4. 单独报告 B4 的 proxy overlap、aspect 分布、重复率、support/refutation 分布和失败样本；
 5. 保留 E6 的报告追踪、Top-K、zero paper-level decision 和 unseen demo 验收边界。

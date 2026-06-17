@@ -179,3 +179,52 @@ def test_e6_cue_aware_candidates_improve_proxy_overlap_without_review_leakage():
     assert report["candidate_source"] == "system_cue_aware_baseline_v2"
     assert any("human annotation" in item["weakness"].lower() for item in report["top_weaknesses"])
     assert all(item["source_review_id"] is None for item in report["top_weaknesses"])
+
+
+def test_e6_agent_rag_pipeline_runs_full_audit_chain():
+    submissions = [
+        {
+            "paper_id": "paper-1",
+            "content": {
+                "title": "Agentic Retrieval for Scientific Review",
+                "abstract": (
+                    "We propose an agentic retrieval system for paper review. "
+                    "The evaluation includes baselines, ablations, and implementation details."
+                ),
+                "keywords": ["agent", "retrieval", "review"],
+                "method": "The method uses a planner, Paper-RAG, support agent, refutation agent, and adjudicator.",
+                "experiments": "Table 1 reports baseline comparison and main results.",
+                "ablation": "Table 2 reports retriever and ranker ablations.",
+                "related_work": "Related work covers automatic review systems and evidence-grounded RAG.",
+            },
+            "reviews": [
+                {
+                    "id": "review-1",
+                    "content": {
+                        "weaknesses": (
+                            "The agent ablation should isolate the retrieval module. "
+                            "The baseline comparison needs more detail."
+                        )
+                    },
+                }
+            ],
+        }
+    ]
+
+    result = run_end_to_end_report_baseline(
+        submissions,
+        [],
+        {"e2": {}, "e3": {}, "e4": {}, "e5": {}},
+        top_k=3,
+    )
+
+    metrics = result["systems"]["B4_agent_rag_pipeline_report"]
+    report = result["agent_rag_reports"][0]
+    assert metrics["trace_coverage"] == 1.0
+    assert metrics["pipeline_stage_coverage"] == 1.0
+    assert metrics["support_refutation_trace_coverage"] == 1.0
+    assert metrics["paper_decision_produced"] is False
+    assert report["candidate_source"] == "agent_rag_review_pipeline_v1"
+    assert report["trace_policy"] == "paper_content_to_agent_rag_pipeline_topk"
+    assert all(item["source_review_id"] is None for item in report["top_weaknesses"])
+    assert all("audit_decision" in item for item in report["top_weaknesses"])

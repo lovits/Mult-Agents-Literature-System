@@ -6,6 +6,11 @@ from evireview.agent.candidate_generator import (
     generate_cue_aware_candidate_weaknesses,
     generate_candidate_weaknesses,
 )
+from evireview.system import AgentRAGReviewPipeline, ReviewPipelineRequest
+from evireview.system.config import AgentRAGSystemConfig
+
+
+AGENT_RAG_PIPELINE_NAME = "agent_rag_review_pipeline_v1"
 
 
 def run_end_to_end_report_baseline(
@@ -18,10 +23,12 @@ def run_end_to_end_report_baseline(
     reports = [_review_derived_report(submission, top_k) for submission in submissions]
     generated_reports = [_system_generated_report(submission, top_k) for submission in submissions]
     cue_aware_reports = [_cue_aware_report(submission, top_k) for submission in submissions]
+    agent_rag_reports = _agent_rag_pipeline_reports(submissions, top_k)
     baseline = _baseline_metrics(submissions)
     structured = _structured_metrics(reports, top_k)
     generated = _system_generated_metrics(generated_reports, submissions, top_k)
     cue_aware = _cue_aware_metrics(cue_aware_reports, submissions, generated, top_k)
+    agent_rag = _agent_rag_metrics(agent_rag_reports, submissions, cue_aware, top_k)
     return {
         "protocol": {
             "name": "e6-end-to-end-structured-report-v1",
@@ -30,6 +37,7 @@ def run_end_to_end_report_baseline(
             "arxiv_unseen_gold_metrics": False,
             "system_candidate_generation": GENERATOR_NAME,
             "cue_aware_candidate_generation": CUE_AWARE_GENERATOR_NAME,
+            "agent_rag_pipeline": AGENT_RAG_PIPELINE_NAME,
             "uses_component_outputs": ["E2", "E3", "E4", "E5"],
             "component_status": {
                 name.upper(): metrics.get("status", "available")
@@ -46,10 +54,12 @@ def run_end_to_end_report_baseline(
             "B1_structured_evidence_report": structured,
             "B2_system_generated_structured_report": generated,
             "B3_cue_aware_structured_report": cue_aware,
+            "B4_agent_rag_pipeline_report": agent_rag,
         },
         "openreview_reports": reports,
         "system_generated_reports": generated_reports,
         "cue_aware_reports": cue_aware_reports,
+        "agent_rag_reports": agent_rag_reports,
         "unseen_demo": {
             "papers": len(arxiv_papers),
             "gold_metrics_reported": False,
@@ -119,6 +129,61 @@ def _cue_aware_report(submission: dict, top_k: int) -> dict:
         "top_weaknesses": top,
         "candidate_count": len(candidates),
         "review_count": len(submission.get("reviews", [])),
+    }
+
+
+def _agent_rag_pipeline_reports(submissions: list[dict], top_k: int) -> list[dict]:
+    pipeline = AgentRAGReviewPipeline(
+        AgentRAGSystemConfig(
+            max_candidates=max(6, top_k),
+            top_k_weaknesses=top_k,
+        )
+    )
+    return [_agent_rag_pipeline_report(pipeline, submission, top_k) for submission in submissions]
+
+
+def _agent_rag_pipeline_report(
+    pipeline: AgentRAGReviewPipeline,
+    submission: dict,
+    top_k: int,
+) -> dict:
+    paper_id = submission["paper_id"]
+    content = submission.get("content", {})
+    result = pipeline.run(ReviewPipelineRequest(submission=submission))
+    traces = {trace.candidate.candidate_id: trace for trace in result.traces}
+    top = []
+    for item in result.top_weaknesses[:top_k]:
+        trace = traces[item.candidate_id]
+        top.append(
+            {
+                "candidate_id": item.candidate_id,
+                "paper_id": paper_id,
+                "aspect": trace.candidate.aspect,
+                "weakness": item.weakness,
+                "severity": trace.candidate.severity,
+                "suggestion": trace.candidate.suggestion,
+                "source_agent": trace.candidate.source_agent,
+                "evidence_ids": item.evidence_ids,
+                "confidence": item.confidence,
+                "rank_score": item.rank_score,
+                "source_review_id": None,
+                "audit_decision": trace.adjudication.decision,
+                "support_strength": trace.support.strength,
+                "refutation_strength": trace.refutation.strength,
+            }
+        )
+    return {
+        "paper_id": paper_id,
+        "title": content.get("title", paper_id),
+        "summary": result.report.summary,
+        "decision": "not_applicable",
+        "trace_policy": "paper_content_to_agent_rag_pipeline_topk",
+        "candidate_source": AGENT_RAG_PIPELINE_NAME,
+        "top_weaknesses": top,
+        "candidate_count": len(result.traces),
+        "review_count": len(submission.get("reviews", [])),
+        "pipeline_stages": result.stages,
+        "system_trace": result.system_trace,
     }
 
 
@@ -264,6 +329,26 @@ def _cue_aware_metrics(
     return metrics
 
 
+def _agent_rag_metrics(
+    reports: list[dict],
+    submissions: list[dict],
+    baseline_metrics: dict,
+    top_k: int,
+) -> dict:
+    metrics = _system_generated_metrics(reports, submissions, top_k)
+    metrics["official_weakness_proxy_overlap_delta_vs_b3"] = (
+        metrics["official_weakness_proxy_overlap@k"]
+        - baseline_metrics["official_weakness_proxy_overlap@k"]
+    )
+    metrics["pipeline_stage_coverage"] = _pipeline_stage_coverage(reports)
+    metrics["support_refutation_trace_coverage"] = _support_refutation_trace_coverage(reports)
+    metrics["paper_decision_produced"] = any(
+        report.get("system_trace", {}).get("paper_decision_produced", False)
+        for report in reports
+    )
+    return metrics
+
+
 def _trace_coverage(reports: list[dict]) -> float:
     items = [item for report in reports for item in report["top_weaknesses"]]
     return sum(bool(item.get("evidence_ids")) for item in items) / len(items) if items else 0.0
@@ -320,6 +405,35 @@ def _redundancy_rate(reports: list[dict]) -> float:
                 if _max_token_overlap(left["weakness"], [right["weakness"]]) >= 0.5:
                     redundant += 1
     return redundant / pairs if pairs else 0.0
+
+
+def _pipeline_stage_coverage(reports: list[dict]) -> float:
+    required = {
+        "paper_parse_index",
+        "candidate_generation",
+        "query_planning",
+        "paper_rag",
+        "literature_rag_boundary",
+        "support_refutation_audit",
+        "adjudication",
+        "meta_reviewer_ranking",
+        "report_assembly",
+    }
+    if not reports:
+        return 0.0
+    return sum(required.issubset(set(report.get("pipeline_stages", []))) for report in reports) / len(reports)
+
+
+def _support_refutation_trace_coverage(reports: list[dict]) -> float:
+    items = [item for report in reports for item in report["top_weaknesses"]]
+    if not items:
+        return 0.0
+    return sum(
+        "support_strength" in item
+        and "refutation_strength" in item
+        and item.get("audit_decision") in {"keep", "rewrite", "reject", "uncertain"}
+        for item in items
+    ) / len(items)
 
 
 def _max_token_overlap(candidate: str, references: list[str]) -> float:

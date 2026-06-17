@@ -18,6 +18,7 @@ def validate(metrics_path: Path | None = None) -> dict:
     structured = result["systems"]["B1_structured_evidence_report"]
     generated = result["systems"]["B2_system_generated_structured_report"]
     cue_aware = result["systems"]["B3_cue_aware_structured_report"]
+    agent_rag = result["systems"]["B4_agent_rag_pipeline_report"]
     checks = {
         "protocol": {
             "passed": (
@@ -26,6 +27,7 @@ def validate(metrics_path: Path | None = None) -> dict:
                 and protocol["arxiv_unseen_gold_metrics"] is False
                 and protocol["system_candidate_generation"] == "system_deterministic_baseline_v1"
                 and protocol["cue_aware_candidate_generation"] == "system_cue_aware_baseline_v2"
+                and protocol["agent_rag_pipeline"] == "agent_rag_review_pipeline_v1"
                 and set(protocol["uses_component_outputs"]) == {"E2", "E3", "E4", "E5"}
             ),
             "protocol": protocol["name"],
@@ -50,10 +52,12 @@ def validate(metrics_path: Path | None = None) -> dict:
                 structured["top_k_compliance"] == 1.0
                 and generated["top_k_compliance"] == 1.0
                 and cue_aware["top_k_compliance"] == 1.0
+                and agent_rag["top_k_compliance"] == 1.0
             ),
             "review_derived_top_k_compliance": structured["top_k_compliance"],
             "system_generated_top_k_compliance": generated["top_k_compliance"],
             "cue_aware_top_k_compliance": cue_aware["top_k_compliance"],
+            "agent_rag_top_k_compliance": agent_rag["top_k_compliance"],
         },
         "system_generated_candidates": {
             "passed": (
@@ -94,10 +98,36 @@ def validate(metrics_path: Path | None = None) -> dict:
                 structured["accept_reject_decisions"] == 0
                 and generated["accept_reject_decisions"] == 0
                 and cue_aware["accept_reject_decisions"] == 0
+                and agent_rag["accept_reject_decisions"] == 0
+                and agent_rag["paper_decision_produced"] is False
             ),
             "review_derived_accept_reject_decisions": structured["accept_reject_decisions"],
             "system_generated_accept_reject_decisions": generated["accept_reject_decisions"],
             "cue_aware_accept_reject_decisions": cue_aware["accept_reject_decisions"],
+            "agent_rag_accept_reject_decisions": agent_rag["accept_reject_decisions"],
+            "agent_rag_paper_decision_produced": agent_rag["paper_decision_produced"],
+        },
+        "agent_rag_pipeline": {
+            "passed": (
+                agent_rag["paper_report_coverage"] == 1.0
+                and agent_rag["trace_coverage"] == 1.0
+                and agent_rag["review_leakage_free"] is True
+                and agent_rag["pipeline_stage_coverage"] == 1.0
+                and agent_rag["support_refutation_trace_coverage"] == 1.0
+            ),
+            "paper_report_coverage": agent_rag["paper_report_coverage"],
+            "trace_coverage": agent_rag["trace_coverage"],
+            "review_leakage_free": agent_rag["review_leakage_free"],
+            "pipeline_stage_coverage": agent_rag["pipeline_stage_coverage"],
+            "support_refutation_trace_coverage": agent_rag[
+                "support_refutation_trace_coverage"
+            ],
+            "official_weakness_proxy_overlap@k": agent_rag[
+                "official_weakness_proxy_overlap@k"
+            ],
+            "official_weakness_proxy_overlap_delta_vs_b3": agent_rag[
+                "official_weakness_proxy_overlap_delta_vs_b3"
+            ],
         },
         "unseen_boundary": {
             "passed": result["unseen_demo"]["gold_metrics_reported"] is False
@@ -117,12 +147,15 @@ def validate(metrics_path: Path | None = None) -> dict:
             "structured_trace_coverage": structured["trace_coverage"],
             "system_generated_trace_coverage": generated["trace_coverage"],
             "cue_aware_trace_coverage": cue_aware["trace_coverage"],
+            "agent_rag_trace_coverage": agent_rag["trace_coverage"],
             "structured_paper_report_coverage": structured["paper_report_coverage"],
             "system_generated_paper_report_coverage": generated["paper_report_coverage"],
             "cue_aware_paper_report_coverage": cue_aware["paper_report_coverage"],
+            "agent_rag_paper_report_coverage": agent_rag["paper_report_coverage"],
             "structured_top_k_compliance": structured["top_k_compliance"],
             "system_generated_top_k_compliance": generated["top_k_compliance"],
             "cue_aware_top_k_compliance": cue_aware["top_k_compliance"],
+            "agent_rag_top_k_compliance": agent_rag["top_k_compliance"],
             "system_generated_official_weakness_proxy_overlap@k": generated[
                 "official_weakness_proxy_overlap@k"
             ],
@@ -134,9 +167,19 @@ def validate(metrics_path: Path | None = None) -> dict:
             ],
             "cue_aware_aspect_diversity@k": cue_aware["aspect_diversity@k"],
             "cue_aware_redundancy_rate@k": cue_aware["redundancy_rate@k"],
+            "agent_rag_official_weakness_proxy_overlap@k": agent_rag[
+                "official_weakness_proxy_overlap@k"
+            ],
+            "agent_rag_official_weakness_proxy_overlap_delta_vs_b3": agent_rag[
+                "official_weakness_proxy_overlap_delta_vs_b3"
+            ],
+            "agent_rag_pipeline_stage_coverage": agent_rag["pipeline_stage_coverage"],
+            "agent_rag_support_refutation_trace_coverage": agent_rag[
+                "support_refutation_trace_coverage"
+            ],
             "accept_reject_decisions": cue_aware["accept_reject_decisions"],
         },
-        "next_experiment": "Expand OpenReview seed and compare B3 cue-aware deterministic candidates with provider-generated candidates after provider stability improves.",
+        "next_experiment": "Use B4 Agent-RAG pipeline output as the E6 system entry point, then optimize candidate generation or provider stability in bounded ablations.",
     }
 
 

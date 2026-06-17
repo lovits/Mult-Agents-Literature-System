@@ -48,6 +48,7 @@ def _render_report(result: dict) -> str:
         "- Accept/reject decision: disabled",
         "- arXiv unseen Gold metrics: disabled",
         "- Component outputs: E2, E3, E4, E5",
+        "- Agent-RAG pipeline: enabled as B4",
         "",
         "## Dataset",
         "",
@@ -106,6 +107,22 @@ def _render_report(result: dict) -> str:
                 f"evidence={', '.join(item['evidence_ids'])}: {item['weakness']}"
             )
         lines.append("")
+
+    lines.extend(["", "## Sample Agent-RAG Pipeline Reports", ""])
+    for report in result["agent_rag_reports"][:3]:
+        lines.append(f"### {report['paper_id']}: {report['title']}")
+        lines.append("")
+        lines.append(f"- Candidate source: `{report['candidate_source']}`")
+        lines.append(f"- Pipeline stages: {len(report['pipeline_stages'])}")
+        lines.append("")
+        for item in report["top_weaknesses"]:
+            lines.append(
+                f"- `{item['candidate_id']}` aspect={item['aspect']}, "
+                f"decision={item['audit_decision']}, score={item['rank_score']:.4f}, "
+                f"support={item['support_strength']:.4f}, refutation={item['refutation_strength']:.4f}, "
+                f"evidence={', '.join(item['evidence_ids'])}: {item['weakness']}"
+            )
+        lines.append("")
     lines.extend(
         [
             "## arXiv Unseen Demo Boundary",
@@ -128,6 +145,7 @@ def main() -> None:
         key: value
         for key, value in result.items()
         if key not in {"openreview_reports", "system_generated_reports", "cue_aware_reports"}
+        and key not in {"agent_rag_reports"}
     }
     print(json.dumps(compact, ensure_ascii=False, indent=2))
 

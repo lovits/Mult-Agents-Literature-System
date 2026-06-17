@@ -228,17 +228,23 @@ Provider 输出覆盖率为 0.0000，provider_failures 为 8，P1 Proxy Overlap@
 0.0000，相对 B3 failure slice 的 delta 为 -0.0483，相对 B2 的 delta 为 -0.0639。
 因此当前 provider 不能替代 B3 cue-aware deterministic candidates，只能作为后续
 更稳定模型或更强 JSON 输出约束的待优化方向。
+第七步将 E6 runner 接入 `evireview.system.AgentRAGReviewPipeline`，新增
+B4 Agent-RAG Pipeline Report。B4 在 30 篇 OpenReview seed 上实现完整链路：
+candidate generation、Query Planner、Paper-RAG、support/refutation 双向审计、
+adjudication、Meta-Reviewer Top-K 和 report assembly。B4 的 Trace Coverage、
+Top-K Compliance、Pipeline Stage Coverage 和 Support/Refutation Trace Coverage
+均为 1.0000；Official Weakness Proxy Overlap@K 为 0.0559，相对 B3 的 0.0549
+提升 0.0010。该提升很小，主要说明完整 Agent-RAG 编排没有破坏候选质量，并略微改善
+proxy overlap；不能作为强效果声明。
 
 ## 5. 当前立即执行项
 
-1. 先完成并稳定 `src/evireview/system/` Agent-RAG 后端系统框架，确保单篇论文可自动完成
-   candidate generation、Query Planner、Paper-RAG、support/refutation 双向审计、
-   adjudication、Meta-Reviewer Top-K 排序和 report assembly。
-2. 将 E6 runner 逐步改为复用系统层 pipeline，而不是在每个实验脚本里重复编排。
-3. 暂停扩大当前 DeepSeek provider 方案；先做 provider 输出稳定性修复或更换更稳定的 OpenAI-compatible 模型。
-4. 继续扩大 OpenReview seed，但必须保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略。
-5. 为候选生成继续报告 Official Weakness Proxy Overlap@K、aspect 分布、重复率和失败样本。
-6. 保持 E6 validator 要求 trace coverage、Top-K compliance、zero paper-level decision 和 unseen no-Gold。
+1. 基于 B4 Agent-RAG pipeline 的低分样本做 bounded optimizer，优先分析 candidate filtering 和
+   ranker 权重，而不是继续扩大 provider 调参。
+2. 暂停扩大当前 DeepSeek provider 方案；先做 provider 输出稳定性修复或更换更稳定的 OpenAI-compatible 模型。
+3. 继续扩大 OpenReview seed，但必须保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略。
+4. 为 B4 继续报告 Official Weakness Proxy Overlap@K、aspect 分布、重复率、support/refutation 分布和失败样本。
+5. 保持 E6 validator 要求 trace coverage、Top-K compliance、zero paper-level decision 和 unseen no-Gold。
 
 ## 6. 正式实验环境要求
 
