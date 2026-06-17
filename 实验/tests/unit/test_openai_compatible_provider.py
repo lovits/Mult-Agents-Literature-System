@@ -74,3 +74,35 @@ def test_provider_retries_transient_network_failure():
 
     assert result.data["decision"] == "keep"
     assert calls == 2
+
+
+def test_provider_retries_rate_limit_response():
+    calls = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return httpx.Response(429, json={"error": {"message": "rate limited"}})
+        return httpx.Response(
+            200,
+            json={
+                "choices": [{"message": {"content": '{"decision":"keep"}'}}],
+                "usage": {"total_tokens": 10},
+            },
+        )
+
+    provider = OpenAICompatibleProvider(
+        base_url="https://example.test/v1",
+        model="deepseek-v4-flash-free",
+        api_key="test-key",
+        max_tokens_field="max_tokens",
+        retry_attempts=1,
+        retry_backoff_seconds=0,
+        transport=httpx.MockTransport(handler),
+    )
+
+    result = provider.complete_json("judge", {"weakness": "test"})
+
+    assert result.data["decision"] == "keep"
+    assert calls == 2

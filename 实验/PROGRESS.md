@@ -235,10 +235,24 @@
 - E6-D Autoresearch 验收通过。该阶段优化的是误差分析与实验可解释性，不额外宣称 B3
   候选质量提升。
 
+### E6-P：DeepSeek Provider 候选生成失败样本对照
+
+- 新增 E6 provider-generated candidate failure-slice runner，在 E6-D 的 8 个 failure cases 上测试
+  `deepseek-v4-flash-free`；
+- Prompt 输入边界为论文 title、abstract、keywords、primary_area 和候选生成任务描述，不包含 Official Review；
+- Provider 输出只允许生成 weakness、aspect、severity、suggestion、confidence 和本地 metadata evidence id；
+- E6-P 工程验收通过，但实验 verdict 为 `failed_with_metrics`；
+- B2 failure slice Proxy Overlap@K 为 0.0639，B3 failure slice 为 0.0483；
+- P1 provider Proxy Overlap@K 为 0.0000，相对 B3 delta 为 -0.0483，相对 B2 delta 为 -0.0639；
+- Provider 输出覆盖率为 0.0000，provider_failures 为 8，失败类型包括 ProviderHTTPError、JSONDecodeError
+  和 ValueError；
+- 结论：当前 DeepSeek provider 配置不能替代 B3 cue-aware deterministic candidates，后续应先修复
+  provider 稳定性、限流和 JSON 输出格式，再重新做小样本对照。
+
 ## 当前验证
 
 ```text
-pytest:                         95 passed after E6-D diagnostics
+pytest:                         100 passed after E6-P
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -262,6 +276,7 @@ Autoresearch E3 Literature-RAG:       passed
 Autoresearch E5 Meta-Reviewer:       passed
 Autoresearch E6 End-to-End Report:   passed (B3 cue-aware baseline)
 Autoresearch E6 Candidate Diagnostics: passed
+Autoresearch E6 Provider Candidates: passed (experiment verdict: failed_with_metrics)
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -278,7 +293,7 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 使用 E6-D failure cases 将 B3 cue-aware deterministic candidates 与 provider-generated candidates 做同协议对照；
+1. 暂停扩大当前 DeepSeek provider 方案，先修复 provider 输出稳定性或更换更稳定的 OpenAI-compatible 模型；
 2. 继续扩大 OpenReview seed，但保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略；
 3. 单独报告候选生成的 proxy overlap、aspect 分布、重复率和失败样本；
 4. 保留 E6 的报告追踪、Top-K、zero accept/reject 和 unseen demo 验收边界；

@@ -59,6 +59,13 @@ ROLE_INSTRUCTIONS = {
         "with decision keep/rewrite/reject/uncertain, confidence 0-1, evidence_ids "
         "selected only from supplied IDs, and reason. Do not request human review."
     ),
+    "generate_review_candidates": (
+        "Generate leakage-free scientific peer-review weakness candidates from the "
+        "supplied paper metadata and evidence snippets only. Do not infer accept or "
+        "reject decisions. Return JSON with candidates as a list of up to the requested "
+        "top_k items. Each item must include weakness, aspect, severity, suggestion, "
+        "confidence 0-1, and evidence_ids selected only from supplied IDs."
+    ),
 }
 
 
@@ -155,7 +162,7 @@ class OpenAICompatibleProvider:
                     headers={"Authorization": f"Bearer {self.api_key}"},
                     json=request_body,
                 )
-                if response.status_code not in {408, 500, 502, 503, 504}:
+                if response.status_code not in {408, 429, 500, 502, 503, 504}:
                     return response
             except (httpx.ConnectError, httpx.RemoteProtocolError):
                 if attempt >= self.retry_attempts:

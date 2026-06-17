@@ -1,0 +1,20 @@
+e6_metrics: outputs/metrics/e6_end_to_end_report.json
+diagnostics: outputs/metrics/e6_candidate_diagnostics.json
+openreview_path: dataset/raw/primary/openreview_iclr2025_seed
+
+provider:
+  name: deepseek
+  base_url: https://api.ccode.vip/v1
+  model: deepseek-v4-flash-free
+  timeout_seconds: 180
+  max_completion_tokens: 1024
+  max_tokens_field: max_tokens
+  retry_attempts: 2
+  retry_backoff_seconds: 1
+
+experiment:
+  limit: 8
+  top_k: 3
+
+output: outputs/metrics/e6_deepseek_provider_candidates.json
+report: reports/e6_deepseek_provider_candidates.md
