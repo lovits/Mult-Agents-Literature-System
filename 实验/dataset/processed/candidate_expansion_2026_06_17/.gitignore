@@ -1,0 +1,5 @@
+# Generated from third-party raw datasets; keep local.
+*.jsonl
+manifest.json
+peercheck_summary.json
+reviewrebuttal_test_summary.json

@@ -74,6 +74,18 @@
 - 新增 `reports/dataset_candidate_expansion_2026-06-17.md` 与 `scripts/validate_dataset_candidate_expansion_2026_06_17.py`；
 - 本阶段只提升数据准备度，没有复跑 E2/E4/E5/E6，不能声称相对 baseline 的模型性能提升。
 
+### Task 3-G：候选数据处理适配
+
+- 新增 `evireview.dao.candidate_datasets`，处理 NeurIPS 2023、ReviewRebuttal test 与 PeerCheck；
+- 新增 `scripts/process_candidate_datasets_2026_06_17.py`，把可直接读取的 JSON/JSONL 数据生成本地 processed 快照；
+- NeurIPS 2023 抽样 50 篇论文，生成 5,974 个 EvidenceBlock 和 230 条 review；
+- ReviewRebuttal test 统计 1,000 篇论文、3,681 条 reviews、1,000 条 metareview、6,335 条 rating 记录；
+- PeerCheck 统计 100 行 review、856 个引用标记、90 条 Weaknesses section、77 条 Overall Score；
+- OpenReview Raw shard0 只做 parquet 文件边界检查，因当前依赖不含 `pyarrow/pandas`，event filter 暂缓；
+- 处理后的正文与 review pool 保持本地化，不提交第三方正文和 review 文本；
+- 新增 `reports/candidate_dataset_processing_2026-06-17.md` 与 `scripts/validate_candidate_dataset_processing_2026_06_17.py`；
+- 本阶段提升的是数据处理能力，没有复跑 E2/E4/E5/E6，不能声称相对 baseline 的模型性能提升。
+
 ### Task 4：论文结构解析
 
 - 实现 Markdown 论文解析主路径；
@@ -337,6 +349,9 @@ OpenReview Raw HF shard0:        downloaded, 1 / 6 parquet shards
 NeurIPS 2023 JSONL:              downloaded, 3,395 paper/review records
 PeerCheck JSONL:                 downloaded, 100 evidence-style review records
 ReviewRebuttal test:             downloaded, 1,000 review/metareview/decision records
+NeurIPS processed sample:        50 papers / 5,974 evidence blocks / 230 reviews
+ReviewRebuttal processed summary: 1,000 papers / 3,681 reviews / 1,000 metareviews
+PeerCheck processed summary:     100 rows / 856 citation markers
 Autoresearch dataset bootstrap: passed
 Autoresearch flat layout/task6: passed
 Autoresearch PeerQA E2 foundation: passed
@@ -360,6 +375,7 @@ Autoresearch Agent-RAG system framework: passed
 Autoresearch Data Expansion 2026-06-17: passed with documented gaps
 Autoresearch Dataset Schema Inspection 2026-06-17: passed
 Autoresearch Dataset Candidate Expansion 2026-06-17: passed
+Autoresearch Candidate Dataset Processing 2026-06-17: passed
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -375,19 +391,22 @@ pip check:                      no broken requirements
 7. OpenReview Raw 当前只下载首个 parquet 分片，需 event filter 后才能进入正式统计；
 8. NeurIPS 2023 数据含完整论文文本与 reviews，但公开拒稿不足会导致接受样本偏置，不能直接作为严格 accept/reject 评价；
 9. ReviewRebuttal 已下载 test reviews，但未下载大体量 `papers.zip`，暂不能用作完整论文解析主数据；
-10. E2 正式实验已完成，但 PeerQA 上的 P4 未达到预设 Recall 与 Evidence-Type Match 增益；
-11. PeerQA 映射后的证据类型以 paragraph 为主，PeerQA-XT 又是合成 QA，因此仍不足以单独证明 evidence-type prior 有效。
+10. NeurIPS 2023 简单章节识别仍把较多正文归到 introduction，E6 小规模复跑前需要校准 section detector；
+11. 当前依赖不含 parquet reader，OpenReview Raw event filter 暂不能本地执行；
+12. E2 正式实验已完成，但 PeerQA 上的 P4 未达到预设 Recall 与 Evidence-Type Match 增益；
+13. PeerQA 映射后的证据类型以 paragraph 为主，PeerQA-XT 又是合成 QA，因此仍不足以单独证明 evidence-type prior 有效。
 
 ## 下一步
 
 按照关键路径继续：
 
-1. 为 NeurIPS 2023 写 `PaperDocument` 适配器，先抽样 50 篇生成 EvidenceBlock 与 review pool；
-2. 为 ReviewRebuttal test 写 review/metareview/decision 解析器，建立全阶段评审诊断表；
-3. 为 OpenReview Raw shard0 写 event filter，统计 review/meta-review/decision 比例，并与 OpenReview seed 对齐；
-4. 编写 PeerQA-XT 适配器，把 `paper` 长文本切成 `EvidenceBlock`，先跑 validation/test 检索，不动原 PeerQA 严格 Gold；
-5. 编写 ResearchArcade event registry，过滤 Official Review / Meta Review / Paper Decision 事件，并与 OpenReview seed ID 对齐；
-6. 在 OpenReview API 限流恢复后复跑 expanded-100，目标是 `review_fetch_failures == 0` 且 `valid_pdfs >= 80`；
-7. 申请 NLPEERv2，获批后按 `restricted -> primary` 受控流程解析；
-8. 数据补齐后再回到 E6-B5/候选生成优化，优先处理 experiment 切片和 zero-overlap 候选；
-9. 保留 E6 的报告追踪、Top-K、zero paper-level decision 和 unseen demo 验收边界。
+1. 把 NeurIPS 2023 processed sample 接入 E6 小规模 runner，先比较 B3/B5/Agent-RAG 在 50 篇样本上的 coverage、trace、aspect diversity 和 proxy overlap；
+2. 为 ReviewRebuttal test 建立 review/metareview/decision 诊断表，先评价报告结构与 decision 辅助特征，不写成自动录用决策能力；
+3. 小幅校准 NeurIPS section detector，重点减少 introduction 过度归类；
+4. 如果允许增加 parquet reader，再对 OpenReview Raw shard0 做 event filter，统计 review/meta-review/decision 比例；
+5. 编写 PeerQA-XT 适配器，把 `paper` 长文本切成 `EvidenceBlock`，先跑 validation/test 检索，不动原 PeerQA 严格 Gold；
+6. 编写 ResearchArcade event registry，过滤 Official Review / Meta Review / Paper Decision 事件，并与 OpenReview seed ID 对齐；
+7. 在 OpenReview API 限流恢复后复跑 expanded-100，目标是 `review_fetch_failures == 0` 且 `valid_pdfs >= 80`；
+8. 申请 NLPEERv2，获批后按 `restricted -> primary` 受控流程解析；
+9. 数据补齐后再回到 E6-B5/候选生成优化，优先处理 experiment 切片和 zero-overlap 候选；
+10. 保留 E6 的报告追踪、Top-K、zero paper-level decision 和 unseen demo 验收边界。
