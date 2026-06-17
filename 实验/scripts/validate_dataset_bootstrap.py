@@ -40,9 +40,8 @@ def validate() -> dict:
     openreview_manifest = json.loads(
         (RAW_ROOT / "primary/openreview_iclr2025_seed/manifest.json").read_text(encoding="utf-8")
     )
-    arxiv_manifest = json.loads(
-        (RAW_ROOT / "demo/arxiv_unseen_2026-06-13/manifest.json").read_text(encoding="utf-8")
-    )
+    arxiv_snapshot_root = RAW_ROOT / "demo/arxiv_unseen_2026-06-17"
+    arxiv_manifest = json.loads((arxiv_snapshot_root / "manifest.json").read_text(encoding="utf-8"))
     literature_files = [
         path
         for path in (RAW_ROOT / "literature/local_corpus/source").rglob("*")
@@ -125,10 +124,12 @@ def validate() -> dict:
         },
         "unseen_demo": {
             "passed": (
-                arxiv_manifest["papers"] == 5
-                and len(valid_pdfs(RAW_ROOT / "demo/arxiv_unseen_2026-06-13/pdfs")) == 5
+                arxiv_manifest["papers"] >= 20
+                and len(valid_pdfs(arxiv_snapshot_root / "pdfs")) >= 20
             ),
             "arxiv_papers": arxiv_manifest["papers"],
+            "arxiv_valid_pdfs": len(valid_pdfs(arxiv_snapshot_root / "pdfs")),
+            "snapshot": str(arxiv_snapshot_root.relative_to(ROOT)),
         },
         "clean_dataset_layout": {
             "passed": not forbidden_paths,

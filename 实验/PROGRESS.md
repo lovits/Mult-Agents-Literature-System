@@ -1,6 +1,6 @@
 # EviReview-Lite 实验进度
 
-更新时间：2026-06-16
+更新时间：2026-06-17
 
 ## 已完成
 
@@ -37,6 +37,19 @@
 - 冻结 arXiv 未见集：5 篇最新 `cs.CL` PDF；
 - 记录 NLPEERv2 受限状态，完整数据仍需申请；
 - 建立 E0 审计脚本与 Autoresearch 数据验收器。
+
+### Task 3-D：数据扩展与授权限制处理
+
+- 保留 OpenReview ICLR 2025 seed 30 篇完整 PDF、122 条 Official Review 作为当前完整主数据；
+- 新增 OpenReview ICLR 2025 expanded-100 快照：100 篇投稿元数据、229 条 Official Review、35 篇有效 PDF；
+- expanded-100 记录 42 个 forum 抓取失败和 65 个 PDF 失败，主要受 OpenReview 429 限流影响，暂不替代 30 篇完整 seed；
+- 将 arXiv unseen 从 5 篇扩展到 20 篇最新 `cs.CL`，20 个 PDF 均有效；
+- 新增 PeerQA-XT partial 快照：README、test、validation 与 train 第一片 parquet 已落地；
+- PeerQA-XT 为非 gated、CC BY-NC-SA 4.0、合成 QA 数据，只作为 E2 辅助扩展，不作为严格人工 Gold；
+- ResearchArcade OpenReview 数据经 HF metadata 核验为非 gated、约 93MB，但本轮下载两次遇到远端断连/SSL EOF，未计入已下载；
+- Review-5K 经 HF metadata 核验为 auto-gated，已记录授权步骤；
+- NLPEERv2 仍为 TUdataLib restricted file access，已记录授权路径和落地目录纪律；
+- 新增 `scripts/validate_data_expansion_2026_06_17.py`，输出 `.omx/specs/autoresearch-data-expansion-2026-06-17/result.json`。
 
 ### Task 4：论文结构解析
 
@@ -293,8 +306,9 @@ E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
 Local snapshots:                1
-OpenReview valid PDFs:          30 / 30
-arXiv unseen valid PDFs:         5 / 5
+OpenReview valid PDFs:          30 / 30 complete seed; 35 / 100 expanded snapshot
+arXiv unseen valid PDFs:         20 / 20 latest 2026-06-17 snapshot
+PeerQA-XT auxiliary parquet:     3 / 4 files downloaded (missing train shard 00001)
 Autoresearch dataset bootstrap: passed
 Autoresearch flat layout/task6: passed
 Autoresearch PeerQA E2 foundation: passed
@@ -315,24 +329,29 @@ Autoresearch E6 B5 Diagnostics:      passed (B5 vs B4: 7 improved / 21 tied / 2 
 Autoresearch E6 Candidate Diagnostics: passed
 Autoresearch E6 Provider Candidates: passed (experiment verdict: failed_with_metrics)
 Autoresearch Agent-RAG system framework: passed
+Autoresearch Data Expansion 2026-06-17: passed with documented gaps
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
 
 ## 当前限制
 
-1. NLPEERv2 完整数据尚未获得访问授权，当前使用 OpenReview seed 作为原始完整论文主数据；
-2. OpenReview seed 已从 10 篇扩大到 30 篇，仍属于 seed 级实验；E1/E6 正式实验前可继续按固定协议扩大；
-3. arXiv 未见集只用于最终演示，不能用于调参或 Gold 评价；
-4. E2 正式实验已完成，但 PeerQA 上的 P4 未达到预设 Recall 与 Evidence-Type Match 增益；
-5. PeerQA 映射后的证据类型以 paragraph 为主，不足以单独证明 evidence-type prior 有效。
+1. NLPEERv2 完整数据尚未获得访问授权；当前已写明 TUdataLib 申请路径，但不能计为已下载；
+2. OpenReview 已有 30 篇完整 seed 和 100 篇 partial expansion；expanded-100 受 429 限流影响，暂不能替代完整主数据；
+3. arXiv 未见集已扩展到 20 篇，但仍只用于最终演示，不能用于调参或 Gold 评价；
+4. PeerQA-XT 已部分下载，但缺 train 第二片；登录 `HF_TOKEN` 后应补齐，再作为 E2 辅助扩展；
+5. ResearchArcade OpenReview 数据非 gated，但本轮下载遇到网络/SSL EOF，需在网络稳定或登录 HF 后重试；
+6. Review-5K 为 Hugging Face auto-gated，需要登录并同意数据条款后才能下载；
+7. E2 正式实验已完成，但 PeerQA 上的 P4 未达到预设 Recall 与 Evidence-Type Match 增益；
+8. PeerQA 映射后的证据类型以 paragraph 为主，PeerQA-XT 又是合成 QA，因此仍不足以单独证明 evidence-type prior 有效。
 
 ## 下一步
 
 按照关键路径继续：
 
-1. 基于 E6-B5 诊断结果做下一轮 bounded optimizer，优先处理 experiment 切片和 zero-overlap 候选；
-2. 暂停扩大当前 DeepSeek provider 方案，先修复 provider 输出稳定性或更换更稳定的 OpenAI-compatible 模型；
-3. 继续扩大 OpenReview seed，但保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略；
-4. 固定 E6-B5 low-overlap cases 与 B5-vs-B4 regression cases 作为下一轮优化切片；
-5. 保留 E6 的报告追踪、Top-K、zero paper-level decision 和 unseen demo 验收边界。
+1. 先补数据而不是继续调参：登录 Hugging Face 后补齐 PeerQA-XT train 第二片；
+2. 重试 ResearchArcade OpenReview，优先作为大规模 paper-review metadata 扩展；
+3. 在 OpenReview API 限流恢复后复跑 expanded-100，目标是 `review_fetch_failures == 0` 且 `valid_pdfs >= 80`；
+4. 申请 NLPEERv2，获批后按 `restricted -> primary` 受控流程解析；
+5. 数据补齐后再回到 E6-B5/候选生成优化，优先处理 experiment 切片和 zero-overlap 候选；
+6. 保留 E6 的报告追踪、Top-K、zero paper-level decision 和 unseen demo 验收边界。

@@ -65,7 +65,7 @@ items:
   - name: arxiv_unseen
     role: unseen_demo
     source_url: https://export.arxiv.org/api/query
-    local_path: dataset/raw/demo/arxiv_unseen_2026-06-13
+    local_path: dataset/raw/demo/arxiv_unseen_2026-06-17
     access: public
     license: paper-dependent arXiv license
     supervision: none; held-out demonstration only
