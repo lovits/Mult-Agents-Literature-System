@@ -23,7 +23,8 @@
 │   ├── evaluation/         # 实验指标
 │   ├── models/             # 领域协议
 │   ├── rag/                # Paper-RAG 与后续 Literature-RAG
-│   ├── service/            # 文档归一化、结构切块、章节标签映射与证据映射
+│   ├── service/            # 文档归一化、解析 Agent 编排与证据映射
+│   ├── agent/              # 候选评审、解析、审计与排序 Agent
 │   └── system/             # Agent-RAG 自动评审系统编排层
 └── tests/
     ├── unit/               # 组件行为测试
@@ -64,13 +65,15 @@
 
 ## 统一文档解析层
 
-论文解析主路径采用五层管线：
+论文解析主路径采用 LLM-first 的 Agent 管线：
 
 ```text
 Source Adapter
   -> Document Normalizer
-  -> Structure Segmenter
-  -> Section Canonicalizer
+  -> Document Parsing Agent
+     -> Structure Segmentation
+     -> LLM Section Labeling
+     -> LLM Evidence-Type Labeling
   -> Evidence Mapper
 ```
 
@@ -80,12 +83,14 @@ Source Adapter
    checksum 和原始 metadata，不直接生成证据块；
 2. `Document Normalizer` 将所有输入统一转换为 Markdown，并生成 `parse_manifest.json`；
    PDF 优先使用 MinerU，失败或低置信时使用 Docling / OCR / LLM fallback；
-3. `Structure Segmenter` 从 Markdown 中识别 heading、paragraph、table、figure caption、
-   algorithm、equation、appendix、reference 和 page boundary；
-4. `Section Canonicalizer` 将章节别名映射到固定 canonical section。规则词典优先，LLM
-   只处理低置信别名和语义标签映射，且只能从固定标签集合中选择；
-5. `Evidence Mapper` 将 `DocumentBlock` 转换为 `EvidenceBlock`，保留 raw section title、
-   page/span、parser、parse confidence 和 canonicalizer source。
+3. `Document Parsing Agent` 从 Markdown 中识别 heading、paragraph、table、figure caption、
+   algorithm、equation、appendix、reference 和 page boundary，并形成候选文档块；
+4. `Document Parsing Agent` 使用 LLM 作为章节别名映射和证据类型映射的主路径。LLM 必须从固定
+   canonical section 与 evidence type 集合中选择，并输出 `canonical_section`、`evidence_type`、
+   `confidence`、`rationale` 和 `matched_cues`；
+5. 代码层只做 JSON schema 校验、固定标签集合约束、低置信 fallback 和解析轨迹记录，不使用规则词典优先；
+6. `Evidence Mapper` 将 `DocumentBlock` 转换为 `EvidenceBlock`，保留 raw section title、
+   page/span、parser、LLM confidence、prompt version、fallback reason 和解析来源。
 
 固定 canonical section：
 
@@ -97,9 +102,10 @@ appendix / references / unknown
 
 LLM 在该层的边界：
 
-- 只用于章节别名和文本标签映射；
+- 作为章节别名、文本标签和证据类型映射的主路径；
 - 不改写论文正文；
 - 不直接生成评审弱点；
 - 不决定证据是否支持结论；
 - 输出必须通过 JSON schema 和固定标签集合校验；
+- 无效 JSON、越界标签或低置信输出统一落为 `unknown`，并记录 fallback 原因；
 - 每次调用记录模型名、prompt 版本、置信度和 fallback 原因。
