@@ -221,10 +221,24 @@
 - E6 Autoresearch 验收通过。该阶段证明端到端报告组装、系统候选生成入口、cue-aware 小幅优化、
   追踪和边界控制在 30 篇扩展 seed 上仍成立，但不宣称候选弱点已经达到高质量自动评审水平。
 
+### E6-D：候选生成诊断与失败样本切片
+
+- 新增 E6 candidate diagnostics，专门分析 B2/B3 的 aspect 分布、paper-level delta 和失败样本；
+- 该诊断使用 Official Review weakness 只作为离线 proxy，不进入候选生成和报告组装；
+- B2 Overall Proxy Overlap@K 为 0.0504，B3 为 0.0549，平均 delta 为 0.0044；
+- B3 在 30 篇 OpenReview seed 中 19 篇提升、11 篇退化，failure-or-tie rate 为 0.3667；
+- B3 zero-overlap rate 从 B2 的 0.0556 降至 0.0222；
+- B3 aspect 分布为 experiment 20、method 23、missing_baseline 16、novelty 18、related_work 3、
+  reproducibility 10；
+- B3 诊断中 experiment aspect overlap 为 0.0477，仍是后续优化重点之一；
+- 输出 8 个 failure cases，作为下一步 provider-generated candidates 的第一批对照切片；
+- E6-D Autoresearch 验收通过。该阶段优化的是误差分析与实验可解释性，不额外宣称 B3
+  候选质量提升。
+
 ## 当前验证
 
 ```text
-pytest:                         92 passed after OpenReview-30 expansion
+pytest:                         95 passed after E6-D diagnostics
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -247,6 +261,7 @@ Autoresearch SubstanReview baselines: passed
 Autoresearch E3 Literature-RAG:       passed
 Autoresearch E5 Meta-Reviewer:       passed
 Autoresearch E6 End-to-End Report:   passed (B3 cue-aware baseline)
+Autoresearch E6 Candidate Diagnostics: passed
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -263,7 +278,7 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 将 B3 cue-aware deterministic candidates 与 provider-generated candidates 做同协议对照；
+1. 使用 E6-D failure cases 将 B3 cue-aware deterministic candidates 与 provider-generated candidates 做同协议对照；
 2. 继续扩大 OpenReview seed，但保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略；
 3. 单独报告候选生成的 proxy overlap、aspect 分布、重复率和失败样本；
 4. 保留 E6 的报告追踪、Top-K、zero accept/reject 和 unseen demo 验收边界；

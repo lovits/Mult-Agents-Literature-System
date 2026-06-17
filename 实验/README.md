@@ -96,4 +96,20 @@ SubstanReview 辅助评价：
 只作为 review claim-evidence substantiation 辅助评价，不作为 weakness validity
 或 covered/refuted Gold。
 
+E6 端到端报告与候选生成诊断：
+
+```bash
+../.venv/bin/python scripts/run_e6_end_to_end_report.py \
+  --config conf/experiments/e6_end_to_end_report.yaml
+../.venv/bin/python scripts/validate_e6_end_to_end_report.py
+../.venv/bin/python scripts/run_e6_candidate_diagnostics.py \
+  --config conf/experiments/e6_candidate_diagnostics.yaml
+../.venv/bin/python scripts/validate_e6_candidate_diagnostics.py
+```
+
+当前 OpenReview seed 为 30 篇论文、122 条 Official Review。B3 cue-aware
+candidate generator 相对 B2 的 proxy overlap delta 为 `+0.0044`；E6-D 诊断显示
+B3 在 19 篇论文上提升、11 篇论文上退化，下一步使用退化样本做 provider-generated
+candidates 对照。
+
 详细数据说明见 `dataset/README.md`，当前进度见 `PROGRESS.md`。
