@@ -19,11 +19,11 @@
 ├── scripts/                # 下载、实验运行和验收入口
 ├── src/evireview/
 │   ├── conf/               # 运行配置模型
-│   ├── dao/                # 数据集与外部来源适配
+│   ├── dao/                # 数据集、PDF/Markdown/OpenReview/JSON 来源适配
 │   ├── evaluation/         # 实验指标
 │   ├── models/             # 领域协议
 │   ├── rag/                # Paper-RAG 与后续 Literature-RAG
-│   ├── service/            # 论文解析、数据处理等服务
+│   ├── service/            # 文档归一化、结构切块、章节标签映射与证据映射
 │   └── system/             # Agent-RAG 自动评审系统编排层
 └── tests/
     ├── unit/               # 组件行为测试
@@ -51,7 +51,7 @@
 组件编排为一条可复现后端链路：
 
 1. `paper_adapter.py`：将 OpenReview/arXiv-like 输入转换为 `PaperDocument` 和
-   `EvidenceBlock`；
+   `EvidenceBlock`，后续由统一文档解析管线替代其直接拼接职责；
 2. `planner.py`：为每条候选弱点生成 section-aware、evidence-type-aware 的
    `QueryPlan`；
 3. `review_pipeline.py`：串联 candidate generation、Paper-RAG、support/refutation
@@ -61,3 +61,45 @@
 
 该层不输出论文接收/拒稿决策，不包含 human-check 路由，也不包含前端代码。它用于
 后续 E6 端到端实验和 provider 模型接入前的稳定系统框架。
+
+## 统一文档解析层
+
+论文解析主路径采用五层管线：
+
+```text
+Source Adapter
+  -> Document Normalizer
+  -> Structure Segmenter
+  -> Section Canonicalizer
+  -> Evidence Mapper
+```
+
+职责边界：
+
+1. `Source Adapter` 接入 PDF、Markdown、OpenReview、arXiv 和 JSON/JSONL，记录来源、
+   checksum 和原始 metadata，不直接生成证据块；
+2. `Document Normalizer` 将所有输入统一转换为 Markdown，并生成 `parse_manifest.json`；
+   PDF 优先使用 MinerU，失败或低置信时使用 Docling / OCR / LLM fallback；
+3. `Structure Segmenter` 从 Markdown 中识别 heading、paragraph、table、figure caption、
+   algorithm、equation、appendix、reference 和 page boundary；
+4. `Section Canonicalizer` 将章节别名映射到固定 canonical section。规则词典优先，LLM
+   只处理低置信别名和语义标签映射，且只能从固定标签集合中选择；
+5. `Evidence Mapper` 将 `DocumentBlock` 转换为 `EvidenceBlock`，保留 raw section title、
+   page/span、parser、parse confidence 和 canonicalizer source。
+
+固定 canonical section：
+
+```text
+front_matter / abstract / introduction / related_work / method / experiments /
+ablation / results / analysis / limitations / discussion / conclusion /
+appendix / references / unknown
+```
+
+LLM 在该层的边界：
+
+- 只用于章节别名和文本标签映射；
+- 不改写论文正文；
+- 不直接生成评审弱点；
+- 不决定证据是否支持结论；
+- 输出必须通过 JSON schema 和固定标签集合校验；
+- 每次调用记录模型名、prompt 版本、置信度和 fallback 原因。
