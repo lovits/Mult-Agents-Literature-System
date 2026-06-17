@@ -1,0 +1,5 @@
+e6_metrics: outputs/metrics/e6_end_to_end_report.json
+openreview_path: dataset/raw/primary/openreview_iclr2025_seed
+top_failure_count: 8
+output: outputs/metrics/e6_b5_diagnostics.json
+report: reports/e6_b5_diagnostics.md

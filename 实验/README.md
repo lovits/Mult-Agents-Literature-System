@@ -132,6 +132,10 @@ Trace、Top-K、Pipeline Stage 和 Support/Refutation 覆盖均为 `1.0000`。
 aspect 的候选，并加入 `0.03` 候选先验权重。B5 proxy overlap 为 `0.0570`，相对
 B4 提升 `+0.0011`，Aspect Diversity 从 `0.9111` 恢复到 `1.0000`。
 
+E6-B5 diagnostics 进一步确认：B5 相对 B4 为 `7/21/2` 篇提升/持平/退化；
+更有代表性的瓶颈是 `experiment` 切片，Proxy Overlap@K 为 `0.0510`。下一轮优化
+应优先做候选过滤或 aspect-specific query planning，而不是继续扩大 provider prompt。
+
 E6 DeepSeek provider 候选生成对照：
 
 ```bash

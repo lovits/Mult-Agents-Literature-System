@@ -242,14 +242,20 @@ proxy overlap；不能作为强效果声明。
 B5 的 Official Weakness Proxy Overlap@K 为 0.0570，相对 B4 的 0.0559 提升 0.0011；
 Aspect Diversity@K 从 B4 的 0.9111 恢复到 1.0000；Redundancy Rate@K 保持 0.0000。
 该结果说明 aspect-balanced Meta-Reviewer Top-K 对当前 seed 有小幅正向作用，但提升仍小。
+第九步新增 B5 诊断实验。该实验不改变系统输出，只对 B3/B4/B5 的 Top-K 结果做
+paper-level 和 aspect-level 离线诊断。结果显示 B5 相对 B4 为 7 篇提升、21 篇持平、
+2 篇退化；相对 B3 为 17 篇提升、2 篇持平、11 篇退化。B5 的最低 overlap aspect 为
+related_work，但样本数仅 1；更有代表性的瓶颈是 experiment，26 条候选的
+Proxy Overlap@K 为 0.0510。B5 zero-overlap rate 为 0.0333，说明下一步应优先做
+候选过滤或 aspect-specific query planning，而不是继续扩大 provider prompt 调参。
 
 ## 5. 当前立即执行项
 
-1. 基于 B5 Balanced Agent-RAG pipeline 的剩余低 overlap 样本做 aspect slice 诊断，优先定位
-   experiment、method、missing_baseline 哪类仍是瓶颈。
+1. 基于 B5 诊断结果，优先处理 experiment 切片和 zero-overlap 候选：候选弱点至少要绑定一个
+   paper-local cue 或 Literature-RAG cue。
 2. 暂停扩大当前 DeepSeek provider 方案；先做 provider 输出稳定性修复或更换更稳定的 OpenAI-compatible 模型。
 3. 继续扩大 OpenReview seed，但必须保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略。
-4. 为 B5 继续报告 Official Weakness Proxy Overlap@K、aspect 分布、重复率、support/refutation 分布和失败样本。
+4. 保留 B5 诊断报告中的低 overlap cases 和 B5 vs B4 regression cases，作为下一轮 bounded optimizer 的固定切片。
 5. 保持 E6 validator 要求 trace coverage、Top-K compliance、zero paper-level decision 和 unseen no-Gold。
 
 ## 6. 正式实验环境要求

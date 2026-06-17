@@ -129,17 +129,6 @@ def _render_report(result: dict) -> str:
                 f"evidence={', '.join(item['evidence_ids'])}: {item['weakness']}"
             )
         lines.append("")
-        lines.append(f"- Candidate source: `{report['candidate_source']}`")
-        lines.append(f"- Pipeline stages: {len(report['pipeline_stages'])}")
-        lines.append("")
-        for item in report["top_weaknesses"]:
-            lines.append(
-                f"- `{item['candidate_id']}` aspect={item['aspect']}, "
-                f"decision={item['audit_decision']}, score={item['rank_score']:.4f}, "
-                f"support={item['support_strength']:.4f}, refutation={item['refutation_strength']:.4f}, "
-                f"evidence={', '.join(item['evidence_ids'])}: {item['weakness']}"
-            )
-        lines.append("")
     lines.extend(
         [
             "## arXiv Unseen Demo Boundary",
