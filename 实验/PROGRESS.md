@@ -316,6 +316,20 @@
 - 结论：当前 DeepSeek provider 配置不能替代 B3 cue-aware deterministic candidates，后续应先修复
   provider 稳定性、限流和 JSON 输出格式，再重新做小样本对照。
 
+### E6-N：NeurIPS 2023 扩展样本稳定性诊断
+
+- 新增 E6 NeurIPS stability runner，把 Task 3-G 生成的 NeurIPS 2023 processed sample 接入端到端报告组装；
+- 输入为 50 篇论文、5,974 个 EvidenceBlock 和 230 条官方 review；
+- 官方 review 文本只作为弱 proxy overlap，不作为严格 weakness-level Gold；
+- 不生成 paper-level accept/reject decision，保持自动评审辅助系统边界；
+- 修复 B5 balanced selector 的稳定性问题：当 Evidence-aware Meta-Ranker 合法过滤 `reject` trace 时，selector 跳过该候选而不是中断整批实验；
+- B3 Cue-aware Proxy Overlap@K 为 0.0515，Aspect Diversity@K 为 1.0000；
+- B4 Agent-RAG Proxy Overlap@K 为 0.0504，Aspect Diversity@K 为 0.9220；
+- B5 Balanced Agent-RAG Proxy Overlap@K 为 0.0499，Aspect Diversity@K 为 1.0000；
+- B5 相对 B4 的 Aspect Diversity@K 提升 0.0780，但 Proxy Overlap@K 下降 0.00048；
+- E6-N Autoresearch 验收通过，但实验 verdict 为 `failed_with_metrics`；
+- 结论：B5 的 Top-K 平衡策略能恢复 aspect 多样性，但在 NeurIPS 扩展样本上没有提升 review proxy 对齐，下一步应先校准章节识别和候选生成，而不是继续调排序权重。
+
 ### Agent-RAG 后端系统框架
 
 - 新增 `src/evireview/system/` 系统编排层，把已有候选生成、Paper-RAG、双向证据审计、
@@ -336,7 +350,7 @@
 ## 当前验证
 
 ```text
-pytest:                         108 passed after E6-B5 diagnostics
+pytest:                         115 passed after E6-N stability diagnostic
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -371,6 +385,7 @@ Autoresearch E6 End-to-End Report:   passed (B5 balanced Agent-RAG; +0.0011 vs B
 Autoresearch E6 B5 Diagnostics:      passed (B5 vs B4: 7 improved / 21 tied / 2 regressed)
 Autoresearch E6 Candidate Diagnostics: passed
 Autoresearch E6 Provider Candidates: passed (experiment verdict: failed_with_metrics)
+Autoresearch E6 NeurIPS Stability: passed (experiment verdict: failed_with_metrics)
 Autoresearch Agent-RAG system framework: passed
 Autoresearch Data Expansion 2026-06-17: passed with documented gaps
 Autoresearch Dataset Schema Inspection 2026-06-17: passed
@@ -391,7 +406,7 @@ pip check:                      no broken requirements
 7. OpenReview Raw 当前只下载首个 parquet 分片，需 event filter 后才能进入正式统计；
 8. NeurIPS 2023 数据含完整论文文本与 reviews，但公开拒稿不足会导致接受样本偏置，不能直接作为严格 accept/reject 评价；
 9. ReviewRebuttal 已下载 test reviews，但未下载大体量 `papers.zip`，暂不能用作完整论文解析主数据；
-10. NeurIPS 2023 简单章节识别仍把较多正文归到 introduction，E6 小规模复跑前需要校准 section detector；
+10. NeurIPS 2023 简单章节识别仍把较多正文归到 introduction，E6-N 已证明这会影响 Agent-RAG proxy overlap，需要优先校准 section detector；
 11. 当前依赖不含 parquet reader，OpenReview Raw event filter 暂不能本地执行；
 12. E2 正式实验已完成，但 PeerQA 上的 P4 未达到预设 Recall 与 Evidence-Type Match 增益；
 13. PeerQA 映射后的证据类型以 paragraph 为主，PeerQA-XT 又是合成 QA，因此仍不足以单独证明 evidence-type prior 有效。
@@ -400,9 +415,9 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 把 NeurIPS 2023 processed sample 接入 E6 小规模 runner，先比较 B3/B5/Agent-RAG 在 50 篇样本上的 coverage、trace、aspect diversity 和 proxy overlap；
+1. 小幅校准 NeurIPS section detector，重点减少 introduction 过度归类，然后复跑 E6-N；
 2. 为 ReviewRebuttal test 建立 review/metareview/decision 诊断表，先评价报告结构与 decision 辅助特征，不写成自动录用决策能力；
-3. 小幅校准 NeurIPS section detector，重点减少 introduction 过度归类；
+3. 检查 E6-N 低 overlap 切片，区分候选生成问题、证据检索问题和 ranker 选择问题；
 4. 如果允许增加 parquet reader，再对 OpenReview Raw shard0 做 event filter，统计 review/meta-review/decision 比例；
 5. 编写 PeerQA-XT 适配器，把 `paper` 长文本切成 `EvidenceBlock`，先跑 validation/test 检索，不动原 PeerQA 严格 Gold；
 6. 编写 ResearchArcade event registry，过滤 Official Review / Meta Review / Paper Decision 事件，并与 OpenReview seed ID 对齐；

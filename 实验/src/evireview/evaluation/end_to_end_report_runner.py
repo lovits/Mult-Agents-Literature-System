@@ -241,7 +241,10 @@ def _balanced_agent_rag_top_items(traces, top_k: int) -> list[dict]:
     scored = []
     trace_by_id = {trace.candidate.candidate_id: trace for trace in traces}
     for row in trace_rows:
-        item = ranker.score_traces([row])[0]
+        ranked_items = ranker.score_traces([row])
+        if not ranked_items:
+            continue
+        item = ranked_items[0]
         candidate_prior = float(row["metadata"].get("candidate_rank_score") or 0.0)
         item = {
             **item,
