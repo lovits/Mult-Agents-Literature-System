@@ -128,6 +128,10 @@ Paper-RAG、support/refutation 双向审计、Adjudication 和 Meta-Reviewer Top
 B4 的 proxy overlap 为 `0.0559`，相对 B3 的 `0.0549` 小幅提升 `+0.0010`；
 Trace、Top-K、Pipeline Stage 和 Support/Refutation 覆盖均为 `1.0000`。
 
+当前 B5 Balanced Agent-RAG pipeline 在 B4 基础上只优化 Top-K 选择层：优先保留不同
+aspect 的候选，并加入 `0.03` 候选先验权重。B5 proxy overlap 为 `0.0570`，相对
+B4 提升 `+0.0011`，Aspect Diversity 从 `0.9111` 恢复到 `1.0000`。
+
 E6 DeepSeek provider 候选生成对照：
 
 ```bash

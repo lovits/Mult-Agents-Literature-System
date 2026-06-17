@@ -12,6 +12,7 @@ def test_validate_e6_end_to_end_report_accepts_traceable_report_result(tmp_path)
             "system_candidate_generation": "system_deterministic_baseline_v1",
             "cue_aware_candidate_generation": "system_cue_aware_baseline_v2",
             "agent_rag_pipeline": "agent_rag_review_pipeline_v1",
+            "balanced_agent_rag_pipeline": "balanced_agent_rag_review_pipeline_v1",
             "uses_component_outputs": ["E2", "E3", "E4", "E5"],
         },
         "dataset": {
@@ -67,6 +68,23 @@ def test_validate_e6_end_to_end_report_accepts_traceable_report_result(tmp_path)
                 "support_refutation_trace_coverage": 1.0,
                 "paper_decision_produced": False,
             },
+            "B5_balanced_agent_rag_pipeline_report": {
+                "paper_report_coverage": 1.0,
+                "trace_coverage": 1.0,
+                "top_k_compliance": 1.0,
+                "accept_reject_decisions": 0,
+                "review_leakage_free": True,
+                "official_weakness_proxy_overlap@k": 0.35,
+                "official_weakness_proxy_overlap_delta_vs_b3": 0.03,
+                "official_weakness_proxy_overlap_delta_vs_b4": 0.02,
+                "aspect_diversity@k": 1.0,
+                "aspect_diversity_delta_vs_b4": 0.1,
+                "redundancy_rate@k": 0.0,
+                "pipeline_stage_coverage": 1.0,
+                "support_refutation_trace_coverage": 1.0,
+                "paper_decision_produced": False,
+                "balanced_candidate_prior_weight": 0.03,
+            },
         },
         "unseen_demo": {"papers": 5, "gold_metrics_reported": False},
     }
@@ -80,4 +98,5 @@ def test_validate_e6_end_to_end_report_accepts_traceable_report_result(tmp_path)
     assert result["checks"]["system_generated_candidates"]["passed"] is True
     assert result["checks"]["cue_aware_optimization"]["passed"] is True
     assert result["checks"]["agent_rag_pipeline"]["passed"] is True
+    assert result["checks"]["balanced_agent_rag_optimizer"]["passed"] is True
     assert result["checks"]["unseen_boundary"]["passed"] is True

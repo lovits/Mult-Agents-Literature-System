@@ -228,3 +228,51 @@ def test_e6_agent_rag_pipeline_runs_full_audit_chain():
     assert report["trace_policy"] == "paper_content_to_agent_rag_pipeline_topk"
     assert all(item["source_review_id"] is None for item in report["top_weaknesses"])
     assert all("audit_decision" in item for item in report["top_weaknesses"])
+
+
+def test_e6_balanced_agent_rag_optimizer_preserves_audit_trace():
+    submissions = [
+        {
+            "paper_id": "paper-1",
+            "content": {
+                "title": "Agentic Retrieval Benchmark",
+                "abstract": (
+                    "We evaluate an agentic retrieval benchmark with baselines, "
+                    "ablation studies, and implementation details."
+                ),
+                "keywords": ["agent", "retrieval", "benchmark"],
+                "method": "The method uses retrieval planning and adjudication.",
+                "experiments": "Table 1 reports baselines and ablations.",
+                "related_work": "Prior work includes RAG and automatic review systems.",
+            },
+            "reviews": [
+                {
+                    "id": "review-1",
+                    "content": {
+                        "weaknesses": (
+                            "The ablation is limited. "
+                            "The baseline comparison needs more detail. "
+                            "The method assumptions should be clearer."
+                        )
+                    },
+                }
+            ],
+        }
+    ]
+
+    result = run_end_to_end_report_baseline(
+        submissions,
+        [],
+        {"e2": {}, "e3": {}, "e4": {}, "e5": {}},
+        top_k=3,
+    )
+
+    metrics = result["systems"]["B5_balanced_agent_rag_pipeline_report"]
+    report = result["balanced_agent_rag_reports"][0]
+    assert metrics["trace_coverage"] == 1.0
+    assert metrics["pipeline_stage_coverage"] == 1.0
+    assert metrics["support_refutation_trace_coverage"] == 1.0
+    assert metrics["paper_decision_produced"] is False
+    assert report["candidate_source"] == "balanced_agent_rag_review_pipeline_v1"
+    assert report["selection_policy"]["name"] == "aspect_balanced_with_candidate_prior"
+    assert len({item["aspect"] for item in report["top_weaknesses"]}) == len(report["top_weaknesses"])

@@ -236,14 +236,20 @@ Top-K Compliance、Pipeline Stage Coverage 和 Support/Refutation Trace Coverage
 均为 1.0000；Official Weakness Proxy Overlap@K 为 0.0559，相对 B3 的 0.0549
 提升 0.0010。该提升很小，主要说明完整 Agent-RAG 编排没有破坏候选质量，并略微改善
 proxy overlap；不能作为强效果声明。
+第八步新增 B5 Balanced Agent-RAG Pipeline Report。B5 只在 Top-K 选择层做 bounded
+优化：每篇论文优先保留不同 aspect 的最高分候选，并加入很小的候选先验权重 `0.03`。
+该策略不改候选生成、Paper-RAG、Support/Refutation、Adjudicator，也不调用 provider。
+B5 的 Official Weakness Proxy Overlap@K 为 0.0570，相对 B4 的 0.0559 提升 0.0011；
+Aspect Diversity@K 从 B4 的 0.9111 恢复到 1.0000；Redundancy Rate@K 保持 0.0000。
+该结果说明 aspect-balanced Meta-Reviewer Top-K 对当前 seed 有小幅正向作用，但提升仍小。
 
 ## 5. 当前立即执行项
 
-1. 基于 B4 Agent-RAG pipeline 的低分样本做 bounded optimizer，优先分析 candidate filtering 和
-   ranker 权重，而不是继续扩大 provider 调参。
+1. 基于 B5 Balanced Agent-RAG pipeline 的剩余低 overlap 样本做 aspect slice 诊断，优先定位
+   experiment、method、missing_baseline 哪类仍是瓶颈。
 2. 暂停扩大当前 DeepSeek provider 方案；先做 provider 输出稳定性修复或更换更稳定的 OpenAI-compatible 模型。
 3. 继续扩大 OpenReview seed，但必须保留 PDF 缓存复用和单个 PDF 下载失败不终止快照的策略。
-4. 为 B4 继续报告 Official Weakness Proxy Overlap@K、aspect 分布、重复率、support/refutation 分布和失败样本。
+4. 为 B5 继续报告 Official Weakness Proxy Overlap@K、aspect 分布、重复率、support/refutation 分布和失败样本。
 5. 保持 E6 validator 要求 trace coverage、Top-K compliance、zero paper-level decision 和 unseen no-Gold。
 
 ## 6. 正式实验环境要求

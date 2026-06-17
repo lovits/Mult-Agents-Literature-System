@@ -8,9 +8,12 @@ from evireview.agent.candidate_generator import (
 )
 from evireview.system import AgentRAGReviewPipeline, ReviewPipelineRequest
 from evireview.system.config import AgentRAGSystemConfig
+from evireview.system.ranker import EvidenceAwareMetaRanker
 
 
 AGENT_RAG_PIPELINE_NAME = "agent_rag_review_pipeline_v1"
+BALANCED_AGENT_RAG_PIPELINE_NAME = "balanced_agent_rag_review_pipeline_v1"
+BALANCED_CANDIDATE_PRIOR_WEIGHT = 0.03
 
 
 def run_end_to_end_report_baseline(
@@ -23,7 +26,10 @@ def run_end_to_end_report_baseline(
     reports = [_review_derived_report(submission, top_k) for submission in submissions]
     generated_reports = [_system_generated_report(submission, top_k) for submission in submissions]
     cue_aware_reports = [_cue_aware_report(submission, top_k) for submission in submissions]
-    agent_rag_reports = _agent_rag_pipeline_reports(submissions, top_k)
+    agent_rag_reports, balanced_agent_rag_reports = _agent_rag_pipeline_report_variants(
+        submissions,
+        top_k,
+    )
     baseline = _baseline_metrics(submissions)
     structured = _structured_metrics(reports, top_k)
     generated = _system_generated_metrics(generated_reports, submissions, top_k)
@@ -38,6 +44,7 @@ def run_end_to_end_report_baseline(
             "system_candidate_generation": GENERATOR_NAME,
             "cue_aware_candidate_generation": CUE_AWARE_GENERATOR_NAME,
             "agent_rag_pipeline": AGENT_RAG_PIPELINE_NAME,
+            "balanced_agent_rag_pipeline": BALANCED_AGENT_RAG_PIPELINE_NAME,
             "uses_component_outputs": ["E2", "E3", "E4", "E5"],
             "component_status": {
                 name.upper(): metrics.get("status", "available")
@@ -55,11 +62,19 @@ def run_end_to_end_report_baseline(
             "B2_system_generated_structured_report": generated,
             "B3_cue_aware_structured_report": cue_aware,
             "B4_agent_rag_pipeline_report": agent_rag,
+            "B5_balanced_agent_rag_pipeline_report": _balanced_agent_rag_metrics(
+                balanced_agent_rag_reports,
+                submissions,
+                agent_rag,
+                cue_aware,
+                top_k,
+            ),
         },
         "openreview_reports": reports,
         "system_generated_reports": generated_reports,
         "cue_aware_reports": cue_aware_reports,
         "agent_rag_reports": agent_rag_reports,
+        "balanced_agent_rag_reports": balanced_agent_rag_reports,
         "unseen_demo": {
             "papers": len(arxiv_papers),
             "gold_metrics_reported": False,
@@ -132,58 +147,151 @@ def _cue_aware_report(submission: dict, top_k: int) -> dict:
     }
 
 
-def _agent_rag_pipeline_reports(submissions: list[dict], top_k: int) -> list[dict]:
+def _agent_rag_pipeline_report_variants(
+    submissions: list[dict],
+    top_k: int,
+) -> tuple[list[dict], list[dict]]:
     pipeline = AgentRAGReviewPipeline(
         AgentRAGSystemConfig(
             max_candidates=max(6, top_k),
             top_k_weaknesses=top_k,
         )
     )
-    return [_agent_rag_pipeline_report(pipeline, submission, top_k) for submission in submissions]
+    base_reports = []
+    balanced_reports = []
+    for submission in submissions:
+        base_report, balanced_report = _agent_rag_pipeline_report_variants_for_submission(
+            pipeline,
+            submission,
+            top_k,
+        )
+        base_reports.append(base_report)
+        balanced_reports.append(balanced_report)
+    return base_reports, balanced_reports
 
 
-def _agent_rag_pipeline_report(
+def _agent_rag_pipeline_report_variants_for_submission(
     pipeline: AgentRAGReviewPipeline,
     submission: dict,
     top_k: int,
-) -> dict:
+) -> tuple[dict, dict]:
     paper_id = submission["paper_id"]
     content = submission.get("content", {})
     result = pipeline.run(ReviewPipelineRequest(submission=submission))
     traces = {trace.candidate.candidate_id: trace for trace in result.traces}
-    top = []
-    for item in result.top_weaknesses[:top_k]:
-        trace = traces[item.candidate_id]
-        top.append(
-            {
-                "candidate_id": item.candidate_id,
-                "paper_id": paper_id,
-                "aspect": trace.candidate.aspect,
-                "weakness": item.weakness,
-                "severity": trace.candidate.severity,
-                "suggestion": trace.candidate.suggestion,
-                "source_agent": trace.candidate.source_agent,
-                "evidence_ids": item.evidence_ids,
-                "confidence": item.confidence,
-                "rank_score": item.rank_score,
-                "source_review_id": None,
-                "audit_decision": trace.adjudication.decision,
-                "support_strength": trace.support.strength,
-                "refutation_strength": trace.refutation.strength,
-            }
-        )
-    return {
+    base_top = [_pipeline_item_from_ranked(item, traces[item.candidate_id]) for item in result.top_weaknesses[:top_k]]
+    balanced_top = _balanced_agent_rag_top_items(result.traces, top_k)
+    base_report = {
         "paper_id": paper_id,
         "title": content.get("title", paper_id),
         "summary": result.report.summary,
         "decision": "not_applicable",
         "trace_policy": "paper_content_to_agent_rag_pipeline_topk",
         "candidate_source": AGENT_RAG_PIPELINE_NAME,
-        "top_weaknesses": top,
+        "top_weaknesses": base_top,
         "candidate_count": len(result.traces),
         "review_count": len(submission.get("reviews", [])),
         "pipeline_stages": result.stages,
         "system_trace": result.system_trace,
+    }
+    balanced_report = {
+        **base_report,
+        "trace_policy": "paper_content_to_balanced_agent_rag_pipeline_topk",
+        "candidate_source": BALANCED_AGENT_RAG_PIPELINE_NAME,
+        "top_weaknesses": balanced_top,
+        "selection_policy": {
+            "name": "aspect_balanced_with_candidate_prior",
+            "candidate_prior_weight": BALANCED_CANDIDATE_PRIOR_WEIGHT,
+        },
+    }
+    return base_report, balanced_report
+
+
+def _pipeline_item_from_ranked(item, trace) -> dict:
+    return {
+        "candidate_id": item.candidate_id,
+        "paper_id": trace.candidate.paper_id,
+        "aspect": trace.candidate.aspect,
+        "weakness": item.weakness,
+        "severity": trace.candidate.severity,
+        "suggestion": trace.candidate.suggestion,
+        "source_agent": trace.candidate.source_agent,
+        "evidence_ids": item.evidence_ids,
+        "confidence": item.confidence,
+        "rank_score": item.rank_score,
+        "source_review_id": None,
+        "audit_decision": trace.adjudication.decision,
+        "support_strength": trace.support.strength,
+        "refutation_strength": trace.refutation.strength,
+    }
+
+
+def _balanced_agent_rag_top_items(traces, top_k: int) -> list[dict]:
+    ranker = EvidenceAwareMetaRanker()
+    trace_rows = [
+        {
+            "candidate": trace.candidate,
+            "support": trace.support,
+            "refutation": trace.refutation,
+            "adjudication": trace.adjudication,
+            "metadata": trace.metadata,
+        }
+        for trace in traces
+    ]
+    scored = []
+    trace_by_id = {trace.candidate.candidate_id: trace for trace in traces}
+    for row in trace_rows:
+        item = ranker.score_traces([row])[0]
+        candidate_prior = float(row["metadata"].get("candidate_rank_score") or 0.0)
+        item = {
+            **item,
+            "rank_score": round(
+                item["rank_score"] + BALANCED_CANDIDATE_PRIOR_WEIGHT * candidate_prior,
+                6,
+            ),
+        }
+        scored.append(item)
+    scored.sort(key=lambda item: (-item["rank_score"], item["candidate"].candidate_id))
+    selected = []
+    used_aspects = set()
+    for item in scored:
+        aspect = item["candidate"].aspect
+        if aspect in used_aspects:
+            continue
+        selected.append(item)
+        used_aspects.add(aspect)
+        if len(selected) == top_k:
+            break
+    for item in scored:
+        if item not in selected:
+            selected.append(item)
+        if len(selected) == top_k:
+            break
+    return [_pipeline_item_from_scored(item, trace_by_id[item["candidate"].candidate_id]) for item in selected[:top_k]]
+
+
+def _pipeline_item_from_scored(item: dict, trace) -> dict:
+    adjudication = item["adjudication"]
+    weakness = (
+        adjudication.rewritten_weakness
+        if adjudication.decision == "rewrite" and adjudication.rewritten_weakness
+        else item["candidate"].weakness
+    )
+    return {
+        "candidate_id": item["candidate"].candidate_id,
+        "paper_id": item["candidate"].paper_id,
+        "aspect": item["candidate"].aspect,
+        "weakness": weakness,
+        "severity": item["candidate"].severity,
+        "suggestion": item["candidate"].suggestion,
+        "source_agent": item["candidate"].source_agent,
+        "evidence_ids": adjudication.evidence_ids,
+        "confidence": item["confidence"],
+        "rank_score": item["rank_score"],
+        "source_review_id": None,
+        "audit_decision": adjudication.decision,
+        "support_strength": item["support"].strength,
+        "refutation_strength": item["refutation"].strength,
     }
 
 
@@ -346,6 +454,25 @@ def _agent_rag_metrics(
         report.get("system_trace", {}).get("paper_decision_produced", False)
         for report in reports
     )
+    return metrics
+
+
+def _balanced_agent_rag_metrics(
+    reports: list[dict],
+    submissions: list[dict],
+    agent_rag_metrics: dict,
+    cue_aware_metrics: dict,
+    top_k: int,
+) -> dict:
+    metrics = _agent_rag_metrics(reports, submissions, cue_aware_metrics, top_k)
+    metrics["official_weakness_proxy_overlap_delta_vs_b4"] = (
+        metrics["official_weakness_proxy_overlap@k"]
+        - agent_rag_metrics["official_weakness_proxy_overlap@k"]
+    )
+    metrics["aspect_diversity_delta_vs_b4"] = (
+        metrics["aspect_diversity@k"] - agent_rag_metrics["aspect_diversity@k"]
+    )
+    metrics["balanced_candidate_prior_weight"] = BALANCED_CANDIDATE_PRIOR_WEIGHT
     return metrics
 
 

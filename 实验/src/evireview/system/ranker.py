@@ -21,9 +21,7 @@ class EvidenceAwareMetaRanker:
         self.dedup_threshold = dedup_threshold
 
     def rank(self, traces: list[dict], *, top_k: int) -> list[RankedWeakness]:
-        scored = [self._score_trace(trace) for trace in traces]
-        scored = [item for item in scored if item["decision"] in {"keep", "rewrite", "uncertain"}]
-        scored.sort(key=lambda item: (-item["rank_score"], item["candidate"].candidate_id))
+        scored = self.score_traces(traces)
         deduped = self._deduplicate(scored)
         return [
             RankedWeakness(
@@ -40,6 +38,12 @@ class EvidenceAwareMetaRanker:
             )
             for item in deduped[:top_k]
         ]
+
+    def score_traces(self, traces: list[dict]) -> list[dict]:
+        scored = [self._score_trace(trace) for trace in traces]
+        scored = [item for item in scored if item["decision"] in {"keep", "rewrite", "uncertain"}]
+        scored.sort(key=lambda item: (-item["rank_score"], item["candidate"].candidate_id))
+        return scored
 
     def _score_trace(self, trace: dict) -> dict:
         candidate: CandidateWeakness = trace["candidate"]

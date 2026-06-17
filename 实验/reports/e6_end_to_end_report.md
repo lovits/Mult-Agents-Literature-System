@@ -6,6 +6,7 @@
 - arXiv unseen Gold metrics: disabled
 - Component outputs: E2, E3, E4, E5
 - Agent-RAG pipeline: enabled as B4
+- Balanced Agent-RAG optimizer: enabled as B5
 
 ## Dataset
 
@@ -22,6 +23,7 @@
 | B2_system_generated_structured_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0504 |
 | B3_cue_aware_structured_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0549 |
 | B4_agent_rag_pipeline_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0559 |
+| B5_balanced_agent_rag_pipeline_report | 1.0000 | 1.0000 | 1.0000 | 0 | True | 0.0570 |
 
 ## Sample OpenReview Reports
 
@@ -102,30 +104,63 @@
 
 ### PwxYoMvmvy: Beyond Random Masking: When Dropout meets Graph Convolutional Networks
 
-- Candidate source: `agent_rag_review_pipeline_v1`
-- Pipeline stages: 9
-
-- `PwxYoMvmvy:cue:0` aspect=experiment, decision=uncertain, score=0.1550, support=0.5000, refutation=0.5000, evidence=PwxYoMvmvy:content:abstract:0: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
-- `PwxYoMvmvy:cue:2` aspect=reproducibility, decision=uncertain, score=0.1344, support=0.4706, refutation=0.4824, evidence=PwxYoMvmvy:content:abstract:0: The implementation, dataset, hyperparameter, and compute details may not be sufficient for reproduction.
-- `PwxYoMvmvy:cue:24` aspect=experiment, decision=uncertain, score=0.1340, support=0.3333, refutation=0.4000, evidence=PwxYoMvmvy:content:abstract:0: The agent or tool-use evaluation may need broader task coverage and stronger out-of-distribution testing.
-
 ### ONfWFluZBI: Self-supervised contrastive learning performs non-linear system identification
-
-- Candidate source: `agent_rag_review_pipeline_v1`
-- Pipeline stages: 9
-
-- `ONfWFluZBI:cue:0` aspect=experiment, decision=uncertain, score=0.1271, support=0.3684, refutation=0.4211, evidence=ONfWFluZBI:content:abstract:0: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
-- `ONfWFluZBI:cue:21` aspect=method, decision=uncertain, score=0.1217, support=0.3125, refutation=0.3875, evidence=ONfWFluZBI:content:abstract:0: The method may depend on strong observability, control-input, or system-identification assumptions.
-- `ONfWFluZBI:cue:1` aspect=missing_baseline, decision=uncertain, score=0.1190, support=0.3500, refutation=0.4100, evidence=ONfWFluZBI:content:abstract:0, literature:boundary:missing_baseline: The baseline comparison may be incomplete, especially against closely related recent or task-specific methods.
 
 ### odjMSBSWRt: DarkBench: Benchmarking Dark Patterns in Large Language Models
 
-- Candidate source: `agent_rag_review_pipeline_v1`
+
+## Sample Balanced Agent-RAG Pipeline Reports
+
+### PwxYoMvmvy: Beyond Random Masking: When Dropout meets Graph Convolutional Networks
+
+- Candidate source: `balanced_agent_rag_review_pipeline_v1`
+- Pipeline stages: 9
+- Selection policy: `aspect_balanced_with_candidate_prior`
+
+- `PwxYoMvmvy:cue:0` aspect=experiment, decision=uncertain, score=0.1781, support=0.5000, refutation=0.5000, evidence=PwxYoMvmvy:content:abstract:0: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
+- `PwxYoMvmvy:cue:2` aspect=reproducibility, decision=uncertain, score=0.1527, support=0.4706, refutation=0.4824, evidence=PwxYoMvmvy:content:abstract:0: The implementation, dataset, hyperparameter, and compute details may not be sufficient for reproduction.
+- `PwxYoMvmvy:cue:1` aspect=missing_baseline, decision=uncertain, score=0.1460, support=0.3684, refutation=0.4211, evidence=PwxYoMvmvy:content:abstract:0, literature:boundary:missing_baseline: The baseline comparison may be incomplete, especially against closely related recent or task-specific methods.
+
+- Candidate source: `balanced_agent_rag_review_pipeline_v1`
 - Pipeline stages: 9
 
-- `odjMSBSWRt:cue:0` aspect=experiment, decision=uncertain, score=0.1298, support=0.3810, refutation=0.4286, evidence=odjMSBSWRt:content:abstract:0: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
-- `odjMSBSWRt:cue:3` aspect=method, decision=uncertain, score=0.1206, support=0.3182, refutation=0.3909, evidence=odjMSBSWRt:content:abstract:0: The method may rely on strong assumptions or underspecified algorithmic choices that need clearer justification.
-- `odjMSBSWRt:cue:2` aspect=reproducibility, decision=uncertain, score=0.1195, support=0.4000, refutation=0.4400, evidence=odjMSBSWRt:content:abstract:0: The implementation, dataset, hyperparameter, and compute details may not be sufficient for reproduction.
+- `PwxYoMvmvy:cue:0` aspect=experiment, decision=uncertain, score=0.1781, support=0.5000, refutation=0.5000, evidence=PwxYoMvmvy:content:abstract:0: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
+- `PwxYoMvmvy:cue:2` aspect=reproducibility, decision=uncertain, score=0.1527, support=0.4706, refutation=0.4824, evidence=PwxYoMvmvy:content:abstract:0: The implementation, dataset, hyperparameter, and compute details may not be sufficient for reproduction.
+- `PwxYoMvmvy:cue:1` aspect=missing_baseline, decision=uncertain, score=0.1460, support=0.3684, refutation=0.4211, evidence=PwxYoMvmvy:content:abstract:0, literature:boundary:missing_baseline: The baseline comparison may be incomplete, especially against closely related recent or task-specific methods.
+
+### ONfWFluZBI: Self-supervised contrastive learning performs non-linear system identification
+
+- Candidate source: `balanced_agent_rag_review_pipeline_v1`
+- Pipeline stages: 9
+- Selection policy: `aspect_balanced_with_candidate_prior`
+
+- `ONfWFluZBI:cue:21` aspect=method, decision=uncertain, score=0.1587, support=0.3125, refutation=0.3875, evidence=ONfWFluZBI:content:abstract:0: The method may depend on strong observability, control-input, or system-identification assumptions.
+- `ONfWFluZBI:cue:0` aspect=experiment, decision=uncertain, score=0.1406, support=0.3684, refutation=0.4211, evidence=ONfWFluZBI:content:abstract:0: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
+- `ONfWFluZBI:cue:1` aspect=missing_baseline, decision=uncertain, score=0.1325, support=0.3500, refutation=0.4100, evidence=ONfWFluZBI:content:abstract:0, literature:boundary:missing_baseline: The baseline comparison may be incomplete, especially against closely related recent or task-specific methods.
+
+- Candidate source: `balanced_agent_rag_review_pipeline_v1`
+- Pipeline stages: 9
+
+- `ONfWFluZBI:cue:21` aspect=method, decision=uncertain, score=0.1587, support=0.3125, refutation=0.3875, evidence=ONfWFluZBI:content:abstract:0: The method may depend on strong observability, control-input, or system-identification assumptions.
+- `ONfWFluZBI:cue:0` aspect=experiment, decision=uncertain, score=0.1406, support=0.3684, refutation=0.4211, evidence=ONfWFluZBI:content:abstract:0: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
+- `ONfWFluZBI:cue:1` aspect=missing_baseline, decision=uncertain, score=0.1325, support=0.3500, refutation=0.4100, evidence=ONfWFluZBI:content:abstract:0, literature:boundary:missing_baseline: The baseline comparison may be incomplete, especially against closely related recent or task-specific methods.
+
+### odjMSBSWRt: DarkBench: Benchmarking Dark Patterns in Large Language Models
+
+- Candidate source: `balanced_agent_rag_review_pipeline_v1`
+- Pipeline stages: 9
+- Selection policy: `aspect_balanced_with_candidate_prior`
+
+- `odjMSBSWRt:cue:0` aspect=experiment, decision=uncertain, score=0.1481, support=0.3810, refutation=0.4286, evidence=odjMSBSWRt:content:abstract:0: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
+- `odjMSBSWRt:cue:2` aspect=reproducibility, decision=uncertain, score=0.1330, support=0.4000, refutation=0.4400, evidence=odjMSBSWRt:content:abstract:0: The implementation, dataset, hyperparameter, and compute details may not be sufficient for reproduction.
+- `odjMSBSWRt:cue:3` aspect=method, decision=uncertain, score=0.1311, support=0.3182, refutation=0.3909, evidence=odjMSBSWRt:content:abstract:0: The method may rely on strong assumptions or underspecified algorithmic choices that need clearer justification.
+
+- Candidate source: `balanced_agent_rag_review_pipeline_v1`
+- Pipeline stages: 9
+
+- `odjMSBSWRt:cue:0` aspect=experiment, decision=uncertain, score=0.1481, support=0.3810, refutation=0.4286, evidence=odjMSBSWRt:content:abstract:0: The empirical evaluation may need stronger ablation analysis and direct validation of the claimed mechanism.
+- `odjMSBSWRt:cue:2` aspect=reproducibility, decision=uncertain, score=0.1330, support=0.4000, refutation=0.4400, evidence=odjMSBSWRt:content:abstract:0: The implementation, dataset, hyperparameter, and compute details may not be sufficient for reproduction.
+- `odjMSBSWRt:cue:3` aspect=method, decision=uncertain, score=0.1311, support=0.3182, refutation=0.3909, evidence=odjMSBSWRt:content:abstract:0: The method may rely on strong assumptions or underspecified algorithmic choices that need clearer justification.
 
 ## arXiv Unseen Demo Boundary
 
