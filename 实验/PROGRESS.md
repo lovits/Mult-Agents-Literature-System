@@ -44,12 +44,22 @@
 - 新增 OpenReview ICLR 2025 expanded-100 快照：100 篇投稿元数据、229 条 Official Review、35 篇有效 PDF；
 - expanded-100 记录 42 个 forum 抓取失败和 65 个 PDF 失败，主要受 OpenReview 429 限流影响，暂不替代 30 篇完整 seed；
 - 将 arXiv unseen 从 5 篇扩展到 20 篇最新 `cs.CL`，20 个 PDF 均有效；
-- 新增 PeerQA-XT partial 快照：README、test、validation 与 train 第一片 parquet 已落地；
+- 新增 PeerQA-XT complete 快照：README、test、validation 与两个 train parquet shard 已落地；
 - PeerQA-XT 为非 gated、CC BY-NC-SA 4.0、合成 QA 数据，只作为 E2 辅助扩展，不作为严格人工 Gold；
-- ResearchArcade OpenReview 数据经 HF metadata 核验为非 gated、约 93MB，但本轮下载两次遇到远端断连/SSL EOF，未计入已下载；
+- ResearchArcade OpenReview 数据经 HF metadata 核验为非 gated；原始 parquet 下载遇到远端断连/SSL EOF，已改用 HF converted parquet 落地为扩容候选；
 - Review-5K 经 HF metadata 核验为 auto-gated，已记录授权步骤；
 - NLPEERv2 仍为 TUdataLib restricted file access，已记录授权路径和落地目录纪律；
 - 新增 `scripts/validate_data_expansion_2026_06_17.py`，输出 `.omx/specs/autoresearch-data-expansion-2026-06-17/result.json`。
+
+### Task 3-E：新增数据 Schema Inspection
+
+- 使用 Hugging Face Dataset Viewer API 核验 PeerQA-XT 与 ResearchArcade 的 split、size、parquet URL 和 first rows；
+- PeerQA-XT 确认为 12,628 行，字段为 `pid/qid/question/answer/paper/domain`；
+- PeerQA-XT train/validation/test 分别为 10,128 / 1,248 / 1,252 行；
+- ResearchArcade converted parquet 确认为 737,577 行，字段为 `venue/paper_openreview_id/review_openreview_id/title/time`；
+- 明确 ResearchArcade converted 只提供 OpenReview thread metadata，不含完整 review text，不能直接替代评审正文数据；
+- 新增 `reports/dataset_schema_inspection_2026-06-17.md` 和 `scripts/validate_dataset_schema_inspection_2026_06_17.py`；
+- 本阶段提升的是数据准备度，不是模型指标；未复跑 E2/E6，不能声称相对 baseline 的性能提升。
 
 ### Task 4：论文结构解析
 
@@ -308,7 +318,8 @@ Restricted datasets:            1 (NLPEERv2)
 Local snapshots:                1
 OpenReview valid PDFs:          30 / 30 complete seed; 35 / 100 expanded snapshot
 arXiv unseen valid PDFs:         20 / 20 latest 2026-06-17 snapshot
-PeerQA-XT auxiliary parquet:     3 / 4 files downloaded (missing train shard 00001)
+PeerQA-XT auxiliary parquet:     4 / 4 files downloaded
+ResearchArcade converted parquet: downloaded, pending schema inspection
 Autoresearch dataset bootstrap: passed
 Autoresearch flat layout/task6: passed
 Autoresearch PeerQA E2 foundation: passed
@@ -330,6 +341,7 @@ Autoresearch E6 Candidate Diagnostics: passed
 Autoresearch E6 Provider Candidates: passed (experiment verdict: failed_with_metrics)
 Autoresearch Agent-RAG system framework: passed
 Autoresearch Data Expansion 2026-06-17: passed with documented gaps
+Autoresearch Dataset Schema Inspection 2026-06-17: passed
 Clean dataset layout:             passed (no nested Git/ZIP/legacy)
 pip check:                      no broken requirements
 ```
@@ -339,8 +351,8 @@ pip check:                      no broken requirements
 1. NLPEERv2 完整数据尚未获得访问授权；当前已写明 TUdataLib 申请路径，但不能计为已下载；
 2. OpenReview 已有 30 篇完整 seed 和 100 篇 partial expansion；expanded-100 受 429 限流影响，暂不能替代完整主数据；
 3. arXiv 未见集已扩展到 20 篇，但仍只用于最终演示，不能用于调参或 Gold 评价；
-4. PeerQA-XT 已部分下载，但缺 train 第二片；登录 `HF_TOKEN` 后应补齐，再作为 E2 辅助扩展；
-5. ResearchArcade OpenReview 数据非 gated，但本轮下载遇到网络/SSL EOF，需在网络稳定或登录 HF 后重试；
+4. PeerQA-XT 已完整下载，但它是合成 QA，只能作为 E2 辅助扩展，不能替代 PeerQA 严格 Gold；
+5. ResearchArcade OpenReview converted parquet 已下载，但还需要字段检查、样本计数和任务映射，才能进入正式数据注册表；
 6. Review-5K 为 Hugging Face auto-gated，需要登录并同意数据条款后才能下载；
 7. E2 正式实验已完成，但 PeerQA 上的 P4 未达到预设 Recall 与 Evidence-Type Match 增益；
 8. PeerQA 映射后的证据类型以 paragraph 为主，PeerQA-XT 又是合成 QA，因此仍不足以单独证明 evidence-type prior 有效。
@@ -349,8 +361,8 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 先补数据而不是继续调参：登录 Hugging Face 后补齐 PeerQA-XT train 第二片；
-2. 重试 ResearchArcade OpenReview，优先作为大规模 paper-review metadata 扩展；
+1. 编写 PeerQA-XT 适配器，把 `paper` 长文本切成 `EvidenceBlock`，先跑 validation/test 检索，不动原 PeerQA 严格 Gold；
+2. 编写 ResearchArcade event registry，过滤 Official Review / Meta Review / Paper Decision 事件，并与 OpenReview seed ID 对齐；
 3. 在 OpenReview API 限流恢复后复跑 expanded-100，目标是 `review_fetch_failures == 0` 且 `valid_pdfs >= 80`；
 4. 申请 NLPEERv2，获批后按 `restricted -> primary` 受控流程解析；
 5. 数据补齐后再回到 E6-B5/候选生成优化，优先处理 experiment 切片和 zero-overlap 候选；

@@ -34,7 +34,8 @@ dataset/
 | OpenReview ICLR 2025 seed | 30 篇完整 PDF、投稿元数据、122 条 Official Review | 当前完整可复现主数据 seed |
 | OpenReview ICLR 2025 expanded-100 | 100 篇投稿元数据、229 条 Official Review、35 篇有效 PDF | 主数据扩展快照；受 OpenReview 429 限流影响，暂不替代 30 篇完整 seed |
 | PeerQA | 579 条标注 QA、24,265 条论文段落记录、未标注问题 | E2 Paper-RAG 严格检索评价 |
-| PeerQA-XT | README、test、validation 与 train 第一片 parquet 已落地 | E2 辅助扩展检索/QA 数据；合成 QA，不作为严格 Gold；train 第二片需登录 HF 后补齐 |
+| PeerQA-XT | README、test、validation 与两个 train parquet shard 已落地 | E2 辅助扩展检索/QA 数据；合成 QA，不作为严格 Gold |
+| ResearchArcade OpenReview | README 与 HF converted train parquet 已落地 | OpenReview paper-review metadata 扩容候选；正式入主实验前需做 schema inspection 与抽样核验 |
 | CLAIMCHECK | 55 个 main source paper-review 对、43 个 related-work 对的文本标注 | E4 双向文本证据审计严格评价；当前不做多模态图表审计 |
 | ReviewCritique | 100 篇人类评审论文、20 篇 LLM 评审论文及专家 deficiency 标注 | E1/E5/E6 辅助严格评价；禁止用于训练 |
 | SubstanReview | 550 条专家标注评审，包含 claim-evidence 配对 span | E4 证据充分性与 E5 排序辅助评价 |
@@ -49,7 +50,8 @@ dataset/
 | OpenReview seed | 可用但规模不足 | 可打通完整论文处理和候选生成；正式端到端实验前必须扩大并冻结划分 |
 | OpenReview expanded-100 | 部分可用 | 可用于论文元数据和评审文本扩容；因 PDF 与 forum 抓取受限，不能替代完整主数据 |
 | PeerQA | 可直接使用 | 具有映射到论文段落的 Gold evidence，是 E2 Paper-RAG 主评价集 |
-| PeerQA-XT | 部分可用 | 非 gated、CC BY-NC-SA 4.0，可用于辅助扩大 QA 检索样本；当前本地缺 train 第二片，正式使用前需补齐 |
+| PeerQA-XT | 可用，限辅助 | 非 gated、CC BY-NC-SA 4.0，可用于辅助扩大 QA 检索样本；因是合成 QA，不替代 PeerQA 严格 Gold |
+| ResearchArcade OpenReview | 可用，待 schema inspection | 非 gated，已落地 HF converted parquet；可作为 OpenReview paper-review metadata 扩容候选 |
 | CLAIMCHECK | 可直接使用，限文本任务 | source 与 related-work 文本对适合 E4 支持/反驳证据审计；不能据此宣称多模态能力 |
 | ReviewCritique | 可直接使用，限评价 | 可评价评审缺陷和报告质量；按数据说明不得作为训练集 |
 | SubstanReview | 可直接使用，限辅助评价 | 可评价评审 claim 是否被 evidence substantiated；不能独立证明 weakness 正确 |
@@ -61,8 +63,8 @@ dataset/
 
 | 数据源 | 状态 | 本项目建议用途 |
 | --- | --- | --- |
-| `UKPLab/PeerQA-XT` | Hugging Face 非 gated；license 为 CC BY-NC-SA 4.0；本地已下载 3/4 个 parquet 文件 | 辅助扩大 E2 QA 检索实验；不得替代 PeerQA 人工标注 Gold |
-| `ulab-ai/ResearchArcade-openreview-papers-reviews` | Hugging Face 非 gated；本轮下载遇到 SSL/远端断连，尚未落地 | 下一轮优先补主数据规模，用于 OpenReview paper-review metadata 扩容 |
+| `UKPLab/PeerQA-XT` | Hugging Face 非 gated；license 为 CC BY-NC-SA 4.0；本地已下载 4/4 个 parquet 文件 | 辅助扩大 E2 QA 检索实验；不得替代 PeerQA 人工标注 Gold |
+| `ulab-ai/ResearchArcade-openreview-papers-reviews` | Hugging Face 非 gated；原始 data parquet 下载遇到 SSL/远端断连，HF converted parquet 已落地 | 下一轮做 schema inspection 后补主数据规模，用于 OpenReview paper-review metadata 扩容 |
 | `WestlakeNLP/Review-5K` | Hugging Face `gated: auto`；需登录后申请/同意数据条款 | 只作 peer review analysis 辅助评价，不用于宣称替代人工审稿 |
 | `JerMa88/ICLR_Peer_Reviews` | Hugging Face 非 gated；MIT；体量约 799MB | 可作为轻量文本评审辅助数据，优先级低于 OpenReview/NLPEERv2 |
 

@@ -41,6 +41,11 @@ def validate() -> dict:
         "train_00000": peerqa_xt_root / "data/train-00000-of-00002.parquet",
         "train_00001": peerqa_xt_root / "data/train-00001-of-00002.parquet",
     }
+    researcharcade_root = RAW_ROOT / "primary/researcharcade_openreview_papers_reviews"
+    researcharcade_files = {
+        "readme": researcharcade_root / "README.md",
+        "converted_train": researcharcade_root / "converted/default/train/0000.parquet",
+    }
     report_path = ROOT / "reports/data_expansion_2026-06-17.md"
 
     checks = {
@@ -70,13 +75,13 @@ def validate() -> dict:
             "valid_pdfs": arxiv_expanded["valid_pdfs"],
             "role": "unseen demonstration only",
         },
-        "peerqa_xt_partial_snapshot": {
+        "peerqa_xt_complete_snapshot": {
             "passed": (
                 peerqa_xt_files["readme"].exists()
                 and parquet_like(peerqa_xt_files["test"])
                 and parquet_like(peerqa_xt_files["validation"])
                 and parquet_like(peerqa_xt_files["train_00000"])
-                and not peerqa_xt_files["train_00001"].exists()
+                and parquet_like(peerqa_xt_files["train_00001"])
             ),
             "downloaded_files": [
                 name for name, path in peerqa_xt_files.items() if path.exists()
@@ -84,7 +89,20 @@ def validate() -> dict:
             "missing_files": [
                 name for name, path in peerqa_xt_files.items() if not path.exists()
             ],
-            "role": "auxiliary synthetic QA expansion; full train split still requires retry/HF_TOKEN",
+            "role": "complete auxiliary synthetic QA expansion; not a strict human-gold set",
+        },
+        "researcharcade_converted_snapshot": {
+            "passed": (
+                researcharcade_files["readme"].exists()
+                and parquet_like(researcharcade_files["converted_train"])
+            ),
+            "downloaded_files": [
+                name for name, path in researcharcade_files.items() if path.exists()
+            ],
+            "role": (
+                "OpenReview paper-review metadata expansion candidate from HF converted parquet; "
+                "requires schema inspection before main metrics"
+            ),
         },
         "authorization_and_limitations_documented": {
             "passed": (
