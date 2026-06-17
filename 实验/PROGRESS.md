@@ -322,13 +322,21 @@
 - 输入为 50 篇论文、5,974 个 EvidenceBlock 和 230 条官方 review；
 - 官方 review 文本只作为弱 proxy overlap，不作为严格 weakness-level Gold；
 - 不生成 paper-level accept/reject decision，保持自动评审辅助系统边界；
+- 校准 NeurIPS section detector，补充 numbered headings、Markdown headings、LaTeX section headings
+  和 `Technical Overview` / `Preliminary` / `Experimental Evaluation` / `Related works`
+  等常见章节别名；
+- section 分布从 introduction 3,422 / method 298 / experiments 522，改善为 introduction
+  2,281 / method 1,496 / experiments 602；
 - 修复 B5 balanced selector 的稳定性问题：当 Evidence-aware Meta-Ranker 合法过滤 `reject` trace 时，selector 跳过该候选而不是中断整批实验；
 - B3 Cue-aware Proxy Overlap@K 为 0.0515，Aspect Diversity@K 为 1.0000；
-- B4 Agent-RAG Proxy Overlap@K 为 0.0504，Aspect Diversity@K 为 0.9220；
-- B5 Balanced Agent-RAG Proxy Overlap@K 为 0.0499，Aspect Diversity@K 为 1.0000；
-- B5 相对 B4 的 Aspect Diversity@K 提升 0.0780，但 Proxy Overlap@K 下降 0.00048；
+- B4 Agent-RAG Proxy Overlap@K 为 0.0510，Aspect Diversity@K 为 0.9058；
+- B5 Balanced Agent-RAG Proxy Overlap@K 为 0.0502，Aspect Diversity@K 为 1.0000；
+- B5 相对 B4 的 Aspect Diversity@K 提升 0.0942，但 Proxy Overlap@K 下降 0.000759；
+- 相比校准前，B4 Proxy Overlap@K 从 0.0504 小幅提升到 0.0510，B5 从 0.0499 小幅提升到 0.0502；
 - E6-N Autoresearch 验收通过，但实验 verdict 为 `failed_with_metrics`；
-- 结论：B5 的 Top-K 平衡策略能恢复 aspect 多样性，但在 NeurIPS 扩展样本上没有提升 review proxy 对齐，下一步应先校准章节识别和候选生成，而不是继续调排序权重。
+- 结论：section detector 校准对 Agent-RAG 证据链有小幅正向影响；B5 的 Top-K 平衡策略能恢复
+  aspect 多样性，但在 NeurIPS 扩展样本上仍没有提升 review proxy 对齐，下一步应做低 overlap
+  切片归因，而不是继续调排序权重。
 
 ### Agent-RAG 后端系统框架
 
@@ -350,7 +358,7 @@
 ## 当前验证
 
 ```text
-pytest:                         115 passed after E6-N stability diagnostic
+pytest:                         116 passed after E6-N section calibration
 E0 registered datasets:         8
 Downloaded datasets:            6
 Restricted datasets:            1 (NLPEERv2)
@@ -406,7 +414,7 @@ pip check:                      no broken requirements
 7. OpenReview Raw 当前只下载首个 parquet 分片，需 event filter 后才能进入正式统计；
 8. NeurIPS 2023 数据含完整论文文本与 reviews，但公开拒稿不足会导致接受样本偏置，不能直接作为严格 accept/reject 评价；
 9. ReviewRebuttal 已下载 test reviews，但未下载大体量 `papers.zip`，暂不能用作完整论文解析主数据；
-10. NeurIPS 2023 简单章节识别仍把较多正文归到 introduction，E6-N 已证明这会影响 Agent-RAG proxy overlap，需要优先校准 section detector；
+10. NeurIPS 2023 section detector 已完成一轮小幅校准，但 E6-N 仍显示 B5 低于 B4，需要继续分析低 overlap 切片；
 11. 当前依赖不含 parquet reader，OpenReview Raw event filter 暂不能本地执行；
 12. E2 正式实验已完成，但 PeerQA 上的 P4 未达到预设 Recall 与 Evidence-Type Match 增益；
 13. PeerQA 映射后的证据类型以 paragraph 为主，PeerQA-XT 又是合成 QA，因此仍不足以单独证明 evidence-type prior 有效。
@@ -415,9 +423,9 @@ pip check:                      no broken requirements
 
 按照关键路径继续：
 
-1. 小幅校准 NeurIPS section detector，重点减少 introduction 过度归类，然后复跑 E6-N；
+1. 检查 E6-N 低 overlap 切片，区分候选生成问题、证据检索问题和 ranker 选择问题；
 2. 为 ReviewRebuttal test 建立 review/metareview/decision 诊断表，先评价报告结构与 decision 辅助特征，不写成自动录用决策能力；
-3. 检查 E6-N 低 overlap 切片，区分候选生成问题、证据检索问题和 ranker 选择问题；
+3. 根据低 overlap 切片结果决定是否小幅调整 cue-aware candidate generator，而不是继续盲调排序权重；
 4. 如果允许增加 parquet reader，再对 OpenReview Raw shard0 做 event filter，统计 review/meta-review/decision 比例；
 5. 编写 PeerQA-XT 适配器，把 `paper` 长文本切成 `EvidenceBlock`，先跑 validation/test 检索，不动原 PeerQA 严格 Gold；
 6. 编写 ResearchArcade event registry，过滤 Official Review / Meta Review / Paper Decision 事件，并与 OpenReview seed ID 对齐；

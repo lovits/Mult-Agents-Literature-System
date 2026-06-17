@@ -13,21 +13,31 @@ from evireview.models.paper import PaperDocument
 SECTION_KEYWORDS = {
     "abstract": "abstract",
     "introduction": "introduction",
+    "overview": "method",
+    "preliminary": "method",
+    "preliminaries": "method",
     "background": "related_work",
     "related work": "related_work",
+    "related works": "related_work",
     "method": "method",
     "methods": "method",
     "approach": "method",
     "model": "method",
+    "technical overview": "method",
+    "implementation details": "method",
     "experiments": "experiments",
     "experiment": "experiments",
+    "experimental evaluation": "experiments",
     "evaluation": "experiments",
     "results": "experiments",
     "ablation": "ablation",
     "analysis": "discussion",
     "discussion": "discussion",
+    "broader impact": "discussion",
+    "impact statement": "discussion",
     "limitations": "limitations",
     "conclusion": "conclusion",
+    "conclusions": "conclusion",
     "appendix": "appendix",
 }
 
@@ -138,11 +148,23 @@ def split_paper_text(
 
 
 def detect_section(line: str) -> str | None:
-    cleaned = re.sub(r"^\d+(?:\.\d+)*\s*", "", line).strip().lower().rstrip(":")
-    cleaned = re.sub(r"[^a-z ]", "", cleaned)
+    cleaned = _normalize_heading(line)
+    if cleaned in {"acknowledgment", "acknowledgments", "references", "bibliography"}:
+        return None
     if cleaned.startswith("appendix"):
         return "appendix"
-    return SECTION_KEYWORDS.get(cleaned)
+    if cleaned in SECTION_KEYWORDS:
+        return SECTION_KEYWORDS[cleaned]
+    for phrase, section in (
+        ("experimental evaluation", "experiments"),
+        ("technical overview", "method"),
+        ("implementation detail", "method"),
+        ("related work", "related_work"),
+        ("broader impact", "discussion"),
+    ):
+        if phrase in cleaned:
+            return section
+    return None
 
 
 def reviewrebuttal_summary(path: Path) -> dict[str, Any]:
@@ -212,3 +234,15 @@ def _evidence_type(section: str, text: str) -> EvidenceType:
 
 def _clean(text: str) -> str:
     return " ".join(text.split())
+
+
+def _normalize_heading(line: str) -> str:
+    text = _clean(line)
+    text = re.sub(r"^#{1,6}\s*", "", text)
+    latex = re.fullmatch(r"\\{0,2}(?:section|subsection|subsubsection)\*?\{(.+)\}", text)
+    if latex:
+        text = latex.group(1)
+    text = re.sub(r"^\d+(?:\.\d+)*\.?\s*", "", text)
+    text = text.lower().strip().rstrip(":")
+    text = re.sub(r"[^a-z ]", " ", text)
+    return _clean(text)

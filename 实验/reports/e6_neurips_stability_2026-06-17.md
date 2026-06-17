@@ -20,19 +20,21 @@
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | B2_system_generated_structured_report | 1.0000 | 1.0000 | 1.0000 | 0.0437 | 1.0000 | 0.0000 | 0 |
 | B3_cue_aware_structured_report | 1.0000 | 1.0000 | 1.0000 | 0.0515 | 1.0000 | 0.0000 | 0 |
-| B4_agent_rag_pipeline_report | 0.9400 | 1.0000 | 1.0000 | 0.0504 | 0.9220 | 0.0000 | 0 |
-| B5_balanced_agent_rag_pipeline_report | 0.9400 | 1.0000 | 1.0000 | 0.0499 | 1.0000 | 0.0000 | 0 |
+| B4_agent_rag_pipeline_report | 0.9200 | 1.0000 | 1.0000 | 0.0510 | 0.9058 | 0.0000 | 0 |
+| B5_balanced_agent_rag_pipeline_report | 0.9200 | 1.0000 | 1.0000 | 0.0502 | 1.0000 | 0.0000 | 0 |
 
 ## Comparison
 
-- B5 overlap delta vs B3: -0.001569
-- B5 overlap delta vs B4: -0.000480
-- B5 aspect diversity delta vs B4: 0.078014
+- B5 overlap delta vs B3: -0.001258
+- B5 overlap delta vs B4: -0.000759
+- B5 aspect diversity delta vs B4: 0.094203
 - B5 redundancy delta vs B4: 0.000000
 - Experiment verdict: `failed_with_metrics`
 
 ## Interpretation
 
 This diagnostic tests whether the existing E6 Agent-RAG assembly remains stable when moved from the OpenReview seed to a 50-paper NeurIPS 2023 processed sample. The official review text is used only as a weak proxy for weakness overlap; it is not a strict human Gold weakness annotation.
+
+This run uses the calibrated NeurIPS section detector. Compared with the pre-calibration run, B4 proxy overlap moved from 0.0504 to 0.0510 and B5 moved from 0.0499 to 0.0502. The gain is small and does not change the verdict: B5 restores aspect diversity but still does not beat B4 on review-proxy overlap.
 
 No paper-level accept/reject decision is produced. The result should be used to guide the next engineering step, not as final thesis evidence.

@@ -2,6 +2,7 @@ import json
 
 from evireview.dao.candidate_datasets import (
     coerce_review_list,
+    detect_section,
     paper_from_neurips_record,
     peercheck_summary,
     reviewrebuttal_summary,
@@ -47,6 +48,15 @@ def test_coerce_review_list_handles_encoded_lists_and_plain_text():
     assert coerce_review_list("[\"a\", \"b\"]") == ["a", "b"]
     assert coerce_review_list("plain review") == ["plain review"]
     assert coerce_review_list([{"score": 6}]) == ['{"score": 6}']
+
+
+def test_neurips_section_detector_handles_numbered_and_latex_headings():
+    assert detect_section("## 2 Technical Overview") == "method"
+    assert detect_section("2 Preliminary") == "method"
+    assert detect_section("1.2.3 Experimental Evaluation") == "experiments"
+    assert detect_section(r"\\section{Related works}") == "related_work"
+    assert detect_section("Broader Impact") == "discussion"
+    assert detect_section("Acknowledgments") is None
 
 
 def test_reviewrebuttal_and_peercheck_summaries(tmp_path):
